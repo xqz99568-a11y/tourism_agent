@@ -1,0 +1,55 @@
+﻿{
+  "description": "Offline weather sample cases for weather_service/weather_validator tests",
+  "schema": {
+    "city": "string",
+    "daily": [
+      {
+        "date": "YYYY-MM-DD",
+        "condition": "string",
+        "temperature_max": "number",
+        "temperature_min": "number",
+        "rain_probability": "number",
+        "wind_speed": "number",
+        "outdoor_suitability": "good|medium|low",
+        "notes": "string"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "id": "case_hz_sunny",
+      "file": "hangzhou_sunny.json",
+      "city": "杭州",
+      "weather_type": "sunny",
+      "expected_focus": "适合户外，夜景可正常安排"
+    },
+    {
+      "id": "case_hz_light_rain",
+      "file": "hangzhou_rainy.json",
+      "city": "杭州",
+      "weather_type": "light_rain",
+      "expected_focus": "下午时段需室内备选"
+    },
+    {
+      "id": "case_hz_heavy_rain",
+      "file": "hangzhou_heavy_rain.json",
+      "city": "杭州",
+      "weather_type": "heavy_rain",
+      "expected_focus": "全天户外活动应显著降权"
+    },
+    {
+      "id": "case_xa_hot",
+      "file": "xian_hot.json",
+      "city": "西安",
+      "weather_type": "high_temperature",
+      "expected_focus": "中午户外风险高，活动应前移"
+    },
+    {
+      "id": "case_bj_windy",
+      "file": "beijing_windy.json",
+      "city": "北京",
+      "weather_type": "cold_windy",
+      "expected_focus": "临水夜游与高风区域活动应降权"
+    }
+  ]
+}

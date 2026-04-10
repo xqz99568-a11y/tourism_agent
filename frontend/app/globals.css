@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 212 72% 40%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 45 93% 94%;
+    --accent-foreground: 24 60% 24%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 212 72% 40%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 222 47% 8%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 10%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 10%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 199 89% 48%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 48 96% 16%;
+    --accent-foreground: 48 96% 92%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 199 89% 48%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Avenir Next", "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(circle at top left, rgba(56, 189, 248, 0.06), transparent 28%),
+      radial-gradient(circle at bottom right, rgba(16, 185, 129, 0.08), transparent 24%);
+  }
+}
+
+/* ============================================
+   展示模式 (demo) - 隐藏开发工具浮层
+   通过 html.demo-mode 包裹，仅当 NEXT_PUBLIC_APP_MODE=demo 时生效
+   ============================================ */
+
+html.demo-mode {
+  /* 隐藏 Next.js 开发错误浮层（error overlay） */
+  --tw-portal-display: none !important;
+}
+
+/* 隐藏 Next.js 开发错误 overlay（标准 DOM 结构） */
+html.demo-mode body > div[data-nextjs-error-overlay],
+html.demo-mode body > div[data-nextjs-portal],
+html.demo-mode body > div[data-nextjs-dev-overlay] {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* 隐藏 Issues badge（左下角 "N Issues" 提示） */
+html.demo-mode [data-nextjs-container-footer] {
+  display: none !important;
+}
+
+/* 隐藏 Turbopack / webpack 构建状态栏（底部） */
+html.demo-mode body > div[style*="position: fixed"][style*="bottom"] {
+  display: none !important;
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.4);
+    border-radius: 999px;
+  }
+}

@@ -1,0 +1,21 @@
+﻿{
+  "case_id": "case_04",
+  "title": "杭州雨天临时改行程",
+  "user_input": "我们原本安排了西湖步行和夜游，但明天下雨，帮我改成更合适的两天行程。",
+  "structured_request": {
+    "city": "杭州",
+    "days": 2,
+    "budget": 2200,
+    "traveler_type": "family",
+    "preferences": ["室内替代", "文化体验", "美食"],
+    "constraints": ["雨天适配", "保留核心体验"]
+  },
+  "expected_focus": ["天气风险识别", "受影响时段定位", "室内替代方案"],
+  "constraints": ["大雨天减少长时间户外活动", "优先博物馆/室内街区"],
+  "city": "杭州",
+  "days": 2,
+  "budget": 2200,
+  "traveler_type": "family",
+  "weather_case_file": "data/weather/hangzhou_heavy_rain.json",
+  "notes": "用于 weather_service + weather_validator + review_service 联动测试。"
+}

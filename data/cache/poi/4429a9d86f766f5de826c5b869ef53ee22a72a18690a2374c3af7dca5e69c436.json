@@ -1,0 +1,1 @@
+{"created_at": 1774420440.6563444, "value": {"query": "地标", "city": "桂林", "tags": [], "count": 0, "results": [], "source": "poi_search_amap", "search_log": [{"city": "桂林", "query": "地标", "raw_hits": 8, "after_filter_hits": 0, "source": "amap"}], "cache_hit": false}}

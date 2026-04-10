@@ -1,0 +1,20 @@
+﻿{
+  "case_id": "case_03",
+  "title": "老人同行杭州两日轻松游",
+  "user_input": "五一和父母去杭州玩两天，预算2000，希望轻松一些，想看西湖和吃当地美食。",
+  "structured_request": {
+    "city": "杭州",
+    "days": 2,
+    "budget": 2000,
+    "traveler_type": "elderly_family",
+    "preferences": ["西湖", "美食", "轻松游"],
+    "constraints": ["低强度", "减少步行", "晚上不宜过晚"]
+  },
+  "expected_focus": ["老人适配", "行程强度控制", "预算控制"],
+  "constraints": ["单天核心景点<=2", "避免高强度步行景点"],
+  "city": "杭州",
+  "days": 2,
+  "budget": 2000,
+  "traveler_type": "elderly_family",
+  "notes": "重点用于 accessibility_validator 与 schedule_validator 的适配能力验证。"
+}

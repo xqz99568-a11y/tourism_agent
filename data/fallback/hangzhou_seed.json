@@ -1,0 +1,12 @@
+﻿{
+  "city": "杭州",
+  "pois": [
+    {"name": "河坊街", "category": "美食", "tags": ["老街", "美食", "夜游"], "best_time": ["afternoon", "evening"], "estimated_duration": 120, "ticket_price": 0, "area": "上城区", "photo_score": 78, "food_score": 90, "night_score": 70},
+    {"name": "武林夜市", "category": "美食", "tags": ["夜市", "小吃"], "best_time": ["evening"], "estimated_duration": 90, "ticket_price": 0, "area": "拱墅区", "photo_score": 72, "food_score": 88, "night_score": 76},
+    {"name": "钱江新城灯光秀", "category": "夜景", "tags": ["灯光", "城市夜景"], "best_time": ["evening"], "estimated_duration": 90, "ticket_price": 0, "area": "上城区", "photo_score": 92, "food_score": 20, "night_score": 96},
+    {"name": "西湖", "category": "自然风光", "tags": ["经典", "湖景"], "best_time": ["morning", "afternoon"], "estimated_duration": 150, "ticket_price": 0, "area": "西湖区", "photo_score": 95, "food_score": 20, "night_score": 65},
+    {"name": "灵隐寺", "category": "历史文化", "tags": ["寺庙", "文化"], "best_time": ["morning", "afternoon"], "estimated_duration": 120, "ticket_price": 45, "area": "西湖区", "photo_score": 70, "food_score": 20, "night_score": 30},
+    {"name": "西溪湿地", "category": "自然风光", "tags": ["湿地", "轻松"], "best_time": ["morning", "afternoon"], "estimated_duration": 150, "ticket_price": 80, "area": "西湖区", "photo_score": 86, "food_score": 20, "night_score": 35},
+    {"name": "浙江省博物馆", "category": "历史文化", "tags": ["博物馆", "室内"], "best_time": ["morning", "afternoon"], "estimated_duration": 100, "ticket_price": 0, "area": "西湖区", "photo_score": 68, "food_score": 20, "night_score": 18}
+  ]
+}

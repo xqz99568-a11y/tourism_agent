@@ -1,0 +1,28 @@
+﻿{
+  "city": "北京",
+  "timezone": "Asia/Shanghai",
+  "source": "offline_mock",
+  "scenario": "cold_windy",
+  "daily": [
+    {
+      "date": "2026-12-08",
+      "condition": "windy",
+      "temperature_max": 4,
+      "temperature_min": -6,
+      "rain_probability": 10,
+      "wind_speed": 36,
+      "outdoor_suitability": "low",
+      "notes": "低温大风，夜间户外活动不友好。"
+    },
+    {
+      "date": "2026-12-09",
+      "condition": "cloudy",
+      "temperature_max": 5,
+      "temperature_min": -5,
+      "rain_probability": 8,
+      "wind_speed": 28,
+      "outdoor_suitability": "medium",
+      "notes": "白天可短时户外，建议缩短临水夜游项目。"
+    }
+  ]
+}

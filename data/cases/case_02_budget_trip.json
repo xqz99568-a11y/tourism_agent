@@ -1,0 +1,20 @@
+﻿{
+  "case_id": "case_02",
+  "title": "西安低预算一日游",
+  "user_input": "我在西安只有一天，预算800，想逛历史景点，不要太贵。",
+  "structured_request": {
+    "city": "西安",
+    "days": 1,
+    "budget": 800,
+    "traveler_type": "solo",
+    "preferences": ["历史文化", "性价比"],
+    "constraints": ["低预算", "单日可执行"]
+  },
+  "expected_focus": ["预算约束处理", "免费/低门票景点优先", "压缩交通成本"],
+  "constraints": ["总预算不超过800", "优先公共交通"],
+  "city": "西安",
+  "days": 1,
+  "budget": 800,
+  "traveler_type": "solo",
+  "notes": "重点用于 budget_service 与 budget_validator 的低预算场景评估。"
+}

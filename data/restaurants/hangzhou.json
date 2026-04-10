@@ -1,0 +1,56 @@
+{
+  "city": "杭州",
+  "version": "v1",
+  "restaurants": [
+    {
+      "id": "hz_rest001",
+      "name": "楼外楼",
+      "area": "西湖区",
+      "category": "杭帮菜",
+      "signature_dishes": ["西湖醋鱼", "龙井虾仁", "叫花鸡"],
+      "price_range": "人均150-200元",
+      "rating": 4.5,
+      "address": "杭州市西湖区孤山路30号"
+    },
+    {
+      "id": "hz_rest002",
+      "name": "知味观",
+      "area": "上城区",
+      "category": "杭帮菜",
+      "signature_dishes": ["小笼包", "猫耳朵", "西湖藕粉"],
+      "price_range": "人均80-120元",
+      "rating": 4.3,
+      "address": "杭州市上城区河坊街180号"
+    },
+    {
+      "id": "hz_rest003",
+      "name": "新白鹿",
+      "area": "西湖区",
+      "category": "杭帮菜",
+      "signature_dishes": ["糖醋排骨", "蛋黄鸡翅", "西湖牛肉羹"],
+      "price_range": "人均60-100元",
+      "rating": 4.2,
+      "address": "杭州市西湖区延安路98号"
+    },
+    {
+      "id": "hz_rest004",
+      "name": "外婆家",
+      "area": "上城区",
+      "category": "杭帮菜",
+      "signature_dishes": ["茶香鸡", "红烧肉", "西湖醋鱼"],
+      "price_range": "人均80-120元",
+      "rating": 4.3,
+      "address": "杭州市上城区湖滨路12号"
+    },
+    {
+      "id": "hz_rest005",
+      "name": "张生记",
+      "area": "上城区",
+      "category": "杭帮菜",
+      "signature_dishes": ["老鸭煲", "东坡肉", "炸响铃"],
+      "price_range": "人均100-150元",
+      "rating": 4.2,
+      "address": "杭州市上城区仁和路83号"
+    }
+  ]
+}

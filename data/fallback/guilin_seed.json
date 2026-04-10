@@ -1,0 +1,11 @@
+﻿{
+  "city": "桂林",
+  "pois": [
+    {"name": "东西巷", "category": "美食", "tags": ["老街", "美食", "夜游"], "best_time": ["afternoon", "evening"], "estimated_duration": 120, "ticket_price": 0, "area": "秀峰区", "photo_score": 80, "food_score": 90, "night_score": 75},
+    {"name": "正阳步行街", "category": "美食", "tags": ["步行街", "小吃"], "best_time": ["afternoon", "evening"], "estimated_duration": 100, "ticket_price": 0, "area": "秀峰区", "photo_score": 70, "food_score": 88, "night_score": 72},
+    {"name": "日月双塔文化公园", "category": "夜景", "tags": ["夜景", "地标"], "best_time": ["evening"], "estimated_duration": 90, "ticket_price": 0, "area": "秀峰区", "photo_score": 88, "food_score": 20, "night_score": 92},
+    {"name": "榕杉湖景区", "category": "夜景", "tags": ["湖景", "散步"], "best_time": ["afternoon", "evening"], "estimated_duration": 90, "ticket_price": 0, "area": "秀峰区", "photo_score": 82, "food_score": 25, "night_score": 86},
+    {"name": "靖江王府", "category": "历史文化", "tags": ["王府", "古迹"], "best_time": ["morning", "afternoon"], "estimated_duration": 120, "ticket_price": 100, "area": "秀峰区", "photo_score": 75, "food_score": 20, "night_score": 30},
+    {"name": "漓江", "category": "自然风光", "tags": ["山水", "经典"], "best_time": ["morning", "afternoon"], "estimated_duration": 180, "ticket_price": 0, "area": "象山区", "photo_score": 96, "food_score": 20, "night_score": 40}
+  ]
+}

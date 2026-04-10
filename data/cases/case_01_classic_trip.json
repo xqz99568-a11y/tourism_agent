@@ -1,0 +1,20 @@
+﻿{
+  "case_id": "case_01",
+  "title": "杭州两日经典游",
+  "user_input": "下周末去杭州玩两天，预算2500，想看经典景点和夜景。",
+  "structured_request": {
+    "city": "杭州",
+    "days": 2,
+    "budget": 2500,
+    "traveler_type": "couple",
+    "preferences": ["自然风光", "历史文化", "夜景"],
+    "constraints": ["经典路线", "适度节奏"]
+  },
+  "expected_focus": ["经典景点推荐", "日夜搭配行程", "基础预算评估"],
+  "constraints": ["两天内覆盖核心景点", "保留晚上夜景活动"],
+  "city": "杭州",
+  "days": 2,
+  "budget": 2500,
+  "traveler_type": "couple",
+  "notes": "用于基线能力验证：推荐、行程、预算、审核全链路。"
+}

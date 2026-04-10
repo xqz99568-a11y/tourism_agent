@@ -1,0 +1,20 @@
+﻿{
+  "case_id": "case_05",
+  "title": "北京紧凑时间窗一日游",
+  "user_input": "我在北京只有一天，上午10点后才有空，晚上8点前结束，想看两个经典景点。",
+  "structured_request": {
+    "city": "北京",
+    "days": 1,
+    "budget": 1200,
+    "traveler_type": "solo",
+    "preferences": ["经典景点", "历史文化"],
+    "constraints": ["时间紧凑", "10:00后出发", "20:00前结束"]
+  },
+  "expected_focus": ["时间窗约束", "时段冲突避免", "开放时间匹配"],
+  "constraints": ["不可超时", "避免跨区折返"],
+  "city": "北京",
+  "days": 1,
+  "budget": 1200,
+  "traveler_type": "solo",
+  "notes": "重点用于 itinerary_service 与 schedule/opening_hours validator 的可执行性验证。"
+}

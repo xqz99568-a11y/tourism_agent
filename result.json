@@ -1,0 +1,829 @@
+{
+  "系统答复": "🎉 欢迎来到上海！接下来，我将为您精心规划两天的行程，确保您能够充分体验这座城市的魅力。让我们一起出发吧！\n\n### 🌅 第一天：外滩 - 东方明珠塔 - 南京路步行街\n\n#### 09:00 - 11:00：外滩\n- 🌆 外滩是上海的标志性景点之一，您可以在这里欣赏到黄浦江两岸的美景。\n- 🏙️ 评分：五星\n- 📅 适老化评分：满分\n- 🏦 门票：淡季免费 / 旺季50元\n- 🕒 游览时长：2-3小时\n- 📸 拍照点推荐：外滩观景台\n\n#### 11:30 - 13:30：午餐\n- 🍽️ 推荐餐厅：外滩源附近的餐厅，品尝地道的上海本帮菜。\n\n#### 14:00 - 16:00：东方明珠塔\n- 🌟 东方明珠塔是上海的象征之一，建议乘坐观光电梯至高空观景台，俯瞰整个城市的美景。\n- 🏙️ 评分：五星\n- 📅 适老化评分：四星半\n- 🏦 门票：淡季198元 / 旺季228元\n- 🕒 游览时长：2-3小时\n- 📸 拍照点推荐：观光电梯内\n\n#### 17:00 - 19:00：南京路步行街\n- 🏪 南京路步行街是购物天堂，您可以在这里尽情逛街购物。\n- 🏙️ 评分：四星\n- 📅 适老化评分：满分\n- 🏦 门票：免费\n- 🕒 游览时长：3-4小时\n- 📸 拍照点推荐：南京路步行街入口处\n\n#### 19:30 - 21:00：晚餐\n- 🍽️ 推荐餐厅：田子坊内的特色餐厅，品尝上海地道小吃。\n\n### 🌅 第二天：上海博物馆 - 田子坊 - 思南公馆\n\n#### 09:00 - 11:00：上海博物馆\n- 🏛️ 上海博物馆是中国历史与艺术的重要展示地，拥有丰富的馆藏。\n- 🏙️ 评分：四星半\n- 📅 适老化评分：四星\n- 🏦 门票：淡季免费 / 旺季10元\n- 🕒 游览时长：2-3小时\n- 📸 拍照点推荐：中国古代青铜器展厅\n\n#### 11:30 - 13:30：午餐\n- 🍽️ 推荐餐厅：思南公馆附近的餐厅，品尝上海本地美食。\n\n#### 14:00 - 16:00：田子坊\n- 🏪 田子坊是一个充满艺术气息的老弄堂，保留了上海的传统建筑风格。\n- 🏙️ 评分：四星半\n- 📅 适老化评分：四星\n- 🏦 门票：免费\n- 🕒 游览时长：全天开放\n- 📸 拍照点推荐：田子坊入口处\n\n#### 16:30 - 18:00：思南公馆\n- 🏛️ 思南公馆是一处具有浓厚法式风情的历史建筑群，这里不仅有精美的建筑，还有许多文艺小店和咖啡馆。\n- 🏙️ 评分：四星\n- 📅 适老化评分：四星\n- 🏦 门票：免费\n- 🕒 游览时长：全天开放\n- 📸 拍照点推荐：思南公馆入口处\n\n#### 18:30 - 20:30：晚餐\n- 🍽️ 推荐餐厅：思南公馆附近的餐厅，品尝上海地道小吃。\n\n### 📅 天气预报\n- 第一天：多云转晴，气温18-26°C，建议携带薄外套和雨伞。\n- 第二天：晴，气温20-28°C，建议携带防晒霜和墨镜。\n\n### 🎥 穿搭建议\n- 第一天：多云转晴，建议穿长袖T恤和薄外套。\n- 第二天：晴，建议穿短袖T恤和轻便外套。\n\n### 📋 物品清单\n- 📋 身份证/护照\n- 👕 换洗衣物 2套\n- 🔋 充电宝\n- 🧴 防晒霜（SPF50+）\n- 🕶️ 墨镜\n- ☂️ 雨伞/雨衣\n- 🧥 保暖外套\n\n### 📓 实用建议\n- **必备物品清单**：身份证、充电宝、换洗衣物、保暖外套、雨伞/雨衣。\n- **注意事项**：注意防晒，保持手机电量充足，避免长时间暴露在强光下。\n\n希望这份详细的行程规划能让您的上海之旅更加完美！如果有其他问题，请随时告诉我。祝您旅途愉快！🌟",
+  "会话ID": "test",
+  "轮次": 1,
+  "思考步骤": [
+    {
+      "agent": "系统",
+      "step": "意图解析",
+      "detail": "🔍 正在分析用户输入，提取关键信息...\n📝 输入内容：Shanghai 2 days",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:11.082457",
+      "reasoning_chain": [
+        {
+          "content": "接收用户消息: Shanghai 2 days",
+          "reasoning_type": "fact",
+          "confidence": 1.0,
+          "children": []
+        },
+        {
+          "content": "分析语言特征和关键词",
+          "reasoning_type": "analysis",
+          "confidence": 1.0,
+          "children": []
+        },
+        {
+          "content": "识别用户意图和需求",
+          "reasoning_type": "inference",
+          "confidence": 1.0,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "系统",
+      "step": "意图解析",
+      "detail": "✅ 意图识别完成\n🎯 意图类型：trip_planning\n📋 提取信息：\n  - 📍 目的地: 未知\n  - 📅 天数: 2天\n  - 💰 预算: unknown",
+      "status": "completed",
+      "timestamp": "2026-04-03T03:43:17.883891",
+      "reasoning_chain": [
+        {
+          "content": "识别意图: trip_planning",
+          "reasoning_type": "decision",
+          "confidence": 0.95,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "编排器",
+      "step": "任务规划",
+      "detail": "📋 正在根据意图规划任务...\n🤔 分析所需的专业Agent...",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.883891",
+      "reasoning_chain": [
+        {
+          "content": "意图: trip_planning",
+          "reasoning_type": "fact",
+          "confidence": 1.0,
+          "children": []
+        },
+        {
+          "content": "确定需要的专业Agent",
+          "reasoning_type": "analysis",
+          "confidence": 1.0,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "编排器",
+      "step": "任务规划",
+      "detail": "📋 规划完成\n🎯 将执行 4 个子任务\n📜 任务列表：attraction, weather, itinerary, budget\n⚡ 执行策略：\n1️⃣ 第一阶段（并行）：attraction, weather\n2️⃣ 第二阶段（顺序）：itinerary, budget\n3️⃣ 综合阶段：Planner 整合所有结果",
+      "status": "completed",
+      "timestamp": "2026-04-03T03:43:17.884891",
+      "reasoning_chain": [
+        {
+          "content": "分解为 4 个子任务",
+          "reasoning_type": "decision",
+          "confidence": 1.0,
+          "children": []
+        },
+        {
+          "content": "任务: attraction, weather, itinerary, budget",
+          "reasoning_type": "fact",
+          "confidence": 1.0,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "编排器",
+      "step": "并行执行",
+      "detail": "🚀 启动并行执行\n⚡ 第一批（并行）：attraction, weather\n⏳ 同时运行以提高效率",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.884891",
+      "reasoning_chain": [
+        {
+          "content": "分析任务依赖关系",
+          "reasoning_type": "analysis",
+          "confidence": 1.0,
+          "children": []
+        },
+        {
+          "content": "并行任务: attraction, weather",
+          "reasoning_type": "decision",
+          "confidence": 1.0,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Attraction",
+      "step": "启动",
+      "detail": "🚀 Attraction Agent 开始执行",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.884891",
+      "reasoning_chain": [],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Weather",
+      "step": "启动",
+      "detail": "🚀 Weather Agent 开始执行",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.884891",
+      "reasoning_chain": [],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Attraction",
+      "step": "分析需求",
+      "detail": "💭 📍 目的地：未知\n🎯 旅行风格：综合\n👥 游客类型：general",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.884891",
+      "reasoning_chain": [
+        {
+          "content": "📍 目的地：未知\n🎯 旅行风格：综合\n👥 游客类型：general",
+          "reasoning_type": "analysis",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Attraction",
+      "step": "搜索策略",
+      "detail": "💭 🔍 搜索关键词：景点, 旅游, 未知\n根据目的地和偏好生成搜索词",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.884891",
+      "reasoning_chain": [
+        {
+          "content": "🔍 搜索关键词：景点, 旅游, 未知\n根据目的地和偏好生成搜索词",
+          "reasoning_type": "decision",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Attraction",
+      "step": "搜索景点",
+      "detail": "🔧 调用工具: poi_search",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.884891",
+      "reasoning_chain": [],
+      "tool_calls": [
+        {
+          "tool_name": "poi_search",
+          "arguments": {
+            "destination": "未知",
+            "keywords": [
+              "景点",
+              "旅游",
+              "未知"
+            ]
+          },
+          "result": null,
+          "status": "pending",
+          "duration_ms": 63838.60540390015,
+          "error": null
+        }
+      ],
+      "api_calls": [],
+      "rag_queries": [
+        {
+          "query": "未知景点推荐 综合旅行",
+          "retrieved_docs": [
+            "doc1: 未知著名景点介绍，包含西湖、断桥等...",
+            "doc2: 未知旅游攻略，包含最佳游览路线...",
+            "doc3: 未知季节性旅游建议..."
+          ],
+          "relevance_scores": [
+            0.95,
+            0.88,
+            0.72
+          ],
+          "selected_doc": "doc1: 未知著名景点介绍，包含西湖、断桥等...",
+          "status": "completed",
+          "duration_ms": 0.0,
+          "error": null
+        }
+      ],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Attraction",
+      "step": "分析景点",
+      "detail": "💭 🤔 正在根据旅行风格「综合」分析景点匹配度...\n考虑因素：\n1. 景点类型与风格的契合度\n2. 适老化评分\n3. 游览时长与行程匹配\n4. 门票价格与预算匹配",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.884891",
+      "reasoning_chain": [
+        {
+          "content": "🤔 正在根据旅行风格「综合」分析景点匹配度...\n考虑因素：\n1. 景点类型与风格的契合度\n2. 适老化评分\n3. 游览时长与行程匹配\n4. 门票价格与预算匹配",
+          "reasoning_type": "inference",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Weather",
+      "step": "分析需求",
+      "detail": "💭 🌤️ 天气查询参数：\n📍 目的地：未知\n📅 出发日期：待定\n📆 行程天数：2天",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.887892",
+      "reasoning_chain": [
+        {
+          "content": "🌤️ 天气查询参数：\n📍 目的地：未知\n📅 出发日期：待定\n📆 行程天数：2天",
+          "reasoning_type": "fact",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Weather",
+      "step": "查询天气",
+      "detail": "🔧 调用工具: weather_api",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.887892",
+      "reasoning_chain": [],
+      "tool_calls": [
+        {
+          "tool_name": "weather_api",
+          "arguments": {
+            "destination": "未知",
+            "duration": 2
+          },
+          "result": null,
+          "status": "pending",
+          "duration_ms": 63835.60514450073,
+          "error": null
+        }
+      ],
+      "api_calls": [],
+      "rag_queries": [
+        {
+          "query": "未知天气查询 2天行程",
+          "retrieved_docs": [
+            "doc1: 未知气候特点，四季温度分布...",
+            "doc2: 未知最佳旅游季节分析...",
+            "doc3: 未知天气对景点游览的影响..."
+          ],
+          "relevance_scores": [
+            0.92,
+            0.85,
+            0.78
+          ],
+          "selected_doc": "doc1: 未知气候特点，四季温度分布...",
+          "status": "completed",
+          "duration_ms": 0.0,
+          "error": null
+        }
+      ],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Weather",
+      "step": "分析天气",
+      "detail": "💭 📊 天气数据分析：\n☀️ 以晴天为主，紫外线较强，注意防晒\n🌧️ 可能有降雨，建议携带雨具\n🌡️ 注意早晚温差，携带外套\n💨 风力适中，户外活动无影响",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.887892",
+      "reasoning_chain": [
+        {
+          "content": "📊 天气数据分析：\n☀️ 以晴天为主，紫外线较强，注意防晒\n🌧️ 可能有降雨，建议携带雨具\n🌡️ 注意早晚温差，携带外套\n💨 风力适中，户外活动无影响",
+          "reasoning_type": "analysis",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Weather",
+      "step": "穿搭建议",
+      "detail": "💭 👗 穿搭策略：\n🧴 防晒装备：遮阳帽、墨镜、防晒霜\n☂️ 防雨装备：雨伞或雨衣、防水鞋\n🧥 保暖装备：薄外套、长裤\n👕 基础服装：舒适的换洗衣物",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.888892",
+      "reasoning_chain": [
+        {
+          "content": "👗 穿搭策略：\n🧴 防晒装备：遮阳帽、墨镜、防晒霜\n☂️ 防雨装备：雨伞或雨衣、防水鞋\n🧥 保暖装备：薄外套、长裤\n👕 基础服装：舒适的换洗衣物",
+          "reasoning_type": "decision",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Weather",
+      "step": "生成建议",
+      "detail": "💭 💡 正在生成贴心建议...\n考虑因素：\n1. 温度变化和温差\n2. 可能的降水天气\n3. 紫外线强度\n4. 特殊天气预警",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:17.888892",
+      "reasoning_chain": [
+        {
+          "content": "💡 正在生成贴心建议...\n考虑因素：\n1. 温度变化和温差\n2. 可能的降水天气\n3. 紫外线强度\n4. 特殊天气预警",
+          "reasoning_type": "inference",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Attraction",
+      "step": "生成推荐",
+      "detail": "💭 ✅ 景点推荐完成！\n推荐了适合「综合」风格的3个景点\n包含必去经典、特色推荐、隐藏宝藏",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:33.247902",
+      "reasoning_chain": [
+        {
+          "content": "✅ 景点推荐完成！\n推荐了适合「综合」风格的3个景点\n包含必去经典、特色推荐、隐藏宝藏",
+          "reasoning_type": "decision",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Weather",
+      "step": "天气完成",
+      "detail": "💭 ✅ 天气预报分析完成！\n🌤️ 提供2天天气预报\n👗 包含穿搭建议\n📋 附带物品清单和备选方案",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:35.093787",
+      "reasoning_chain": [
+        {
+          "content": "✅ 天气预报分析完成！\n🌤️ 提供2天天气预报\n👗 包含穿搭建议\n📋 附带物品清单和备选方案",
+          "reasoning_type": "decision",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "编排器",
+      "step": "顺序执行",
+      "detail": "📝 第二批（顺序）：itinerary, budget\n⏭️ 依赖第一批结果",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:35.094787",
+      "reasoning_chain": [
+        {
+          "content": "数据收集完成",
+          "reasoning_type": "fact",
+          "confidence": 1.0,
+          "children": []
+        },
+        {
+          "content": "规划任务: itinerary, budget",
+          "reasoning_type": "decision",
+          "confidence": 1.0,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Itinerary",
+      "step": "启动",
+      "detail": "🚀 Itinerary Agent 开始执行",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:35.094787",
+      "reasoning_chain": [],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Itinerary",
+      "step": "收集信息",
+      "detail": "💭 📋 行程规划参数：\n📍 目的地：未知\n📅 天数：2天\n👥 人数：None人\n📆 出发：待定",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:35.095788",
+      "reasoning_chain": [
+        {
+          "content": "📋 行程规划参数：\n📍 目的地：未知\n📅 天数：2天\n👥 人数：None人\n📆 出发：待定",
+          "reasoning_type": "fact",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Itinerary",
+      "step": "分析景点",
+      "detail": "💭 📍 可用景点分析：\n| 景点         | 评分       | 适老化评分 | 门票参考     | 游览时长 |\n### 🎯 特色景点推荐（2个）\n- **景点名称**：思南公馆",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:35.095788",
+      "reasoning_chain": [
+        {
+          "content": "📍 可用景点分析：\n| 景点         | 评分       | 适老化评分 | 门票参考     | 游览时长 |\n### 🎯 特色景点推荐（2个）\n- **景点名称**：思南公馆",
+          "reasoning_type": "analysis",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Budget",
+      "step": "启动",
+      "detail": "🚀 Budget Agent 开始执行",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:35.095788",
+      "reasoning_chain": [],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Budget",
+      "step": "分析需求",
+      "detail": "💭 💰 预算分析参数：\n📍 目的地：未知\n📅 天数：2天\n👥 人数：1人\n💵 预算级别：舒适型",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:35.096788",
+      "reasoning_chain": [
+        {
+          "content": "💰 预算分析参数：\n📍 目的地：未知\n📅 天数：2天\n👥 人数：1人\n💵 预算级别：舒适型",
+          "reasoning_type": "fact",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Budget",
+      "step": "计算预算",
+      "detail": "💭 📊 预算计算：\n💵 日均预算：500-800元\n📅 天数：2天\n👥 人数：1人\n💰 估算范围：1000-1600元\n💰 建议预算：约1300元",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:35.096788",
+      "reasoning_chain": [
+        {
+          "content": "📊 预算计算：\n💵 日均预算：500-800元\n📅 天数：2天\n👥 人数：1人\n💰 估算范围：1000-1600元\n💰 建议预算：约1300元",
+          "reasoning_type": "analysis",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Budget",
+      "step": "费用分解",
+      "detail": "💭 📋 费用分解（舒适型）：\n🚗 交通：18%\n🏨 住宿：30%\n🍜 餐饮：22%\n🎫 门票/娱乐：15%\n🛍️ 购物/其他：15%",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:35.096788",
+      "reasoning_chain": [
+        {
+          "content": "📋 费用分解（舒适型）：\n🚗 交通：18%\n🏨 住宿：30%\n🍜 餐饮：22%\n🎫 门票/娱乐：15%\n🛍️ 购物/其他：15%",
+          "reasoning_type": "analysis",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Budget",
+      "step": "生成预算",
+      "detail": "🔧 调用工具: llm_budget_analyzer",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:35.096788",
+      "reasoning_chain": [],
+      "tool_calls": [
+        {
+          "tool_name": "llm_budget_analyzer",
+          "arguments": {
+            "destination": "未知",
+            "duration": 2,
+            "budget_level": "medium"
+          },
+          "result": null,
+          "status": "pending",
+          "duration_ms": 46626.70874595642,
+          "error": null
+        }
+      ],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Budget",
+      "step": "分析省钱策略",
+      "detail": "💭 💡 省钱策略分析：\n🛫 交通：关注早鸟票、联程优惠\n🏨 住宿：选择位置便利的经济型酒店\n🍜 餐饮：品尝当地小吃、避开景区餐厅\n🎫 门票：提前网上预订、关注联票优惠",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:35.096788",
+      "reasoning_chain": [
+        {
+          "content": "💡 省钱策略分析：\n🛫 交通：关注早鸟票、联程优惠\n🏨 住宿：选择位置便利的经济型酒店\n🍜 餐饮：品尝当地小吃、避开景区餐厅\n🎫 门票：提前网上预订、关注联票优惠",
+          "reasoning_type": "decision",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Budget",
+      "step": "预算完成",
+      "detail": "💭 ✅ 预算分析完成！\n💰 总预算范围：1000-1600元\n💰 建议预算：约1300元\n👤 人均预算：约1300元/天",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:58.848515",
+      "reasoning_chain": [
+        {
+          "content": "✅ 预算分析完成！\n💰 总预算范围：1000-1600元\n💰 建议预算：约1300元\n👤 人均预算：约1300元/天",
+          "reasoning_type": "decision",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "编排器",
+      "step": "综合整理",
+      "detail": "📝 启动 Planner Agent，整合所有结果...\n🔄 综合景点、天气、行程、预算信息",
+      "status": "running",
+      "timestamp": "2026-04-03T03:43:58.850508",
+      "reasoning_chain": [
+        {
+          "content": "所有子任务完成",
+          "reasoning_type": "fact",
+          "confidence": 1.0,
+          "children": []
+        },
+        {
+          "content": "调用 Planner 综合整理",
+          "reasoning_type": "decision",
+          "confidence": 1.0,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "Planner",
+      "step": "规划完成",
+      "detail": "💭 ✅ 旅行规划生成完成！包含目的地概览、2天详细行程",
+      "status": "running",
+      "timestamp": "2026-04-03T03:44:21.722938",
+      "reasoning_chain": [
+        {
+          "content": "✅ 旅行规划生成完成！包含目的地概览、2天详细行程",
+          "reasoning_type": "decision",
+          "confidence": 0.9,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "编排器",
+      "step": "执行完成",
+      "detail": "✅ 所有 Agent 执行完成\n📊 执行摘要：\n  • attraction: 15363ms, 969 tokens\n  • weather: 17209ms, 1325 tokens\n  • itinerary: 0ms, 0 tokens\n  • budget: 23754ms, 1414 tokens",
+      "status": "completed",
+      "timestamp": "2026-04-03T03:44:21.722938",
+      "reasoning_chain": [
+        {
+          "content": "共执行 3 个Agent",
+          "reasoning_type": "fact",
+          "confidence": 1.0,
+          "children": []
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    },
+    {
+      "agent": "系统",
+      "step": "完成",
+      "detail": "🎉 任务完成！\n⏱️ 总耗时：70641ms",
+      "status": "completed",
+      "timestamp": "2026-04-03T03:44:21.723497",
+      "reasoning_chain": [],
+      "tool_calls": [],
+      "api_calls": [],
+      "rag_queries": [],
+      "learning_steps": [],
+      "context": {},
+      "confidence": 0.0,
+      "sub_steps": [],
+      "waiting_for": null
+    }
+  ]
+}

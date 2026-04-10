@@ -1,0 +1,28 @@
+﻿{
+  "city": "西安",
+  "timezone": "Asia/Shanghai",
+  "source": "offline_mock",
+  "scenario": "high_temperature",
+  "daily": [
+    {
+      "date": "2026-07-20",
+      "condition": "sunny",
+      "temperature_max": 38,
+      "temperature_min": 27,
+      "rain_probability": 8,
+      "wind_speed": 11,
+      "outdoor_suitability": "medium",
+      "notes": "正午高温风险高，12:00-15:00 不宜长时户外。"
+    },
+    {
+      "date": "2026-07-21",
+      "condition": "sunny",
+      "temperature_max": 37,
+      "temperature_min": 26,
+      "rain_probability": 5,
+      "wind_speed": 10,
+      "outdoor_suitability": "medium",
+      "notes": "建议上午安排户外，下午转室内或休息。"
+    }
+  ]
+}

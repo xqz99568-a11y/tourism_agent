@@ -1,0 +1,16 @@
+{
+  "name": "旅游规划助手",
+  "short_name": "旅游助手",
+  "description": "基于大语言模型的智慧文旅规划系统",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

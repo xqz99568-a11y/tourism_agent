@@ -1,0 +1,56 @@
+{
+  "city": "上海",
+  "version": "v1",
+  "restaurants": [
+    {
+      "id": "sh_rest001",
+      "name": "外滩九号",
+      "area": "黄浦区",
+      "category": "西餐",
+      "signature_dishes": ["牛排", "龙虾", "鹅肝"],
+      "price_range": "人均300-500元",
+      "rating": 4.6,
+      "address": "上海市黄浦区外滩九号"
+    },
+    {
+      "id": "sh_rest002",
+      "name": "老饭店",
+      "area": "黄浦区",
+      "category": "本帮菜",
+      "signature_dishes": ["红烧肉", "糖醋排骨", "小笼包"],
+      "price_range": "人均150-200元",
+      "rating": 4.4,
+      "address": "上海市黄浦区福州路84号"
+    },
+    {
+      "id": "sh_rest003",
+      "name": "小南国",
+      "area": "静安区",
+      "category": "上海菜",
+      "signature_dishes": ["清蒸鱼", "红烧肉", "狮子头"],
+      "price_range": "人均120-180元",
+      "rating": 4.3,
+      "address": "上海市静安区南京西路1266号"
+    },
+    {
+      "id": "sh_rest004",
+      "name": "南翔小笼",
+      "area": "黄浦区",
+      "category": "上海小吃",
+      "signature_dishes": ["小笼包", "馄饨", "烧卖"],
+      "price_range": "人均50-80元",
+      "rating": 4.2,
+      "address": "上海市黄浦区豫园路85号"
+    },
+    {
+      "id": "sh_rest005",
+      "name": "新雅粤菜馆",
+      "area": "黄浦区",
+      "category": "粤菜",
+      "signature_dishes": ["烧鹅", "虾饺", "肠粉"],
+      "price_range": "人均100-150元",
+      "rating": 4.3,
+      "address": "上海市黄浦区南京东路719号"
+    }
+  ]
+}
