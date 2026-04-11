@@ -1128,9 +1128,10 @@ class SessionContext:
     ) -> None:
         """【本轮新增】更新快照偏好（用于 follow-up）"""
         if self.committed_trip_snapshot:
-            current_prefs = set(self.committed_trip_snapshot.preferences)
-            current_prefs.update(preferences)
-            self.committed_trip_snapshot.preferences = list(current_prefs)
+            self.committed_trip_snapshot.preferences = self._merge_string_values(
+                self.committed_trip_snapshot.preferences,
+                preferences,
+            )
             if plan_summary:
                 self.committed_trip_snapshot.plan_summary = plan_summary
             self.committed_trip_snapshot.committed_at = datetime.utcnow()
@@ -1196,9 +1197,10 @@ class SessionContext:
         
         # 可能是 follow-up 的模式（偏好增强、调整类）
         follow_up_keywords = (
-            "想多", "想少", "改成", "调整", "增加", "减少",
-            "室内多一点", "室外多一点", "美食", "拍照", "轻松",
-            "预算改成", "多走路", "少走路",
+            "想多", "想少", "改成", "调整", "增加", "减少", "优化一下",
+            "美食", "当地美食", "拍照", "出片", "摄影", "夜景",
+            "室内多一点", "室外多一点", "预算改成", "预算调到", "预算调整到",
+            "多走路", "少走路", "节奏轻松", "轻松点", "慢一点", "更集中", "别太折腾",
         )
         return any(kw in user_message for kw in follow_up_keywords)
 
@@ -1207,7 +1209,8 @@ class SessionContext:
         【本轮新增】检测消息是否是侧问/闲聊
         """
         side_question_keywords = (
-            "谢谢", "贵不贵", "下雨", "推荐", "室内", "室外",
-            "住哪个", "哪个区域", "需要带什么", "衣服", "天气",
+            "谢谢", "交通方便", "方便吗", "贵不贵", "值不值", "下雨",
+            "室内还是室外", "住哪个区域", "住哪", "哪个区域更方便",
+            "需要带什么", "穿什么", "衣服", "天气", "推荐住哪",
         )
         return any(kw in user_message for kw in side_question_keywords)

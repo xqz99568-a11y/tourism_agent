@@ -107,6 +107,7 @@ class DialogModeDetector:
         else:
             detected_mode = current_mode
             confidence = 0.6
+        confidence = max(0.0, min(float(confidence), 1.0))
 
         # 检查是否需要切换模式
         suggested_switch = None

@@ -6,8 +6,10 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 import time
 import uuid
+from collections import Counter
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
@@ -500,30 +502,32 @@ class TaskPlanner:
         extracted_info: Dict[str, Any],
         session: Optional[SessionContext] = None,
         user_message: str = "",
+        route: Optional[str] = None,
     ) -> PlanSchema:
         """创建任务计划"""
+        if route == "GENERAL_CHAT":
+            return PlanSchema(
+                intent=IntentType.GENERAL_CHAT,
+                tasks=[],
+                requires_clarification=False,
+                requires_review=False,
+            )
+
+        if route == "FOLLOW_UP":
+            follow_up_agents = self._select_follow_up_sub_agents(extracted_info)
+            return PlanSchema(
+                intent=IntentType.TRIP_PLANNING,
+                tasks=self._build_tasks(follow_up_agents),
+                requires_clarification=False,
+                requires_review=True,
+            )
+
         task_config = self.INTENT_TASK_MAP.get(
             intent,
             self.INTENT_TASK_MAP[IntentType.GENERAL_CHAT]
         )
 
-        tasks = []
-        task_id = 1
-
-        # 优化：只添加必要的子 Agent
-        sub_agents = task_config.get("sub_agents", [])
-        if sub_agents:
-            for agent_name in sub_agents:
-                tasks.append(
-                    TaskSchema(
-                        task_id=f"task_{task_id}",
-                        description=f"Execute {agent_name} agent",
-                        agent_name=agent_name,
-                        dependencies=[],
-                        status="pending",
-                    )
-                )
-                task_id += 1
+        tasks = self._build_tasks(task_config.get("sub_agents", []))
 
         destination = extracted_info.get("destination") or (session.trip_context.destination if session else None)
         duration = extracted_info.get("duration") or (session.trip_context.duration_days if session else None)
@@ -569,6 +573,33 @@ class TaskPlanner:
             follow_up_questions=follow_up_questions,
             requires_review=self._is_complex_planning_intent(intent, extracted_info, task_config),
         )
+
+    def _build_tasks(self, agent_names: List[str]) -> List[TaskSchema]:
+        tasks: List[TaskSchema] = []
+        for idx, agent_name in enumerate(agent_names, 1):
+            tasks.append(
+                TaskSchema(
+                    task_id=f"task_{idx}",
+                    description=f"Execute {agent_name} agent",
+                    agent_name=agent_name,
+                    dependencies=[],
+                    status="pending",
+                )
+            )
+        return tasks
+
+    def _select_follow_up_sub_agents(self, extracted_info: Dict[str, Any]) -> List[str]:
+        needs_weather = bool(
+            extracted_info.get("destination_changed")
+            or extracted_info.get("travel_dates")
+            or extracted_info.get("start_date")
+            or extracted_info.get("end_date")
+        )
+
+        agents = ["attraction", "itinerary", "budget"]
+        if needs_weather:
+            agents.insert(1, "weather")
+        return agents
 
     def _has_budget_info(
         self,
@@ -1024,6 +1055,7 @@ class AgentOrchestrator:
             intent_parse_duration_ms += (time.perf_counter() - llm_intent_start) * 1000
 
         extracted_info = self._normalize_extracted_info(extracted_info)
+        extracted_info = self._enrich_extracted_info(user_message, extracted_info, session)
         self._record_stage_timing(
             stage_timings,
             "intent_parsing",
@@ -1103,6 +1135,13 @@ class AgentOrchestrator:
                 session,
             )
             extracted_info = merged_slots
+        elif route == "FOLLOW_UP":
+            follow_up_delta = self._extract_follow_up_delta(user_message, extracted_info, session)
+            extracted_info = self._merge_slots_for_follow_up(
+                follow_up_delta,
+                session.committed_trip_snapshot,
+                session,
+            )
 
         # 【本轮新增】根据路由处理 CLARIFICATION_ANSWER
         if route == "CLARIFICATION_ANSWER":
@@ -1113,8 +1152,32 @@ class AgentOrchestrator:
             if answer_value:
                 extracted_info.update(answer_value)
 
+        extracted_info = self._normalize_extracted_info(extracted_info)
+        context.extracted_info = extracted_info
+
         # 更新会话上下文
-        self._update_session_context(session, extracted_info)
+        if route != "GENERAL_CHAT":
+            self._update_session_context(session, extracted_info)
+
+        if route in {"FOLLOW_UP", "GENERAL_CHAT"}:
+            self._hydrate_context_from_snapshot(session, context)
+
+        if route == "GENERAL_CHAT":
+            side_question_content = self._answer_side_question(session, user_message, context)
+            elapsed_ms = (time.perf_counter() - start_time) * 1000
+            self._record_stage_timing(stage_timings, "task_planning", 0.0, request_id=request_id, task_count=0)
+            self._record_stage_timing(stage_timings, "total", elapsed_ms, request_id=request_id, outcome="side_question")
+            self._log_stage_timing_summary(request_id, stage_timings)
+            yield {
+                "phase": ExecutionPhase.RESPONSE_SYNTHESIS.value,
+                "status": "completed",
+                "content": side_question_content,
+                "execution_time_ms": elapsed_ms,
+                "emotion": emotion.emotion.value,
+                "suggestions": [],
+                "thinking_steps": [s.to_dict() for s in context.thinking_steps],
+            }
+            return
 
         # ========== 阶段 2: 任务规划 ==========
         phase = ExecutionPhase.TASK_PLANNING
@@ -1141,6 +1204,7 @@ class AgentOrchestrator:
             extracted_info,
             session=session,
             user_message=user_message,
+            route=route,
         )
         task_planning_duration_ms = (time.perf_counter() - task_planning_start) * 1000
         self._record_stage_timing(
@@ -1650,10 +1714,14 @@ class AgentOrchestrator:
         # 收集实验指标
         experiment_metrics = self._collect_experiment_metrics(context) if self.config.experiment_mode else None
         
+        final_content = planner_response.content if planner_response else planner_streaming_content
+        if route == "FOLLOW_UP" and final_content:
+            final_content = f"{self._build_follow_up_lead_in(user_message, extracted_info, session)}\n\n{final_content}"
+
         result = {
             "phase": phase.value,
             "status": "completed",
-            "content": planner_response.content if planner_response else planner_streaming_content,
+            "content": final_content,
             "execution_time_ms": elapsed_time,
             "emotion": emotion.emotion.value,
             "suggestions": suggestions,
@@ -1691,20 +1759,24 @@ class AgentOrchestrator:
         people_count = extracted_info.get("num_travelers") or session.trip_context.num_travelers
 
         # 提取偏好
-        preferences = []
-        if travel_styles := extracted_info.get("travel_styles"):
-            if isinstance(travel_styles, list):
-                preferences.extend(travel_styles)
-            else:
-                preferences.append(travel_styles)
-        if session.preferences.travel_style:
-            preferences.extend(session.preferences.travel_style)
+        preferences = self._merge_string_lists(
+            extracted_info.get("preferences"),
+            extracted_info.get("interests"),
+            extracted_info.get("travel_styles"),
+            session.preferences.interests,
+            session.preferences.travel_style,
+        )
+        if extracted_info.get("pace") == "relaxed":
+            preferences = self._merge_string_lists(preferences, ["relaxed_pace"])
+        if extracted_info.get("indoor_preference"):
+            preferences = self._merge_string_lists(preferences, [f"indoor_pref:{extracted_info.get('indoor_preference')}"])
 
         # 构建计划摘要
         plan_summary = {
             "itinerary": self._serialize_itinerary_result(context),
             "budget": self._serialize_budget_result(context),
             "attraction": self._serialize_attraction_result(context),
+            "weather": context.get_result("weather").data if context.get_result("weather") and getattr(context.get_result("weather"), "data", None) else None,
         }
 
         # 提交快照
@@ -2146,6 +2218,10 @@ class AgentOrchestrator:
             "budget_level": extracted_info.get("budget_level"),
             "num_travelers": extracted_info.get("num_travelers"),
             "travel_styles": extracted_info.get("travel_styles"),
+            "interests": extracted_info.get("interests"),
+            "preferences": extracted_info.get("preferences"),
+            "pace": extracted_info.get("pace"),
+            "indoor_preference": extracted_info.get("indoor_preference"),
             "start_date": str(extracted_info.get("start_date")) if extracted_info.get("start_date") else None,
             "end_date": str(extracted_info.get("end_date")) if extracted_info.get("end_date") else None,
         }
@@ -2179,6 +2255,32 @@ class AgentOrchestrator:
     def _normalize_agent_name_for_log(self, agent_name: Any) -> str:
         return str(getattr(agent_name, "value", agent_name))
 
+    @staticmethod
+    def _merge_string_lists(*groups: Any) -> List[str]:
+        merged: List[str] = []
+        seen = set()
+        for group in groups:
+            if not group:
+                continue
+            values = group if isinstance(group, list) else [group]
+            for value in values:
+                text = str(value or "").strip()
+                if not text or text in seen:
+                    continue
+                seen.add(text)
+                merged.append(text)
+        return merged
+
+    @staticmethod
+    def _infer_budget_level_from_amount(amount: Optional[float]) -> Optional[str]:
+        if amount is None:
+            return None
+        if amount < 3000:
+            return "economy"
+        if amount < 6000:
+            return "medium"
+        return "luxury"
+
     def _normalize_extracted_info(self, info: Dict[str, Any]) -> Dict[str, Any]:
         """
         标准化提取的信息，确保数据类型正确
@@ -2189,81 +2291,300 @@ class AgentOrchestrator:
         Returns:
             标准化后的信息字典
         """
-        normalized = info.copy()
-        
-        # 确保数字字段是正确类型
-        if "duration" in normalized:
+        normalized = dict(info or {})
+
+        if normalized.get("duration") is None and normalized.get("duration_days") is not None:
+            normalized["duration"] = normalized.get("duration_days")
+        if normalized.get("num_travelers") is None and normalized.get("people_count") is not None:
+            normalized["num_travelers"] = normalized.get("people_count")
+
+        duration_value = normalized.get("duration")
+        if duration_value is not None:
             try:
-                normalized["duration"] = int(normalized["duration"])
+                duration_value = int(duration_value)
             except (ValueError, TypeError):
-                normalized["duration"] = None
-        
-        if "num_travelers" in normalized:
+                duration_value = None
+        normalized["duration"] = duration_value
+        normalized["duration_days"] = duration_value
+
+        num_travelers = normalized.get("num_travelers")
+        if num_travelers is not None:
             try:
-                normalized["num_travelers"] = int(normalized["num_travelers"])
+                num_travelers = int(num_travelers)
             except (ValueError, TypeError):
-                normalized["num_travelers"] = 1
-        
-        # 处理预算字段
-        if "budget" in normalized:
-            budget = normalized["budget"]
-            if isinstance(budget, str):
-                # 尝试从字符串提取数字
-                import re
-                match = re.search(r'(\d+)', budget)
-                if match:
-                    normalized["budget"] = int(match.group(1))
-                else:
-                    normalized["budget"] = None
-        
-        if "budget_amount" in normalized:
+                num_travelers = 1
+        normalized["num_travelers"] = num_travelers
+        if num_travelers is not None:
+            normalized["people_count"] = num_travelers
+
+        budget = normalized.get("budget")
+        if isinstance(budget, str):
+            match = re.search(r"(\d+(?:\.\d+)?)", budget)
+            budget = float(match.group(1)) if match else None
+        elif isinstance(budget, (int, float)):
+            budget = float(budget)
+        else:
+            budget = None
+
+        budget_amount = normalized.get("budget_amount")
+        if budget_amount is not None:
             try:
-                normalized["budget_amount"] = float(normalized["budget_amount"])
+                budget_amount = float(budget_amount)
             except (ValueError, TypeError):
-                normalized["budget_amount"] = None
-        
-        # 确保 budget_level 有效
-        valid_levels = ["economy", "medium", "luxury"]
-        if "budget_level" in normalized:
-            level = normalized["budget_level"]
-            if isinstance(level, str) and level.lower() in valid_levels:
-                normalized["budget_level"] = level.lower()
-            elif isinstance(budget, (int, float)) and budget is not None:
-                # 根据预算金额自动推断等级
-                if budget < 3000:
-                    normalized["budget_level"] = "economy"
-                elif budget < 6000:
-                    normalized["budget_level"] = "medium"
-                else:
-                    normalized["budget_level"] = "luxury"
-        
-        # 确保 travel_styles 是列表
-        if "travel_styles" in normalized and not isinstance(normalized["travel_styles"], list):
-            if isinstance(normalized["travel_styles"], str):
-                normalized["travel_styles"] = [normalized["travel_styles"]]
+                budget_amount = None
+
+        if budget_amount is None and budget is not None:
+            budget_amount = budget
+        if budget is None and budget_amount is not None:
+            budget = budget_amount
+
+        normalized["budget_amount"] = budget_amount
+        normalized["budget"] = int(budget) if budget is not None and float(budget).is_integer() else budget
+
+        level = normalized.get("budget_level")
+        if isinstance(level, str) and level.lower() in {"economy", "medium", "luxury"}:
+            normalized["budget_level"] = level.lower()
+        else:
+            normalized["budget_level"] = self._infer_budget_level_from_amount(budget_amount)
+
+        for key in ["travel_styles", "special_requirements", "interests", "preferences"]:
+            value = normalized.get(key)
+            if value is None:
+                normalized[key] = []
+            elif isinstance(value, list):
+                normalized[key] = self._merge_string_lists(value)
             else:
-                normalized["travel_styles"] = []
-        
-        # 确保 special_requirements 是列表
-        if "special_requirements" in normalized and not isinstance(normalized["special_requirements"], list):
-            if isinstance(normalized["special_requirements"], str):
-                normalized["special_requirements"] = [normalized["special_requirements"]]
-            else:
-                normalized["special_requirements"] = []
-        
-        # 确保 interests 是列表
-        if "interests" in normalized and not isinstance(normalized["interests"], list):
-            if isinstance(normalized["interests"], str):
-                normalized["interests"] = [normalized["interests"]]
-            else:
-                normalized["interests"] = []
-        
-        # 确保字符串字段没有多余空白
-        for key in ["destination", "origin"]:
-            if key in normalized and isinstance(normalized[key], str):
-                normalized[key] = normalized[key].strip()
-        
+                normalized[key] = self._merge_string_lists([value])
+
+        for key in ["destination", "origin", "pace", "indoor_preference"]:
+            value = normalized.get(key)
+            if isinstance(value, str):
+                normalized[key] = value.strip()
+
         return normalized
+
+    def _extract_message_preferences(self, user_message: str) -> Dict[str, Any]:
+        text = str(user_message or "").strip()
+        signals: Dict[str, Any] = {
+            "preferences": [],
+            "interests": [],
+            "travel_styles": [],
+            "special_requirements": [],
+        }
+        if not text:
+            return signals
+
+        if "美食" in text:
+            signals["preferences"].extend(["food", "local_food"])
+            signals["interests"].extend(["美食", "当地美食"])
+            signals["travel_styles"].append("美食")
+
+        if any(keyword in text for keyword in ["拍照", "出片", "摄影"]):
+            signals["preferences"].extend(["photo", "photogenic"])
+            signals["interests"].extend(["拍照", "摄影"])
+
+        if "西湖" in text:
+            signals["interests"].append("西湖")
+
+        if "夜景" in text:
+            signals["preferences"].append("night_view")
+            signals["interests"].append("夜景")
+
+        if any(keyword in text for keyword in ["少走路", "轻松点", "节奏轻松", "慢一点"]):
+            signals["preferences"].extend(["less_walking", "relaxed_pace"])
+            signals["travel_styles"].append("休闲")
+            signals["special_requirements"].append("少走路")
+            signals["pace"] = "relaxed"
+
+        if any(keyword in text for keyword in ["室内多一点", "室内优先"]):
+            signals["preferences"].extend(["indoor", "indoor_first"])
+            signals["special_requirements"].append("室内优先")
+            signals["indoor_preference"] = "indoor"
+
+        if any(keyword in text for keyword in ["室外多一点", "室外优先"]):
+            signals["preferences"].extend(["outdoor", "outdoor_first"])
+            signals["indoor_preference"] = "outdoor"
+
+        if any(keyword in text for keyword in ["更集中", "别太折腾", "交通太折腾"]):
+            signals["preferences"].append("compact_route")
+            signals["travel_styles"].append("休闲")
+            signals["special_requirements"].append("交通更集中")
+
+        budget_match = re.search(r"预算(?:改成|调整到|调到|变成|到)?\s*(\d+(?:\.\d+)?)", text)
+        if budget_match:
+            amount = float(budget_match.group(1))
+            signals["budget_amount"] = amount
+            signals["budget"] = int(amount) if amount.is_integer() else amount
+            signals["budget_level"] = self._infer_budget_level_from_amount(amount)
+
+        duration_match = re.search(r"(\d+)\s*[天日]", text)
+        if duration_match:
+            signals["duration"] = int(duration_match.group(1))
+            signals["duration_days"] = int(duration_match.group(1))
+
+        return {
+            **signals,
+            "preferences": self._merge_string_lists(signals["preferences"]),
+            "interests": self._merge_string_lists(signals["interests"]),
+            "travel_styles": self._merge_string_lists(signals["travel_styles"]),
+            "special_requirements": self._merge_string_lists(signals["special_requirements"]),
+        }
+
+    def _enrich_extracted_info(
+        self,
+        user_message: str,
+        extracted_info: Dict[str, Any],
+        session: SessionContext,
+    ) -> Dict[str, Any]:
+        enriched = dict(extracted_info or {})
+        message_signals = self._extract_message_preferences(user_message)
+        for key in ["preferences", "interests", "travel_styles", "special_requirements"]:
+            enriched[key] = self._merge_string_lists(enriched.get(key), message_signals.get(key))
+        for scalar_key in ["budget", "budget_amount", "budget_level", "duration", "duration_days", "pace", "indoor_preference"]:
+            if message_signals.get(scalar_key) is not None:
+                enriched[scalar_key] = message_signals[scalar_key]
+        return self._normalize_extracted_info(enriched)
+
+    def _extract_follow_up_delta(
+        self,
+        user_message: str,
+        extracted_info: Dict[str, Any],
+        session: SessionContext,
+    ) -> Dict[str, Any]:
+        delta = self._extract_message_preferences(user_message)
+        snapshot = session.committed_trip_snapshot
+        if not snapshot:
+            return self._normalize_extracted_info(delta)
+
+        if delta.get("budget_amount") is not None:
+            delta["budget_changed"] = delta["budget_amount"] != snapshot.budget_amount
+        if delta.get("duration_days") is not None:
+            delta["duration_changed"] = delta["duration_days"] != snapshot.duration_days
+
+        return self._normalize_extracted_info(delta)
+
+    def _hydrate_context_from_snapshot(self, session: SessionContext, context: ExecutionContext) -> None:
+        snapshot = session.committed_trip_snapshot
+        plan_summary = snapshot.plan_summary if snapshot else None
+        if not plan_summary:
+            return
+
+        for agent_name in ["attraction", "weather", "itinerary", "budget"]:
+            data = plan_summary.get(agent_name)
+            if data and not context.has_result(agent_name):
+                context.add_result(
+                    agent_name,
+                    AgentResponse(
+                        agent_name=agent_name,
+                        status=AgentStatus.COMPLETED,
+                        content="",
+                        data=data,
+                    ),
+                )
+
+    def _extract_regions_from_daily_plans(self, daily_plans: List[Dict[str, Any]]) -> List[str]:
+        regions: List[str] = []
+        for day in daily_plans or []:
+            if day.get("region"):
+                regions.append(str(day["region"]).strip())
+            for item in day.get("items") or []:
+                region = str(item.get("region") or "").strip()
+                if region:
+                    regions.append(region)
+        return [region for region in regions if region]
+
+    def _pick_primary_region(self, itinerary_summary: Dict[str, Any]) -> Optional[str]:
+        daily_plans = itinerary_summary.get("daily_plans") or []
+        regions = self._extract_regions_from_daily_plans(daily_plans)
+        if not regions:
+            return None
+        return Counter(regions).most_common(1)[0][0]
+
+    def _answer_side_question(
+        self,
+        session: SessionContext,
+        user_message: str,
+        context: ExecutionContext,
+    ) -> str:
+        snapshot = session.committed_trip_snapshot
+        plan_summary = snapshot.plan_summary if snapshot and snapshot.plan_summary else {}
+        itinerary_summary = plan_summary.get("itinerary") or {}
+        budget_summary = plan_summary.get("budget") or {}
+        attraction_summary = plan_summary.get("attraction") or {}
+        weather_summary = plan_summary.get("weather") or {}
+        question = str(user_message or "").strip()
+        destination = snapshot.destination if snapshot and snapshot.destination else "这版行程"
+
+        if question in {"谢谢", "多谢", "谢啦"}:
+            return "不客气。如果你想，我也可以继续把这版行程再往美食、拍照或少走路的方向细调。"
+
+        if "交通" in question or "方便吗" in question:
+            daily_plans = itinerary_summary.get("daily_plans") or []
+            cross_region_days = 0
+            for day in daily_plans:
+                day_regions = set(self._extract_regions_from_daily_plans([day]))
+                if len(day_regions) > 1:
+                    cross_region_days += 1
+            primary_region = self._pick_primary_region(itinerary_summary)
+            if daily_plans and cross_region_days <= max(1, len(daily_plans) // 2):
+                return f"整体还算方便。这版主要围绕 {primary_region or destination} 安排，只有少数时段会跨区，正常打车或地铁衔接就能走通。"
+            if primary_region:
+                return f"交通不算差，但有几段会跨区。如果你更在意省路，我建议把住宿尽量放在 {primary_region} 附近。"
+            return f"这版 {destination} 行程能走通，但如果你更在意交通省心，我可以再帮你压缩成更集中的动线。"
+
+        if "贵不贵" in question or "值不值" in question:
+            total_budget = budget_summary.get("total_budget")
+            budget_limit = budget_summary.get("budget_limit") or (snapshot.budget_amount if snapshot else None)
+            if isinstance(total_budget, (int, float)) and isinstance(budget_limit, (int, float)):
+                if total_budget <= budget_limit * 0.85:
+                    return f"不算贵。这版估算总花费大约 {total_budget:.0f} 元，低于你给的 {budget_limit:.0f} 元预算，还有一些余量。"
+                if total_budget <= budget_limit:
+                    return f"整体算是比较贴着预算走。这版估算约 {total_budget:.0f} 元，还在你给的 {budget_limit:.0f} 元范围内。"
+                return f"会稍微偏贵一点。这版估算约 {total_budget:.0f} 元，已经高于你给的 {budget_limit:.0f} 元预算。"
+            return "这得看你更重视舒适度还是性价比。按目前这版行程，整体是中等偏稳妥的花法，不算特别奢。"
+
+        if "下雨" in question or "室内还是室外" in question:
+            poi_list = attraction_summary.get("poi_list") or []
+            indoor_count = sum(1 for poi in poi_list if str(poi.get("indoor_outdoor") or "").lower() == "indoor")
+            outdoor_count = sum(1 for poi in poi_list if str(poi.get("indoor_outdoor") or "").lower() == "outdoor")
+            if indoor_count >= outdoor_count:
+                return "如果下雨，我会更建议优先室内。这版本身就有一些博物馆和室内点位，临场替换会更顺。"
+            return "如果下雨，我还是更建议优先室内，再把西湖、湿地这类更吃天气的点位留给不下雨的时段。"
+
+        if "住哪个区域" in question or "住哪" in question or "推荐住哪" in question:
+            primary_region = self._pick_primary_region(itinerary_summary)
+            if primary_region:
+                return f"按这版行程，住在 {primary_region} 会更方便，能把主要景点和吃饭动线尽量压在一片区域里。"
+            return f"如果你想住得更省心，我建议优先选这版 {destination} 行程里出现频率最高的核心活动区附近。"
+
+        if "衣服" in question or "穿什么" in question or "需要带什么" in question:
+            packing_list = weather_summary.get("packing_list") or []
+            if packing_list:
+                packing_text = "、".join(str(item) for item in packing_list[:4])
+                return f"按现在这版天气建议，优先带上 {packing_text}。出发前一天再看一次实时温度会更稳。"
+            return "衣服最好按可叠穿来准备，舒适步行鞋和一件方便增减的外套基本都用得上。"
+
+        return f"我先按当前这版 {destination} 行程理解：整体是能继续细化的。如果你愿意，我可以直接基于这版再给你一个更具体的建议。"
+
+    def _build_follow_up_lead_in(
+        self,
+        user_message: str,
+        extracted_info: Dict[str, Any],
+        session: SessionContext,
+    ) -> str:
+        destination = extracted_info.get("destination") or session.trip_context.destination or "这版"
+        preferences = set(extracted_info.get("preferences") or [])
+        interests = set(extracted_info.get("interests") or [])
+
+        if {"food", "local_food"} & preferences or {"美食", "当地美食"} & interests:
+            return f"好，我把这版 {destination} 行程往更偏美食的方向调了一下，尽量把更适合吃本地味道的点位和餐食安排串进去。下面给你更新版。"
+        if {"photo", "photogenic"} & preferences or {"拍照", "摄影"} & interests:
+            return f"好，我把这版 {destination} 行程里更适合拍照出片的权重提上来了，会优先保留更适合取景和卡时间段的点位。下面给你更新版。"
+        if {"less_walking", "relaxed_pace"} & preferences or extracted_info.get("pace") == "relaxed":
+            return f"好，我把这版 {destination} 行程往更轻松、少走路的方向收了一下，尽量减少来回折返。下面给你更新版。"
+        if extracted_info.get("budget_amount") is not None and "预算" in user_message:
+            return f"好，我按你新的预算重新校了一版，把整体花费和安排重新对齐后再给你更新方案。"
+        return f"好，我按你刚补充的偏好把这版 {destination} 行程重新调了一下。下面给你更新版。"
 
     def _summarize_extracted_info(self, info: Dict[str, Any]) -> str:
         """将提取的信息格式化为可读字符串"""
@@ -2279,6 +2600,9 @@ class AgentOrchestrator:
         if styles := info.get("travel_styles"):
             styles_str = ", ".join(styles) if isinstance(styles, list) else str(styles)
             lines.append(f"  - 🎯 风格: {styles_str}")
+        if interests := info.get("interests"):
+            interests_str = ", ".join(interests) if isinstance(interests, list) else str(interests)
+            lines.append(f"  - 🧩 偏好: {interests_str}")
         return "\n".join(lines) if lines else "  - 无额外信息"
 
     async def _review_results(
@@ -2378,6 +2702,10 @@ class AgentOrchestrator:
             # 清除旧行程状态，避免新旧规划混染
             session.trip_context.planned_days = []
             session.conversation_history = []
+            session.preferences.travel_style = []
+            session.preferences.interests = []
+            session.preferences.special_requirements = []
+            session.preferences.pace_preference = "moderate"
 
         # 更新目的地
         if destination := extracted_info.get("destination"):
@@ -2394,7 +2722,25 @@ class AgentOrchestrator:
         # 更新旅行风格
         if styles := extracted_info.get("travel_styles"):
             if isinstance(styles, list):
-                session.preferences.travel_style = styles
+                session.preferences.travel_style = self._merge_string_lists(
+                    session.preferences.travel_style,
+                    styles,
+                )
+
+        if interests := extracted_info.get("interests"):
+            session.preferences.interests = self._merge_string_lists(
+                session.preferences.interests,
+                interests,
+            )
+
+        if special_requirements := extracted_info.get("special_requirements"):
+            session.preferences.special_requirements = self._merge_string_lists(
+                session.preferences.special_requirements,
+                special_requirements,
+            )
+
+        if pace := extracted_info.get("pace"):
+            session.preferences.pace_preference = str(pace).strip()
 
         # 更新天数与预算，兼容 duration/duration_days、budget/budget_amount 两套字段名。
         duration = extracted_info.get("duration")
@@ -2598,6 +2944,7 @@ class AgentOrchestrator:
         self,
         follow_up_delta: Dict[str, Any],
         committed_snapshot: Optional["CommittedTripSnapshot"],
+        session: SessionContext,
     ) -> Dict[str, Any]:
         """
         【本轮新增】FOLLOW_UP 的 slot 合并
@@ -2611,33 +2958,46 @@ class AgentOrchestrator:
             merged["duration_days"] = committed_snapshot.duration_days
             merged["budget_amount"] = committed_snapshot.budget_amount
             merged["people_count"] = committed_snapshot.people_count
+            merged["num_travelers"] = committed_snapshot.people_count
             merged["preferences"] = list(committed_snapshot.preferences) if committed_snapshot.preferences else []
+        if session.preferences.interests:
+            merged["interests"] = list(session.preferences.interests)
+        if session.preferences.travel_style:
+            merged["travel_styles"] = list(session.preferences.travel_style)
+        if session.preferences.special_requirements:
+            merged["special_requirements"] = list(session.preferences.special_requirements)
+        if getattr(session.preferences, "pace_preference", None):
+            merged["pace"] = session.preferences.pace_preference
 
         # 2. follow-up delta 覆盖
         for key, value in follow_up_delta.items():
             if value is not None:
                 if key == "duration":
                     merged["duration_days"] = value
+                    merged["duration"] = value
                 elif key == "budget":
                     merged["budget_amount"] = value
+                    merged["budget"] = value
                 elif key == "budget_amount":
                     merged["budget_amount"] = value
+                    merged["budget"] = value
                 else:
                     merged[key] = value
 
         # 3. 处理偏好增强
-        if "preferences" in follow_up_delta:
-            prefs = merged.get("preferences", [])
-            new_prefs = follow_up_delta["preferences"]
-            if isinstance(new_prefs, list):
-                prefs.extend(new_prefs)
-                merged["preferences"] = list(set(prefs))
+        for list_key in ["preferences", "interests", "travel_styles", "special_requirements"]:
+            merged[list_key] = self._merge_string_lists(
+                merged.get(list_key),
+                follow_up_delta.get(list_key),
+            )
 
         logger.info(
             f"[MULTITURN_TRACE] Merge for FOLLOW_UP: "
             f"destination={merged.get('destination')} "
             f"duration={merged.get('duration_days')} "
-            f"budget={merged.get('budget_amount')}"
+            f"budget={merged.get('budget_amount')} "
+            f"preferences={merged.get('preferences')} "
+            f"interests={merged.get('interests')}"
         )
         return merged
 
