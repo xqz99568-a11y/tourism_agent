@@ -28,7 +28,9 @@ python -m app.main --mode web --host 127.0.0.1 --port 8000
 
 - `GET /health`
 - `POST /chat`
+- `POST /chat/stream`
 - `POST /session/reset`
+- `POST /feedback`
 
 ## 3. 启动 Next.js 前端
 

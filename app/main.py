@@ -244,14 +244,56 @@ def _get_request_models():
             return str(self.session_id or self.sessionId or "web-default")
 
     class ResetRequest(BaseModel):
-        session_id: str
+        session_id: Optional[str] = None
+        sessionId: Optional[str] = None
+
+        def get_session_id(self) -> str:
+            return str(self.session_id or self.sessionId or "web-default")
 
     class FeedbackRequest(BaseModel):
-        session_id: str
-        rating: str  # 'positive' or 'negative'
+        session_id: Optional[str] = None
+        sessionId: Optional[str] = None
+        rating: str | int  # 'positive' or 'negative'
         comment: Optional[str] = None
 
+        def get_session_id(self) -> str:
+            return str(self.session_id or self.sessionId or "web-default")
+
+        def get_rating(self) -> str:
+            if isinstance(self.rating, str):
+                normalized = self.rating.strip().lower()
+                if normalized in {"positive", "negative"}:
+                    return normalized
+                return "positive"
+
+            return "positive" if int(self.rating) > 0 else "negative"
+
+    ChatRequest.model_rebuild()
+    ResetRequest.model_rebuild()
+    FeedbackRequest.model_rebuild()
+
     return ChatRequest, ResetRequest, FeedbackRequest
+
+
+def _save_feedback(session_id: str, rating: str, comment: Optional[str]) -> None:
+    import os
+
+    feedback_data = {
+        "session_id": session_id,
+        "rating": rating,
+        "comment": comment,
+        "timestamp": datetime.now().isoformat(timespec="seconds"),
+    }
+
+    feedback_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "feedback")
+    os.makedirs(feedback_dir, exist_ok=True)
+
+    feedback_file = os.path.join(
+        feedback_dir,
+        f"feedback_{datetime.now().strftime('%Y%m%d')}.jsonl",
+    )
+    with open(feedback_file, "a", encoding="utf-8") as f:
+        f.write(json.dumps(feedback_data, ensure_ascii=False) + "\n")
 
 
 def create_web_app(app: TourismSystemApp):
@@ -282,9 +324,9 @@ def create_web_app(app: TourismSystemApp):
         }
 
     @web.post("/chat")
-    def chat(payload: ChatRequest = Body(...)) -> Dict[str, Any]:
-        text = payload.get_text()
-        session_id = payload.get_session_id().strip() or "web-default"
+    def chat(payload: Dict[str, Any] = Body(...)) -> Dict[str, Any]:
+        text = str(payload.get("message") or payload.get("query") or payload.get("req") or "")
+        session_id = str(payload.get("session_id") or payload.get("sessionId") or "web-default").strip() or "web-default"
 
         try:
             app.ensure_runtime_initialized()
@@ -293,32 +335,23 @@ def create_web_app(app: TourismSystemApp):
             raise HTTPException(status_code=400, detail=str(exc))
 
     @web.post("/session/reset")
-    def reset(req: ResetRequest = Body(...)) -> Dict[str, Any]:
-        app.reset_session(req.session_id)
-        return {"status": "ok", "session_id": req.session_id}
+    def reset(payload: Dict[str, Any] = Body(...)) -> Dict[str, Any]:
+        session_id = str(payload.get("session_id") or payload.get("sessionId") or "web-default").strip() or "web-default"
+        app.reset_session(session_id)
+        return {"status": "ok", "session_id": session_id}
 
     @web.post("/feedback")
-    def submit_feedback(req: FeedbackRequest = Body(...)) -> Dict[str, Any]:
+    def submit_feedback(payload: Dict[str, Any] = Body(...)) -> Dict[str, Any]:
         try:
-            # 存储反馈到文件
-            feedback_data = {
-                "session_id": req.session_id,
-                "rating": req.rating,
-                "comment": req.comment,
-                "timestamp": datetime.now().isoformat(timespec="seconds")
-            }
-            
-            # 确保反馈目录存在
-            import os
-            feedback_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "feedback")
-            os.makedirs(feedback_dir, exist_ok=True)
-            
-            # 存储到文件
-            feedback_file = os.path.join(feedback_dir, f"feedback_{datetime.now().strftime('%Y%m%d')}.jsonl")
-            with open(feedback_file, "a", encoding="utf-8") as f:
-                f.write(json.dumps(feedback_data, ensure_ascii=False) + "\n")
-            
-            print(f"Received feedback: session_id={req.session_id}, rating={req.rating}, comment={req.comment}")
+            session_id = str(payload.get("session_id") or payload.get("sessionId") or "web-default").strip() or "web-default"
+            rating_input = payload.get("rating", "positive")
+            if isinstance(rating_input, str):
+                rating = "negative" if rating_input.strip().lower() == "negative" else "positive"
+            else:
+                rating = "positive" if int(rating_input) > 0 else "negative"
+            comment = payload.get("comment")
+            _save_feedback(session_id, rating, comment if isinstance(comment, str) else None)
+            print(f"Received feedback: session_id={session_id}, rating={rating}, comment={comment}")
             return {"status": "ok", "message": "反馈提交成功"}
         except Exception as exc:
             raise HTTPException(status_code=400, detail=str(exc))
@@ -335,7 +368,7 @@ def create_sse_app(app: TourismSystemApp):
     except Exception as exc:
         raise RuntimeError("Web 模式需要安装 fastapi uvicorn pydantic sse-starlette") from exc
 
-    ChatRequest, _, _ = _get_request_models()
+    ChatRequest, ResetRequest, FeedbackRequest = _get_request_models()
 
     web = FastAPI(title="旅游规划 Agent 系统 (流式版)", version="1.1.0")
 
@@ -355,14 +388,25 @@ def create_sse_app(app: TourismSystemApp):
             "time": datetime.now().isoformat(timespec="seconds"),
         }
 
+    @web.post("/chat")
+    def chat(payload: Dict[str, Any] = Body(...)) -> Dict[str, Any]:
+        text = str(payload.get("message") or payload.get("query") or payload.get("req") or "")
+        session_id = str(payload.get("session_id") or payload.get("sessionId") or "web-default").strip() or "web-default"
+
+        try:
+            app.ensure_runtime_initialized()
+            return app.handle_query(text, session_id=session_id)
+        except Exception as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
+
     @web.post("/chat/stream")
-    async def chat_stream(payload: ChatRequest = Body(...)):
+    async def chat_stream(payload: Dict[str, Any] = Body(...)):
         """
         流式输出接口，使用 Server-Sent Events (SSE) 协议。
         实时返回 Agent 思考步骤和最终结果。
         """
-        text = payload.get_text()
-        session_id = payload.get_session_id().strip() or "web-default"
+        text = str(payload.get("message") or payload.get("query") or payload.get("req") or "")
+        session_id = str(payload.get("session_id") or payload.get("sessionId") or "web-default").strip() or "web-default"
 
         async def event_generator():
             from app.core.context import SessionContext
@@ -384,6 +428,8 @@ def create_sse_app(app: TourismSystemApp):
             }
             
             last_thinking_count = 0
+            sent_streaming_chunks = False
+            streaming_content = ""
             
             try:
                 # 使用真实的 orchestrator 流式输出
@@ -421,14 +467,32 @@ def create_sse_app(app: TourismSystemApp):
                     # orchestrator 主动发的 final event（SSE 标准格式）
                     if event.get("event") == "final" and event.get("data"):
                         yield event
+
+                    # 发送正文增量（planner 的 streaming chunk）
+                    if event.get("is_streaming") and isinstance(event.get("content"), str) and event.get("content"):
+                        sent_streaming_chunks = True
+                        streaming_content += event.get("content", "")
+                        yield {
+                            "event": "streaming",
+                            "data": json.dumps({
+                                "type": "streaming",
+                                "content": event.get("content", ""),
+                                "phase": event.get("phase"),
+                                "timestamp": datetime.now().isoformat(timespec="seconds"),
+                            }, ensure_ascii=False)
+                        }
                     
                     # 发送最终结果（orchestrator 返回的 content 事件）
                     if event.get("status") == "completed" and "content" in event:
+                        final_text = event.get("content", "") or ""
+                        if sent_streaming_chunks and event.get("final_content_already_streamed"):
+                            # 已经通过 streaming 事件增量发完正文，这里 final 只做结束标记，避免整段覆盖
+                            final_text = ""
                         final_event = {
                             "event": "final",
                             "data": json.dumps({
                                 "type": "final",
-                                "content": event.get("content", ""),
+                                "content": final_text,
                                 "thinking_steps": event.get("thinking_steps", []),
                                 "execution_time_ms": event.get("execution_time_ms", 0),
                                 "emotion": event.get("emotion", "neutral"),
@@ -447,7 +511,7 @@ def create_sse_app(app: TourismSystemApp):
                         # 记录到会话
                         session.add_turn(
                             user_message=text,
-                            ai_message=event.get("content", ""),
+                            ai_message=(streaming_content or event.get("content", "")),
                         )
 
             except Exception as exc:
@@ -470,6 +534,28 @@ def create_sse_app(app: TourismSystemApp):
             }
         
         return EventSourceResponse(event_generator())
+
+    @web.post("/session/reset")
+    def reset(payload: Dict[str, Any] = Body(...)) -> Dict[str, Any]:
+        session_id = str(payload.get("session_id") or payload.get("sessionId") or "web-default").strip() or "web-default"
+        app.reset_session(session_id)
+        return {"status": "ok", "session_id": session_id}
+
+    @web.post("/feedback")
+    def submit_feedback(payload: Dict[str, Any] = Body(...)) -> Dict[str, Any]:
+        try:
+            session_id = str(payload.get("session_id") or payload.get("sessionId") or "web-default").strip() or "web-default"
+            rating_input = payload.get("rating", "positive")
+            if isinstance(rating_input, str):
+                rating = "negative" if rating_input.strip().lower() == "negative" else "positive"
+            else:
+                rating = "positive" if int(rating_input) > 0 else "negative"
+            comment = payload.get("comment")
+            _save_feedback(session_id, rating, comment if isinstance(comment, str) else None)
+            print(f"Received feedback: session_id={session_id}, rating={rating}, comment={comment}")
+            return {"status": "ok", "message": "反馈提交成功"}
+        except Exception as exc:
+            raise HTTPException(status_code=400, detail=str(exc))
 
     return web
 

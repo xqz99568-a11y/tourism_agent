@@ -255,8 +255,7 @@ export function ChatPage() {
           }
         }
       }
-    } catch (error) {
-      console.error("Chat error:", error);
+    } catch {
       // 【本轮修复】安全兜底：有占位消息 id 就 patch；没有就追加一条失败消息
       if (currentAssistantMsgId) {
         patchMessage(currentAssistantMsgId, {

@@ -302,8 +302,7 @@ VECTOR_DB_PORT=6333
 ### 启动后端
 
 ```bash
-cd app
-uvicorn api.main:app --reload --port 8000
+python -m app.main --mode web --host 127.0.0.1 --port 8000
 ```
 
 ### 启动前端
@@ -401,8 +400,7 @@ A：可以，浏览器控制台（F12 → Console）仍然可用，HMR 也正常
 A：需要。前后端都启动后才能完整使用：
 ```bash
 # 终端 1：后端
-cd app
-uvicorn api.main:app --reload --port 8000
+python -m app.main --mode web --host 127.0.0.1 --port 8000
 
 # 终端 2：前端（dev / demo / production）
 cd frontend
@@ -490,10 +488,11 @@ Tourism_Agent/
 
 | 端点 | 方法 | 说明 |
 |------|------|------|
-| `POST /api/chat` | POST | 发送聊天消息 |
-| `POST /api/chat/stream` | POST | 流式聊天 |
-| `GET /api/health` | GET | 健康检查 |
-| `POST /api/session/reset` | POST | 重置会话 |
+| `POST /chat` | POST | 发送聊天消息 |
+| `POST /chat/stream` | POST | 流式聊天 |
+| `GET /health` | GET | 健康检查 |
+| `POST /session/reset` | POST | 重置会话 |
+| `POST /feedback` | POST | 提交反馈 |
 
 ## Unified Planner Baseline
 

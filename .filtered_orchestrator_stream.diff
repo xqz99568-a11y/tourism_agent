@@ -1,0 +1,66 @@
+﻿diff --git a/app/agents/orchestrator.py b/app/agents/orchestrator.py
+index 9a09bbb..b89561a 100644
+--- a/app/agents/orchestrator.py
++++ b/app/agents/orchestrator.py
+@@ -1350,6 +1350,9 @@ class AgentOrchestrator:
+         planner_streaming_content = ""
+         # 维护一个绝对不倒退的 stable baseline
+         planner_stream_stable_baseline = ""
++        follow_up_lead_in = ""
++        if route == "FOLLOW_UP":
++            follow_up_lead_in = self._build_follow_up_lead_in(user_message, extracted_info, session).strip()
+ 
+         def _next_stream_tick_seconds() -> float:
+             if "attraction" not in context.completed_agents:
+@@ -1367,7 +1370,7 @@ class AgentOrchestrator:
+             if not remaining:
+                 return prefix
+             newline_index = remaining.find("\n")
+-            if newline_index >= 0:
++            if 0 <= newline_index < max_chars:
+                 return prefix + remaining[: newline_index + 1]
+             if len(remaining) <= max_chars:
+                 return prefix + remaining
+@@ -1396,6 +1399,8 @@ class AgentOrchestrator:
+                 return
+             if not target_content:
+                 return
++            if follow_up_lead_in:
++                target_content = f"{follow_up_lead_in}\n\n{target_content}"
+             # 只扩展已确认的稳定前缀，不允许倒退
+             if (
+                 planner_stream_stable_baseline
+@@ -1724,10 +1729,33 @@ class AgentOrchestrator:
+         if route == "FOLLOW_UP" and final_content:
+             final_content = f"{self._build_follow_up_lead_in(user_message, extracted_info, session)}\n\n{final_content}"
+ 
++        # 【最小修复】若前面已经输出了部分正文草稿，这里把剩余正文继续按 chunk 补齐，避免最后整段一次性吐出。
++        final_content_already_streamed = False
++        if isinstance(final_content, str) and final_content:
++            if not planner_streaming_content or final_content.startswith(planner_streaming_content):
++                while len(planner_streaming_content) < len(final_content):
++                    suffix = final_content[len(planner_streaming_content):]
++                    chunk = _select_stream_chunk(suffix, _next_stream_chunk_size())
++                    if not chunk:
++                        break
++                    planner_streaming_content += chunk
++                    yield {
++                        "phase": phase.value,
++                        "status": "running",
++                        "content": chunk,
++                        "is_streaming": True,
++                        "agent": "planner",
++                        "thinking_steps": [s.to_dict() for s in context.thinking_steps],
++                    }
++                    await asyncio.sleep(0)
++
++            final_content_already_streamed = planner_streaming_content == final_content
++
+         result = {
+             "phase": phase.value,
+             "status": "completed",
+             "content": final_content,
++            "final_content_already_streamed": final_content_already_streamed,
+             "execution_time_ms": elapsed_time,
+             "emotion": emotion.emotion.value,
+             "suggestions": suggestions,

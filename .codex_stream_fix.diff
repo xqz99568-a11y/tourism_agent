@@ -1,0 +1,56 @@
+﻿diff --git a/app/main.py b/app/main.py
+index 0bfa58a..0c34f72 100644
+--- a/app/main.py
++++ b/app/main.py
+@@ -384,6 +384,8 @@ def create_sse_app(app: TourismSystemApp):
+             }
+             
+             last_thinking_count = 0
++            sent_streaming_chunks = False
++            streaming_content = ""
+             
+             try:
+                 # 使用真实的 orchestrator 流式输出
+@@ -421,14 +423,32 @@ def create_sse_app(app: TourismSystemApp):
+                     # orchestrator 主动发的 final event（SSE 标准格式）
+                     if event.get("event") == "final" and event.get("data"):
+                         yield event
++
++                    # 发送正文增量（planner 的 streaming chunk）
++                    if event.get("is_streaming") and isinstance(event.get("content"), str) and event.get("content"):
++                        sent_streaming_chunks = True
++                        streaming_content += event.get("content", "")
++                        yield {
++                            "event": "streaming",
++                            "data": json.dumps({
++                                "type": "streaming",
++                                "content": event.get("content", ""),
++                                "phase": event.get("phase"),
++                                "timestamp": datetime.now().isoformat(timespec="seconds"),
++                            }, ensure_ascii=False)
++                        }
+                     
+                     # 发送最终结果（orchestrator 返回的 content 事件）
+                     if event.get("status") == "completed" and "content" in event:
++                        final_text = event.get("content", "") or ""
++                        if sent_streaming_chunks and event.get("final_content_already_streamed"):
++                            # 已经通过 streaming 事件增量发完正文，这里 final 只做结束标记，避免整段覆盖
++                            final_text = ""
+                         final_event = {
+                             "event": "final",
+                             "data": json.dumps({
+                                 "type": "final",
+-                                "content": event.get("content", ""),
++                                "content": final_text,
+                                 "thinking_steps": event.get("thinking_steps", []),
+                                 "execution_time_ms": event.get("execution_time_ms", 0),
+                                 "emotion": event.get("emotion", "neutral"),
+@@ -447,7 +467,7 @@ def create_sse_app(app: TourismSystemApp):
+                         # 记录到会话
+                         session.add_turn(
+                             user_message=text,
+-                            ai_message=event.get("content", ""),
++                            ai_message=(streaming_content or event.get("content", "")),
+                         )
+ 
+             except Exception as exc:

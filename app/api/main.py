@@ -180,6 +180,7 @@ def create_app() -> FastAPI:
         abort_event = asyncio.Event()
 
         async def generate():
+            sent_streaming_chunks = False
             # 【本轮修复】注册 abort 回调：当 fetch abort 时设置 event
             def on_fetch_done():
                 if not abort_event.is_set():
@@ -192,7 +193,34 @@ def create_app() -> FastAPI:
                     if abort_event.is_set():
                         logger.info(f"Request {session_id} aborted by client")
                         break
-                    yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+
+                    if event.get("is_streaming") and isinstance(event.get("content"), str) and event.get("content"):
+                        sent_streaming_chunks = True
+
+                    is_terminal = (
+                        event.get("phase") == "response_synthesis"
+                        and event.get("status") == "completed"
+                        and "content" in event
+                    )
+                    if is_terminal and sent_streaming_chunks and event.get("final_content_already_streamed"):
+                        event_no_content = dict(event)
+                        if isinstance(event_no_content.get("content"), str):
+                            event_no_content["final_content_len"] = len(event_no_content["content"])
+                        event_no_content["content"] = ""
+                        yield f"data: {json.dumps(event_no_content, ensure_ascii=False)}\n\n"
+
+                        final_marker = {
+                            "type": "final",
+                            "content": "",
+                            "final_content_already_streamed": True,
+                            "execution_time_ms": event.get("execution_time_ms", 0),
+                            "emotion": event.get("emotion", "neutral"),
+                            "suggestions": event.get("suggestions", []),
+                        }
+                        yield "event: final\n"
+                        yield f"data: {json.dumps(final_marker, ensure_ascii=False)}\n\n"
+                    else:
+                        yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
                     # 主动让出事件循环，尽快把当前 chunk 刷给客户端
                     await asyncio.sleep(0)
 
