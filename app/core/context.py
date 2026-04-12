@@ -1192,9 +1192,6 @@ class SessionContext:
         text = str(user_message or "").strip()
         if not text:
             return False
-        # 侧问优先走轻量问答，不应误判为 follow-up 重规划。
-        if self.is_side_question(text):
-            return False
         
         # 明确不是 follow-up 的模式（完整新规划关键词）
         full_new_keywords = ("帮我做一个", "帮我规划一个", "我想去旅游", "重新规划")
@@ -1204,12 +1201,18 @@ class SessionContext:
         
         # 可能是 follow-up 的模式（偏好增强、调整类）
         follow_up_keywords = (
-            "想多", "想少", "改成", "调整", "增加", "减少", "优化一下",
+            "想多", "想少", "改成", "改一下", "调整", "增加", "减少", "优化一下", "微调",
             "美食", "当地美食", "拍照", "出片", "摄影", "夜景",
             "室内多一点", "室外多一点", "预算改成", "预算调到", "预算调整到",
-            "多走路", "少走路", "节奏轻松", "轻松点", "慢一点", "更集中", "别太折腾",
+            "多走路", "少走路", "少换乘", "节奏轻松", "轻松点", "慢一点", "更集中", "顺路一点", "别太折腾", "别太赶", "别太累", "调松", "松一点",
         )
-        return any(kw in text for kw in follow_up_keywords)
+        looks_like_follow_up = any(kw in text for kw in follow_up_keywords)
+
+        # 侧问默认走轻量问答；但若用户表达了“想优化/想调整”的意图，则优先视为 follow-up。
+        if self.is_side_question(text) and not looks_like_follow_up:
+            return False
+
+        return looks_like_follow_up
 
     def is_side_question(self, user_message: str) -> bool:
         """
@@ -1219,5 +1222,8 @@ class SessionContext:
             "谢谢", "交通方便", "方便吗", "贵不贵", "值不值", "下雨",
             "室内还是室外", "住哪个区域", "住哪", "哪个区域更方便",
             "需要带什么", "穿什么", "衣服", "天气", "推荐住哪",
+            "会不会太赶", "太赶", "赶不赶", "累不累", "会不会累", "走路多吗",
+            "适合老人", "带老人", "长辈", "爸妈",
+            "门票贵", "票价贵", "票价", "预算够", "预算够不够", "预算够用",
         )
         return any(kw in user_message for kw in side_question_keywords)

@@ -2525,34 +2525,253 @@ class AgentOrchestrator:
         weather_summary = plan_summary.get("weather") or {}
         question = str(user_message or "").strip()
         destination = snapshot.destination if snapshot and snapshot.destination else "这版行程"
+        daily_plans = itinerary_summary.get("daily_plans") or []
 
         if question in {"谢谢", "多谢", "谢啦"}:
             return "不客气。如果你想，我也可以继续把这版行程再往美食、拍照或少走路的方向细调。"
 
         if "交通" in question or "方便吗" in question:
-            daily_plans = itinerary_summary.get("daily_plans") or []
             cross_region_days = 0
             for day in daily_plans:
                 day_regions = set(self._extract_regions_from_daily_plans([day]))
                 if len(day_regions) > 1:
                     cross_region_days += 1
             primary_region = self._pick_primary_region(itinerary_summary)
-            if daily_plans and cross_region_days <= max(1, len(daily_plans) // 2):
-                return f"整体还算方便。这版主要围绕 {primary_region or destination} 安排，只有少数时段会跨区，正常打车或地铁衔接就能走通。"
-            if primary_region:
-                return f"交通不算差，但有几段会跨区。如果你更在意省路，我建议把住宿尽量放在 {primary_region} 附近。"
-            return f"这版 {destination} 行程能走通，但如果你更在意交通省心，我可以再帮你压缩成更集中的动线。"
+            day_count = len(daily_plans)
+            if day_count:
+                if cross_region_days <= max(1, day_count // 2):
+                    direct = "就你刚刚这版行程来说，整体交通还是比较方便的。"
+                    if primary_region:
+                        if cross_region_days == 0:
+                            reason1 = f"大部分点位都在 {primary_region} 这一带，基本不用来回跨区。"
+                        else:
+                            reason1 = f"大部分点位都在 {primary_region} 附近，只有 {cross_region_days} 天会稍微跨区跑一下。"
+                    else:
+                        if cross_region_days == 0:
+                            reason1 = "从每天的分区看，点位排得比较集中，基本不用来回换区。"
+                        else:
+                            reason1 = f"从每天的分区看，点位排得比较集中，只有 {cross_region_days} 天会跨区移动。"
+                    reason2 = "按地铁配合短距离打车走，衔接一般没问题。"
+                    advice = "如果你更在意少换乘/更顺路，我也可以把跨区那天的动线再压一压。"
+                    follow = "你更在意少走路，还是少换乘？"
+                    return f"{direct}{reason1}{reason2}{advice}{follow}"
 
-        if "贵不贵" in question or "值不值" in question:
+                direct = "就你刚刚这版行程来说，能走通，但会稍微有点折腾。"
+                if primary_region:
+                    reason1 = f"这版里大概有 {cross_region_days} 天需要跨区跑，通勤时间会多一点。"
+                    reason2 = f"把住宿放在 {primary_region} 或地铁枢纽附近，会省不少时间。"
+                else:
+                    reason1 = f"从每天的分区看，跨区的天数偏多（约 {cross_region_days} 天），通勤时间会拉长。"
+                    reason2 = "如果你希望更省心，优先选地铁沿线/交通枢纽附近的住宿会更稳。"
+                advice = "要是你想更顺路，我可以把跨区最折腾的那一天重新排一下，尽量把同一区域的点挪到同一天。"
+                follow = "要不要我顺手把交通最折腾的那一天再优化一下？"
+                return f"{direct}{reason1}{reason2}{advice}{follow}"
+
+            direct = f"就你刚刚这版 {destination} 来看，整体交通是能比较顺地走下来的。"
+            reason1 = "我这边暂时没拿到每天分区的细节，但核心点位看起来不会特别分散。"
+            reason2 = "一般按地铁+短打车的方式走，会更省心。"
+            advice = "如果你想尽量少换乘，我也可以按地铁线路把动线再微调一下。"
+            follow = "你更在意少走路，还是少换乘？"
+            return f"{direct}{reason1}{reason2}{advice}{follow}"
+
+        if any(key in question for key in ("会不会太赶", "太赶", "赶不赶", "节奏紧不紧", "节奏怎么样")):
+            day_count = len(daily_plans)
+            core_counts: List[int] = []
+            has_breaks = False
+            for day in daily_plans:
+                items = day.get("items") or []
+                core = 0
+                for item in items:
+                    if not isinstance(item, dict):
+                        continue
+                    name = str(item.get("name") or "").strip()
+                    category = str(item.get("category") or "").strip()
+                    if category == "rest" or name in {"午餐 / 休息", "晚餐 / 休息"}:
+                        has_breaks = True
+                        continue
+                    if name == "备选景点（未排入）":
+                        continue
+                    core += 1
+                core_counts.append(core)
+
+            max_core = max(core_counts) if core_counts else 0
+            avg_core = round(sum(core_counts) / max(len(core_counts), 1), 1) if core_counts else 0
+            cross_region_days = 0
+            for day in daily_plans:
+                day_regions = set(self._extract_regions_from_daily_plans([day]))
+                if len(day_regions) > 1:
+                    cross_region_days += 1
+
+            if day_count and max_core <= 2 and cross_region_days <= max(1, day_count // 2):
+                direct = "就你刚刚这版行程来说，节奏不算赶，属于比较舒服的强度。"
+            elif day_count and max_core <= 3 and cross_region_days <= max(1, day_count // 2):
+                direct = "就你刚刚这版行程来说，节奏偏适中，不会特别赶。"
+            else:
+                direct = "就你刚刚这版行程来说，整体能玩下来，但节奏会稍微紧一点。"
+
+            if day_count:
+                reason1 = f"大多数天大概是 {avg_core} 个主要点位左右"
+                reason1 += "，中间也留了午餐/休息。" if has_breaks else "。"
+                reason2 = f"另外大概有 {cross_region_days} 天会跨区移动，赶时间时主要就耗在路上。"
+            else:
+                reason1 = "我目前没拿到每天的点位细节，但行程可以按“少点位+多机动”的思路来放松节奏。"
+                reason2 = "如果你希望更轻松，我可以把每天的点位再收一收。"
+
+            advice = "要是你担心太赶，我可以把最满的那天减少一个点，或者把跨区那天拆得更顺一点。"
+            follow = "你更想每天少一个景点，还是尽量少跨区/少换乘？"
+            return f"{direct}{reason1}{reason2}{advice}{follow}"
+
+        if any(key in question for key in ("累不累", "会不会累", "会很累吗", "体力", "走路多吗")):
+            day_count = len(daily_plans)
+            core_counts: List[int] = []
+            has_breaks = False
+            for day in daily_plans:
+                items = day.get("items") or []
+                core = 0
+                for item in items:
+                    if not isinstance(item, dict):
+                        continue
+                    name = str(item.get("name") or "").strip()
+                    category = str(item.get("category") or "").strip()
+                    if category == "rest" or name in {"午餐 / 休息", "晚餐 / 休息"}:
+                        has_breaks = True
+                        continue
+                    if name == "备选景点（未排入）":
+                        continue
+                    core += 1
+                core_counts.append(core)
+
+            max_core = max(core_counts) if core_counts else 0
+            cross_region_days = 0
+            for day in daily_plans:
+                day_regions = set(self._extract_regions_from_daily_plans([day]))
+                if len(day_regions) > 1:
+                    cross_region_days += 1
+
+            if day_count and max_core <= 2 and cross_region_days <= max(1, day_count // 2):
+                direct = "就你刚刚这版行程的强度来说，整体不会特别累，偏轻松。"
+            else:
+                direct = "就你刚刚这版行程的强度来说，能玩下来，但体力上会稍微有点累。"
+
+            if day_count:
+                reason1 = f"这版每天最多 {max_core} 个主要点位"
+                reason1 += "，中间也安排了休息。" if has_breaks else "。"
+                reason2 = f"如果跨区移动比较多（约 {cross_region_days} 天），那几天会更容易觉得累。"
+            else:
+                reason1 = "我现在没拿到每天点位细节，不过体力感受主要取决于“走路多不多”和“通勤长不长”。"
+                reason2 = "你愿意的话，我可以把行程按少走路的思路再整理一版。"
+
+            advice = "建议穿舒服的鞋，景点之间优先地铁+短打车，下午留一段弹性时间会更稳。"
+            follow = "你更怕走路多，还是更怕来回坐车折腾？"
+            return f"{direct}{reason1}{reason2}{advice}{follow}"
+
+        if any(key in question for key in ("适合老人", "带老人", "长辈", "爸妈")):
+            day_count = len(daily_plans)
+            core_names: List[str] = []
+            for day in daily_plans:
+                for item in day.get("items") or []:
+                    if not isinstance(item, dict):
+                        continue
+                    name = str(item.get("name") or "").strip()
+                    category = str(item.get("category") or "").strip()
+                    if category == "rest" or name in {"午餐 / 休息", "晚餐 / 休息", "备选景点（未排入）"}:
+                        continue
+                    if name:
+                        core_names.append(name)
+
+            strenuous_keywords = ("长城", "爬山", "登山", "徒步", "台阶", "爬坡")
+            strenuous_pois = [name for name in core_names if any(k in name for k in strenuous_keywords)]
+
+            direct = "就你刚刚这版行程来说，大体是适合带老人走的，但我建议把“少走路+多休息”放在第一位。"
+            if day_count:
+                reason1 = "这版每天点位不算多，中间也留了吃饭/休息的空档。"
+            else:
+                reason1 = "我现在没拿到每天点位细节，不过可以按更慢、更省体力的节奏来走。"
+            if strenuous_pois:
+                poi_name = strenuous_pois[0]
+                reason2 = f"另外像「{poi_name}」这类台阶/爬坡比较多的点，老人可能会更吃力一些。"
+                advice = "如果你愿意，我可以把这类强体力的点换成更平坦、出入口更友好的景点，并把当天动线调得更顺。"
+                follow = "老人这边膝盖/走路方便吗？要不要我直接把那天改成更轻松的版本？"
+                return f"{direct}{reason1}{reason2}{advice}{follow}"
+
+            reason2 = "出行上尽量用地铁配合短打车，住宿选在地铁口附近，会省很多力气。"
+            advice = "如果你告诉我老人更怕走路还是更怕早起，我可以按这个把节奏再调松一点。"
+            follow = "你更想少走路，还是晚一点出门也可以？"
+            return f"{direct}{reason1}{reason2}{advice}{follow}"
+
+        if any(key in question for key in ("贵不贵", "值不值", "门票", "票价", "预算够", "预算够吗", "预算够不够", "预算够用")):
             total_budget = budget_summary.get("total_budget")
             budget_limit = budget_summary.get("budget_limit") or (snapshot.budget_amount if snapshot else None)
+            budget_breakdown = budget_summary.get("budget_breakdown") or {}
+            ticket_cost = budget_summary.get("ticket_cost")
+            if ticket_cost is None and isinstance(budget_breakdown, dict):
+                ticket_cost = budget_breakdown.get("ticket")
+            pending_ticket_count = int(budget_summary.get("pending_ticket_count") or 0)
+
+            if "门票" in question or "票价" in question:
+                if isinstance(ticket_cost, (int, float)) and isinstance(total_budget, (int, float)) and total_budget > 0:
+                    share = float(ticket_cost) / float(total_budget)
+                    if share < 0.2:
+                        direct = "就你刚刚这版行程来说，门票这块不会是大头，整体不算贵。"
+                    elif share < 0.35:
+                        direct = "就你刚刚这版行程来说，门票会占一部分，但还在可控范围内。"
+                    else:
+                        direct = "就你刚刚这版行程来说，门票占比会偏高一点，可能会有点肉疼。"
+                    reason1 = f"按这版预算估算，门票大概 {ticket_cost:.0f} 元（总预算约 {total_budget:.0f} 元）。"
+                elif isinstance(ticket_cost, (int, float)):
+                    direct = "就你刚刚这版行程来说，门票整体在可控范围内。"
+                    reason1 = f"按这版预算估算，门票大概 {ticket_cost:.0f} 元左右。"
+                else:
+                    direct = "就你刚刚这版行程来说，门票贵不贵主要看景点组合。"
+                    reason1 = "我这边暂时没拿到完整的门票估算明细。"
+
+                if pending_ticket_count:
+                    reason2 = f"其中有 {pending_ticket_count} 个点的票价我先按保守值估了下，实际可能会略有浮动。"
+                else:
+                    reason2 = "如果你愿意，我也可以把每个景点的门票区间顺手标出来，方便你心里更有数。"
+
+                advice = "想省一点的话，我可以优先把高门票的点换成免费/性价比更高的替代，或者帮你看看有没有通票/预约免费的组合。"
+                follow = "你更想省门票，还是更在意体验别缩水？"
+                return f"{direct}{reason1}{reason2}{advice}{follow}"
+
             if isinstance(total_budget, (int, float)) and isinstance(budget_limit, (int, float)):
                 if total_budget <= budget_limit * 0.85:
-                    return f"不算贵。这版估算总花费大约 {total_budget:.0f} 元，低于你给的 {budget_limit:.0f} 元预算，还有一些余量。"
-                if total_budget <= budget_limit:
-                    return f"整体算是比较贴着预算走。这版估算约 {total_budget:.0f} 元，还在你给的 {budget_limit:.0f} 元范围内。"
-                return f"会稍微偏贵一点。这版估算约 {total_budget:.0f} 元，已经高于你给的 {budget_limit:.0f} 元预算。"
-            return "这得看你更重视舒适度还是性价比。按目前这版行程，整体是中等偏稳妥的花法，不算特别奢。"
+                    direct = "就你刚刚这版行程来说，预算是够的，而且还比较宽松。"
+                elif total_budget <= budget_limit:
+                    direct = "就你刚刚这版行程来说，预算基本够用，属于贴着预算走的那种。"
+                else:
+                    direct = "就你刚刚这版行程来说，可能会略超一点预算。"
+                reason1 = f"按这版估算总花费约 {total_budget:.0f} 元，你给的预算是 {budget_limit:.0f} 元。"
+
+                reason2 = ""
+                if isinstance(budget_breakdown, dict):
+                    cn_map = {"hotel": "住宿", "ticket": "门票", "transport": "交通", "food": "吃饭", "other": "其他"}
+                    parts = [
+                        (key, float(value))
+                        for key, value in budget_breakdown.items()
+                        if key in cn_map and isinstance(value, (int, float))
+                    ]
+                    parts = sorted(parts, key=lambda x: x[1], reverse=True)[:2]
+                    if parts:
+                        top_text = "、".join(f"{cn_map.get(key, key)}约 {value:.0f} 元" for key, value in parts)
+                        reason2 = f"里面占比比较大的通常是 {top_text}。"
+
+                if total_budget > budget_limit:
+                    advice = "如果你想把它压回预算内，我可以优先从住宿档位、门票组合或跨区交通这三块帮你省下来一部分。"
+                    follow = "你更愿意从哪一块省：住宿、门票还是交通？"
+                else:
+                    advice = "如果你想花得更值，我也可以把预算重点放到你更在意的部分（比如住得舒服点/门票换更经典的）。"
+                    follow = "你更在意住得舒服一点，还是景点更经典一点？"
+                return f"{direct}{reason1}{reason2}{advice}{follow}"
+
+            if isinstance(total_budget, (int, float)):
+                direct = "就你刚刚这版行程来说，整体花费不算离谱。"
+                reason1 = f"这版估算总花费大约 {total_budget:.0f} 元左右。"
+                advice = "如果你告诉我你的预算上限，我可以立刻帮你把行程压到那个范围内。"
+                follow = "你大概想控制在多少预算？"
+                return f"{direct}{reason1}{advice}{follow}"
+
+            return "就你刚刚这版行程来说，花费高不高主要取决于住宿档位、门票组合和交通方式。你给我一个预算上限，我可以帮你快速算一版更贴合的。你更想省门票，还是省住宿？"
 
         if "下雨" in question or "室内还是室外" in question:
             poi_list = attraction_summary.get("poi_list") or []
