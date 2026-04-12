@@ -147,6 +147,7 @@ def run_cli(app: Any, *, session_id: str = "cli-default", show_json: bool = Fals
     current_session = session_id
     verbose_json = bool(show_json)
     cli_presenter.print_intro(session_id=current_session)
+    runtime_prepared = False
 
     while True:
         try:
@@ -156,6 +157,30 @@ def run_cli(app: Any, *, session_id: str = "cli-default", show_json: bool = Fals
             return
 
         try:
+            if not runtime_prepared:
+                command_probe = parse_cli_command(raw)
+                if command_probe.kind == "natural" and hasattr(app, "ensure_runtime_initialized"):
+                    if hasattr(app, "_print_thinking_steps"):
+                        app._print_thinking_steps([
+                            {
+                                "agent": "系统",
+                                "step": "运行时初始化",
+                                "detail": "🔧 正在初始化核心组件...",
+                                "status": "running",
+                            }
+                        ])
+                    app.ensure_runtime_initialized()
+                    runtime_prepared = True
+                    if hasattr(app, "_print_thinking_steps"):
+                        app._print_thinking_steps([
+                            {
+                                "agent": "系统",
+                                "step": "运行时初始化",
+                                "detail": "✅ 核心组件初始化完成",
+                                "status": "completed",
+                            }
+                        ])
+
             turn = process_cli_turn(
                 app,
                 raw_text=raw,

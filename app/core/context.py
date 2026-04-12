@@ -1188,11 +1188,18 @@ class SessionContext:
         """
         if not self.has_committed_trip():
             return False
+
+        text = str(user_message or "").strip()
+        if not text:
+            return False
+        # 侧问优先走轻量问答，不应误判为 follow-up 重规划。
+        if self.is_side_question(text):
+            return False
         
         # 明确不是 follow-up 的模式（完整新规划关键词）
         full_new_keywords = ("帮我做一个", "帮我规划一个", "我想去旅游", "重新规划")
         for kw in full_new_keywords:
-            if kw in user_message:
+            if kw in text:
                 return False
         
         # 可能是 follow-up 的模式（偏好增强、调整类）
@@ -1202,7 +1209,7 @@ class SessionContext:
             "室内多一点", "室外多一点", "预算改成", "预算调到", "预算调整到",
             "多走路", "少走路", "节奏轻松", "轻松点", "慢一点", "更集中", "别太折腾",
         )
-        return any(kw in user_message for kw in follow_up_keywords)
+        return any(kw in text for kw in follow_up_keywords)
 
     def is_side_question(self, user_message: str) -> bool:
         """

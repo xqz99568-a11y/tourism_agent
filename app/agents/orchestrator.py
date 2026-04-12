@@ -529,10 +529,15 @@ class TaskPlanner:
 
         tasks = self._build_tasks(task_config.get("sub_agents", []))
 
-        destination = extracted_info.get("destination") or (session.trip_context.destination if session else None)
-        duration = extracted_info.get("duration") or (session.trip_context.duration_days if session else None)
-        start_date = extracted_info.get("start_date") or (session.trip_context.start_date if session else None)
-        end_date = extracted_info.get("end_date") or (session.trip_context.end_date if session else None)
+        # FULL_NEW_PLAN 不回填旧会话核心槽位，避免旧预算/旧天数污染新规划。
+        allow_session_core_fallback = route != "FULL_NEW_PLAN"
+        session_trip_context = session.trip_context if session and allow_session_core_fallback else None
+
+        destination = extracted_info.get("destination") or (session_trip_context.destination if session_trip_context else None)
+        duration = extracted_info.get("duration") or (session_trip_context.duration_days if session_trip_context else None)
+        start_date = extracted_info.get("start_date") or (session_trip_context.start_date if session_trip_context else None)
+        end_date = extracted_info.get("end_date") or (session_trip_context.end_date if session_trip_context else None)
+        # 人数保持既有默认逻辑（默认 1 人），避免无必要追问。
         num_travelers = extracted_info.get("num_travelers") or (session.trip_context.num_travelers if session else None)
 
         clarification_questions: List[str] = []
@@ -548,7 +553,8 @@ class TaskPlanner:
             missing_fields.append("travel_time")
             clarification_questions.append("你计划玩几天，或者大概什么时候出发？")
 
-        if not self._has_budget_info(extracted_info, session):
+        budget_session = session if allow_session_core_fallback else None
+        if not self._has_budget_info(extracted_info, budget_session):
             missing_fields.append("budget")
             clarification_questions.append("预算大概是多少？")
 
@@ -1996,7 +2002,6 @@ class AgentOrchestrator:
 
         # 【本轮修复】检测是否是 follow-up：当前有 session destination 且消息不包含新目的地
         session_destination = session.trip_context.destination if session else None
-        is_follow_up = bool(session_destination)
 
         # 检测目的地
         destinations = ["杭州", "北京", "上海", "成都", "西安", "桂林", "深圳", "广州", "厦门", "丽江", "苏州", "南京", "武汉", "重庆", "青岛", "大连", "三亚", "昆明", "哈尔滨", "长沙"]
@@ -2005,6 +2010,12 @@ class AgentOrchestrator:
             if dest in user_message:
                 found_destination = dest
                 break
+
+        # 仅在“未出现新目的地/同目的地”的场景继承旧上下文，
+        # 避免 FULL_NEW_PLAN 被旧预算、旧天数污染。
+        is_follow_up = bool(session_destination) and (
+            not found_destination or found_destination == session_destination
+        )
 
         # 【本轮修复】如果消息没有新目的地，但 session 有目的地，则继承
         if found_destination:
@@ -2781,7 +2792,7 @@ class AgentOrchestrator:
             return "FOLLOW_UP"
 
         # 3. GENERAL_CHAT_OR_SIDE_QUESTION
-        if session.is_side_question(user_message):
+        if self._looks_like_side_question(user_message, session):
             logger.info("[MULTITURN_TRACE] Route: GENERAL_CHAT_OR_SIDE_QUESTION")
             return "GENERAL_CHAT"
 
@@ -2810,6 +2821,33 @@ class AgentOrchestrator:
 
         logger.info("[MULTITURN_TRACE] Route: INCOMPLETE_PLANNING (default)")
         return "INCOMPLETE_PLANNING"
+
+    def _looks_like_side_question(
+        self,
+        user_message: str,
+        session: SessionContext,
+    ) -> bool:
+        text = str(user_message or "").strip()
+        if not text:
+            return False
+        if session.is_side_question(text):
+            return True
+        if not session.has_committed_trip():
+            return False
+
+        side_question_hints = (
+            "交通", "方便吗", "贵不贵", "值不值", "住哪", "住哪个区域",
+            "推荐住哪", "下雨怎么办", "如果下雨", "需要带什么", "穿什么", "天气",
+        )
+        if any(hint in text for hint in side_question_hints):
+            return True
+
+        looks_like_question = ("？" in text) or ("?" in text) or text.endswith("吗")
+        if looks_like_question and not session.is_follow_up_message(text):
+            lightweight_hints = ("预算", "交通", "酒店", "区域", "下雨", "住", "方便")
+            return any(hint in text for hint in lightweight_hints)
+
+        return False
 
     def _is_clarification_answer(
         self,
@@ -2899,7 +2937,8 @@ class AgentOrchestrator:
     ) -> Dict[str, Any]:
         """
         【本轮新增】FULL_NEW_PLAN 的 slot 合并
-        优先级: 显式值 > session 提取值 > committed snapshot 兜底 > 默认值
+        优先级: 当前消息显式值 > 当前消息解析值
+        FULL_NEW_PLAN 不回填旧快照核心槽位。
         """
         merged: Dict[str, Any] = dict(explicit_info or {})
 
@@ -2921,16 +2960,7 @@ class AgentOrchestrator:
         if "destination" not in merged and explicit_info.get("destination"):
             merged["destination"] = explicit_info["destination"]
 
-        # 3. committed snapshot 兜底（只有显式值为空时才用）
-        if committed_snapshot:
-            if "destination" not in merged:
-                merged["destination"] = committed_snapshot.destination
-            if "duration_days" not in merged:
-                merged["duration_days"] = committed_snapshot.duration_days
-            if "budget_amount" not in merged:
-                merged["budget_amount"] = committed_snapshot.budget_amount
-            if "num_travelers" not in merged:
-                merged["num_travelers"] = committed_snapshot.people_count
+        # 3. FULL_NEW_PLAN 禁止旧快照回填核心槽位，避免静默继承旧预算/旧天数。
 
         logger.info(
             f"[MULTITURN_TRACE] Merge for FULL_NEW_PLAN: "
