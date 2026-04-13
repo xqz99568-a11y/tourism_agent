@@ -656,7 +656,8 @@ class AttractionAgent(BaseAgent):
             "输出要求：先给简短结论，再列 3-5 个重点推荐景点及理由，最后补一段怎么选的建议。未知字段请直接写“信息待确认”，不要编造新景点。"
         )
         response = await self.chat(self.build_messages(session, system_prompt))
-        return response.content, response.usage.get("total_tokens", 0)
+        formatted_content = self._format_recommendation_content(destination, pois, response.content)
+        return formatted_content, response.usage.get("total_tokens", 0)
 
     def _record_stage_timing(
         self,
@@ -888,15 +889,138 @@ class AttractionAgent(BaseAgent):
         return "\n".join(lines)
 
     def _build_fallback_content(self, destination: str, pois: List[POI]) -> str:
-        lines = [f"我基于真实 POI 检索为你筛到了这些 {destination} 候选景点："]
-        for index, poi in enumerate(pois[:5], start=1):
-            lines.append(
-                f"{index}. {poi['name']}：{poi.get('category') or '分类待确认'}，开放时间 {poi.get('open_time') or '信息待确认'}，"
-                f"门票 {poi.get('ticket_price') or '信息待确认'}，建议游玩 {poi.get('suggested_duration_hours') or 2.0} 小时，"
-                f"标签 {'、'.join(poi.get('tags') or []) or '无明显标签'}。"
-            )
-        lines.append("如果你告诉我更偏爱文化、亲子、夜景还是休闲路线，我可以继续基于这些真实候选帮你缩小范围。")
+        return self._format_recommendation_content(destination, pois, "")
+
+    def _format_recommendation_content(self, destination: str, pois: List[POI], raw_content: str) -> str:
+        conclusion = self._extract_recommendation_section(
+            raw_content,
+            ("结论：", "结论", "综上所述：", "综上所述"),
+            ("重点推荐景点及理由", "推荐景点", "建议：", "建议"),
+        )
+        if not conclusion:
+            conclusion = f"我基于真实 POI 检索，为你筛出了几处更适合在 {destination} 优先考虑的景点。"
+
+        advice = self._extract_recommendation_section(
+            raw_content,
+            ("建议：", "建议", "怎么选：", "如何选择："),
+            (),
+        )
+        if not advice:
+            advice = f"如果你告诉我更偏向亲子互动、轻松散步、拍照打卡还是室内体验，我可以继续帮你把 {destination} 的候选景点再缩小一轮。"
+
+        lines = [
+            "✨ 结论",
+            conclusion,
+            "",
+            "🎯 推荐景点",
+        ]
+
+        for index, poi in enumerate(pois[:4], start=1):
+            name = str(poi.get("name") or "信息待确认").strip() or "信息待确认"
+            reason = self._build_recommendation_reason(poi)
+            area = str(poi.get("area") or poi.get("address") or "信息待确认").strip() or "信息待确认"
+            ticket_price = str(poi.get("ticket_price") or "信息待确认").strip() or "信息待确认"
+            duration_text = self._format_duration_text(poi.get("suggested_duration_hours"))
+
+            lines.extend([
+                f"{index}. 📍 {name}",
+                f"   ✨ 推荐理由：{reason}",
+                f"   🚇 区域/地址：{area}",
+                f"   🎫 门票：{ticket_price}",
+                f"   ⏰ 建议时长：{duration_text}",
+            ])
+
+        lines.extend([
+            "",
+            "💡 小建议",
+            advice,
+        ])
         return "\n".join(lines)
+
+    def _extract_recommendation_section(
+        self,
+        raw_content: str,
+        markers: tuple[str, ...],
+        stop_markers: tuple[str, ...],
+    ) -> str:
+        text = str(raw_content or "").replace("\r\n", "\n").strip()
+        if not text:
+            return ""
+
+        lines = [line.strip() for line in text.split("\n") if line.strip()]
+        if not lines:
+            return ""
+
+        start_index = None
+        section_text = ""
+        for idx, line in enumerate(lines):
+            for marker in markers:
+                if line.startswith(marker):
+                    start_index = idx
+                    section_text = line[len(marker):].lstrip("：: ").strip()
+                    break
+            if start_index is not None:
+                break
+
+        if start_index is None:
+            if markers and markers[0].startswith("结论"):
+                return lines[0]
+            return ""
+
+        collected = [section_text] if section_text else []
+        for line in lines[start_index + 1:]:
+            if any(line.startswith(stop_marker) for stop_marker in stop_markers):
+                break
+            if re.match(r"^\d+[.、]", line):
+                break
+            collected.append(line)
+
+        return " ".join(part for part in collected if part).strip()
+
+    def _build_recommendation_reason(self, poi: POI) -> str:
+        area = str(poi.get("area") or poi.get("region") or "").strip()
+        if not area:
+            address = str(poi.get("address") or "").strip()
+            if address and address != "信息待确认":
+                area = address.split("，", 1)[0].split(",", 1)[0].strip()
+
+        duration_value = poi.get("suggested_duration_hours")
+        duration_hint = ""
+        try:
+            if duration_value is not None and float(duration_value) <= 4:
+                duration_hint = "，半天到一天安排会更从容"
+        except (TypeError, ValueError):
+            duration_hint = ""
+
+        if poi.get("family_friendly"):
+            experience_hint = "，亲子互动会更自然"
+        elif poi.get("elder_friendly"):
+            experience_hint = "，整体节奏更容易放轻松"
+        else:
+            tags = self._normalize_string_list(poi.get("tags"))
+            if any(tag in " ".join(tags) for tag in ["拍照", "摄影", "夜景", "街区", "散步"]):
+                experience_hint = "，边走边逛边拍会更出片"
+            elif tags:
+                experience_hint = f"，也比较贴合这次想要的{tags[0]}体验"
+            else:
+                category = str(poi.get("category") or "").strip()
+                experience_hint = f"，适合放进这次的{category}向推荐里" if category else ""
+
+        if area and area != "信息待确认":
+            return f"更适合放在{area}一带顺路安排{experience_hint}{duration_hint}。"
+
+        return f"整体更适合做这次路线里的轻松候选点{experience_hint}{duration_hint}。"
+
+    def _format_duration_text(self, duration_value: Any) -> str:
+        try:
+            if duration_value is None:
+                return "信息待确认"
+            duration = float(duration_value)
+            if duration.is_integer():
+                return f"{int(duration)}小时"
+            return f"{duration:.1f}小时"
+        except (TypeError, ValueError):
+            return "信息待确认"
 
     def _format_pois_for_prompt(self, pois: List[POI]) -> str:
         return "\n".join(

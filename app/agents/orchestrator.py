@@ -466,7 +466,7 @@ class TaskPlanner:
         },
         IntentType.ATTRACTION_RECOMMENDATION: {
             "primary_agent": "attraction",
-            "sub_agents": [],
+            "sub_agents": ["attraction"],
             "requires_review": False,
         },
         IntentType.ITINERARY_PLANNING: {
@@ -486,7 +486,7 @@ class TaskPlanner:
         },
         IntentType.ROUTE_CONSULTATION: {
             "primary_agent": "attraction",
-            "sub_agents": [],
+            "sub_agents": ["attraction"],
             "requires_review": False,
         },
         IntentType.GENERAL_CHAT: {
@@ -529,6 +529,13 @@ class TaskPlanner:
 
         tasks = self._build_tasks(task_config.get("sub_agents", []))
 
+        recommendation_intents = {
+            IntentType.ATTRACTION_RECOMMENDATION,
+            IntentType.ROUTE_CONSULTATION,
+        }
+        if intent in recommendation_intents and not tasks:
+            tasks = self._build_tasks(["attraction"])
+
         # FULL_NEW_PLAN 不回填旧会话核心槽位，避免旧预算/旧天数污染新规划。
         allow_session_core_fallback = route != "FULL_NEW_PLAN"
         session_trip_context = session.trip_context if session and allow_session_core_fallback else None
@@ -544,23 +551,37 @@ class TaskPlanner:
         follow_up_questions: List[str] = []
         missing_fields: List[str] = []
 
+        strict_planning_intents = {
+            IntentType.TRIP_PLANNING,
+            IntentType.ITINERARY_PLANNING,
+            IntentType.WEATHER_ADJUSTMENT,
+        }
+        lightweight_recommendation_intents = {
+            IntentType.ATTRACTION_RECOMMENDATION,
+            IntentType.ROUTE_CONSULTATION,
+        }
+
         # A 级核心字段，按优先级排序
         if not destination:
             missing_fields.append("destination")
             clarification_questions.append("你想去哪个城市或目的地旅游？")
 
-        if not duration and not start_date and not end_date:
-            missing_fields.append("travel_time")
-            clarification_questions.append("你计划玩几天，或者大概什么时候出发？")
+        if intent in strict_planning_intents:
+            if not duration and not start_date and not end_date:
+                missing_fields.append("travel_time")
+                clarification_questions.append("你计划玩几天，或者大概什么时候出发？")
 
-        budget_session = session if allow_session_core_fallback else None
-        if not self._has_budget_info(extracted_info, budget_session):
-            missing_fields.append("budget")
-            clarification_questions.append("预算大概是多少？")
+            budget_session = session if allow_session_core_fallback else None
+            if not self._has_budget_info(extracted_info, budget_session):
+                missing_fields.append("budget")
+                clarification_questions.append("预算大概是多少？")
 
-        if not num_travelers:
-            missing_fields.append("people")
-            clarification_questions.append("几个人一起出行？")
+            if not num_travelers:
+                missing_fields.append("people")
+                clarification_questions.append("几个人一起出行？")
+        elif intent in lightweight_recommendation_intents:
+            # 推荐类请求不因 budget / people / duration 缺失而阻塞
+            pass
 
         # B/C 级次要偏好字段（不阻塞规划，但补充后更准确）
         if self._needs_special_requirements_follow_up(extracted_info, session, user_message):
@@ -1273,7 +1294,10 @@ class AgentOrchestrator:
 
         # 记录任务规划结果
         task_list = ", ".join([t.agent_name for t in plan.tasks])
-        execution_strategy = self._generate_execution_strategy(plan.tasks)
+        if intent in {IntentType.ATTRACTION_RECOMMENDATION, IntentType.ROUTE_CONSULTATION}:
+            execution_strategy = "1️⃣ 执行景点推荐：attraction"
+        else:
+            execution_strategy = self._generate_execution_strategy(plan.tasks)
         context.add_thinking_step(
             agent_name="编排器",
             step="任务规划",
@@ -1448,6 +1472,7 @@ class AgentOrchestrator:
         pending_tasks: Dict[str, asyncio.Task] = {}
         started_tasks: set[str] = set()
         planning_results: List[AgentResponse] = []
+        child_agent_results: List[AgentResponse] = []
 
         def start_task(agent_name: str) -> None:
             if agent_name not in task_lookup or agent_name in started_tasks:
@@ -1495,6 +1520,7 @@ class AgentOrchestrator:
                 pending_tasks.pop(agent_name, None)
                 result = await await_agent_result(agent_name, finished_task)
                 context.add_result(agent_name, result)
+                child_agent_results.append(result)
                 self._log_agent_result_summary(request_id, agent_name, result)
                 if agent_name in {"itinerary", "budget"}:
                     planning_results.append(result)
@@ -1510,6 +1536,60 @@ class AgentOrchestrator:
 
                 maybe_start_tasks()
 
+        recommendation_intents = {
+            IntentType.ATTRACTION_RECOMMENDATION,
+            IntentType.ROUTE_CONSULTATION,
+        }
+        if intent in recommendation_intents:
+            attraction_result = next(
+                (r for r in child_agent_results if r.agent_name == "attraction" and r.success),
+                None,
+            )
+
+            final_content = ""
+            if attraction_result and attraction_result.content:
+                final_content = attraction_result.content
+            else:
+                final_content = self._synthesize_response(child_agent_results, context)
+
+            elapsed_time = (time.perf_counter() - start_time) * 1000
+            self._record_stage_timing(stage_timings, "total", elapsed_time, request_id=request_id)
+            self._log_stage_timing_summary(request_id, stage_timings)
+
+            suggestions = self.mode_manager.get_suggestions(DialogMode.QA, emotion)
+
+            context.add_thinking_step(
+                agent_name="系统",
+                step="完成",
+                detail=f"🎉 任务完成！\n⏱️ 总耗时：{elapsed_time:.0f}ms",
+                status="completed",
+            )
+
+            result = {
+                "phase": ExecutionPhase.RESPONSE_SYNTHESIS.value,
+                "status": "completed",
+                "content": final_content,
+                "final_content_already_streamed": False,
+                "execution_time_ms": elapsed_time,
+                "emotion": emotion.emotion.value,
+                "suggestions": suggestions,
+                "review": None,
+                "budget": None,
+                "itinerary": None,
+                "attraction": self._serialize_attraction_result(context),
+                "thinking_steps": [s.to_dict() for s in context.thinking_steps],
+            }
+
+            experiment_metrics = self._collect_experiment_metrics(context) if self.config.experiment_mode else None
+            if self.config.experiment_mode and experiment_metrics:
+                result["experiment_mode"] = True
+                result["collaboration_mode"] = self.config.collaboration_mode
+                result["review_mode"] = self._get_review_mode()
+                result["experiment_case_id"] = self.config.experiment_case_id
+                result["experiment_metrics"] = experiment_metrics
+
+            yield result
+            return
         # 【修复】在执行 Planner 前校验天数，不允许默认 3 天
         if not context.extracted_info.get("duration"):
             # 天数缺失，不执行 planner，直接追问
@@ -2059,18 +2139,29 @@ class AgentOrchestrator:
                 extracted_info["budget_level"] = session.preferences.budget_level
 
         # 检测天数
-        days_match = re.search(r"(\d+)[天日]|[一二三四五六七八九十]+天", user_message)
+        days_match = re.search(r"(?:(\d+)|([一二两三四五六七八九十]))[天日]", user_message)
         if days_match:
-            match = days_match.group(1)
-            if match.isdigit():
-                extracted_info["duration"] = int(match)
-            else:
-                # 中文数字转换
-                chinese_nums = {"一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9, "十": 10}
-                for cn, num in chinese_nums.items():
-                    if cn in match:
-                        extracted_info["duration"] = num
-                        break
+            digit_part = days_match.group(1)
+            cn_part = days_match.group(2)
+
+            if digit_part is not None:
+                extracted_info["duration"] = int(digit_part)
+            elif cn_part is not None:
+                chinese_nums = {
+                    "一": 1,
+                    "二": 2,
+                    "两": 2,
+                    "三": 3,
+                    "四": 4,
+                    "五": 5,
+                    "六": 6,
+                    "七": 7,
+                    "八": 8,
+                    "九": 9,
+                    "十": 10,
+                }
+                if cn_part in chinese_nums:
+                    extracted_info["duration"] = chinese_nums[cn_part]
 
         # 检测人数
         people_match = re.search(r"(\d+)[个人位]|[一两二三四五六七八九十]+个人", user_message)
@@ -2102,6 +2193,31 @@ class AgentOrchestrator:
                 else:
                     extracted_info["budget_level"] = "luxury"
 
+        stripped_message = user_message.strip()
+        numeric_only_match = re.fullmatch(r"(\d{3,7})(?:\.0+)?", stripped_message)
+
+        has_existing_trip_context = False
+        if session is not None:
+            trip_ctx = getattr(session, "trip_context", None)
+            if trip_ctx:
+                if (
+                    getattr(trip_ctx, "destination", None)
+                    or getattr(trip_ctx, "duration_days", None)
+                    or getattr(trip_ctx, "start_date", None)
+                    or getattr(trip_ctx, "end_date", None)
+                ):
+                    has_existing_trip_context = True
+
+        if (
+            numeric_only_match
+            and extracted_info.get("budget") is None
+            and extracted_info.get("budget_amount") is None
+            and has_existing_trip_context
+        ):
+            numeric_budget = float(numeric_only_match.group(1))
+            extracted_info["budget_amount"] = numeric_budget
+            extracted_info["budget"] = numeric_budget
+
         # 检测旅行风格
         style_keywords = {
             "休闲": ["休闲", "放松", "度假", "慢节奏"],
@@ -2120,8 +2236,20 @@ class AgentOrchestrator:
         # 确定意图
         # 【本轮修复】follow-up 场景下，即使消息中没有新目的地，只要有 session 目的地就视为有效规划
         inherited_destination = extracted_info.get("destination")
+        recommendation_keywords = ("推荐", "适合", "哪里", "哪些地方", "景点", "散步地点")
+        planning_keywords = ("规划", "行程", "计划", "攻略")
+
+        has_recommendation_signal = any(keyword in user_message for keyword in recommendation_keywords)
+        has_planning_signal = any(keyword in user_message for keyword in planning_keywords)
+
+        duration_value = extracted_info.get("duration")
+        has_budget_signal = extracted_info.get("budget") is not None or extracted_info.get("budget_amount") is not None
+        has_multi_day_signal = bool(duration_value and int(duration_value) > 1)
+
         if found_destination or inherited_destination:
-            if extracted_info.get("duration") or extracted_info.get("budget"):
+            if has_recommendation_signal and not has_planning_signal and not has_budget_signal and not has_multi_day_signal:
+                intent = IntentType.ATTRACTION_RECOMMENDATION
+            elif has_budget_signal or has_multi_day_signal or has_planning_signal:
                 intent = IntentType.TRIP_PLANNING
             else:
                 intent = IntentType.ATTRACTION_RECOMMENDATION
