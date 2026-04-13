@@ -408,6 +408,43 @@ def create_sse_app(app: TourismSystemApp):
         text = str(payload.get("message") or payload.get("query") or payload.get("req") or "")
         session_id = str(payload.get("session_id") or payload.get("sessionId") or "web-default").strip() or "web-default"
 
+        def build_sse_payload(
+            event_type: str,
+            *,
+            content: str = "",
+            content_kind: str = "none",
+            phase: str = "",
+            status: str = "",
+            base: Optional[Dict[str, Any]] = None,
+            **extra: Any,
+        ) -> Dict[str, Any]:
+            payload: Dict[str, Any] = {}
+            if base:
+                payload.update(
+                    {
+                        key: value
+                        for key, value in base.items()
+                        if key not in {"event", "data", "type", "content", "content_kind", "is_streaming"}
+                    }
+                )
+            payload.update(
+                {
+                    "type": event_type,
+                    "content": content,
+                    "content_kind": content_kind,
+                    "phase": phase,
+                    "status": status,
+                    "timestamp": datetime.now().isoformat(timespec="seconds"),
+                }
+            )
+            for key, value in extra.items():
+                if value is not None:
+                    payload[key] = value
+            return payload
+
+        def make_sse_event(event_name: str, payload_data: Dict[str, Any]) -> Dict[str, Any]:
+            return {"event": event_name, "data": json.dumps(payload_data, ensure_ascii=False)}
+
         async def event_generator():
             from app.core.context import SessionContext
 
@@ -421,6 +458,10 @@ def create_sse_app(app: TourismSystemApp):
                 "event": "connected",
                 "data": json.dumps({
                     "type": "connected",
+                    "content": "",
+                    "content_kind": "none",
+                    "phase": "connection",
+                    "status": "connected",
                     "session_id": session_id,
                     "timestamp": datetime.now().isoformat(timespec="seconds"),
                     "message": "已连接，正在处理您的请求...",
@@ -433,7 +474,7 @@ def create_sse_app(app: TourismSystemApp):
             
             try:
                 # 使用真实的 orchestrator 流式输出
-                async for event in app.orchestrator.process(session, text, session_id):
+                async for event in app.orchestrator.process(app.get_or_create_session(session_id), text, session_id):
                     # 发送思考步骤更新
                     if "thinking_steps" in event and event["thinking_steps"]:
                         new_steps = event["thinking_steps"]
@@ -444,29 +485,81 @@ def create_sse_app(app: TourismSystemApp):
                                 "event": "thinking_step",
                                 "data": json.dumps({
                                     "type": "thinking_step",
+                                    "content": "",
+                                    "content_kind": "none",
+                                    "phase": "agent_step",
+                                    "status": "running",
                                     "step": latest_step,
                                     "all_steps": new_steps,
+                                    "thinking_steps": new_steps,
                                     "timestamp": datetime.now().isoformat(timespec="seconds"),
                                 }, ensure_ascii=False)
                             }
                             last_thinking_count = len(new_steps)
                     
                     # 发送阶段更新
-                    if "phase" in event and "status" in event:
+                    if (
+                        "phase" in event
+                        and "status" in event
+                        and not event.get("is_streaming")
+                        and not (event.get("status") == "completed" and "content" in event)
+                    ):
                         yield {
                             "event": "phase_update",
                             "data": json.dumps({
                                 "type": "phase_update",
+                                "content": "",
+                                "content_kind": "none",
                                 "phase": event.get("phase"),
                                 "status": event.get("status"),
                                 "message": event.get("message", ""),
+                                "thinking_steps": event.get("thinking_steps", []),
+                                "mode": event.get("mode"),
+                                "emotion": event.get("emotion"),
+                                "suggestions": event.get("suggestions"),
+                                "results": event.get("results"),
+                                "agent_metrics": event.get("agent_metrics"),
+                                "review": event.get("review"),
+                                "budget": event.get("budget"),
+                                "itinerary": event.get("itinerary"),
+                                "attraction": event.get("attraction"),
                                 "timestamp": datetime.now().isoformat(timespec="seconds"),
                             }, ensure_ascii=False)
                         }
                     
                     # orchestrator 主动发的 final event（SSE 标准格式）
                     if event.get("event") == "final" and event.get("data"):
-                        yield event
+                        raw_final_data = event.get("data")
+                        if isinstance(raw_final_data, str):
+                            try:
+                                parsed_final = json.loads(raw_final_data)
+                            except json.JSONDecodeError:
+                                parsed_final = {"content": raw_final_data}
+                        elif isinstance(raw_final_data, dict):
+                            parsed_final = raw_final_data
+                        else:
+                            parsed_final = {}
+                        yield {
+                            "event": "final",
+                            "data": json.dumps({
+                                "type": "final",
+                                "content": str(parsed_final.get("content") or ""),
+                                "content_kind": "final_full",
+                                "phase": parsed_final.get("phase", event.get("phase", "response_synthesis")),
+                                "status": parsed_final.get("status", event.get("status", "completed")),
+                                "timestamp": datetime.now().isoformat(timespec="seconds"),
+                                **(
+                                    {
+                                        k: v
+                                        for k, v in parsed_final.items()
+                                        if k not in {"type", "content", "content_kind", "phase", "status"}
+                                    }
+                                    if isinstance(parsed_final, dict)
+                                    else {}
+                                ),
+                            }, ensure_ascii=False)
+                        }
+                        continue
 
                     # 发送正文增量（planner 的 streaming chunk）
                     if event.get("is_streaming") and isinstance(event.get("content"), str) and event.get("content"):
@@ -476,8 +569,12 @@ def create_sse_app(app: TourismSystemApp):
                             "event": "streaming",
                             "data": json.dumps({
                                 "type": "streaming",
+                                "content_kind": "delta",
                                 "content": event.get("content", ""),
                                 "phase": event.get("phase"),
+                                "status": event.get("status", "running"),
+                                "agent": event.get("agent"),
+                                "thinking_steps": event.get("thinking_steps", []),
                                 "timestamp": datetime.now().isoformat(timespec="seconds"),
                             }, ensure_ascii=False)
                         }
@@ -485,18 +582,23 @@ def create_sse_app(app: TourismSystemApp):
                     # 发送最终结果（orchestrator 返回的 content 事件）
                     if event.get("status") == "completed" and "content" in event:
                         final_text = event.get("content", "") or ""
-                        if sent_streaming_chunks and event.get("final_content_already_streamed"):
-                            # 已经通过 streaming 事件增量发完正文，这里 final 只做结束标记，避免整段覆盖
-                            final_text = ""
                         final_event = {
                             "event": "final",
                             "data": json.dumps({
                                 "type": "final",
                                 "content": final_text,
+                                "content_kind": "final_full",
+                                "phase": event.get("phase", "response_synthesis"),
+                                "status": event.get("status", "completed"),
                                 "thinking_steps": event.get("thinking_steps", []),
                                 "execution_time_ms": event.get("execution_time_ms", 0),
                                 "emotion": event.get("emotion", "neutral"),
                                 "suggestions": event.get("suggestions", []),
+                                "final_content_already_streamed": event.get("final_content_already_streamed", False),
+                                "review": event.get("review"),
+                                "budget": event.get("budget"),
+                                "itinerary": event.get("itinerary"),
+                                "attraction": event.get("attraction"),
                                 "timestamp": datetime.now().isoformat(timespec="seconds"),
                             }, ensure_ascii=False)
                         }
@@ -509,7 +611,7 @@ def create_sse_app(app: TourismSystemApp):
                         yield final_event
                         
                         # 记录到会话
-                        session.add_turn(
+                        app.get_or_create_session(session_id).add_turn(
                             user_message=text,
                             ai_message=(streaming_content or event.get("content", "")),
                         )
@@ -519,6 +621,10 @@ def create_sse_app(app: TourismSystemApp):
                     "event": "error",
                     "data": json.dumps({
                         "type": "error",
+                        "content": "",
+                        "content_kind": "none",
+                        "phase": "error",
+                        "status": "failed",
                         "message": str(exc),
                         "timestamp": datetime.now().isoformat(timespec="seconds"),
                     }, ensure_ascii=False)
@@ -529,6 +635,10 @@ def create_sse_app(app: TourismSystemApp):
                 "event": "done",
                 "data": json.dumps({
                     "type": "done",
+                    "content": "",
+                    "content_kind": "none",
+                    "phase": "connection",
+                    "status": "completed",
                     "timestamp": datetime.now().isoformat(timespec="seconds"),
                 }, ensure_ascii=False)
             }

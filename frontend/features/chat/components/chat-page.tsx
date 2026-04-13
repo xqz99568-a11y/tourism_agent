@@ -180,10 +180,16 @@ export function ChatPage() {
         const data = event.data as Record<string, unknown>;
 
         // ── agent_step / pipeline 阶段 ──────────────────────────────────
-        if (event.type === "agent_step") {
+        if (
+          event.type === "agent_step" ||
+          event.type === "phase_update" ||
+          event.type === "thinking_step"
+        ) {
           // 同步 thinking_steps
           if (data.thinking_steps && Array.isArray(data.thinking_steps)) {
             setThinkingSteps(data.thinking_steps as ThinkingStep[]);
+          } else if (data.all_steps && Array.isArray(data.all_steps)) {
+            setThinkingSteps(data.all_steps as ThinkingStep[]);
           }
 
           // 更新 agent metrics
@@ -244,8 +250,19 @@ export function ChatPage() {
         if (event.type === "final") {
           const finalContent = data.content;
           if (typeof finalContent === "string" && finalContent.trim().length > 0) {
-            streamingContent = finalContent;
-            patchMessage(currentAssistantMsgId, { content: finalContent });
+            if (!streamingContent) {
+              streamingContent = finalContent;
+              patchMessage(currentAssistantMsgId, { content: finalContent });
+            } else if (finalContent.startsWith(streamingContent)) {
+              const tail = finalContent.slice(streamingContent.length);
+              if (tail) {
+                streamingContent += tail;
+                patchMessage(currentAssistantMsgId, { content: streamingContent });
+              }
+            } else {
+              streamingContent = finalContent;
+              patchMessage(currentAssistantMsgId, { content: finalContent });
+            }
           }
           setProcessingStates([]);
           clearThinkingSteps();

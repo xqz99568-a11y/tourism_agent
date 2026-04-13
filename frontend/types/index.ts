@@ -142,6 +142,9 @@ export type StreamEventType =
   | "agent_complete"
   | "agent_step"
   | "thinking_step"
+  | "phase_update"
+  | "connected"
+  | "done"
   | "streaming"
   | "final"
   | "error";

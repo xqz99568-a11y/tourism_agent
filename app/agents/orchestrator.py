@@ -1478,10 +1478,6 @@ class AgentOrchestrator:
                 start_task("budget")
 
         maybe_start_tasks()
-        refresh_stream_target()
-        draft_event = build_progressive_event()
-        if draft_event:
-            yield draft_event
 
         while pending_tasks:
             done, _ = await asyncio.wait(
@@ -1490,10 +1486,6 @@ class AgentOrchestrator:
                 return_when=asyncio.FIRST_COMPLETED,
             )
             if not done:
-                refresh_stream_target()
-                draft_event = build_progressive_event()
-                if draft_event:
-                    yield draft_event
                 continue
             for finished_task in done:
                 agent_name = next(
@@ -1516,15 +1508,7 @@ class AgentOrchestrator:
                             "thinking_steps": [s.to_dict() for s in context.thinking_steps],
                         }
 
-                if agent_name in {"attraction", "itinerary", "budget", "weather"}:
-                    refresh_stream_target()
-
                 maybe_start_tasks()
-
-            refresh_stream_target()
-            draft_event = build_progressive_event()
-            if draft_event:
-                yield draft_event
 
         # 【修复】在执行 Planner 前校验天数，不允许默认 3 天
         if not context.extracted_info.get("duration"):
@@ -1558,11 +1542,6 @@ class AgentOrchestrator:
             self._log_stage_timing_summary(request_id, stage_timings)
             return
 
-        refresh_stream_target()
-        draft_event = build_progressive_event()
-        if draft_event:
-            yield draft_event
-
         # 执行主 Planner（正式结果）
         context.add_thinking_step(
             agent_name="编排器",
@@ -1575,33 +1554,70 @@ class AgentOrchestrator:
             ],
         )
 
-        planner_task = TaskSchema(
-            task_id="planner_main",
-            description="Execute planner agent",
-            agent_name="planner",
-            dependencies=[],
-        )
-
-        # 获取 planner 实例
         planner_response = None
         planner_start = time.perf_counter()
 
-        planner_task_future = asyncio.create_task(
-            self._execute_single_task(planner_task, session, context)
-        )
-        while True:
-            done, _ = await asyncio.wait(
-                [planner_task_future],
-                timeout=_next_stream_tick_seconds(),
-                return_when=asyncio.FIRST_COMPLETED,
+        yield {
+            "phase": ExecutionPhase.RESPONSE_SYNTHESIS.value,
+            "status": "running",
+            "message": "正在生成最终响应...",
+            "thinking_steps": [s.to_dict() for s in context.thinking_steps],
+        }
+
+        try:
+            if planner and hasattr(planner, "execute_stream"):
+                if follow_up_lead_in:
+                    lead_in_chunk = f"{follow_up_lead_in}\n\n"
+                    planner_streaming_content += lead_in_chunk
+                    yield {
+                        "phase": ExecutionPhase.RESPONSE_SYNTHESIS.value,
+                        "status": "running",
+                        "content": lead_in_chunk,
+                        "is_streaming": True,
+                        "agent": "planner",
+                        "thinking_steps": [s.to_dict() for s in context.thinking_steps],
+                    }
+                async for planner_item in planner.execute_stream(session, context):
+                    if isinstance(planner_item, str):
+                        if not planner_item:
+                            continue
+                        planner_streaming_content += planner_item
+                        yield {
+                            "phase": ExecutionPhase.RESPONSE_SYNTHESIS.value,
+                            "status": "running",
+                            "content": planner_item,
+                            "is_streaming": True,
+                            "agent": "planner",
+                            "thinking_steps": [s.to_dict() for s in context.thinking_steps],
+                        }
+                        await asyncio.sleep(0)
+                    else:
+                        planner_response = planner_item
+            else:
+                planner_task = TaskSchema(
+                    task_id="planner_main",
+                    description="Execute planner agent",
+                    agent_name="planner",
+                    dependencies=[],
+                )
+                planner_response = await await_agent_result(
+                    "planner",
+                    asyncio.create_task(self._execute_single_task(planner_task, session, context)),
+                )
+        except Exception as exc:
+            logger.exception(f"Planner streaming execution failed request_id={request_id}: {exc}")
+            planner_response = AgentResponse(
+                agent_name="planner",
+                status=AgentStatus.FAILED,
+                content="",
+                error=str(exc),
             )
-            if done:
-                break
-            refresh_stream_target()
-            draft_event = build_progressive_event()
-            if draft_event:
-                yield draft_event
-        planner_response = await await_agent_result("planner", planner_task_future)
+        if planner_response is None:
+            planner_response = AgentResponse(
+                agent_name="planner",
+                status=AgentStatus.COMPLETED,
+                content=planner_streaming_content,
+            )
         planning_results.append(planner_response)
 
         if planner_response:
@@ -1653,10 +1669,6 @@ class AgentOrchestrator:
                         )
                         if done:
                             break
-                        refresh_stream_target()
-                        draft_event = build_progressive_event()
-                        if draft_event:
-                            yield draft_event
                     review_result = await await_agent_result("review", review_task_future)
                     review_duration_ms = (time.perf_counter() - review_start) * 1000
                     self._record_stage_timing(stage_timings, "review", review_duration_ms, request_id=request_id)
@@ -1729,27 +1741,11 @@ class AgentOrchestrator:
         if route == "FOLLOW_UP" and final_content:
             final_content = f"{self._build_follow_up_lead_in(user_message, extracted_info, session)}\n\n{final_content}"
 
-        # 【最小修复】若前面已经输出了部分正文草稿，这里把剩余正文继续按 chunk 补齐，避免最后整段一次性吐出。
-        final_content_already_streamed = False
-        if isinstance(final_content, str) and final_content:
-            if not planner_streaming_content or final_content.startswith(planner_streaming_content):
-                while len(planner_streaming_content) < len(final_content):
-                    suffix = final_content[len(planner_streaming_content):]
-                    chunk = _select_stream_chunk(suffix, _next_stream_chunk_size())
-                    if not chunk:
-                        break
-                    planner_streaming_content += chunk
-                    yield {
-                        "phase": phase.value,
-                        "status": "running",
-                        "content": chunk,
-                        "is_streaming": True,
-                        "agent": "planner",
-                        "thinking_steps": [s.to_dict() for s in context.thinking_steps],
-                    }
-                    await asyncio.sleep(0)
-
-            final_content_already_streamed = planner_streaming_content == final_content
+        final_content_already_streamed = bool(
+            isinstance(final_content, str)
+            and final_content
+            and planner_streaming_content == final_content
+        )
 
         result = {
             "phase": phase.value,
