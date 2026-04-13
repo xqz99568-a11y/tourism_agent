@@ -36,6 +36,9 @@ PLANNER_CONFIG = AgentConfig(
 class PlannerAgent(BaseAgent):
     """负责接收用户请求、整合子 Agent 结果并生成最终规划。"""
 
+    PLAN_ASSISTANT_TITLE = "旅游规划助手"
+    STREAM_CANONICAL_PLAN_MARKER = "【最终规划正文】"
+
     GENERIC_ASSISTANT_MARKERS = (
         "您好！看起来您可能",
         "您好！我是您的智能旅行规划助手",
@@ -243,114 +246,21 @@ class PlannerAgent(BaseAgent):
         travel_styles: List[str],
     ) -> List[LLMMessage]:
         """构建用于原生流式渲染的系统提示 + 用户消息。"""
-        agent_results = planner_context.get("agent_results", {})
-        structured_summary = planner_context.get("structured_summary", {})
+        final_content = str(planner_context.get("final_content") or "").strip()
+        system_prompt = f"""你是旅游规划助手的流式展示渲染器。
+你的唯一任务，是把用户提供的最终旅游规划文本逐字输出为流式内容。
 
-        # 景点概览
-        pois = structured_summary.get("attraction", {}).get("pois") or []
-        poi_lines: List[str] = []
-        for poi in pois[:8]:
-            name = str(poi.get("name") or "").strip()
-            if not name:
-                continue
-            desc = str(poi.get("description") or "")[:80].strip()
-            tags = "、".join((poi.get("tags") or [])[:5])
-            region = str(poi.get("region") or poi.get("district") or destination).strip()
-            line = f"- {name}（{region}）"
-            if tags:
-                line += f"，标签：{tags}"
-            if desc:
-                line += f"，{desc}"
-            poi_lines.append(line)
-
-        # 行程概览
-        itinerary_data = structured_summary.get("itinerary", {}).get("data", {})
-        daily_plans = itinerary_data.get("daily_plans") or []
-        day_lines: List[str] = []
-        for plan in daily_plans:
-            day = plan.get("day", "?")
-            theme = str(plan.get("theme") or "").strip()
-            items = plan.get("items") or []
-            item_names = [str(i.get("name") or "") for i in items if i.get("category") != "rest"]
-            day_lines.append(
-                f"- Day {day}：{theme}｜{' → '.join(item_names[:5]) if item_names else '待安排'}"
-            )
-
-        # 预算概览
-        budget_data = structured_summary.get("budget", {})
-        total = budget_data.get("total_budget") or budget_data.get("confirmed_total_cost") or "待确认"
-        food_budget = budget_data.get("food_cost") or "待确认"
-        lunch_each = budget_data.get("lunch_per_day") or ""
-        ticket_confirmed = budget_data.get("confirmed_ticket_cost") or 0
-
-        # 天气概览（只引用真实数据）
-        weather_data = structured_summary.get("weather", {})
-        weather_summary_text = "天气数据获取中，请参考当地实时预报。"
-        if weather_data and weather_data.get("data"):
-            forecasts = weather_data["data"].get("daily_forecasts") or []
-            if forecasts:
-                weather_lines = []
-                for fc in forecasts[:3]:
-                    date = fc.get("date", "?")
-                    weather_type = fc.get("weather_type") or fc.get("type") or "未知"
-                    temp_high = fc.get("temperature_max") or fc.get("temp_max") or "?"
-                    temp_low = fc.get("temperature_min") or fc.get("temp_min") or "?"
-                    weather_lines.append(f"  • {date}：{weather_type}，{temp_low}~{temp_high}°C")
-                if weather_lines:
-                    weather_summary_text = "\n".join(weather_lines)
-
-        # 构建系统提示（严格约束输出格式）
-        styles_text = "、".join(travel_styles) if travel_styles else "综合"
-        system_prompt = f"""你是一个专业的旅游规划文案助手。
-你的职责是把已准备好的结构化旅游规划数据，以自然、流畅的原生大模型文本流形式输出。
-【严格约束】
-1. 必须严格遵循以下章节顺序：目的地概览 → 每日行程 → 预算 → 天气 → 实用贴士 → 结束语
-2. emoji、章节标题、表头、字段名必须严格保持不变（见下方规范）
-3. 不要臆造任何景点、餐厅、活动，只基于以下事实数据输出
-4. 天气信息只能引用真实预报数据，禁止自行补充数值
-5. 景点推荐理由要自然流畅，不要机械罗列标签
-6. 不要出现"高优先级 0 个"、"室内 0 个"、"室外 0 个"这类统计句
-
-【章节格式规范】
-- 目的地概览：## 🌟 1️⃣ 目的地概览
-- 每日行程：## 📆 2️⃣ 每日行程安排（{duration}天）
-  - 每 Day：### Day X️⃣ - 主题名（emoji）
-  - 上午：🌅 上午安排，格式：景点名（推荐理由）
-  - 午餐：🍜 午餐安排，格式：区域 + 特色美食
-  - 下午：🌇 下午安排，格式：景点名（推荐理由）
-  - 晚间：🌃 晚间活动，格式：景点名（推荐理由）或"在 XX 一带自由探索"
-- 预算：## 💰 3️⃣ 预算概览
-- 天气：## 🌤️ 4️⃣ 当地天气预报
-- 贴士：## 💡 5️⃣ 实用贴士
-- 结束语：## ✅ 祝旅途愉快！
-
-当前规划数据如下："""
-
-        # 构建用户消息（包含所有事实）
-        user_content = f"""请根据以下结构化数据生成完整的旅游规划文案，以原生流式方式输出。
-
-【目的地】{destination}
-【天数】{duration}天
-【人数】{num_travelers}人
-【预算】{budget}
-【旅行风格】{styles_text}
-
-【推荐景点（{len(pois)}个）】
-{chr(10).join(poi_lines) if poi_lines else "景点数据获取中，请根据目的地常见景点生成自然导语。"}
-
-【每日行程安排】
-{chr(10).join(day_lines) if day_lines else "行程数据获取中。"}
-
-【预算详情】
-- 总预算：{total}元
-- 餐饮预算：{food_budget}元
-- 单次午餐参考：{lunch_each}元/次
-- 已确认门票：{ticket_confirmed}元
-
-【当地天气预报（真实数据）】
-{weather_summary_text}
-
-请开始生成完整规划文案："""
+严格要求：
+1. 必须逐字输出，不得增删改任何标题、emoji、Day 行、小标题、表格列名、标点、空行或换行
+2. 不要补充解释、前言、后记、代码块、调试信息或字段名
+3. 第一行必须是“{self.PLAN_ASSISTANT_TITLE}”
+4. 第二行必须是“# 🧭 {destination} 旅行规划”
+"""
+        user_content = (
+            "请从第一行开始，原样输出下面这份最终旅游规划，不要做任何改写。\n\n"
+            f"{self.STREAM_CANONICAL_PLAN_MARKER}\n"
+            f"{final_content}"
+        )
 
         return [
             LLMMessage(role="system", content=system_prompt),
@@ -770,7 +680,7 @@ class PlannerAgent(BaseAgent):
         include_closing: bool = True,
     ) -> List[str]:
         sections = [
-            f"# 🧭 {destination} 旅行规划",
+            f"{self.PLAN_ASSISTANT_TITLE}\n# 🧭 {destination} 旅行规划",
             self._render_overview_section(destination, structured_summary, agent_results, sanitized_contents),
         ]
         if include_daily:
@@ -982,7 +892,7 @@ class PlannerAgent(BaseAgent):
             sections.extend(
                 [
                     "",
-                    f"### Day {day_emoji} - {theme}",
+                    f"Day {day_emoji} - {theme}",
                     self._render_day_slot("🌅 上午安排", morning_items, "09:00-11:30", region, "适合用来开启当天主线景点，避开后续高峰。"),
                     self._render_lunch_slot(lunch_spot, region, budget_data, destination),
                     self._render_day_slot("🌇 下午安排", afternoon_items, "14:00-17:00", region, "把同一区域景点放在同一时段，更省通勤时间。"),
@@ -1096,7 +1006,7 @@ class PlannerAgent(BaseAgent):
                 "## 💰 3️⃣ 预算估算",
                 intro,
                 "",
-                "### 📊 费用总览",
+                "### 💵 📊 费用总览",
                 *table_lines,
                 "",
                 "### 💡 省钱技巧",
@@ -2686,200 +2596,13 @@ class PlannerAgent(BaseAgent):
         travel_styles: List[str],
         planner_context: Dict[str, Any],
     ) -> str:
-        styles_str = ", ".join(travel_styles) if travel_styles else "综合"
-        conflict_text = "\n".join(
-            [f"- [{conflict['level']}] {conflict['message']}" for conflict in planner_context["conflicts"]]
-        ) or "- 未识别到明显冲突"
-        rationale_text = "\n".join([f"- {item}" for item in planner_context["planning_rationale"]]) or "- 基于现有结果保守整合"
-
-        return f"""你是一位热情专业的旅游规划助手，正在为用户整合 {destination} 的旅行方案。
-
-当前规划参数：
-- 目的地：{destination}
-- 行程天数：{duration}天
-- 出行人数：{num_travelers}人
-- 预算：{budget}
-- 旅行风格：{styles_str}
-
-以下是已经完成的结构化整合与基础校验，请基于这些已决策结果进行自然语言润色，不要推翻既有约束：
-
-【决策摘要】
-{planner_context['decision_summary']}
-
-【安排理由 / 决策依据】
-{rationale_text}
-
-【冲突检查】
-{conflict_text}
-
-【各 Agent 文本结果（仅作补充参考）】
-{planner_context['other_results_text']}
-
-请严格按照以下格式输出完整的旅游规划，使用 emoji 丰富内容：
-
-# 🗼 {destination} 旅行规划
-
-## 🌟 1️⃣ 目的地概览
-
-### 📖 简介和特色亮点
-[用2-3句话描述目的地的特点]
-
-### 🌸 最佳旅行季节
-- ⭐ **最佳季节**：[月份]
-- 🌡️ **气候特点**：[气候描述]
-- 🎫 **淡旺季**：[淡旺季说明]
-
-### 🍜 必吃美食
-1. **[美食名称]** - [简介]
-2. **[美食名称]** - [简介]
-3. **[美食名称]** - [简介]
-
-### 🎁 必买特产
-1. **[特产名称]** - [购买地点]
-2. **[特产名称]** - [购买地点]
-
----
-
-## 📆 2️⃣ 每日行程安排（{duration}天）
-
-### Day 1️⃣ - [主题名称]
-
-#### 🕘 上午安排
-- ⏰ **时间**：09:00
-- 📍 **地点**：[景点名称]
-- 💡 **推荐理由**：[推荐原因]
-
-#### 🍜 午餐推荐
-- ⏰ **时间**：12:00
-- 📍 **地点**：[餐厅或区域]
-- 💰 **人均**：[价格]元
-- 🍽️ **推荐菜品**：[菜品名称]
-
-#### 🕑 下午安排
-- ⏰ **时间**：14:00
-- 📍 **地点**：[景点名称]
-- 💡 **推荐理由**：[推荐原因]
-
-#### 🌙 晚间活动
-- ⏰ **时间**：19:00
-- 📍 **地点**：[活动地点]
-- 🎉 **推荐理由**：[推荐原因]
-
-#### 📌 今日小贴士
-- ⚠️ [注意事项1]
-- ⚠️ [注意事项2]
-
-[按照同样的格式继续 Day 2、Day 3...]
-
----
-
-## 💰 3️⃣ 预算估算
-
-### 📊 费用总览
-[基于实际计算的各项费用，使用表格]
-
-| 类别 | 金额/总行程 | 占比 |
-|------|------------|------|
-| 🚗 交通 | xxx元 | xx% |
-| 🏨 住宿 | xxx元 | xx% |
-| 🍜 餐饮 | xxx元 | xx% |
-| 🎫 门票 | xxx元 | xx% |
-| 🛍️ 购物 | xxx元 | xx% |
-| **总计** | **xxx元** | **100%** |
-
-### 💡 省钱技巧
-
-#### 🛫 交通省钱
-- [技巧1] xxx
-- [技巧2] xxx
-
-#### 🏨 住宿省钱
-- [技巧1] xxx
-- [技巧2] xxx
-
-#### 🍜 餐饮省钱
-- [技巧1] xxx
-- [技巧2] xxx
-
-#### 🎫 门票省钱
-- [技巧1] xxx
-- [技巧2] xxx
-
----
-
-## ⚠️ 4️⃣ 实用贴士
-
-### 🎒 行前准备清单
-
-#### ⭐ 必带物品
-- 📋 [证件类]
-- 👕 [衣物类]
-- 🔋 [电子产品]
-- 💊 [常备药品]
-
-### 🙏 当地礼仪和禁忌
-- ⚠️ [礼仪1]
-- ⚠️ [礼仪2]
-
-### 🔒 安全提示
-- 🔐 [安全提示1]
-- 🔐 [安全提示2]
-
----
-
-## 🌤️ 5️⃣ 天气信息
-
-### 📊 整体天气概况
-- 🌡️ **温度范围**：[温度范围，若无真实数据则输出“暂未获取到可靠数据”]
-- ☀️ **天气状况**：[天气描述，若无可用数据则输出“暂未获取到可靠数据”]
-- 💧 **出行指数**：[星级][评价，若无可用数据则输出“暂未获取到可靠数据”]
-
-### 📔 每日天气详情
-[仅当 weather agent 返回了真实 daily_forecasts 时，才在此渲染逐日表格；
-若 weather agent degraded=true 或 daily_forecasts 为空/不足，**禁止在此处自行补充任何逐日天气数据**，
-只输出一行降级说明：「暂未获取到可靠天气预报，请以临近出发时实时预报为准」，
-不要猜测日期、天气类型、温度、风力或出行建议。]
-
-### 👗 穿搭建议
-[仅当有真实逐日预报数据时，基于 weather agent 返回的每日最高/最低温度和天气类型生成穿搭建议；
-无数据时输出：「天气数据暂不可用，出发前请查看实时天气预报自行准备穿搭」，
-**不要自行编造具体温度或天气**。]
-
-### 📋 物品清单
-
-#### ⭐ 必带物品
-- [物品列表]
-
-#### 🌤️ 根据天气必带
-[仅当有真实天气数据时，基于降水概率、高温、大风等字段添加相应物品；
-无数据时输出：「天气数据暂不可用，请出发前查看实时天气预报」，
-**不要自行推断降水概率或温度区间**。]
-
-### 💡 实用建议
-[仅当有真实天气数据时，基于 risk_tags、alternatives 等字段生成实用建议；
-无数据时输出：「天气数据暂不可用，建议出行前关注实时天气以获取准确建议」，
-**不要自行编造雨具建议、防晒建议等具体内容**。]
-
-### 🌈 6️⃣ 特别提醒
-[仅当有真实天气数据时，基于 risk_tags 生成特别提醒（如防晒/防雨/保暖）；
-无数据时输出：「天气数据暂不可用，建议出行前关注实时天气预报以获取准确提醒」，
-**不要自行编造具体天气提醒内容**。]
-
----
-
-✨ **祝您旅途愉快！期待您的 {destination} 之行！** 🗼
-
-输出要求：
-1. 严格按照上述格式输出，不要省略任何部分
-2. 每日行程要包含上午、午餐、下午、晚间四个时段
-3. 每个景点都要给出推荐理由（"为什么这么安排"）
-4. 预算数据必须基于实际的费用计算结果
-5. 天气信息**只能引用 weather agent 返回的真实结构化数据**；weather agent degraded=true 或 daily_forecasts 为空时，天气部分**严禁自行补充逐日数值**（禁止猜测日期、天气类型、温度、风力、降水概率），只输出明确的降级说明
-6. 实用贴士要包含行前准备、礼仪禁忌、安全提示
-7. 不要把未校验的新景点当作核心安排强行加入
-8. 保留冲突检查中发现的风险提示
-9. **【天气部分绝对禁止】**：当 weather agent 未返回有效 daily_forecasts 时，不允许在「每日天气详情」「穿搭建议」「根据天气必带」「实用建议」等子节中自行编写具体日期、具体温度、具体天气描述、具体风力或具体出行建议，一经发现视为严重幻觉错误
-"""
+        final_content = str(planner_context.get("final_content") or "").strip()
+        return (
+            "你是旅游规划助手的最终文案渲染器。\n"
+            "请逐字输出下面这份已经校验完成的最终旅游规划，不要改写标题、emoji、Day 层级、表格列名或段落结构。\n\n"
+            f"{self.STREAM_CANONICAL_PLAN_MARKER}\n"
+            f"{final_content}"
+        )
 
     def _parse_price(self, price_text: str) -> float:
         if not price_text or "免费" in price_text:

@@ -225,17 +225,28 @@ def test_planner_renders_rich_sections_for_beijing_and_hangzhou() -> None:
         response = asyncio.run(planner.execute(session, context))
 
         assert response.status == AgentStatus.COMPLETED
+        assert response.content.startswith(f"旅游规划助手\n# 🧭 {destination} 旅行规划")
         assert f"# 🧭 {destination} 旅行规划" in response.content
         assert "## 🌟 1️⃣ 目的地概览" in response.content
         assert "## 📆 2️⃣ 每日行程安排（3天）" in response.content
         assert "## 💰 3️⃣ 预算估算" in response.content
         assert "## ⚠️ 4️⃣ 实用贴士" in response.content
         assert "## 🌤️ 5️⃣ 天气信息" in response.content
+        assert "### 💵 📊 费用总览" in response.content
+        assert "### 📊 整体天气概况" in response.content
+        assert "### 📅 每日天气详情" in response.content
+        assert "### 👗 穿搭建议" in response.content
+        assert "### 📝 实用建议" in response.content
         assert "| 类别 | 预计费用 | 说明 |" in response.content
         assert "| 日期 | 天气 | 温度 | 出行提示 |" in response.content
-        assert "Day 1️⃣" in response.content
-        assert "Day 2️⃣" in response.content
-        assert "Day 3️⃣" in response.content
+        assert "Day 1️⃣ - " in response.content
+        assert "Day 2️⃣ - " in response.content
+        assert "Day 3️⃣ - " in response.content
+        assert "#### 🌅 上午安排" in response.content
+        assert "#### 🍽️ 午餐推荐" in response.content
+        assert "#### 🌇 下午安排" in response.content
+        assert "#### 🌃 晚间活动" in response.content
+        assert "#### 📌 今日小贴士" in response.content
         assert "数据来源：和风天气（QWeather）" not in response.content
         assert "天气来源：" not in response.content
         assert "天气类型：" not in response.content
@@ -256,6 +267,32 @@ def test_planner_execute_stream_matches_execute_output() -> None:
 
     assert streamed_response.status == AgentStatus.COMPLETED
     assert streamed_text == streamed_response.content
+    assert streamed_response.content == execute_response.content
+
+
+def test_planner_execute_stream_uses_same_canonical_rendered_content_with_llm_stream() -> None:
+    class EchoStreamPlanner(PlannerAgent):
+        async def chat_stream(self, messages):
+            assert len(messages) == 2
+            assert "逐字输出" in messages[0].content
+            assert "旅游规划助手" in messages[0].content
+            assert self.STREAM_CANONICAL_PLAN_MARKER in messages[1].content
+            canonical_text = messages[1].content.split(f"{self.STREAM_CANONICAL_PLAN_MARKER}\n", 1)[1]
+            split_at = max(len(canonical_text) // 2, 1)
+            yield canonical_text[:split_at]
+            yield canonical_text[split_at:]
+
+    planner = EchoStreamPlanner(llm=object())
+    session, context = _build_context("北京")
+    execute_response = asyncio.run(planner.execute(session, context))
+
+    stream_session, stream_context = _build_context("北京")
+    streamed_text, streamed_response = asyncio.run(
+        _collect_stream_output(planner, stream_session, stream_context)
+    )
+
+    assert streamed_response.status == AgentStatus.COMPLETED
+    assert streamed_text == execute_response.content
     assert streamed_response.content == execute_response.content
 
 
