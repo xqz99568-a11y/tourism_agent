@@ -110,6 +110,10 @@ class TourismSystemApp:
         clarification_message = ""
         questions = []
         missing_fields = []
+        cli_streaming_started = False
+        cli_streamed_any = False
+        streamed_content = ""
+        cli_stream_output_closed = False
 
         try:
             async for event in self.orchestrator.process(session, text, session_id):
@@ -130,8 +134,30 @@ class TourismSystemApp:
                         last_step_count = len(new_steps)
                     thinking_steps = new_steps
 
+                # 处理 planner 正文流式输出（仅 CLI handle_query 使用）
+                if event.get("is_streaming") and isinstance(event.get("content"), str):
+                    chunk = event.get("content", "")
+                    if chunk:
+                        if not cli_streaming_started:
+                            print("\n系统> 最终答复：")
+                            cli_streaming_started = True
+                        print(chunk, end="", flush=True)
+                        streamed_content += chunk
+                        cli_streamed_any = True
+
                 if event.get("status") == "completed" and "content" in event:
-                    final_content = event["content"]
+                    final_content = event["content"] or ""
+
+                    if cli_streamed_any and not cli_stream_output_closed:
+                        # 如果 completed 事件里还有 streaming 尚未打印的尾巴，则只补齐尾巴，避免整段重复
+                        if isinstance(final_content, str) and final_content.startswith(streamed_content):
+                            tail = final_content[len(streamed_content):]
+                            if tail:
+                                print(tail, end="", flush=True)
+                                streamed_content += tail
+                        # 收尾换行，避免后续“系统> 处理完成”顶在同一行
+                        print()
+                        cli_stream_output_closed = True
 
                 if "results" in event:
                     responses = event["results"]
@@ -153,6 +179,7 @@ class TourismSystemApp:
 
         # 构建结果
         result = {
+            "cli_streamed": cli_streamed_any,
             "系统答复": final_content or "抱歉，暂时无法处理您的请求。",
             "会话ID": session_id,
             "轮次": session.turn_count,

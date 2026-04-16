@@ -62,6 +62,7 @@ def print_app_result(out: Dict[str, Any], *, show_json: bool) -> None:
     followup = _pick_nested_dict(out, "追问状态", "杩介棶鐘舵€?")
     display = _pick_nested_dict(out, "展示", "灞曠ず")
     mode = str(display.get("mode") or "")
+    cli_streamed = bool(_pick(out, "cli_streamed"))
     reply = str(_pick(out, "系统答复", "绯荤粺绛斿") or "").strip()
     session_id = _pick(out, "会话ID", "浼氳瘽ID")
     turn_no = _pick(out, "轮次", "杞")
@@ -94,7 +95,7 @@ def print_app_result(out: Dict[str, Any], *, show_json: bool) -> None:
         if should_show_draft:
             print("\n系统> 草案摘要：")
             _print_draft_summary(draft)
-    else:
+    elif not cli_streamed:
         print("系统> 最终答复：")
         if reply:
             print(reply)
