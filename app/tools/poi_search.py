@@ -40,6 +40,17 @@ async def _get_poi_http_client() -> httpx.AsyncClient:
         return client
 
 
+def _format_exception_message(exc: Exception) -> str:
+    detail = str(exc)
+    if detail:
+        return f"{exc.__class__.__name__}: {detail}"
+    return exc.__class__.__name__
+
+
+def _is_expected_http_error(exc: Exception) -> bool:
+    return isinstance(exc, httpx.TransportError)
+
+
 class POISearchTool(BaseTool):
     """Search POIs from AMap."""
 
@@ -171,14 +182,20 @@ class POISearchTool(BaseTool):
                 ],
             )
         except Exception as e:
-            logger.exception(f"POI search failed: {e}")
+            error_text = _format_exception_message(e)
+            if _is_expected_http_error(e):
+                logger.warning(
+                    f"POI search request failed for city={city} keywords={keywords}: {error_text}"
+                )
+            else:
+                logger.exception(f"POI search failed: {error_text}")
             self.record_api_call(
                 endpoint="/v3/place/text",
                 params={"city": city, "keywords": keywords},
                 status="failed",
-                error=str(e),
+                error=error_text,
             )
-            return ToolResult(success=False, error=str(e))
+            return ToolResult(success=False, error=error_text)
 
     def _map_category(self, category: str) -> str:
         """Map a friendly category to an AMap type code."""
@@ -285,14 +302,20 @@ class POIDetailTool(BaseTool):
             }
             return ToolResult(success=True, data=result)
         except Exception as e:
-            logger.exception(f"POI detail fetch failed: {e}")
+            error_text = _format_exception_message(e)
+            if _is_expected_http_error(e):
+                logger.warning(
+                    f"POI detail request failed for poi_id={poi_id}: {error_text}"
+                )
+            else:
+                logger.exception(f"POI detail fetch failed: {error_text}")
             self.record_api_call(
                 endpoint="/v3/place/detail",
                 params={"id": poi_id},
                 status="failed",
-                error=str(e),
+                error=error_text,
             )
-            return ToolResult(success=False, error=str(e))
+            return ToolResult(success=False, error=error_text)
 
     def _get_photos(self, poi: Dict[str, Any]) -> List[str]:
         """Extract up to five photo URLs."""

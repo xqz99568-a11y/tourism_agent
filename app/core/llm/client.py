@@ -833,9 +833,12 @@ class LLMManager:
 
 
 # 全局 LLM 管理器
-llm_manager = LLMManager()
+_llm_manager: Optional[LLMManager] = None
 
 
 def get_llm() -> LLMManager:
     """获取 LLM 管理器"""
-    return llm_manager
+    global _llm_manager
+    if _llm_manager is None:
+        _llm_manager = LLMManager()
+    return _llm_manager

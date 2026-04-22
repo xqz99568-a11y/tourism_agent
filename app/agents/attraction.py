@@ -41,7 +41,7 @@ ATTRACTION_CONFIG = AgentConfig(
     instructions="你是一位资深旅游顾问，请优先基于真实 POI 检索结果给出推荐。",
     capabilities=[AgentCapability.SEARCH, AgentCapability.REASONING],
     max_retries=3,
-    timeout_seconds=45,
+    timeout_seconds=20,
     tools=["poi_search", "poi_detail"],
 )
 

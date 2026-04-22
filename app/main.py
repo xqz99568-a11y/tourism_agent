@@ -4,6 +4,7 @@ import argparse
 import asyncio
 import json
 import sys
+import time
 from datetime import datetime
 from functools import lru_cache
 from typing import TYPE_CHECKING, Any, Dict, Optional
@@ -36,12 +37,19 @@ class TourismSystemApp:
 
         # 会话管理
         self._sessions: Dict[str, "SessionContext"] = {}
+        self._runtime_init_metrics: Optional[Dict[str, float]] = None
+        self._runtime_init_reported = False
+        self._cli_runtime_metrics_enabled = False
+        self._cli_thinking_stream_started = False
+        self._cli_thinking_rendered = ""
 
     def ensure_runtime_initialized(self) -> None:
         """延迟初始化 LLM、orchestrator 和 agents，避免 CLI 启动前阻塞。"""
         if self.llm is not None and self.orchestrator is not None:
             return
 
+        total_started_at = time.perf_counter()
+        imports_started_at = total_started_at
         from app.agents.attraction import AttractionAgent
         from app.agents.budget import BudgetAgent
         from app.agents.itinerary import ItineraryAgent
@@ -49,20 +57,53 @@ class TourismSystemApp:
         from app.agents.planner import PlannerAgent
         from app.agents.review import ReviewAgent
         from app.agents.weather import WeatherAgent
-        from app.core.llm.client import LLMManager
+        from app.core.llm.client import get_llm
+        imports_ms = (time.perf_counter() - imports_started_at) * 1000
 
-        llm = LLMManager()
+        llm_started_at = time.perf_counter()
+        llm = get_llm()
+        llm_init_ms = (time.perf_counter() - llm_started_at) * 1000
+
+        orchestrator_started_at = time.perf_counter()
         orchestrator = AgentOrchestrator(llm)
+        orchestrator_init_ms = (time.perf_counter() - orchestrator_started_at) * 1000
 
+        register_agents_started_at = time.perf_counter()
         orchestrator.register_agent(PlannerAgent(llm))
         orchestrator.register_agent(AttractionAgent(llm))
         orchestrator.register_agent(ItineraryAgent(llm))
         orchestrator.register_agent(BudgetAgent(llm))
         orchestrator.register_agent(WeatherAgent(llm))
         orchestrator.register_agent(ReviewAgent(llm))
+        register_agents_ms = (time.perf_counter() - register_agents_started_at) * 1000
 
         self.llm = llm
         self.orchestrator = orchestrator
+        if self._runtime_init_metrics is None:
+            self._runtime_init_metrics = {
+                "imports_ms": imports_ms,
+                "llm_init_ms": llm_init_ms,
+                "orchestrator_init_ms": orchestrator_init_ms,
+                "register_agents_ms": register_agents_ms,
+                "total_ms": (time.perf_counter() - total_started_at) * 1000,
+            }
+        if (
+            self._cli_runtime_metrics_enabled
+            and self._runtime_init_metrics
+            and not self._runtime_init_reported
+        ):
+            metrics = self._runtime_init_metrics
+            now = datetime.now().strftime("%H:%M:%S")
+            print(
+                f"[{now}] runtime_init done: total={metrics['total_ms']:.1f}ms, "
+                f"imports={metrics['imports_ms']:.1f}ms, "
+                f"llm={metrics['llm_init_ms']:.1f}ms, "
+                f"orchestrator={metrics['orchestrator_init_ms']:.1f}ms, "
+                f"register_agents={metrics['register_agents_ms']:.1f}ms",
+                file=sys.stderr,
+                flush=True,
+            )
+            self._runtime_init_reported = True
 
     def get_or_create_session(self, session_id: str) -> SessionContext:
         """获取或创建会话"""
@@ -110,13 +151,22 @@ class TourismSystemApp:
         clarification_message = ""
         questions = []
         missing_fields = []
+        stream_started = False
         cli_streaming_started = False
         cli_streamed_any = False
         streamed_content = ""
         cli_stream_output_closed = False
+        self._cli_thinking_stream_started = False
+        self._cli_thinking_rendered = ""
 
         try:
             async for event in self.orchestrator.process(session, text, session_id):
+                message = event.get("message")
+                if message:
+                    phase = event.get("phase", "") or "unknown_phase"
+                    status = event.get("status", "") or "info"
+                    now = datetime.now().strftime("%H:%M:%S")
+                    print(f"[{now}] {phase} {status}: {message}", flush=True)
                 # 追踪追问信息
                 if event.get("requires_clarification"):
                     requires_clarification = True
@@ -126,11 +176,15 @@ class TourismSystemApp:
                 # 收集思考步骤
                 if "thinking_steps" in event:
                     new_steps = event["thinking_steps"]
-                    # 只打印新增的步骤
                     if len(new_steps) > last_step_count:
-                        new_items = new_steps[last_step_count:]
-                        if new_items:
-                            self._print_thinking_steps(new_items)
+                        rendered = self._print_thinking_steps(new_steps)
+                        if rendered.startswith(self._cli_thinking_rendered):
+                            tail = rendered[len(self._cli_thinking_rendered):]
+                        else:
+                            tail = rendered
+                        if tail:
+                            print(tail, end="", flush=True)
+                        self._cli_thinking_rendered = rendered
                         last_step_count = len(new_steps)
                     thinking_steps = new_steps
 
@@ -138,10 +192,9 @@ class TourismSystemApp:
                 if event.get("is_streaming") and isinstance(event.get("content"), str):
                     chunk = event.get("content", "")
                     if chunk:
-                        if not cli_streaming_started:
-                            print("\n系统> 最终答复：")
-                            cli_streaming_started = True
                         print(chunk, end="", flush=True)
+                        stream_started = True
+                        cli_streaming_started = True
                         streamed_content += chunk
                         cli_streamed_any = True
 
@@ -149,14 +202,6 @@ class TourismSystemApp:
                     final_content = event["content"] or ""
 
                     if cli_streamed_any and not cli_stream_output_closed:
-                        # 如果 completed 事件里还有 streaming 尚未打印的尾巴，则只补齐尾巴，避免整段重复
-                        if isinstance(final_content, str) and final_content.startswith(streamed_content):
-                            tail = final_content[len(streamed_content):]
-                            if tail:
-                                print(tail, end="", flush=True)
-                                streamed_content += tail
-                        # 收尾换行，避免后续“系统> 处理完成”顶在同一行
-                        print()
                         cli_stream_output_closed = True
 
                 if "results" in event:
@@ -168,6 +213,9 @@ class TourismSystemApp:
                         user_message=text,
                         ai_message=final_content,
                     )
+
+            if stream_started:
+                print("", flush=True)
 
         except Exception as e:
             return {
@@ -202,10 +250,10 @@ class TourismSystemApp:
         
         return result
 
-    def _print_thinking_steps(self, steps: list) -> None:
+    def _print_thinking_steps(self, steps: list) -> str:
         """打印思考步骤到控制台"""
         if not steps:
-            return
+            return ""
 
         # 统一 Agent 名称大小写
         def format_agent(name: str) -> str:
@@ -221,9 +269,7 @@ class TourismSystemApp:
             }
             return name_map.get(name.lower(), name.capitalize())
 
-        print("\n" + "-" * 60)
-        print("Agent 协作过程")
-        print("-" * 60)
+        lines = ["\n" + "-" * 60, "🧠Agent协作过程", "-" * 60]
 
         for step in steps:
             agent = format_agent(step.get("agent", "未知"))
@@ -236,9 +282,9 @@ class TourismSystemApp:
                 "completed": "DONE",
                 "failed": "FAILED",
             }.get(status, "INFO")
-            print(f"{status_label} [{agent}] {step_name}: {detail}")
+            lines.append(f"{status_label} [{agent}] {step_name}: {detail}")
 
-        print("-" * 60)
+        return "\n".join(lines) + "\n"
 
 
 class ChatSession:
@@ -250,7 +296,24 @@ def _configure_cli_stdio() -> None:
     for stream in (sys.stdout, sys.stderr):
         reconfigure = getattr(stream, "reconfigure", None)
         if callable(reconfigure):
-            reconfigure(errors="backslashreplace")
+            try:
+                reconfigure(
+                    errors="backslashreplace",
+                    line_buffering=True,
+                    write_through=True,
+                )
+            except TypeError:
+                try:
+                    reconfigure(errors="backslashreplace", line_buffering=True)
+                except TypeError:
+                    try:
+                        reconfigure(errors="backslashreplace")
+                    except Exception:
+                        pass
+                except Exception:
+                    pass
+            except Exception:
+                pass
 
 
 @lru_cache(maxsize=1)
@@ -724,6 +787,7 @@ def _build_app(args: argparse.Namespace) -> TourismSystemApp:
 def _run_once(app: TourismSystemApp, args: argparse.Namespace) -> None:
     if not (args.query or "").strip():
         raise SystemExit("once 模式必须提供 --query")
+    app._cli_runtime_metrics_enabled = True
     out = app.handle_query(args.query, session_id=args.session_id)
     if args.json:
         print(json.dumps(out, ensure_ascii=False, indent=2))
@@ -757,6 +821,7 @@ def main() -> None:
         _run_web(app, args)
         return
     _configure_cli_stdio()
+    app._cli_runtime_metrics_enabled = True
     from app.cli_runner import run_cli
 
     run_cli(app, session_id=args.session_id, show_json=bool(args.json))

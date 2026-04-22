@@ -35,6 +35,11 @@ from app.schemas import (
 
 logger = get_logger(__name__)
 
+COMMON_DESTINATION_CANDIDATES = [
+    "杭州", "北京", "上海", "成都", "西安", "桂林", "深圳", "广州", "厦门", "丽江",
+    "苏州", "南京", "武汉", "重庆", "青岛", "大连", "三亚", "昆明", "哈尔滨", "长沙",
+]
+
 
 class ExecutionPhase(str, Enum):
     """执行阶段"""
@@ -1081,7 +1086,11 @@ class AgentOrchestrator:
             )
             intent_parse_duration_ms += (time.perf_counter() - llm_intent_start) * 1000
 
-        extracted_info = self._normalize_extracted_info(extracted_info)
+        extracted_info = self._normalize_extracted_info(
+            extracted_info,
+            user_message=user_message,
+            session=session,
+        )
         extracted_info = self._enrich_extracted_info(user_message, extracted_info, session)
         self._record_stage_timing(
             stage_timings,
@@ -1173,13 +1182,22 @@ class AgentOrchestrator:
         # 【本轮新增】根据路由处理 CLARIFICATION_ANSWER
         if route == "CLARIFICATION_ANSWER":
             # 消费 clarification latch
+            latch = session.pending_clarification_latch
+            partial_extracted = dict(latch.partial_extracted or {}) if latch else {}
             session.consume_clarification_latch()
             # 将回答值合并到 extracted_info
-            answer_value = self._extract_clarification_answer(user_message, session.pending_clarification_latch)
+            answer_value = self._extract_clarification_answer(user_message, latch) if latch else {}
+            merged_extracted = dict(partial_extracted)
+            merged_extracted.update(extracted_info)
             if answer_value:
-                extracted_info.update(answer_value)
+                merged_extracted.update(answer_value)
+            extracted_info = merged_extracted
 
-        extracted_info = self._normalize_extracted_info(extracted_info)
+        extracted_info = self._normalize_extracted_info(
+            extracted_info,
+            user_message=user_message,
+            session=session,
+        )
         context.extracted_info = extracted_info
 
         # 更新会话上下文
@@ -1251,6 +1269,13 @@ class AgentOrchestrator:
 
         # 检查是否需要追问
         if plan.requires_clarification:
+            self._persist_partial_trip_context(session, extracted_info)
+            session.set_pending_clarification(
+                missing_slots=plan.missing_fields or [],
+                origin_request_id=request_id,
+                origin_intent=plan.intent.value if plan.intent else "unknown",
+                partial_extracted=extracted_info,
+            )
             clarification_event = {
                 "phase": phase.value,
                 "status": "completed",
@@ -1263,13 +1288,6 @@ class AgentOrchestrator:
                 "execution_time_ms": round(task_planning_duration_ms, 2),
             }
             yield clarification_event
-            # 【本轮新增】设置 pending clarification latch
-            session.set_pending_clarification(
-                missing_slots=plan.missing_fields or [],
-                origin_request_id=request_id,
-                origin_intent=plan.intent.value if plan.intent else "unknown",
-                partial_extracted=extracted_info,
-            )
             # 发送 final + done，让 SSE 流正常结束
             yield {
                 "event": "final",
@@ -1591,7 +1609,18 @@ class AgentOrchestrator:
             yield result
             return
         # 【修复】在执行 Planner 前校验天数，不允许默认 3 天
-        if not context.extracted_info.get("duration"):
+        effective_duration = context.extracted_info.get("duration") or session.trip_context.duration_days
+        if effective_duration and context.extracted_info.get("duration") is None:
+            context.extracted_info["duration"] = effective_duration
+            context.extracted_info["duration_days"] = effective_duration
+        if not effective_duration:
+            self._persist_partial_trip_context(session, context.extracted_info)
+            session.set_pending_clarification(
+                missing_slots=["travel_time"],
+                origin_request_id=request_id,
+                origin_intent=intent.value,
+                partial_extracted=context.extracted_info,
+            )
             # 天数缺失，不执行 planner，直接追问
             yield {
                 "phase": "task_planning",
@@ -2108,7 +2137,7 @@ class AgentOrchestrator:
         session_destination = session.trip_context.destination if session else None
 
         # 检测目的地
-        destinations = ["杭州", "北京", "上海", "成都", "西安", "桂林", "深圳", "广州", "厦门", "丽江", "苏州", "南京", "武汉", "重庆", "青岛", "大连", "三亚", "昆明", "哈尔滨", "长沙"]
+        destinations = COMMON_DESTINATION_CANDIDATES
         found_destination = None
         for dest in destinations:
             if dest in user_message:
@@ -2128,6 +2157,12 @@ class AgentOrchestrator:
             # Follow-up 场景：继承 session 中的目的地
             extracted_info["destination"] = session_destination
 
+        explicit_location_info = self._extract_origin_destination_from_text(user_message, session=session)
+        if explicit_location_info.get("origin"):
+            extracted_info["origin"] = explicit_location_info["origin"]
+        if explicit_location_info.get("destination"):
+            extracted_info["destination"] = explicit_location_info["destination"]
+
         # 【本轮修复】follow-up 场景下继承 session 的天数
         if is_follow_up and session.trip_context.duration_days:
             extracted_info["duration"] = session.trip_context.duration_days
@@ -2138,60 +2173,19 @@ class AgentOrchestrator:
             if session.preferences.budget_level:
                 extracted_info["budget_level"] = session.preferences.budget_level
 
-        # 检测天数
-        days_match = re.search(r"(?:(\d+)|([一二两三四五六七八九十]))[天日]", user_message)
-        if days_match:
-            digit_part = days_match.group(1)
-            cn_part = days_match.group(2)
+        duration_days = self._extract_duration_from_text(user_message)
+        if duration_days is not None:
+            extracted_info["duration"] = duration_days
 
-            if digit_part is not None:
-                extracted_info["duration"] = int(digit_part)
-            elif cn_part is not None:
-                chinese_nums = {
-                    "一": 1,
-                    "二": 2,
-                    "两": 2,
-                    "三": 3,
-                    "四": 4,
-                    "五": 5,
-                    "六": 6,
-                    "七": 7,
-                    "八": 8,
-                    "九": 9,
-                    "十": 10,
-                }
-                if cn_part in chinese_nums:
-                    extracted_info["duration"] = chinese_nums[cn_part]
+        num_travelers = self._extract_num_travelers_from_text(user_message)
+        if num_travelers is not None:
+            extracted_info["num_travelers"] = num_travelers
 
-        # 检测人数
-        people_match = re.search(r"(\d+)[个人位]|[一两二三四五六七八九十]+个人", user_message)
-        if people_match:
-            match = people_match.group(1)
-            if match.isdigit():
-                extracted_info["num_travelers"] = int(match)
-            else:
-                chinese_nums = {"一": 1, "两": 2, "二": 2, "三": 3, "四": 4, "五": 5}
-                for cn, num in chinese_nums.items():
-                    if cn in match:
-                        extracted_info["num_travelers"] = num
-                        break
-
-        # 检测预算
-        budget_match = re.search(r"(\d+)(?:00)?[元块万]|预算[是为]*(\d+)", user_message)
-        if budget_match:
-            amount = budget_match.group(1) or budget_match.group(2)
-            if amount:
-                amount_int = int(amount)
-                # 转换为元
-                if amount_int < 100:  # 可能是 "5000" 写成 "5000"
-                    amount_int = amount_int * 100 if amount_int > 100 else amount_int
-                extracted_info["budget"] = amount_int
-                if amount_int < 3000:
-                    extracted_info["budget_level"] = "economy"
-                elif amount_int < 6000:
-                    extracted_info["budget_level"] = "medium"
-                else:
-                    extracted_info["budget_level"] = "luxury"
+        budget_amount = self._extract_budget_amount_from_text(user_message)
+        if budget_amount is not None:
+            extracted_info["budget_amount"] = budget_amount
+            extracted_info["budget"] = int(budget_amount) if float(budget_amount).is_integer() else budget_amount
+            extracted_info["budget_level"] = self._infer_budget_level_from_amount(budget_amount)
 
         stripped_message = user_message.strip()
         numeric_only_match = re.fullmatch(r"(\d{3,7})(?:\.0+)?", stripped_message)
@@ -2444,7 +2438,297 @@ class AgentOrchestrator:
             return "medium"
         return "luxury"
 
-    def _normalize_extracted_info(self, info: Dict[str, Any]) -> Dict[str, Any]:
+    @staticmethod
+    def _parse_chinese_number(value: Any) -> Optional[int]:
+        text = str(value or "").strip()
+        if not text:
+            return None
+        if text.isdigit():
+            return int(text)
+
+        mapping = {
+            "零": 0,
+            "一": 1,
+            "二": 2,
+            "两": 2,
+            "三": 3,
+            "四": 4,
+            "五": 5,
+            "六": 6,
+            "七": 7,
+            "八": 8,
+            "九": 9,
+        }
+        if text == "十":
+            return 10
+        if "十" in text:
+            left, right = text.split("十", 1)
+            tens = 1 if not left else mapping.get(left)
+            ones = 0 if not right else mapping.get(right)
+            if tens is None or ones is None:
+                return None
+            return tens * 10 + ones
+
+        digits = [mapping.get(char) for char in text]
+        if any(digit is None for digit in digits):
+            return None
+
+        result = 0
+        for digit in digits:
+            result = result * 10 + int(digit)
+        return result if result > 0 else None
+
+    @staticmethod
+    def _normalize_budget_amount_value(amount: float, unit: str = "") -> float:
+        unit_text = str(unit or "").strip().lower()
+        if unit_text in {"万", "w"}:
+            amount *= 10000
+        elif unit_text in {"千", "k"}:
+            amount *= 1000
+        return round(amount, 2)
+
+    def _match_known_destination(self, candidate: str, session: Optional[SessionContext] = None) -> str:
+        text = str(candidate or "").strip()
+        if not text:
+            return ""
+
+        known_candidates = list(COMMON_DESTINATION_CANDIDATES)
+        if session:
+            for extra in [session.trip_context.destination, session.trip_context.origin]:
+                extra_text = str(extra or "").strip()
+                if extra_text and extra_text not in known_candidates:
+                    known_candidates.insert(0, extra_text)
+
+        for item in known_candidates:
+            if item and item in text:
+                return item
+        return text
+
+    def _normalize_location_candidate(self, candidate: Any, session: Optional[SessionContext] = None) -> str:
+        text = str(candidate or "").strip()
+        if not text:
+            return ""
+
+        text = re.split(r"[，。；;,、\s]", text)[0]
+        text = re.sub(r"^(从|由|去|到|在)", "", text)
+        text = re.sub(r"(出发地|目的地|旅游|旅行|游玩|玩|逛|出发|前往|看看|走走)$", "", text)
+        text = text.strip()
+        if not text:
+            return ""
+        return self._match_known_destination(text, session=session)
+
+    def _extract_origin_destination_from_text(
+        self,
+        user_message: str,
+        session: Optional[SessionContext] = None,
+    ) -> Dict[str, str]:
+        text = str(user_message or "").strip()
+        if not text:
+            return {}
+
+        result: Dict[str, str] = {}
+        origin_patterns = [
+            r"(?:从|由)\s*([^\s，。；,]{1,12}?)(?=\s*(?:出发|过去|前往|去|到|飞|乘|坐|自驾|高铁|火车|飞机|，|。|,|$))",
+        ]
+        destination_patterns = [
+            r"(?:想去|准备去|计划去|去)\s*([^\s，。；,]{1,12}?)(?=\s*(?:玩|旅游|旅行|逛|看看|走走|待|住|打卡|，|。|,|$))",
+            r"(?:前往)\s*([^\s，。；,]{1,12}?)(?=\s*(?:玩|旅游|旅行|逛|看看|走走|待|住|打卡|，|。|,|$))",
+            r"(?:^|[，。；,\s])到\s*([^\s，。；,]{1,12}?)(?=\s*(?:玩|旅游|旅行|逛|看看|走走|待|住|打卡|，|。|,|$))",
+            r"在\s*([^\s，。；,]{1,12}?)(?=\s*(?:玩|旅游|旅行|逛))",
+        ]
+
+        for pattern in origin_patterns:
+            match = re.search(pattern, text)
+            if not match:
+                continue
+            origin = self._normalize_location_candidate(match.group(1), session=session)
+            if origin:
+                result["origin"] = origin
+                break
+
+        for pattern in destination_patterns:
+            match = re.search(pattern, text)
+            if not match:
+                continue
+            destination = self._normalize_location_candidate(match.group(1), session=session)
+            if destination:
+                result["destination"] = destination
+                break
+
+        return result
+
+    def _extract_duration_from_text(self, user_message: str) -> Optional[int]:
+        text = str(user_message or "").strip()
+        if not text:
+            return None
+
+        digit_night_day = re.search(r"(\d+)\s*晚\s*(\d+)\s*[天日]", text)
+        if digit_night_day:
+            return int(digit_night_day.group(2))
+
+        cn_night_day = re.search(r"([一二两三四五六七八九十零]+)\s*晚\s*([一二两三四五六七八九十零]+)\s*[天日]", text)
+        if cn_night_day:
+            return self._parse_chinese_number(cn_night_day.group(2))
+
+        digit_duration = re.search(r"(?:玩|待|住|逛|旅游|旅行)?\s*(\d+)\s*[天日]", text)
+        if digit_duration:
+            return int(digit_duration.group(1))
+
+        cn_duration = re.search(r"(?:玩|待|住|逛|旅游|旅行)?\s*([一二两三四五六七八九十零]+)\s*[天日]", text)
+        if cn_duration:
+            return self._parse_chinese_number(cn_duration.group(1))
+
+        return None
+
+    def _extract_num_travelers_from_text(self, user_message: str) -> Optional[int]:
+        text = str(user_message or "").strip()
+        if not text:
+            return None
+
+        for pattern in [
+            r"一家\s*([一二两三四五六七八九十零\d]+)\s*口",
+            r"我们\s*([一二两三四五六七八九十零\d]+)\s*人",
+            r"([一二两三四五六七八九十零\d]+)\s*(?:个人|人|位)",
+        ]:
+            match = re.search(pattern, text)
+            if not match:
+                continue
+            return self._parse_chinese_number(match.group(1))
+        return None
+
+    def _extract_budget_amount_from_text(self, user_message: str) -> Optional[float]:
+        text = str(user_message or "").strip()
+        if not text:
+            return None
+
+        patterns = [
+            r"预算(?:大概|大约|约|在|是|为|控制在|控制到|调到|调整到|到)?\s*(\d+(?:\.\d+)?)\s*(万|w|W|千|k|K|元|块)?",
+            r"(\d+(?:\.\d+)?)\s*(万|w|W|千|k|K|元|块)(?:左右|以内|上下)?",
+        ]
+        for pattern in patterns:
+            match = re.search(pattern, text)
+            if not match:
+                continue
+            amount = float(match.group(1))
+            unit = match.group(2) or ""
+            return self._normalize_budget_amount_value(amount, unit)
+        return None
+
+    def _augment_special_requirements_from_text(self, normalized: Dict[str, Any], user_message: str) -> Dict[str, Any]:
+        text = str(user_message or "").strip()
+        if not text:
+            return normalized
+
+        has_elder_signal = any(keyword in text for keyword in ["爸妈", "老人", "长辈", "老年"])
+        has_family_signal = any(keyword in text for keyword in ["亲子", "孩子", "小朋友", "宝宝", "带娃"])
+
+        if not has_elder_signal and not has_family_signal:
+            return normalized
+
+        special_requirements = self._merge_string_lists(normalized.get("special_requirements"))
+        if has_elder_signal:
+            special_requirements = self._merge_string_lists(special_requirements, ["老人同行"])
+        if has_family_signal:
+            special_requirements = self._merge_string_lists(special_requirements, ["亲子出行"])
+        normalized["special_requirements"] = special_requirements
+
+        if not normalized.get("tourist_type"):
+            if has_family_signal:
+                normalized["tourist_type"] = "family"
+            elif has_elder_signal:
+                normalized["tourist_type"] = "senior"
+
+        if not normalized.get("group_type") and (has_elder_signal or has_family_signal):
+            normalized["group_type"] = "family"
+
+        return normalized
+
+    def _is_slot_only_update_turn(
+        self,
+        user_message: str,
+        normalized: Dict[str, Any],
+        explicit_destination: str = "",
+    ) -> bool:
+        if explicit_destination:
+            return False
+
+        slot_keys = ["origin", "duration", "duration_days", "budget", "budget_amount", "num_travelers", "start_date", "end_date"]
+        if any(normalized.get(key) is not None for key in slot_keys):
+            return True
+
+        text = str(user_message or "").strip()
+        slot_keywords = ["预算", "元", "块", "万", "人", "个人", "位", "天", "日", "晚", "出发", "爸妈", "老人", "长辈", "亲子", "孩子", "小朋友"]
+        return any(keyword in text for keyword in slot_keywords)
+
+    def _coerce_trip_datetime(self, value: Any) -> Optional[datetime]:
+        if value is None:
+            return None
+        if isinstance(value, datetime):
+            return value
+
+        text = str(value).strip()
+        if not text:
+            return None
+
+        try:
+            return datetime.fromisoformat(text)
+        except ValueError:
+            pass
+
+        for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%Y年%m月%d日", "%m月%d日", "%m/%d"):
+            try:
+                parsed = datetime.strptime(text, fmt)
+                if parsed.year == 1900:
+                    parsed = parsed.replace(year=datetime.now().year)
+                return parsed
+            except ValueError:
+                continue
+        return None
+
+    def _persist_partial_trip_context(
+        self,
+        session: SessionContext,
+        extracted_info: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        partial = self._normalize_extracted_info(extracted_info, session=session)
+
+        if destination := partial.get("destination"):
+            session.trip_context.destination = destination
+
+        origin = partial.get("origin") or partial.get("departure_place")
+        if origin:
+            session.trip_context.origin = origin
+
+        duration_value = partial.get("duration")
+        if duration_value is None:
+            duration_value = partial.get("duration_days")
+        if duration_value is not None:
+            session.trip_context.duration_days = int(duration_value)
+
+        budget_amount = partial.get("budget_amount")
+        if budget_amount is None:
+            budget_amount = partial.get("budget")
+        if budget_amount is not None:
+            session.trip_context.budget_amount = float(budget_amount)
+
+        num_travelers = partial.get("num_travelers")
+        if num_travelers is not None:
+            session.trip_context.num_travelers = int(num_travelers)
+
+        if start_date := self._coerce_trip_datetime(partial.get("start_date")):
+            session.trip_context.start_date = start_date
+        if end_date := self._coerce_trip_datetime(partial.get("end_date")):
+            session.trip_context.end_date = end_date
+
+        session.update_pending_clarification_partial(partial)
+        return partial
+
+    def _normalize_extracted_info(
+        self,
+        info: Dict[str, Any],
+        user_message: str = "",
+        session: Optional[SessionContext] = None,
+    ) -> Dict[str, Any]:
         """
         标准化提取的信息，确保数据类型正确
         
@@ -2455,6 +2739,36 @@ class AgentOrchestrator:
             标准化后的信息字典
         """
         normalized = dict(info or {})
+
+        if normalized.get("origin") is None and normalized.get("departure_place") is not None:
+            normalized["origin"] = normalized.get("departure_place")
+
+        explicit_location_info = self._extract_origin_destination_from_text(user_message, session=session)
+        explicit_origin = explicit_location_info.get("origin") or ""
+        explicit_destination = explicit_location_info.get("destination") or ""
+        if explicit_origin:
+            normalized["origin"] = explicit_origin
+            normalized["departure_place"] = explicit_origin
+        if explicit_destination:
+            normalized["destination"] = explicit_destination
+
+        duration_from_text = self._extract_duration_from_text(user_message)
+        if duration_from_text is not None:
+            normalized["duration"] = duration_from_text
+            normalized["duration_days"] = duration_from_text
+
+        num_travelers_from_text = self._extract_num_travelers_from_text(user_message)
+        if num_travelers_from_text is not None:
+            normalized["num_travelers"] = num_travelers_from_text
+            normalized["people_count"] = num_travelers_from_text
+
+        budget_amount_from_text = self._extract_budget_amount_from_text(user_message)
+        if budget_amount_from_text is not None:
+            normalized["budget_amount"] = budget_amount_from_text
+            normalized.setdefault(
+                "budget",
+                int(budget_amount_from_text) if float(budget_amount_from_text).is_integer() else budget_amount_from_text,
+            )
 
         if normalized.get("duration") is None and normalized.get("duration_days") is not None:
             normalized["duration"] = normalized.get("duration_days")
@@ -2519,10 +2833,40 @@ class AgentOrchestrator:
             else:
                 normalized[key] = self._merge_string_lists([value])
 
-        for key in ["destination", "origin", "pace", "indoor_preference"]:
+        normalized = self._augment_special_requirements_from_text(normalized, user_message)
+
+        for key in ["destination", "origin", "departure_place", "pace", "indoor_preference", "tourist_type", "group_type"]:
             value = normalized.get(key)
             if isinstance(value, str):
                 normalized[key] = value.strip()
+
+        session_destination = str(session.trip_context.destination or "").strip() if session else ""
+        current_destination = str(normalized.get("destination") or "").strip()
+        current_origin = str(normalized.get("origin") or "").strip()
+        if explicit_origin and not normalized.get("departure_place"):
+            normalized["departure_place"] = explicit_origin
+
+        if session_destination and not explicit_destination:
+            slot_only_update = self._is_slot_only_update_turn(user_message, normalized, explicit_destination=explicit_destination)
+            destination_mismatch = bool(
+                current_destination
+                and current_destination != session_destination
+                and current_destination == current_origin
+            )
+            if not current_destination and slot_only_update:
+                normalized["destination"] = session_destination
+            elif destination_mismatch:
+                normalized["destination"] = session_destination
+            elif (
+                current_destination
+                and current_destination != session_destination
+                and slot_only_update
+                and current_destination not in user_message
+            ):
+                normalized["destination"] = session_destination
+
+        if normalized.get("origin") and not normalized.get("departure_place"):
+            normalized["departure_place"] = normalized.get("origin")
 
         return normalized
 
@@ -2606,7 +2950,7 @@ class AgentOrchestrator:
         for scalar_key in ["budget", "budget_amount", "budget_level", "duration", "duration_days", "pace", "indoor_preference"]:
             if message_signals.get(scalar_key) is not None:
                 enriched[scalar_key] = message_signals[scalar_key]
-        return self._normalize_extracted_info(enriched)
+        return self._normalize_extracted_info(enriched, user_message=user_message, session=session)
 
     def _extract_follow_up_delta(
         self,
@@ -2614,17 +2958,23 @@ class AgentOrchestrator:
         extracted_info: Dict[str, Any],
         session: SessionContext,
     ) -> Dict[str, Any]:
-        delta = self._extract_message_preferences(user_message)
+        delta = dict(extracted_info or {})
+        message_signals = self._extract_message_preferences(user_message)
+        for key in ["preferences", "interests", "travel_styles", "special_requirements"]:
+            delta[key] = self._merge_string_lists(delta.get(key), message_signals.get(key))
+        for scalar_key in ["budget", "budget_amount", "budget_level", "duration", "duration_days", "pace", "indoor_preference"]:
+            if message_signals.get(scalar_key) is not None:
+                delta[scalar_key] = message_signals[scalar_key]
         snapshot = session.committed_trip_snapshot
         if not snapshot:
-            return self._normalize_extracted_info(delta)
+            return self._normalize_extracted_info(delta, user_message=user_message, session=session)
 
         if delta.get("budget_amount") is not None:
             delta["budget_changed"] = delta["budget_amount"] != snapshot.budget_amount
         if delta.get("duration_days") is not None:
             delta["duration_changed"] = delta["duration_days"] != snapshot.duration_days
 
-        return self._normalize_extracted_info(delta)
+        return self._normalize_extracted_info(delta, user_message=user_message, session=session)
 
     def _hydrate_context_from_snapshot(self, session: SessionContext, context: ExecutionContext) -> None:
         snapshot = session.committed_trip_snapshot
@@ -3089,17 +3439,17 @@ class AgentOrchestrator:
             session.preferences.special_requirements = []
             session.preferences.pace_preference = "moderate"
 
-        # 更新目的地
-        if destination := extracted_info.get("destination"):
-            session.trip_context.destination = destination
-
-        # 更新人数
-        if num := extracted_info.get("num_travelers"):
-            session.trip_context.num_travelers = int(num)
+        self._persist_partial_trip_context(session, extracted_info)
 
         # 更新预算
         if budget_level := extracted_info.get("budget_level"):
             session.preferences.budget_level = budget_level
+
+        if tourist_type := extracted_info.get("tourist_type"):
+            session.preferences.tourist_type = str(tourist_type).strip()
+
+        if group_type := extracted_info.get("group_type"):
+            session.preferences.group_type = str(group_type).strip()
 
         # 更新旅行风格
         if styles := extracted_info.get("travel_styles"):
@@ -3123,19 +3473,6 @@ class AgentOrchestrator:
 
         if pace := extracted_info.get("pace"):
             session.preferences.pace_preference = str(pace).strip()
-
-        # 更新天数与预算，兼容 duration/duration_days、budget/budget_amount 两套字段名。
-        duration = extracted_info.get("duration")
-        if duration is None:
-            duration = extracted_info.get("duration_days")
-        if duration is not None:
-            session.trip_context.duration_days = int(duration)
-
-        budget_amount = extracted_info.get("budget_amount")
-        if budget_amount is None:
-            budget_amount = extracted_info.get("budget")
-        if budget_amount is not None:
-            session.trip_context.budget_amount = float(budget_amount)
 
     # ========== 【本轮新增】消息路由优先级检测 ==========
 
@@ -3226,26 +3563,18 @@ class AgentOrchestrator:
         latch: "PendingClarificationLatch",
     ) -> bool:
         """【本轮新增】检测消息是否是 clarification 的回答"""
-        import re
-
         missing = set(latch.missing_slots)
         msg = user_message.strip()
 
         # 检查是否是数字类槽位回答
-        if "travel_time" in missing or "duration" in missing:
-            if re.search(r"\d+\s*[天日]", msg):
-                return True
-            chinese_days = ["一", "二", "两", "三", "四", "五", "六", "七", "八", "九", "十"]
-            if any(cn + "天" in msg for cn in chinese_days):
-                return True
+        if ("travel_time" in missing or "duration" in missing) and self._extract_duration_from_text(msg) is not None:
+            return True
 
-        if "budget" in missing:
-            if re.search(r"\d+\s*[元块万]", msg) or re.search(r"预算\s*[:是为]*\s*\d+", msg):
-                return True
+        if ("budget" in missing) and self._extract_budget_amount_from_text(msg) is not None:
+            return True
 
-        if "people" in missing:
-            if re.search(r"\d+\s*[个人位]", msg):
-                return True
+        if ("people" in missing) and self._extract_num_travelers_from_text(msg) is not None:
+            return True
 
         # 检查是否是日期类槽位回答
         if "travel_time" in missing or "start_date" in missing:
@@ -3265,38 +3594,25 @@ class AgentOrchestrator:
         latch: "PendingClarificationLatch",
     ) -> Dict[str, Any]:
         """【本轮新增】从 clarification 回答中提取值"""
-        import re
-
         extracted: Dict[str, Any] = {}
         missing = set(latch.missing_slots)
         msg = user_message.strip()
 
         if "travel_time" in missing or "duration" in missing:
-            # 提取天数
-            days_match = re.search(r"(\d+)\s*[天日]", msg)
-            if days_match:
-                extracted["duration"] = int(days_match.group(1))
-            else:
-                chinese_map = {"一": 1, "二": 2, "两": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9, "十": 10}
-                for cn, num in chinese_map.items():
-                    if cn + "天" in msg:
-                        extracted["duration"] = num
-                        break
+            duration = self._extract_duration_from_text(msg)
+            if duration is not None:
+                extracted["duration"] = duration
 
         if "budget" in missing:
-            # 提取预算
-            budget_match = re.search(r"(\d+)(?:00)?\s*[元块万]?", msg)
-            if budget_match:
-                amount = int(budget_match.group(1))
-                if amount < 100:
-                    amount *= 100
-                extracted["budget"] = amount
+            budget_amount = self._extract_budget_amount_from_text(msg)
+            if budget_amount is not None:
+                extracted["budget_amount"] = budget_amount
+                extracted["budget"] = int(budget_amount) if float(budget_amount).is_integer() else budget_amount
 
         if "people" in missing:
-            # 提取人数
-            people_match = re.search(r"(\d+)\s*[个人位]", msg)
-            if people_match:
-                extracted["num_travelers"] = int(people_match.group(1))
+            num_travelers = self._extract_num_travelers_from_text(msg)
+            if num_travelers is not None:
+                extracted["num_travelers"] = num_travelers
 
         return extracted
 

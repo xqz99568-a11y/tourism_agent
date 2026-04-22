@@ -377,10 +377,10 @@ class ItineraryAgent(BaseAgent):
         existing_names = {a["name"] for a in anchors}
         for generic in generic_anchors:
             if generic["name"] not in existing_names:
-                anchors.append(generic)
+                anchors.append(self._ensure_compatible_duration_fields(generic))
                 existing_names.add(generic["name"])
 
-        return anchors[: max(3, min(len(anchors), duration))]
+        return [self._ensure_compatible_duration_fields(anchor) for anchor in anchors[: max(3, min(len(anchors), duration))]]
 
     def _get_city_specific_anchors(self, destination: str) -> List[POI]:
         """获取城市特色锚点，优先使用当地真实地名和特色"""
@@ -431,23 +431,27 @@ class ItineraryAgent(BaseAgent):
         for city_name, pois in city_anchors.items():
             if city_name in destination:
                 for poi_info in pois:
-                    matched_anchors.append({
-                        "name": poi_info["name"],
-                        "city": destination,
-                        "region": poi_info["region"],
-                        "category": poi_info["category"],
-                        "recommended_visit_duration_hours": 2.0,
-                        "best_time_to_visit": poi_info.get("best_time_to_visit", "flexible"),
-                        "estimated_cost": {"amount": 0, "currency": "CNY", "cost_level": "free"},
-                        "description": poi_info["description"],
-                        "suitable_for": ["首次到访", "轻松游", "本地化"],
-                        "source": "city_specific_anchor",
-                        "priority": "high",
-                        "indoor_outdoor": "mixed",
-                        "coordinates": None,
-                        "opening_hours": "信息待确认",
-                        "tags": poi_info.get("tags", ["本地锚点"]),
-                    })
+                    matched_anchors.append(
+                        self._ensure_compatible_duration_fields(
+                            {
+                                "name": poi_info["name"],
+                                "city": destination,
+                                "region": poi_info["region"],
+                                "category": poi_info["category"],
+                                "recommended_visit_duration_hours": 2.0,
+                                "best_time_to_visit": poi_info.get("best_time_to_visit", "flexible"),
+                                "estimated_cost": {"amount": 0, "currency": "CNY", "cost_level": "free"},
+                                "description": poi_info["description"],
+                                "suitable_for": ["首次到访", "轻松游", "本地化"],
+                                "source": "city_specific_anchor",
+                                "priority": "high",
+                                "indoor_outdoor": "mixed",
+                                "coordinates": None,
+                                "opening_hours": "信息待确认",
+                                "tags": poi_info.get("tags", ["本地锚点"]),
+                            }
+                        )
+                    )
                 break
 
         return matched_anchors
@@ -469,6 +473,55 @@ class ItineraryAgent(BaseAgent):
             if match:
                 return float(match.group(1))
         return None
+
+    def _get_visit_duration_hours(self, poi: POI, default: float = 2.0) -> float:
+        if not isinstance(poi, dict):
+            return default
+        for field in [
+            "visit_duration_hours",
+            "suggested_duration_hours",
+            "recommended_visit_duration_hours",
+            "duration",
+            "recommended_duration",
+        ]:
+            value = poi.get(field)
+            if value is None or (isinstance(value, str) and not value.strip()):
+                continue
+            try:
+                if isinstance(value, str):
+                    numeric_value = float(value.strip())
+                    return max(numeric_value, 0.5)
+                return self._parse_duration_hours(value)
+            except (TypeError, ValueError):
+                try:
+                    return self._parse_duration_hours(value)
+                except Exception:
+                    return default
+            except Exception:
+                return default
+        return default
+
+    def _get_poi_region(self, poi: Optional[POI], default: str = "信息待确认") -> str:
+        if not isinstance(poi, dict):
+            return default
+        region = str(poi.get("region") or poi.get("city") or default).strip()
+        return region or default
+
+    def _get_poi_opening_hours(self, poi: Optional[POI], default: str = "信息待确认") -> str:
+        if not isinstance(poi, dict):
+            return default
+        opening_hours = str(
+            poi.get("opening_hours") or poi.get("open_time") or poi.get("open_hours") or default
+        ).strip()
+        return opening_hours or default
+
+    def _ensure_compatible_duration_fields(self, poi: POI, default: float = 2.0) -> POI:
+        compatible = dict(poi)
+        duration_hours = self._get_visit_duration_hours(compatible, default=default)
+        compatible.setdefault("recommended_visit_duration_hours", duration_hours)
+        compatible.setdefault("suggested_duration_hours", duration_hours)
+        compatible.setdefault("visit_duration_hours", duration_hours)
+        return compatible
 
     def _build_traveler_profile(self, session: SessionContext, context: ExecutionContext) -> Dict[str, Any]:
         tourist_type = context.extracted_info.get("tourist_type") or (session.preferences.tourist_type if session and session.preferences else "general")
@@ -528,7 +581,13 @@ class ItineraryAgent(BaseAgent):
                 continue
             seen_names.add(name)
             city = str(poi.get("city") or poi.get("destination") or "").strip()
-            region = str(poi.get("region") or poi.get("district") or poi.get("area") or poi.get("location") or "").strip()
+            region = self._get_poi_region(
+                {
+                    "region": poi.get("region") or poi.get("district") or poi.get("area") or poi.get("location"),
+                    "city": city,
+                },
+                default="未注明区域",
+            )
             category = str(poi.get("category") or poi.get("type") or "other").strip() or "other"
             priority = str(poi.get("priority") or "medium").strip().lower()
             if priority not in {"high", "medium", "low"}:
@@ -539,9 +598,9 @@ class ItineraryAgent(BaseAgent):
             best_time = str(raw_best_time or "flexible").strip().lower()
             if best_time not in TIME_SLOT_VALUES:
                 best_time = "flexible"
-            opening_hours = str(poi.get("opening_hours") or poi.get("open_time") or poi.get("open_hours") or "").strip()
+            opening_hours = self._get_poi_opening_hours(poi)
             ticket_price = str(poi.get("ticket_price") or poi.get("ticket") or poi.get("price") or "").strip()
-            duration_value = poi.get("visit_duration_hours") or poi.get("suggested_duration_hours") or poi.get("duration") or poi.get("recommended_duration")
+            duration_hours = self._get_visit_duration_hours(poi)
             tags = poi.get("tags") or poi.get("features") or poi.get("categories") or []
             if not isinstance(tags, list):
                 tags = [str(tags)]
@@ -554,11 +613,12 @@ class ItineraryAgent(BaseAgent):
                     "city": city or None,
                     "region": region or "未注明区域",
                     "category": category,
-                    "visit_duration_hours": self._parse_duration_hours(duration_value),
-                    "recommended_visit_duration_hours": self._parse_duration_hours(duration_value),
+                    "visit_duration_hours": duration_hours,
+                    "suggested_duration_hours": duration_hours,
+                    "recommended_visit_duration_hours": duration_hours,
                     "best_time_to_visit": best_time,
                     "priority": priority,
-                    "opening_hours": opening_hours or "未知",
+                    "opening_hours": opening_hours or "信息待确认",
                     "ticket_price": ticket_price or "未知",
                     "ticket_cost": self._parse_ticket_price(ticket_price),
                     "tags": [str(tag).strip() for tag in tags if str(tag).strip()],
@@ -570,12 +630,12 @@ class ItineraryAgent(BaseAgent):
                     "coordinates": poi.get("coordinates"),
                 }
             )
-        return sorted(normalized, key=lambda poi: (poi["ticket_cost"], poi["region"], poi["name"]))
+        return sorted(normalized, key=lambda poi: (poi["ticket_cost"], self._get_poi_region(poi), poi["name"]))
 
     def _format_pois_for_prompt(self, pois: List[POI]) -> str:
         return "\n".join(
             [
-                f"{index}. {poi['name']} | 区域：{poi['region']} | 游玩时长：{poi['visit_duration_hours']}小时 | 开放时间：{poi['opening_hours']} | 门票：{poi['ticket_price']} | 标签：{'、'.join(poi['tags']) if poi['tags'] else '无'}"
+                f"{index}. {poi.get('name')} | 区域：{self._get_poi_region(poi)} | 游玩时长：{self._get_visit_duration_hours(poi)}小时 | 开放时间：{self._get_poi_opening_hours(poi)} | 门票：{poi.get('ticket_price', '未知')} | 标签：{'、'.join(poi.get('tags') or []) if poi.get('tags') else '无'}"
                 for index, poi in enumerate(pois, start=1)
             ]
         )
@@ -589,7 +649,7 @@ class ItineraryAgent(BaseAgent):
         if pois:
             return "\n".join(
                 [
-                    f"景点：{poi['name']} | 区域：{poi['region']} | 时长：{poi['visit_duration_hours']}小时 | 开放：{poi['opening_hours']}"
+                    f"景点：{poi.get('name')} | 区域：{self._get_poi_region(poi)} | 时长：{self._get_visit_duration_hours(poi)}小时 | 开放：{self._get_poi_opening_hours(poi)}"
                     for poi in pois[:5]
                 ]
             )
@@ -620,8 +680,11 @@ class ItineraryAgent(BaseAgent):
             if len(selected) >= constraints["max_pois_per_day"]:
                 break
             commute_minutes = self._estimate_commute_minutes(last_poi, poi)
-            region_changed = last_poi is not None and last_poi["region"] != poi["region"]
-            projected_hours = total_visit_hours + poi["visit_duration_hours"] + commute_minutes / 60.0
+            poi_region = self._get_poi_region(poi)
+            poi_opening_hours = self._get_poi_opening_hours(poi)
+            visit_duration_hours = self._get_visit_duration_hours(poi)
+            region_changed = last_poi is not None and self._get_poi_region(last_poi) != poi_region
+            projected_hours = total_visit_hours + visit_duration_hours + commute_minutes / 60.0
             if projected_hours > constraints["max_visit_hours"]:
                 continue
             if region_changed and cross_region_count >= constraints["max_cross_region"]:
@@ -636,7 +699,7 @@ class ItineraryAgent(BaseAgent):
                 current_time = max(current_time, constraints["lunch_end"])
                 arrival_time = current_time + commute_minutes
 
-            visit_minutes = int(poi["visit_duration_hours"] * 60)
+            visit_minutes = int(visit_duration_hours * 60)
             adjusted_range = self._fit_visit_into_open_hours(arrival_time, visit_minutes, poi["open_range"])
             if adjusted_range is None:
                 continue
@@ -651,13 +714,13 @@ class ItineraryAgent(BaseAgent):
                 "title": poi["name"],
                 "start": start_minutes,
                 "end": end_minutes,
-                "region": poi["region"],
+                "region": poi_region,
                 "ticket_price": poi["ticket_price"],
-                "opening_hours": poi["opening_hours"],
+                "opening_hours": poi_opening_hours,
             })
 
             selected.append(poi)
-            total_visit_hours += poi["visit_duration_hours"]
+            total_visit_hours += visit_duration_hours
             total_commute_minutes += commute_minutes
             ticket_cost_total += poi["ticket_cost"]
             current_time = end_minutes
@@ -675,7 +738,7 @@ class ItineraryAgent(BaseAgent):
 
         return {
             "day": day_number,
-            "theme": f"{selected[0]['region']} 深度游" if selected else "轻松自由活动",
+            "theme": f"{self._get_poi_region(selected[0])} 深度游" if selected else "轻松自由活动",
             "blocks": sorted(blocks, key=lambda block: block["start"]),
             "selected_pois": [poi["name"] for poi in selected],
             "visit_hours": round(total_visit_hours, 1),
@@ -687,14 +750,15 @@ class ItineraryAgent(BaseAgent):
     def _poi_priority_key(self, poi: POI, profile: Dict[str, Any], constraints: Dict[str, Any]) -> Tuple[int, float, str, str]:
         penalty = 0
         tags_text = " ".join(poi.get("tags", []))
+        visit_duration_hours = self._get_visit_duration_hours(poi)
         if profile["mode"] in {"family", "senior", "family_senior", "relaxed"}:
             if any(word in tags_text for word in ["徒步", "登山", "冒险", "高强度", "夜游"]):
                 penalty += 5
-            if poi["visit_duration_hours"] > 3.5:
+            if visit_duration_hours > 3.5:
                 penalty += 2
         if constraints["daily_ticket_budget"] and poi["ticket_cost"] > constraints["daily_ticket_budget"]:
             penalty += 2
-        return (penalty, poi["ticket_cost"], poi["region"], poi["name"])
+        return (penalty, poi["ticket_cost"], self._get_poi_region(poi), poi["name"])
 
     def _validate_day_plan(self, blocks: List[Dict[str, Any]], constraints: Dict[str, Any]) -> Dict[str, Any]:
         notes: List[str] = []
@@ -725,9 +789,11 @@ class ItineraryAgent(BaseAgent):
     def _estimate_commute_minutes(self, previous_poi: Optional[POI], next_poi: POI) -> int:
         if previous_poi is None:
             return 15
-        if previous_poi["region"] == next_poi["region"]:
+        previous_region = self._get_poi_region(previous_poi)
+        next_region = self._get_poi_region(next_poi)
+        if previous_region == next_region:
             return 20
-        if "区" in previous_poi["region"] and "区" in next_poi["region"]:
+        if "区" in previous_region and "区" in next_region:
             return 45
         return 60
 
@@ -881,8 +947,22 @@ class ItineraryAgent(BaseAgent):
             seen.add(name)
             priority_raw = str(poi.get("priority") or "medium").lower()
             priority = priority_raw if priority_raw in {"high", "medium", "low"} else "medium"
-            duration_val = poi.get("recommended_visit_duration_hours") or poi.get("duration") or poi.get("estimated_duration") or 2.0
-            duration_hours = self._parse_duration_hours(duration_val)
+            duration_hours = self._get_visit_duration_hours(poi)
+            if (
+                duration_hours == 2.0
+                and poi.get("estimated_duration") is not None
+                and not any(
+                    poi.get(field) not in {None, ""}
+                    for field in [
+                        "visit_duration_hours",
+                        "suggested_duration_hours",
+                        "recommended_visit_duration_hours",
+                        "duration",
+                        "recommended_duration",
+                    ]
+                )
+            ):
+                duration_hours = self._parse_duration_hours(poi.get("estimated_duration"))
             best_time = str(poi.get("best_time_to_visit") or "flexible").lower()
             if best_time not in TIME_SLOT_VALUES:
                 best_time = "flexible"
@@ -913,6 +993,8 @@ class ItineraryAgent(BaseAgent):
                 "city": city or None,
                 "region": region,
                 "category": str(poi.get("category") or "other").strip() or None,
+                "visit_duration_hours": duration_hours,
+                "suggested_duration_hours": duration_hours,
                 "recommended_visit_duration_hours": duration_hours,
                 "best_time_to_visit": best_time,
                 "estimated_cost": estimated_cost,
@@ -981,10 +1063,10 @@ class ItineraryAgent(BaseAgent):
             "name": poi.get("name"),
             "time_slot": time_slot,
             "category": poi.get("category"),
-            "estimated_duration_hours": poi.get("recommended_visit_duration_hours"),
+            "estimated_duration_hours": poi.get("recommended_visit_duration_hours") or self._get_visit_duration_hours(poi),
             "notes": poi.get("description"),
             "city": poi.get("city"),
-            "region": poi.get("region"),
+            "region": self._get_poi_region(poi),
             "priority": poi.get("priority"),
             "estimated_cost": poi.get("estimated_cost"),
             "coordinates": poi.get("coordinates"),

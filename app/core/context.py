@@ -1159,6 +1159,25 @@ class SessionContext:
         )
         return self.pending_clarification_latch
 
+    def update_pending_clarification_partial(
+        self,
+        partial_extracted: Optional[Dict[str, Any]],
+    ) -> None:
+        """合并更新追问锁存器里的 partial slots。"""
+        if not self.pending_clarification_latch or not partial_extracted:
+            return
+
+        merged = dict(self.pending_clarification_latch.partial_extracted or {})
+        for key, value in partial_extracted.items():
+            if value is None:
+                continue
+            if isinstance(value, str) and not value.strip():
+                continue
+            if isinstance(value, list) and not value:
+                continue
+            merged[key] = value
+        self.pending_clarification_latch.partial_extracted = merged
+
     def consume_clarification_latch(self) -> None:
         """【本轮新增】消费（标记为已消费）追问锁存器"""
         if self.pending_clarification_latch:
