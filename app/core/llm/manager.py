@@ -11,7 +11,13 @@ from typing import Any, Dict, List, Optional
 
 from app.core.config import settings
 from app.core.logger import get_logger
-from app.core.tracing import finish_llm_call, mark_llm_first_token, start_llm_call
+from app.core.tracing import (
+    finish_llm_call,
+    is_experiment_cache_disabled,
+    is_experiment_strict_mode,
+    mark_llm_first_token,
+    start_llm_call,
+)
 
 from .client import (
     LLMMessage,
@@ -110,6 +116,7 @@ class EnhancedLLMManager:
 
     def _initialize_client(self) -> None:
         """初始化客户端"""
+        strict_mode = is_experiment_strict_mode()
         if settings.llm.is_configured:
             try:
                 self._client = OpenRouterClient(
@@ -121,10 +128,14 @@ class EnhancedLLMManager:
                 self._using_mock = False
                 logger.info(f"LLM 客户端已初始化: {settings.llm.model}")
             except Exception as e:
+                if strict_mode:
+                    raise RuntimeError("EXPERIMENT_STRICT_MODE forbids Mock LLM fallback") from e
                 logger.warning(f"初始化 OpenRouter 失败: {e}, 使用 Mock 客户端")
                 self._client = self._mock_client
                 self._using_mock = True
         else:
+            if strict_mode:
+                raise RuntimeError("EXPERIMENT_STRICT_MODE forbids implicit Mock LLM client")
             logger.warning("未配置 LLM API Key, 使用 Mock 客户端")
             self._client = self._mock_client
             self._using_mock = True
@@ -200,6 +211,16 @@ def _manager_client_model_name(client: Optional[BaseLLMClient]) -> str:
     return str(getattr(client, "model", settings.llm.model) or settings.llm.model)
 
 
+def _manager_client_provider_name(client: Optional[BaseLLMClient]) -> Optional[str]:
+    if client is None:
+        return None
+    if isinstance(client, MockLLMClient):
+        return "mock"
+    if isinstance(client, OpenRouterClient):
+        return "openrouter"
+    return client.__class__.__name__.replace("Client", "").lower() or None
+
+
 async def _traced_enhanced_llm_chat(
     self: EnhancedLLMManager,
     messages: List[LLMMessage],
@@ -210,15 +231,40 @@ async def _traced_enhanced_llm_chat(
     start_time = time.time()
     self.metrics.total_calls += 1
 
-    if use_cache and self._cache and not tools:
+    cache_allowed = use_cache and not is_experiment_cache_disabled()
+    if cache_allowed and self._cache and not tools:
         cached = self._cache.get(messages)
         if cached:
             self.metrics.cached_calls += 1
             logger.debug("LLM 鍝嶅簲鍛戒腑缂撳瓨")
+            trace_call = start_llm_call(
+                provider=_manager_client_provider_name(self._client),
+                model=cached.model,
+                streaming=False,
+                mock=self._using_mock,
+                fallback=False,
+                cache_hit=True,
+                message_count=len(messages),
+                message_chars=_estimate_message_chars(messages),
+                tool_count=0,
+            )
+            finish_llm_call(
+                trace_call,
+                provider=_manager_client_provider_name(self._client),
+                model=cached.model,
+                usage=cached.usage,
+                success=True,
+                mock=self._using_mock,
+                fallback=False,
+                cache_hit=True,
+                output_chars=len(str(cached.content or "")),
+                chunk_count=0,
+            )
             return cached
 
     client = self._client
     trace_call = start_llm_call(
+        provider=_manager_client_provider_name(client),
         model=_manager_client_model_name(client),
         streaming=False,
         mock=self._using_mock,
@@ -234,6 +280,7 @@ async def _traced_enhanced_llm_chat(
         self.metrics.total_latency_ms += (time.time() - start_time) * 1000
         finish_llm_call(
             trace_call,
+            provider=_manager_client_provider_name(client),
             model=response.model,
             usage=response.usage,
             success=True,
@@ -242,14 +289,14 @@ async def _traced_enhanced_llm_chat(
             output_chars=len(str(response.content or "")),
         )
 
-        if use_cache and self._cache and not tools:
+        if cache_allowed and self._cache and not tools:
             self._cache.set(messages, response)
 
         return response
     except Exception as exc:
         logger.warning(f"LLM 璋冪敤澶辫触: {exc}")
 
-        if not self._using_mock:
+        if not self._using_mock and not is_experiment_strict_mode():
             logger.info("灏濊瘯浣跨敤 Mock 瀹㈡埛绔?..")
             try:
                 response = await self._mock_client.chat(messages, tools, **kwargs)
@@ -257,6 +304,7 @@ async def _traced_enhanced_llm_chat(
                 self.metrics.total_latency_ms += (time.time() - start_time) * 1000
                 finish_llm_call(
                     trace_call,
+                    provider="mock",
                     model=response.model,
                     usage=response.usage,
                     success=True,
@@ -269,6 +317,7 @@ async def _traced_enhanced_llm_chat(
                 logger.error(f"Mock 瀹㈡埛绔篃澶辫触: {mock_error}")
                 finish_llm_call(
                     trace_call,
+                    provider="mock",
                     model="mock-model",
                     success=False,
                     error=mock_error,
@@ -283,6 +332,7 @@ async def _traced_enhanced_llm_chat(
         self.metrics.total_latency_ms += (time.time() - start_time) * 1000
         finish_llm_call(
             trace_call,
+            provider=_manager_client_provider_name(client),
             model=_manager_client_model_name(client),
             success=False,
             error=exc,
@@ -300,6 +350,7 @@ async def _traced_enhanced_llm_stream(
 ):
     client = self._client
     trace_call = start_llm_call(
+        provider=_manager_client_provider_name(client),
         model=_manager_client_model_name(client),
         streaming=True,
         mock=self._using_mock,
@@ -320,6 +371,7 @@ async def _traced_enhanced_llm_stream(
     except BaseException as exc:
         finish_llm_call(
             trace_call,
+            provider=_manager_client_provider_name(client),
             model=_manager_client_model_name(client),
             success=False,
             error=exc,
@@ -332,6 +384,7 @@ async def _traced_enhanced_llm_stream(
     else:
         finish_llm_call(
             trace_call,
+            provider=_manager_client_provider_name(client),
             model=_manager_client_model_name(client),
             success=True,
             mock=self._using_mock,

@@ -12,6 +12,7 @@ from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING
 
 from app.core.logger import get_logger
+from app.core.tracing import record_tool_call
 
 if TYPE_CHECKING:
     from app.tools.base import BaseTool
@@ -375,6 +376,16 @@ class FallbackToolStrategy(ToolStrategy):
             try:
                 result = await self.fallback_tool.execute(**params)
                 execution_time = (datetime.utcnow() - start).total_seconds() * 1000
+                record_tool_call(
+                    original_tool.name,
+                    params=params,
+                    duration_ms=execution_time,
+                    status="completed" if result.success else "failed",
+                    success=result.success,
+                    error=result.error,
+                    cache_hit=False,
+                    fallback_used=True,
+                )
 
                 return ToolExecutionResult(
                     success=result.success,
@@ -386,6 +397,16 @@ class FallbackToolStrategy(ToolStrategy):
                 )
             except Exception as e:
                 execution_time = (datetime.utcnow() - start).total_seconds() * 1000
+                record_tool_call(
+                    original_tool.name,
+                    params=params,
+                    duration_ms=execution_time,
+                    status="failed",
+                    success=False,
+                    error=e,
+                    cache_hit=False,
+                    fallback_used=True,
+                )
                 return ToolExecutionResult(
                     success=False,
                     error=f"Both primary and fallback failed. Last error: {e}",
@@ -402,6 +423,15 @@ class FallbackToolStrategy(ToolStrategy):
                     result = self.fallback_func(original_tool.name, params)
 
                 execution_time = (datetime.utcnow() - start).total_seconds() * 1000
+                record_tool_call(
+                    original_tool.name,
+                    params=params,
+                    duration_ms=execution_time,
+                    status="completed",
+                    success=True,
+                    cache_hit=False,
+                    fallback_used=True,
+                )
 
                 return ToolExecutionResult(
                     success=True,
@@ -412,6 +442,16 @@ class FallbackToolStrategy(ToolStrategy):
                 )
             except Exception as e:
                 execution_time = (datetime.utcnow() - start).total_seconds() * 1000
+                record_tool_call(
+                    original_tool.name,
+                    params=params,
+                    duration_ms=execution_time,
+                    status="failed",
+                    success=False,
+                    error=e,
+                    cache_hit=False,
+                    fallback_used=True,
+                )
                 return ToolExecutionResult(
                     success=False,
                     error=f"Both primary and fallback failed. Last error: {e}",
@@ -421,6 +461,16 @@ class FallbackToolStrategy(ToolStrategy):
 
         # 无降级方案
         execution_time = (datetime.utcnow() - start).total_seconds() * 1000
+        record_tool_call(
+            original_tool.name,
+            params=params,
+            duration_ms=execution_time,
+            status="failed",
+            success=False,
+            error="No fallback available",
+            cache_hit=False,
+            fallback_used=False,
+        )
         return ToolExecutionResult(
             success=False,
             error="No fallback available",
@@ -464,6 +514,15 @@ class CachedToolStrategy(ToolStrategy):
             cached_value = self.cache.get(cache_key)
             if cached_value is not None:
                 logger.debug(f"Cache hit for tool '{tool.name}'")
+                record_tool_call(
+                    tool.name,
+                    params=params,
+                    duration_ms=0,
+                    status="completed",
+                    success=True,
+                    cache_hit=True,
+                    fallback_used=False,
+                )
                 return ToolExecutionResult(
                     success=True,
                     data=cached_value,
@@ -491,6 +550,16 @@ class CachedToolStrategy(ToolStrategy):
                 execution_time_ms=execution_time,
                 strategy_used=self.strategy_type.value,
                 metadata={"cache_hit": False},
+            )
+            record_tool_call(
+                tool.name,
+                params=params,
+                duration_ms=execution_time,
+                status="completed" if result.success else "failed",
+                success=result.success,
+                error=result.error,
+                cache_hit=False,
+                fallback_used=False,
             )
 
             await self.after_execute(tool, tool_result, ctx)

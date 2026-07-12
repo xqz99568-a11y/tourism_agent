@@ -17,7 +17,13 @@ from pydantic import BaseModel, Field
 from app.core.context import ExecutionContext, SessionContext, ToolCall, ReasoningNode
 from app.core.llm.client import LLMMessage, LLMResponse, LLMManager, ToolDefinition
 from app.core.logger import get_logger
-from app.core.tracing import record_agent_timing, record_tool_call
+from app.core.tracing import (
+    finish_agent_run,
+    record_agent_timing,
+    record_tool_call,
+    start_agent_run,
+    trace_component,
+)
 
 logger = get_logger(__name__)
 
@@ -312,6 +318,8 @@ class BaseAgent(ABC):
         result: str = None,
         duration_ms: float = None,
         error: str = None,
+        cache_hit: Optional[bool] = None,
+        fallback_used: Optional[bool] = None,
     ) -> None:
         """记录工具使用 - 增强版"""
         tool_call_info = {
@@ -325,6 +333,10 @@ class BaseAgent(ABC):
             tool_call_info["duration_ms"] = duration_ms
         if error:
             tool_call_info["error"] = error
+        if cache_hit is not None:
+            tool_call_info["cache_hit"] = bool(cache_hit)
+        if fallback_used is not None:
+            tool_call_info["fallback_used"] = bool(fallback_used)
 
         if status != "pending":
             record_tool_call(
@@ -334,6 +346,8 @@ class BaseAgent(ABC):
                 status=status,
                 error=error,
                 agent=self.config.name,
+                cache_hit=cache_hit,
+                fallback_used=fallback_used,
             )
 
         context.add_thinking_step(
@@ -389,6 +403,7 @@ class BaseAgent(ABC):
         包含计划、执行和反思 - 增强版
         """
         start_time = datetime.utcnow()
+        trace_run = start_agent_run(self.config.name)
         self.status = AgentStatus.RUNNING
 
         logger.info(f"{self.config.name.capitalize()} Agent starting execution")
@@ -420,10 +435,11 @@ class BaseAgent(ABC):
 
             # 执行阶段
             execute_start = time.perf_counter()
-            response = await self._execute_with_timeout(
-                self.execute(session, context),
-                timeout=self.config.timeout_seconds,
-            )
+            with trace_component(self.config.name, agent_name=self.config.name):
+                response = await self._execute_with_timeout(
+                    self.execute(session, context),
+                    timeout=self.config.timeout_seconds,
+                )
             execute_time_ms = (time.perf_counter() - execute_start) * 1000
 
             # 更新工具调用计数
@@ -451,6 +467,14 @@ class BaseAgent(ABC):
                 tokens_used=response.tokens_used,
                 tool_calls_count=metrics.tool_calls_count,
             )
+            finish_agent_run(
+                trace_run,
+                agent_name=self.config.name,
+                status=response.status.value,
+                tokens=response.tokens_used,
+                tool_count=metrics.tool_calls_count,
+                error=response.error,
+            )
 
             self.status = AgentStatus.COMPLETED
             logger.info(
@@ -476,10 +500,35 @@ class BaseAgent(ABC):
 
             return response
 
+        except asyncio.CancelledError as exc:
+            execution_time = (datetime.utcnow() - start_time).total_seconds() * 1000
+            tool_count = len(self._current_tool_calls)
+            self.status = AgentStatus.FAILED
+            record_agent_timing(
+                self.config.name,
+                execution_time,
+                status="cancelled",
+                success=False,
+                tokens_used=0,
+                tool_calls_count=tool_count,
+            )
+            finish_agent_run(
+                trace_run,
+                agent_name=self.config.name,
+                status="cancelled",
+                tokens=0,
+                tool_count=tool_count,
+                error=exc,
+            )
+            self._reset_state()
+            raise
+
         except asyncio.TimeoutError:
             error_msg = f"Agent execution timed out after {self.config.timeout_seconds}s"
             logger.error(f"{self.config.name.capitalize()} Agent: {error_msg}")
             self.status = AgentStatus.FAILED
+            execution_time = (datetime.utcnow() - start_time).total_seconds() * 1000
+            tool_count = len(self._current_tool_calls)
 
             # 记录失败
             self._record_thinking_complete(
@@ -487,6 +536,23 @@ class BaseAgent(ABC):
                 step_name="超时",
                 result_summary=f"❌ {error_msg}",
             )
+            record_agent_timing(
+                self.config.name,
+                execution_time,
+                status="timeout",
+                success=False,
+                tokens_used=0,
+                tool_calls_count=tool_count,
+            )
+            finish_agent_run(
+                trace_run,
+                agent_name=self.config.name,
+                status="timeout",
+                tokens=0,
+                tool_count=tool_count,
+                error=error_msg,
+            )
+            self._reset_state()
 
             return AgentResponse(
                 agent_name=self.config.name,
@@ -499,6 +565,8 @@ class BaseAgent(ABC):
             logger.exception(f"{self.config.name.capitalize()} Agent failed: {e}")
             self.status = AgentStatus.FAILED
             context.add_error(self.config.name, e)
+            execution_time = (datetime.utcnow() - start_time).total_seconds() * 1000
+            tool_count = len(self._current_tool_calls)
 
             # 记录失败
             self._record_thinking_complete(
@@ -506,6 +574,23 @@ class BaseAgent(ABC):
                 step_name="失败",
                 result_summary=f"❌ 执行失败: {str(e)}",
             )
+            record_agent_timing(
+                self.config.name,
+                execution_time,
+                status=AgentStatus.FAILED.value,
+                success=False,
+                tokens_used=0,
+                tool_calls_count=tool_count,
+            )
+            finish_agent_run(
+                trace_run,
+                agent_name=self.config.name,
+                status=AgentStatus.FAILED.value,
+                tokens=0,
+                tool_count=tool_count,
+                error=e,
+            )
+            self._reset_state()
 
             return AgentResponse(
                 agent_name=self.config.name,
@@ -598,12 +683,13 @@ class BaseAgent(ABC):
             tool_count,
         )
         try:
-            response = await self.llm.chat(
-                messages=messages,
-                tools=tools,
-                temperature=self.config.temperature,
-                **kwargs,
-            )
+            with trace_component(self.config.name, agent_name=self.config.name):
+                response = await self.llm.chat(
+                    messages=messages,
+                    tools=tools,
+                    temperature=self.config.temperature,
+                    **kwargs,
+                )
         except Exception:
             llm_time_ms = (time.perf_counter() - llm_start) * 1000
             logger.warning(
@@ -657,15 +743,16 @@ class BaseAgent(ABC):
             tool_count,
         )
         try:
-            async for token in self.llm.stream(
-                messages=messages,
-                tools=tools,
-                temperature=self.config.temperature,
-                **kwargs,
-            ):
-                chunk_count += 1
-                output_chars += len(str(token or ""))
-                yield token
+            with trace_component(self.config.name, agent_name=self.config.name):
+                async for token in self.llm.stream(
+                    messages=messages,
+                    tools=tools,
+                    temperature=self.config.temperature,
+                    **kwargs,
+                ):
+                    chunk_count += 1
+                    output_chars += len(str(token or ""))
+                    yield token
         except Exception:
             llm_time_ms = (time.perf_counter() - llm_start) * 1000
             logger.warning(

@@ -26,6 +26,7 @@ from app.agents.itinerary import ItineraryAgent
 from app.agents.budget import BudgetAgent
 from app.agents.weather import WeatherAgent
 from app.agents.review import ReviewAgent
+from app.core.tracing import mark_trace_status
 
 logger = get_logger(__name__)
 
@@ -140,6 +141,7 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=503, detail="Service not initialized")
 
         session_id = request.get_session_id()
+        request_id = str(uuid.uuid4())
         user_message = request.message
 
         # 获取或创建会话
@@ -151,7 +153,7 @@ def create_app() -> FastAPI:
         results = []
         final_content = ""
 
-        async for event in orchestrator.process(session, user_message, session_id):
+        async for event in orchestrator.process(session, user_message, request_id):
             if event.get("status") == "completed" and "content" in event:
                 final_content = event["content"]
             if "results" in event:
@@ -170,6 +172,7 @@ def create_app() -> FastAPI:
             raise HTTPException(status_code=503, detail="Service not initialized")
 
         session_id = request.get_session_id()
+        request_id = str(uuid.uuid4())
         user_message = request.message
 
         # 【本轮修复】获取或创建会话
@@ -238,10 +241,11 @@ def create_app() -> FastAPI:
 
             try:
                 # 【本轮修复】传递 abort_event 给 orchestrator
-                async for event in orchestrator.process(session, user_message, session_id, abort_event=abort_event):
+                async for event in orchestrator.process(session, user_message, request_id, abort_event=abort_event):
                     # 如果 abort_event 被设置，提前退出
                     if abort_event.is_set():
-                        logger.info(f"Request {session_id} aborted by client")
+                        mark_trace_status("aborted", error="client abort_event set")
+                        logger.info(f"Request {request_id} aborted by client")
                         break
 
                     raw_content = event.get("content")
@@ -358,7 +362,8 @@ def create_app() -> FastAPI:
                 # 【本轮修复】捕获取消异常，确保 abort_event 被设置
                 if not abort_event.is_set():
                     abort_event.set()
-                logger.info(f"Request {session_id} cancelled")
+                mark_trace_status("cancelled", error="client cancelled SSE stream")
+                logger.info(f"Request {request_id} cancelled")
                 raise
             except Exception as exc:
                 yield format_sse(

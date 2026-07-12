@@ -404,6 +404,7 @@ class AttractionAgent(BaseAgent):
                         "status": "completed",
                         "result": result_text,
                         "duration_ms": outcome["duration_ms"],
+                        "cache_hit": outcome["cached"],
                     }],
                     api_calls=outcome["api_calls"],
                 )
@@ -427,6 +428,7 @@ class AttractionAgent(BaseAgent):
                         "status": "failed",
                         "error": error_text,
                         "duration_ms": outcome["duration_ms"],
+                        "cache_hit": outcome.get("cached", False),
                     }],
                     api_calls=outcome["api_calls"],
                 )
@@ -602,6 +604,7 @@ class AttractionAgent(BaseAgent):
                         "status": "completed",
                         "result": result_text,
                         "duration_ms": outcome["duration_ms"],
+                        "cache_hit": outcome["cached"],
                     }],
                     api_calls=[outcome["api_log"]] if outcome["api_log"] else [],
                 )
@@ -618,6 +621,7 @@ class AttractionAgent(BaseAgent):
                         "status": "failed",
                         "error": error_text,
                         "duration_ms": outcome["duration_ms"],
+                        "cache_hit": outcome.get("cached", False),
                     }],
                     api_calls=[outcome["api_log"]] if outcome["api_log"] else [],
                 )

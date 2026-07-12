@@ -30,7 +30,12 @@ from tenacity import (
 
 from app.core.config import settings
 from app.core.logger import get_logger
-from app.core.tracing import finish_llm_call, mark_llm_first_token, start_llm_call
+from app.core.tracing import (
+    finish_llm_call,
+    is_experiment_strict_mode,
+    mark_llm_first_token,
+    start_llm_call,
+)
 
 logger = get_logger(__name__)
 
@@ -766,6 +771,7 @@ class LLMManager:
 
     def _init_client(self) -> None:
         """初始化客户端，优先使用本地 Ollama"""
+        strict_mode = is_experiment_strict_mode()
         # 检查是否配置了 Ollama (本地模型)
         import os
         ollama_base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
@@ -792,6 +798,8 @@ class LLMManager:
             self._client = OpenRouterClient()
             logger.info(f"OpenRouter 客户端已初始化，使用模型: {settings.llm.model}")
         else:
+            if strict_mode:
+                raise RuntimeError("EXPERIMENT_STRICT_MODE forbids implicit Mock LLM client")
             logger.warning("No LLM API key configured, using mock client for demo")
             self._client = MockLLMClient()
 
@@ -809,6 +817,15 @@ class LLMManager:
 
     def _client_model_name(self, client: BaseLLMClient) -> str:
         return str(getattr(client, "model", settings.llm.model) or settings.llm.model)
+
+    def _client_provider_name(self, client: BaseLLMClient) -> str:
+        if isinstance(client, MockLLMClient):
+            return "mock"
+        if isinstance(client, OllamaClient):
+            return "ollama"
+        if isinstance(client, OpenRouterClient):
+            return "openrouter"
+        return client.__class__.__name__.replace("Client", "").lower() or "unknown"
 
     async def chat(
         self,
@@ -854,6 +871,7 @@ async def _traced_llm_manager_chat(
 ) -> LLMResponse:
     client = self.get_client()
     trace_call = start_llm_call(
+        provider=self._client_provider_name(client),
         model=self._client_model_name(client),
         streaming=False,
         mock=isinstance(client, MockLLMClient),
@@ -867,6 +885,7 @@ async def _traced_llm_manager_chat(
         response = await client.chat(messages, tools, **kwargs)
         finish_llm_call(
             trace_call,
+            provider=self._client_provider_name(client),
             model=response.model,
             usage=response.usage,
             success=True,
@@ -877,13 +896,14 @@ async def _traced_llm_manager_chat(
         return response
     except Exception as exc:
         logger.error(f"LLM API 璋冪敤澶辫触: {exc}")
-        if not isinstance(client, MockLLMClient):
+        if not isinstance(client, MockLLMClient) and not is_experiment_strict_mode():
             logger.info("Falling back to Mock LLM client")
             mock_client = MockLLMClient()
             try:
                 response = await mock_client.chat(messages, tools, **kwargs)
                 finish_llm_call(
                     trace_call,
+                    provider="mock",
                     model=response.model,
                     usage=response.usage,
                     success=True,
@@ -895,6 +915,7 @@ async def _traced_llm_manager_chat(
             except Exception as mock_error:
                 finish_llm_call(
                     trace_call,
+                    provider="mock",
                     model="mock-model",
                     success=False,
                     error=mock_error,
@@ -904,6 +925,7 @@ async def _traced_llm_manager_chat(
                 raise
         finish_llm_call(
             trace_call,
+            provider=self._client_provider_name(client),
             model=self._client_model_name(client),
             success=False,
             error=exc,
@@ -921,6 +943,7 @@ async def _traced_llm_manager_stream(
 ) -> AsyncGenerator[str, None]:
     client = self.get_client()
     trace_call = start_llm_call(
+        provider=self._client_provider_name(client),
         model=self._client_model_name(client),
         streaming=True,
         mock=isinstance(client, MockLLMClient),
@@ -941,6 +964,7 @@ async def _traced_llm_manager_stream(
     except BaseException as exc:
         finish_llm_call(
             trace_call,
+            provider=self._client_provider_name(client),
             model=self._client_model_name(client),
             success=False,
             error=exc,
@@ -953,6 +977,7 @@ async def _traced_llm_manager_stream(
     else:
         finish_llm_call(
             trace_call,
+            provider=self._client_provider_name(client),
             model=self._client_model_name(client),
             success=True,
             mock=isinstance(client, MockLLMClient),

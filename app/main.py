@@ -8,6 +8,7 @@ import time
 from datetime import datetime
 from functools import lru_cache
 from typing import TYPE_CHECKING, Any, Dict, Optional
+from uuid import uuid4
 
 if TYPE_CHECKING:
     from app.agents.orchestrator import AgentOrchestrator
@@ -124,6 +125,7 @@ class TourismSystemApp:
         """
         self.ensure_runtime_initialized()
         session = self.get_or_create_session(session_id)
+        request_id = str(uuid4())
 
         # 同步运行异步处理
         try:
@@ -132,7 +134,7 @@ class TourismSystemApp:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
 
-        result = loop.run_until_complete(self._process_async(text, session, session_id))
+        result = loop.run_until_complete(self._process_async(text, session, session_id, request_id))
         return result
 
     async def _process_async(
@@ -140,6 +142,7 @@ class TourismSystemApp:
         text: str,
         session: SessionContext,
         session_id: str,
+        request_id: str,
     ) -> Dict[str, Any]:
         """异步处理查询"""
         self.ensure_runtime_initialized()
@@ -160,7 +163,7 @@ class TourismSystemApp:
         self._cli_thinking_rendered = ""
 
         try:
-            async for event in self.orchestrator.process(session, text, session_id):
+            async for event in self.orchestrator.process(session, text, request_id):
                 message = event.get("message")
                 if message:
                     phase = event.get("phase", "") or "unknown_phase"
@@ -497,6 +500,7 @@ def create_sse_app(app: TourismSystemApp):
         """
         text = str(payload.get("message") or payload.get("query") or payload.get("req") or "")
         session_id = str(payload.get("session_id") or payload.get("sessionId") or "web-default").strip() or "web-default"
+        request_id = str(uuid4())
 
         def build_sse_payload(
             event_type: str,
@@ -537,6 +541,7 @@ def create_sse_app(app: TourismSystemApp):
 
         async def event_generator():
             from app.core.context import SessionContext
+            from app.core.tracing import mark_trace_status
 
             app.ensure_runtime_initialized()
 
@@ -564,7 +569,7 @@ def create_sse_app(app: TourismSystemApp):
             
             try:
                 # 使用真实的 orchestrator 流式输出
-                async for event in app.orchestrator.process(app.get_or_create_session(session_id), text, session_id):
+                async for event in app.orchestrator.process(app.get_or_create_session(session_id), text, request_id):
                     # 发送思考步骤更新
                     if "thinking_steps" in event and event["thinking_steps"]:
                         new_steps = event["thinking_steps"]
@@ -706,6 +711,9 @@ def create_sse_app(app: TourismSystemApp):
                             ai_message=(streaming_content or event.get("content", "")),
                         )
 
+            except asyncio.CancelledError:
+                mark_trace_status("cancelled", error="client cancelled SSE stream")
+                raise
             except Exception as exc:
                 yield {
                     "event": "error",

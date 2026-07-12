@@ -30,12 +30,14 @@ from app.core.llm.emotion_detector import emotion_detector, EmotionDetector
 from app.core.llm.mode_detector import mode_detector, DialogModeDetector
 from app.core.logger import get_logger
 from app.core.tracing import (
+    mark_trace_status,
     record_stage_timing,
     record_trace_event,
     request_trace,
     set_trace_intent_info,
     set_trace_route,
     set_trace_selected_agents,
+    trace_component,
 )
 from app.schemas import (
     DialogMode, EmotionSchema, IntentType, ModeContext, PlanSchema, TaskSchema,
@@ -157,7 +159,8 @@ class IntentParser:
         messages.append(LLMMessage(role="user", content=prompt))
 
         try:
-            response = await self.llm.chat(messages)
+            with trace_component("IntentParser"):
+                response = await self.llm.chat(messages)
 
             # 解析 JSON
             content = response.content.strip()
@@ -374,7 +377,8 @@ class ChatModeHandler:
         ]
 
         try:
-            response = await self.llm.chat(messages)
+            with trace_component("ChatModeHandler"):
+                response = await self.llm.chat(messages)
             return response.content
         except Exception as e:
             logger.error(f"Chat mode handling failed: {e}")
@@ -457,7 +461,8 @@ class QAModeHandler:
         ]
 
         try:
-            response = await self.llm.chat(messages)
+            with trace_component("QAModeHandler"):
+                response = await self.llm.chat(messages)
             return response.content, None
         except Exception as e:
             logger.error(f"QA mode handling failed: {e}")
@@ -780,7 +785,14 @@ class AgentOrchestrator:
         abort_event: Optional[asyncio.Event] = None,
     ) -> AsyncGenerator[Dict[str, Any], None]:
         trace_request_id = request_id or str(uuid.uuid4())
-        with request_trace(trace_request_id, session.session_id):
+        with request_trace(
+            trace_request_id,
+            session.session_id,
+            user_message=user_message,
+            experiment_case_id=self.config.experiment_case_id or None,
+            system_variant=self.config.collaboration_mode if self.config.experiment_mode else None,
+            experiment_group=self.config.review_mode if self.config.experiment_mode else None,
+        ):
             async for event in self._process_impl(
                 session,
                 user_message,
@@ -815,6 +827,12 @@ class AgentOrchestrator:
         # 【本轮修复】检查 abort 信号
         if abort_event and abort_event.is_set():
             logger.info(f"Request {request_id} was aborted before starting")
+            mark_trace_status("aborted", error="abort_event set before starting")
+            yield {
+                "phase": "aborted",
+                "status": "aborted",
+                "message": "request aborted before starting",
+            }
             return
 
         request_id = request_id or str(uuid.uuid4())

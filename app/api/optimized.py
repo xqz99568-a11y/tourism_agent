@@ -15,6 +15,13 @@ from app.core.cache_monitor import get_cache_monitor, init_cache_monitor
 from app.core.context import SessionContext
 from app.core.llm.manager import get_llm_manager
 from app.core.logger import get_logger
+from app.core.tracing import (
+    finish_agent_run,
+    is_experiment_cache_disabled,
+    record_tool_call,
+    request_trace,
+    start_agent_run,
+)
 from app.schemas import IntentType
 
 logger = get_logger(__name__)
@@ -64,83 +71,116 @@ async def unified_plan(request: UnifiedPlanRequest) -> UnifiedPlanResponse:
     import uuid
 
     start_time = time.time()
+    request_id = str(uuid.uuid4())
+    session_id = str(uuid.uuid4())
 
-    # 初始化组件
-    llm = get_llm_manager()
-    cache = get_agent_cache()
+    with request_trace(request_id, session_id):
+        # 初始化组件
+        llm = get_llm_manager()
+        cache = get_agent_cache()
 
-    # 检查缓存
-    cache_hit = False
-    extracted_info = {
-        "destination": request.destination,
-        "duration": request.duration,
-        "num_travelers": request.num_travelers,
-        "budget_level": request.budget_level,
-        "travel_styles": request.travel_styles,
-    }
+        # 检查缓存
+        cache_hit = False
+        extracted_info = {
+            "destination": request.destination,
+            "duration": request.duration,
+            "num_travelers": request.num_travelers,
+            "budget_level": request.budget_level,
+            "travel_styles": request.travel_styles,
+        }
 
-    if request.use_cache:
-        cached = cache.get(
-            agent_name="unified_planner",
-            intent_type="trip_planning",
-            extracted_info=extracted_info,
-        )
-        if cached:
-            cache_hit = True
-            elapsed = (time.time() - start_time) * 1000
-            return UnifiedPlanResponse(
-                success=True,
-                content=cached.content,
-                intent="trip_planning",
-                cache_hit=True,
-                llm_calls_saved=1,
-                execution_time_ms=elapsed,
-            )
-
-    # 创建会话
-    session = SessionContext(
-        session_id=str(uuid.uuid4()),
-    )
-    session.trip_context.destination = request.destination
-    session.trip_context.num_travelers = request.num_travelers
-    session.trip_context.duration_days = request.duration
-    session.preferences.budget_level = request.budget_level
-    session.preferences.travel_style = request.travel_styles
-
-    # 执行统一规划
-    unified_agent = UnifiedPlannerAgent(llm=llm)
-    streaming_content = ""
-
-    try:
-        async for result in unified_agent.execute_stream(session, None):
-            if isinstance(result, str):
-                streaming_content += result
-            elif hasattr(result, 'content'):
-                streaming_content = result.content
-
-        # 缓存结果
-        if request.use_cache and streaming_content:
-            cache.set(
+        cache_allowed = request.use_cache and not is_experiment_cache_disabled()
+        if cache_allowed:
+            cached = cache.get(
                 agent_name="unified_planner",
                 intent_type="trip_planning",
                 extracted_info=extracted_info,
-                content=streaming_content,
+            )
+            if cached:
+                cache_hit = True
+                elapsed = (time.time() - start_time) * 1000
+                record_tool_call(
+                    "agent_cache",
+                    params={"agent_name": "unified_planner", "intent_type": "trip_planning"},
+                    duration_ms=elapsed,
+                    status="completed",
+                    success=True,
+                    component="unified_plan_api",
+                    cache_hit=True,
+                    fallback_used=False,
+                )
+                return UnifiedPlanResponse(
+                    success=True,
+                    content=cached.content,
+                    intent="trip_planning",
+                    cache_hit=True,
+                    llm_calls_saved=1,
+                    execution_time_ms=elapsed,
+                )
+
+        # 创建会话
+        session = SessionContext(
+            session_id=session_id,
+        )
+        session.trip_context.destination = request.destination
+        session.trip_context.num_travelers = request.num_travelers
+        session.trip_context.duration_days = request.duration
+        session.preferences.budget_level = request.budget_level
+        session.preferences.travel_style = request.travel_styles
+
+        # 执行统一规划
+        unified_agent = UnifiedPlannerAgent(llm=llm)
+        streaming_content = ""
+        agent_run = start_agent_run("unified_planner")
+        tokens_used = 0
+
+        try:
+            async for result in unified_agent.execute_stream(session, None):
+                if isinstance(result, str):
+                    streaming_content += result
+                elif hasattr(result, 'content'):
+                    streaming_content = result.content
+                    tokens_used = int(getattr(result, "tokens_used", 0) or 0)
+
+            finish_agent_run(
+                agent_run,
+                agent_name="unified_planner",
+                status="completed",
+                tokens=tokens_used,
+                tool_count=0,
             )
 
-        elapsed = (time.time() - start_time) * 1000
+            # 缓存结果
+            if cache_allowed and streaming_content:
+                cache.set(
+                    agent_name="unified_planner",
+                    intent_type="trip_planning",
+                    extracted_info=extracted_info,
+                    content=streaming_content,
+                )
 
-        return UnifiedPlanResponse(
-            success=True,
-            content=streaming_content,
-            intent="trip_planning",
-            cache_hit=cache_hit,
-            llm_calls_saved=0,
-            execution_time_ms=elapsed,
-        )
+            elapsed = (time.time() - start_time) * 1000
 
-    except Exception as e:
-        logger.exception(f"Unified plan failed: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+            return UnifiedPlanResponse(
+                success=True,
+                content=streaming_content,
+                intent="trip_planning",
+                cache_hit=cache_hit,
+                llm_calls_saved=0,
+                execution_time_ms=elapsed,
+            )
+
+        except Exception as e:
+            finish_agent_run(
+                agent_run,
+                agent_name="unified_planner",
+                status="failed",
+                tokens=tokens_used,
+                tool_count=0,
+                error=e,
+            )
+            logger.exception(f"Unified plan failed: {e}")
+            raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/cache/stats", response_model=CacheStatsResponse)

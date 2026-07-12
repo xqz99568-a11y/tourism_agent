@@ -80,6 +80,8 @@ class BaseTool(ABC):
         http_status: int = 200,
         error: str = None,
         cost_ms: float = None,
+        cache_hit: Optional[bool] = None,
+        fallback_used: Optional[bool] = None,
     ) -> None:
         """记录外部 API 调用"""
         service = self.external_service or self.name
@@ -91,6 +93,8 @@ class BaseTool(ABC):
             status=status,
             http_status=http_status,
             error=error,
+            cache_hit=cache_hit,
+            fallback_used=fallback_used,
         )
         if self._context is None:
             return
