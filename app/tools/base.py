@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from app.core.logger import get_logger
+from app.core.tracing import record_api_call as record_trace_api_call
 
 if TYPE_CHECKING:
     from app.core.context import ExecutionContext
@@ -81,10 +82,19 @@ class BaseTool(ABC):
         cost_ms: float = None,
     ) -> None:
         """记录外部 API 调用"""
+        service = self.external_service or self.name
+        record_trace_api_call(
+            service,
+            endpoint=endpoint,
+            params=params,
+            duration_ms=cost_ms,
+            status=status,
+            http_status=http_status,
+            error=error,
+        )
         if self._context is None:
             return
 
-        service = self.external_service or self.name
         self._context.add_api_call_to_latest(
             agent_name=self._context.current_phase or "系统",
             service=service,

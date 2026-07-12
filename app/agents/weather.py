@@ -184,7 +184,7 @@ class WeatherAgent(BaseAgent):
             "label": destination,
             "coordinates": coordinates,
             "requested_days": self._resolve_trip_days(session, extracted),
-            "start_date": str(extracted.get("start_date") or session.trip_context.start_date or "").strip(),
+            "start_date": self._normalize_request_start_date(extracted.get("start_date") or session.trip_context.start_date),
         }
 
     def _resolve_trip_days(self, session: SessionContext, extracted: Dict[str, Any]) -> int:
@@ -546,6 +546,14 @@ class WeatherAgent(BaseAgent):
             except ValueError:
                 continue
         return None
+
+    def _normalize_request_start_date(self, value: Any) -> str:
+        if value is None:
+            return ""
+        if isinstance(value, datetime):
+            return value.strftime("%Y-%m-%d")
+        text = str(value).strip()
+        return text
 
     def _dedupe(self, items: List[str]) -> List[str]:
         seen = set()

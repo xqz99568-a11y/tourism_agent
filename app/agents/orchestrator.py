@@ -11,7 +11,7 @@ import time
 import uuid
 from collections import Counter
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import date, datetime, timedelta
 from enum import Enum
 from typing import Any, AsyncGenerator, Dict, List, Optional
 
@@ -29,6 +29,14 @@ from app.core.llm.client import LLMManager, LLMMessage, ToolDefinition
 from app.core.llm.emotion_detector import emotion_detector, EmotionDetector
 from app.core.llm.mode_detector import mode_detector, DialogModeDetector
 from app.core.logger import get_logger
+from app.core.tracing import (
+    record_stage_timing,
+    record_trace_event,
+    request_trace,
+    set_trace_intent_info,
+    set_trace_route,
+    set_trace_selected_agents,
+)
 from app.schemas import (
     DialogMode, EmotionSchema, IntentType, ModeContext, PlanSchema, TaskSchema,
 )
@@ -771,6 +779,26 @@ class AgentOrchestrator:
         forced_mode: Optional[DialogMode] = None,
         abort_event: Optional[asyncio.Event] = None,
     ) -> AsyncGenerator[Dict[str, Any], None]:
+        trace_request_id = request_id or str(uuid.uuid4())
+        with request_trace(trace_request_id, session.session_id):
+            async for event in self._process_impl(
+                session,
+                user_message,
+                request_id=trace_request_id,
+                forced_mode=forced_mode,
+                abort_event=abort_event,
+            ):
+                record_trace_event(event)
+                yield event
+
+    async def _process_impl(
+        self,
+        session: SessionContext,
+        user_message: str,
+        request_id: Optional[str] = None,
+        forced_mode: Optional[DialogMode] = None,
+        abort_event: Optional[asyncio.Event] = None,
+    ) -> AsyncGenerator[Dict[str, Any], None]:
         """
         处理用户请求
 
@@ -1119,6 +1147,11 @@ class AgentOrchestrator:
 
         context.extracted_info = extracted_info
         context.current_phase = phase.value
+        set_trace_intent_info(
+            mode=mode_context.current_mode.value,
+            intent=intent.value,
+            extracted_info=extracted_info,
+        )
 
         # 【本轮修复】调试日志
         logger.info(
@@ -1161,6 +1194,7 @@ class AgentOrchestrator:
 
         # 【本轮新增】执行消息路由
         route = self._route_message(user_message, session, extracted_info)
+        set_trace_route(route)
         logger.info(f"[MULTITURN_TRACE] Route decision: {route} request_id={request_id}")
 
         # 【本轮新增】根据路由执行不同的 slot 合并
@@ -1266,6 +1300,8 @@ class AgentOrchestrator:
             f"requires_clarification={plan.requires_clarification} "
             f"missing_fields={plan.missing_fields}"
         )
+        set_trace_selected_agents([task.agent_name for task in plan.tasks])
+        set_trace_intent_info(missing_fields=plan.missing_fields or [])
 
         # 检查是否需要追问
         if plan.requires_clarification:
@@ -1969,6 +2005,7 @@ class AgentOrchestrator:
         **metadata: Any,
     ) -> None:
         stage_timings[stage] = round(duration_ms, 2)
+        record_stage_timing(stage, duration_ms, **metadata)
         metadata_text = " ".join(
             f"{key}={value}"
             for key, value in metadata.items()
@@ -2660,7 +2697,157 @@ class AgentOrchestrator:
         slot_keywords = ["预算", "元", "块", "万", "人", "个人", "位", "天", "日", "晚", "出发", "爸妈", "老人", "长辈", "亲子", "孩子", "小朋友"]
         return any(keyword in text for keyword in slot_keywords)
 
+    def _get_current_datetime(self) -> datetime:
+        return datetime.now()
+
+    def _resolve_upcoming_fixed_date(
+        self,
+        month: int,
+        day: int,
+        now: Optional[datetime] = None,
+    ) -> datetime:
+        reference = (now or self._get_current_datetime()).replace(hour=0, minute=0, second=0, microsecond=0)
+        candidate = datetime(reference.year, month, day)
+        if candidate.date() < reference.date():
+            candidate = datetime(reference.year + 1, month, day)
+        return candidate
+
+    def _next_weekend_date(
+        self,
+        now: Optional[datetime] = None,
+        next_week: bool = False,
+    ) -> datetime:
+        reference = (now or self._get_current_datetime()).replace(hour=0, minute=0, second=0, microsecond=0)
+        days_until_saturday = (5 - reference.weekday()) % 7
+        candidate = reference + timedelta(days=days_until_saturday)
+        if next_week:
+            candidate += timedelta(days=7)
+        return candidate
+
+    def _resolve_relative_trip_date(
+        self,
+        token: str,
+        now: Optional[datetime] = None,
+    ) -> Optional[datetime]:
+        text = str(token or "").strip()
+        if not text:
+            return None
+
+        reference = (now or self._get_current_datetime()).replace(hour=0, minute=0, second=0, microsecond=0)
+        if text == "\u660e\u5929":
+            return reference + timedelta(days=1)
+        if text == "\u540e\u5929":
+            return reference + timedelta(days=2)
+        if text in {"\u5468\u672b", "\u8fd9\u5468\u672b", "\u672c\u5468\u672b"}:
+            return self._next_weekend_date(reference, next_week=False)
+        if text == "\u4e0b\u5468\u672b":
+            return self._next_weekend_date(reference, next_week=True)
+        if text == "\u4e94\u4e00":
+            return self._resolve_upcoming_fixed_date(5, 1, now=reference)
+        if text in {"\u5341\u4e00", "\u56fd\u5e86"}:
+            return self._resolve_upcoming_fixed_date(10, 1, now=reference)
+        return None
+
+    def _coerce_trip_date_only(self, value: Any) -> Optional[datetime]:
+        if value is None:
+            return None
+        if isinstance(value, datetime):
+            return value.replace(hour=0, minute=0, second=0, microsecond=0)
+        if isinstance(value, date):
+            return datetime(value.year, value.month, value.day)
+
+        text = str(value).strip()
+        if not text:
+            return None
+
+        try:
+            parsed = datetime.fromisoformat(text)
+            return datetime(parsed.year, parsed.month, parsed.day)
+        except ValueError:
+            pass
+
+        parsed_relative = self._resolve_relative_trip_date(text)
+        if parsed_relative is not None:
+            return parsed_relative
+
+        if text in {"\u6625\u8282", "\u6e05\u660e", "\u7aef\u5348", "\u4e2d\u79cb"}:
+            return None
+
+        year_match = re.fullmatch(
+            r"(\d{4})\s*(?:\u5e74|/|-|\.)\s*(\d{1,2})\s*(?:\u6708|/|-|\.)\s*(\d{1,2})\s*(?:\u65e5)?",
+            text,
+        )
+        if year_match:
+            year, month, day = map(int, year_match.groups())
+            try:
+                return datetime(year, month, day)
+            except ValueError:
+                return None
+
+        month_day_match = re.fullmatch(r"(\d{1,2})\s*\u6708\s*(\d{1,2})\s*\u65e5", text)
+        if not month_day_match:
+            month_day_match = re.fullmatch(r"(\d{1,2})/(\d{1,2})", text)
+        if month_day_match:
+            month, day = map(int, month_day_match.groups())
+            try:
+                return self._resolve_upcoming_fixed_date(month, day)
+            except ValueError:
+                return None
+
+        return None
+
+    def _extract_trip_dates_from_text(self, user_message: str) -> Dict[str, Any]:
+        text = str(user_message or "").strip()
+        if not text:
+            return {}
+
+        explicit_year_match = re.search(
+            r"(\d{4})\s*(?:\u5e74|/|-|\.)\s*(\d{1,2})\s*(?:\u6708|/|-|\.)\s*(\d{1,2})\s*(?:\u65e5)?",
+            text,
+        )
+        if explicit_year_match:
+            year, month, day = map(int, explicit_year_match.groups())
+            try:
+                return {"start_date": datetime(year, month, day)}
+            except ValueError:
+                return {}
+
+        month_day_match = re.search(r"(?<!\d)(\d{1,2})\s*\u6708\s*(\d{1,2})\s*\u65e5(?!\d)", text)
+        if not month_day_match:
+            month_day_match = re.search(r"(?<!\d)(\d{1,2})/(\d{1,2})(?!\d)", text)
+        if month_day_match:
+            month, day = map(int, month_day_match.groups())
+            try:
+                return {"start_date": self._resolve_upcoming_fixed_date(month, day)}
+            except ValueError:
+                return {}
+
+        for token in (
+            "\u4e0b\u5468\u672b",
+            "\u8fd9\u5468\u672b",
+            "\u672c\u5468\u672b",
+            "\u5468\u672b",
+            "\u660e\u5929",
+            "\u540e\u5929",
+            "\u4e94\u4e00",
+            "\u5341\u4e00",
+            "\u56fd\u5e86",
+        ):
+            if token in text:
+                resolved = self._resolve_relative_trip_date(token)
+                if resolved is not None:
+                    return {"start_date": resolved}
+
+        if re.search(r"(\u6625\u8282|\u6e05\u660e|\u7aef\u5348|\u4e2d\u79cb)", text):
+            return {}
+
+        return {}
+
     def _coerce_trip_datetime(self, value: Any) -> Optional[datetime]:
+        coerced = self._coerce_trip_date_only(value)
+        if coerced is not None:
+            return coerced
+
         if value is None:
             return None
         if isinstance(value, datetime):
@@ -2673,17 +2860,7 @@ class AgentOrchestrator:
         try:
             return datetime.fromisoformat(text)
         except ValueError:
-            pass
-
-        for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%Y年%m月%d日", "%m月%d日", "%m/%d"):
-            try:
-                parsed = datetime.strptime(text, fmt)
-                if parsed.year == 1900:
-                    parsed = parsed.replace(year=datetime.now().year)
-                return parsed
-            except ValueError:
-                continue
-        return None
+            return None
 
     def _persist_partial_trip_context(
         self,
@@ -2823,6 +3000,34 @@ class AgentOrchestrator:
             normalized["budget_level"] = level.lower()
         else:
             normalized["budget_level"] = self._infer_budget_level_from_amount(budget_amount)
+
+        normalized_start_date = self._coerce_trip_date_only(normalized.get("start_date"))
+        if normalized_start_date is not None:
+            normalized["start_date"] = normalized_start_date
+        elif str(normalized.get("start_date") or "").strip() in {
+            "\u6625\u8282",
+            "\u6e05\u660e",
+            "\u7aef\u5348",
+            "\u4e2d\u79cb",
+        }:
+            normalized["start_date"] = None
+
+        normalized_end_date = self._coerce_trip_date_only(normalized.get("end_date"))
+        if normalized_end_date is not None:
+            normalized["end_date"] = normalized_end_date
+        elif str(normalized.get("end_date") or "").strip() in {
+            "\u6625\u8282",
+            "\u6e05\u660e",
+            "\u7aef\u5348",
+            "\u4e2d\u79cb",
+        }:
+            normalized["end_date"] = None
+
+        trip_dates_from_text = self._extract_trip_dates_from_text(user_message)
+        if normalized.get("start_date") is None and trip_dates_from_text.get("start_date") is not None:
+            normalized["start_date"] = trip_dates_from_text.get("start_date")
+        if normalized.get("end_date") is None and trip_dates_from_text.get("end_date") is not None:
+            normalized["end_date"] = trip_dates_from_text.get("end_date")
 
         for key in ["travel_styles", "special_requirements", "interests", "preferences"]:
             value = normalized.get(key)

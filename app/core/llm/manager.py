@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional
 
 from app.core.config import settings
 from app.core.logger import get_logger
+from app.core.tracing import finish_llm_call, mark_llm_first_token, start_llm_call
 
 from .client import (
     LLMMessage,
@@ -191,6 +192,159 @@ class EnhancedLLMManager:
 
 
 # 全局单例
+def _estimate_message_chars(messages: List[LLMMessage]) -> int:
+    return sum(len(str(getattr(message, "content", "") or "")) for message in messages)
+
+
+def _manager_client_model_name(client: Optional[BaseLLMClient]) -> str:
+    return str(getattr(client, "model", settings.llm.model) or settings.llm.model)
+
+
+async def _traced_enhanced_llm_chat(
+    self: EnhancedLLMManager,
+    messages: List[LLMMessage],
+    tools: Optional[List[ToolDefinition]] = None,
+    use_cache: bool = True,
+    **kwargs,
+) -> LLMResponse:
+    start_time = time.time()
+    self.metrics.total_calls += 1
+
+    if use_cache and self._cache and not tools:
+        cached = self._cache.get(messages)
+        if cached:
+            self.metrics.cached_calls += 1
+            logger.debug("LLM 鍝嶅簲鍛戒腑缂撳瓨")
+            return cached
+
+    client = self._client
+    trace_call = start_llm_call(
+        model=_manager_client_model_name(client),
+        streaming=False,
+        mock=self._using_mock,
+        fallback=False,
+        message_count=len(messages),
+        message_chars=_estimate_message_chars(messages),
+        tool_count=len(tools or []),
+    )
+
+    try:
+        response = await client.chat(messages, tools, **kwargs)
+        self.metrics.successful_calls += 1
+        self.metrics.total_latency_ms += (time.time() - start_time) * 1000
+        finish_llm_call(
+            trace_call,
+            model=response.model,
+            usage=response.usage,
+            success=True,
+            mock=self._using_mock,
+            fallback=False,
+            output_chars=len(str(response.content or "")),
+        )
+
+        if use_cache and self._cache and not tools:
+            self._cache.set(messages, response)
+
+        return response
+    except Exception as exc:
+        logger.warning(f"LLM 璋冪敤澶辫触: {exc}")
+
+        if not self._using_mock:
+            logger.info("灏濊瘯浣跨敤 Mock 瀹㈡埛绔?..")
+            try:
+                response = await self._mock_client.chat(messages, tools, **kwargs)
+                self.metrics.successful_calls += 1
+                self.metrics.total_latency_ms += (time.time() - start_time) * 1000
+                finish_llm_call(
+                    trace_call,
+                    model=response.model,
+                    usage=response.usage,
+                    success=True,
+                    mock=True,
+                    fallback=True,
+                    output_chars=len(str(response.content or "")),
+                )
+                return response
+            except Exception as mock_error:
+                logger.error(f"Mock 瀹㈡埛绔篃澶辫触: {mock_error}")
+                finish_llm_call(
+                    trace_call,
+                    model="mock-model",
+                    success=False,
+                    error=mock_error,
+                    mock=True,
+                    fallback=True,
+                )
+                self.metrics.failed_calls += 1
+                self.metrics.total_latency_ms += (time.time() - start_time) * 1000
+                raise exc
+
+        self.metrics.failed_calls += 1
+        self.metrics.total_latency_ms += (time.time() - start_time) * 1000
+        finish_llm_call(
+            trace_call,
+            model=_manager_client_model_name(client),
+            success=False,
+            error=exc,
+            mock=self._using_mock,
+            fallback=False,
+        )
+        raise
+
+
+async def _traced_enhanced_llm_stream(
+    self: EnhancedLLMManager,
+    messages: List[LLMMessage],
+    tools: Optional[List[ToolDefinition]] = None,
+    **kwargs,
+):
+    client = self._client
+    trace_call = start_llm_call(
+        model=_manager_client_model_name(client),
+        streaming=True,
+        mock=self._using_mock,
+        fallback=False,
+        message_count=len(messages),
+        message_chars=_estimate_message_chars(messages),
+        tool_count=len(tools or []),
+    )
+    chunk_count = 0
+    output_chars = 0
+    try:
+        async for chunk in client.stream(messages, tools, **kwargs):
+            if chunk_count == 0:
+                mark_llm_first_token(trace_call)
+            chunk_count += 1
+            output_chars += len(str(chunk or ""))
+            yield chunk
+    except BaseException as exc:
+        finish_llm_call(
+            trace_call,
+            model=_manager_client_model_name(client),
+            success=False,
+            error=exc,
+            mock=self._using_mock,
+            fallback=False,
+            output_chars=output_chars,
+            chunk_count=chunk_count,
+        )
+        raise
+    else:
+        finish_llm_call(
+            trace_call,
+            model=_manager_client_model_name(client),
+            success=True,
+            mock=self._using_mock,
+            fallback=False,
+            output_chars=output_chars,
+            chunk_count=chunk_count,
+        )
+
+
+EnhancedLLMManager.chat = _traced_enhanced_llm_chat  # type: ignore[method-assign]
+EnhancedLLMManager.stream = _traced_enhanced_llm_stream  # type: ignore[method-assign]
+
+
 _llm_manager: Optional[EnhancedLLMManager] = None
 
 

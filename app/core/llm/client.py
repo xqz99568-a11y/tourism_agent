@@ -30,6 +30,7 @@ from tenacity import (
 
 from app.core.config import settings
 from app.core.logger import get_logger
+from app.core.tracing import finish_llm_call, mark_llm_first_token, start_llm_call
 
 logger = get_logger(__name__)
 
@@ -800,6 +801,15 @@ class LLMManager:
             return self._client
         raise ValueError("No LLM client configured")
 
+    def _estimate_message_chars(self, messages: List[LLMMessage]) -> int:
+        total = 0
+        for message in messages:
+            total += len(str(getattr(message, "content", "") or ""))
+        return total
+
+    def _client_model_name(self, client: BaseLLMClient) -> str:
+        return str(getattr(client, "model", settings.llm.model) or settings.llm.model)
+
     async def chat(
         self,
         messages: List[LLMMessage],
@@ -834,6 +844,126 @@ class LLMManager:
 
 # 全局 LLM 管理器
 _llm_manager: Optional[LLMManager] = None
+
+
+async def _traced_llm_manager_chat(
+    self: LLMManager,
+    messages: List[LLMMessage],
+    tools: Optional[List[ToolDefinition]] = None,
+    **kwargs,
+) -> LLMResponse:
+    client = self.get_client()
+    trace_call = start_llm_call(
+        model=self._client_model_name(client),
+        streaming=False,
+        mock=isinstance(client, MockLLMClient),
+        fallback=False,
+        message_count=len(messages),
+        message_chars=self._estimate_message_chars(messages),
+        tool_count=len(tools or []),
+    )
+
+    try:
+        response = await client.chat(messages, tools, **kwargs)
+        finish_llm_call(
+            trace_call,
+            model=response.model,
+            usage=response.usage,
+            success=True,
+            mock=isinstance(client, MockLLMClient),
+            fallback=False,
+            output_chars=len(str(response.content or "")),
+        )
+        return response
+    except Exception as exc:
+        logger.error(f"LLM API 璋冪敤澶辫触: {exc}")
+        if not isinstance(client, MockLLMClient):
+            logger.info("Falling back to Mock LLM client")
+            mock_client = MockLLMClient()
+            try:
+                response = await mock_client.chat(messages, tools, **kwargs)
+                finish_llm_call(
+                    trace_call,
+                    model=response.model,
+                    usage=response.usage,
+                    success=True,
+                    mock=True,
+                    fallback=True,
+                    output_chars=len(str(response.content or "")),
+                )
+                return response
+            except Exception as mock_error:
+                finish_llm_call(
+                    trace_call,
+                    model="mock-model",
+                    success=False,
+                    error=mock_error,
+                    mock=True,
+                    fallback=True,
+                )
+                raise
+        finish_llm_call(
+            trace_call,
+            model=self._client_model_name(client),
+            success=False,
+            error=exc,
+            mock=isinstance(client, MockLLMClient),
+            fallback=False,
+        )
+        raise
+
+
+async def _traced_llm_manager_stream(
+    self: LLMManager,
+    messages: List[LLMMessage],
+    tools: Optional[List[ToolDefinition]] = None,
+    **kwargs,
+) -> AsyncGenerator[str, None]:
+    client = self.get_client()
+    trace_call = start_llm_call(
+        model=self._client_model_name(client),
+        streaming=True,
+        mock=isinstance(client, MockLLMClient),
+        fallback=False,
+        message_count=len(messages),
+        message_chars=self._estimate_message_chars(messages),
+        tool_count=len(tools or []),
+    )
+    chunk_count = 0
+    output_chars = 0
+    try:
+        async for chunk in client.stream(messages, tools, **kwargs):
+            if chunk_count == 0:
+                mark_llm_first_token(trace_call)
+            chunk_count += 1
+            output_chars += len(str(chunk or ""))
+            yield chunk
+    except BaseException as exc:
+        finish_llm_call(
+            trace_call,
+            model=self._client_model_name(client),
+            success=False,
+            error=exc,
+            mock=isinstance(client, MockLLMClient),
+            fallback=False,
+            output_chars=output_chars,
+            chunk_count=chunk_count,
+        )
+        raise
+    else:
+        finish_llm_call(
+            trace_call,
+            model=self._client_model_name(client),
+            success=True,
+            mock=isinstance(client, MockLLMClient),
+            fallback=False,
+            output_chars=output_chars,
+            chunk_count=chunk_count,
+        )
+
+
+LLMManager.chat = _traced_llm_manager_chat  # type: ignore[method-assign]
+LLMManager.stream = _traced_llm_manager_stream  # type: ignore[method-assign]
 
 
 def get_llm() -> LLMManager:

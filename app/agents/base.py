@@ -17,6 +17,7 @@ from pydantic import BaseModel, Field
 from app.core.context import ExecutionContext, SessionContext, ToolCall, ReasoningNode
 from app.core.llm.client import LLMMessage, LLMResponse, LLMManager, ToolDefinition
 from app.core.logger import get_logger
+from app.core.tracing import record_agent_timing, record_tool_call
 
 logger = get_logger(__name__)
 
@@ -153,6 +154,14 @@ class BaseAgent(ABC):
         for call in reversed(self._current_tool_calls):
             if call.tool_name == tool_name and call.status == "running":
                 call.complete(result=result, error=error)
+                record_tool_call(
+                    tool_name,
+                    params=call.arguments,
+                    duration_ms=call.duration_ms,
+                    status=call.status,
+                    error=call.error,
+                    agent=self.config.name,
+                )
                 return call
         return None
 
@@ -317,6 +326,16 @@ class BaseAgent(ABC):
         if error:
             tool_call_info["error"] = error
 
+        if status != "pending":
+            record_tool_call(
+                tool_name,
+                params=arguments,
+                duration_ms=duration_ms,
+                status=status,
+                error=error,
+                agent=self.config.name,
+            )
+
         context.add_thinking_step(
             agent_name=self.config.name.capitalize(),
             step=step_name,
@@ -424,6 +443,14 @@ class BaseAgent(ABC):
             # 记录执行时间
             execution_time = (datetime.utcnow() - start_time).total_seconds() * 1000
             response.execution_time_ms = execution_time
+            record_agent_timing(
+                self.config.name,
+                execution_time,
+                status=response.status.value,
+                success=response.success,
+                tokens_used=response.tokens_used,
+                tool_calls_count=metrics.tool_calls_count,
+            )
 
             self.status = AgentStatus.COMPLETED
             logger.info(
