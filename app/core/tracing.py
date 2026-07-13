@@ -20,7 +20,7 @@ from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 REDACTED = "[REDACTED]"
-TRACE_SCHEMA_VERSION = "1.0"
+TRACE_SCHEMA_VERSION = "1.1"
 DEFAULT_TRACE_DIR = Path("experiments/results/traces")
 
 _current_trace: ContextVar[Optional["TraceState"]] = ContextVar(
@@ -49,6 +49,15 @@ _SENSITIVE_KEY_PARTS = (
     "jwt",
 )
 _SENSITIVE_EXACT_KEYS = {"key", "x-api-key", "api-key", "auth"}
+_NON_SECRET_TOKEN_COUNT_KEYS = {
+    "prompt_tokens",
+    "completion_tokens",
+    "total_tokens",
+    "tokens_used",
+    "first_body_token_ms",
+    "first_token_ms",
+}
+_NON_SECRET_TOKEN_CONTAINER_KEYS = {"tokens", "usage", "cached_source_usage"}
 _SECRET_VALUE_PATTERNS = (
     re.compile(r"(?i)\bbearer\s+[A-Za-z0-9._\-]+"),
     re.compile(r"\bsk-[A-Za-z0-9_\-]{8,}"),
@@ -111,13 +120,26 @@ def _is_sensitive_key(key: Any) -> bool:
     return any(part in key_text for part in _SENSITIVE_KEY_PARTS)
 
 
+def _is_non_secret_token_metric(key: Any, value: Any) -> bool:
+    key_text = str(key or "").strip().lower().replace("-", "_")
+    if key_text in _NON_SECRET_TOKEN_COUNT_KEYS:
+        return value is None or isinstance(value, (int, float))
+    if key_text in _NON_SECRET_TOKEN_CONTAINER_KEYS:
+        if value is None or isinstance(value, (int, float)):
+            return True
+        if not isinstance(value, dict):
+            return False
+        return all(_is_non_secret_token_metric(item_key, item_value) for item_key, item_value in value.items())
+    return False
+
+
 def _looks_like_secret(value: str) -> bool:
     return any(pattern.search(value) for pattern in _SECRET_VALUE_PATTERNS)
 
 
 def sanitize_value(value: Any, *, key: Any = None, depth: int = 0) -> Any:
     """Sanitize values before they are persisted to experiment traces."""
-    if _is_sensitive_key(key):
+    if _is_sensitive_key(key) and not _is_non_secret_token_metric(key, value):
         return REDACTED
     if depth > 8:
         return "<max_depth>"
@@ -196,6 +218,25 @@ def _success_from_status(status: Optional[str], success: Optional[bool]) -> Opti
     return str(status).lower() not in {"failed", "error", "timeout", "cancelled", "canceled", "aborted"}
 
 
+def _first_present(*values: Any) -> Any:
+    for value in values:
+        if value is not None:
+            return value
+    return None
+
+
+def _optional_bool(value: Any) -> Optional[bool]:
+    if value is None:
+        return None
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        if lowered in {"1", "true", "yes", "on"}:
+            return True
+        if lowered in {"0", "false", "no", "off"}:
+            return False
+    return bool(value)
+
+
 def _safe_filename_part(value: str) -> str:
     safe = re.sub(r"[^A-Za-z0-9_.-]+", "_", str(value or "request")).strip("._")
     return (safe or "request")[:80]
@@ -258,8 +299,8 @@ class TraceState:
     error: Optional[str] = None
     trace_file: Optional[str] = None
     _finished: bool = field(default=False, repr=False)
-    _tool_keys: set[str] = field(default_factory=set, repr=False)
-    _api_keys: set[str] = field(default_factory=set, repr=False)
+    _tool_call_ids: set[str] = field(default_factory=set, repr=False)
+    _api_call_ids: set[str] = field(default_factory=set, repr=False)
 
     def __post_init__(self) -> None:
         self.set_metadata(
@@ -412,31 +453,36 @@ class TraceState:
             for tool_call in step.get("tool_calls") or []:
                 if not isinstance(tool_call, dict):
                     continue
-                    self.record_tool_call(
-                        name=str(tool_call.get("tool_name") or tool_call.get("name") or ""),
-                        params=tool_call.get("arguments") or tool_call.get("params") or {},
-                        duration_ms=tool_call.get("duration_ms"),
-                        status=tool_call.get("status"),
-                        error=tool_call.get("error"),
-                        agent=str(agent_name) if agent_name else None,
-                        cache_hit=tool_call.get("cache_hit"),
-                        fallback_used=tool_call.get("fallback_used") or tool_call.get("fallback"),
-                    )
+                self.record_tool_call(
+                    name=str(tool_call.get("tool_name") or tool_call.get("name") or ""),
+                    params=tool_call.get("arguments") or tool_call.get("params") or {},
+                    duration_ms=_first_present(tool_call.get("duration_ms"), tool_call.get("cost_ms")),
+                    status=tool_call.get("status"),
+                    error=tool_call.get("error"),
+                    agent=str(agent_name) if agent_name else None,
+                    component=tool_call.get("component"),
+                    call_id=tool_call.get("call_id") or tool_call.get("id"),
+                    cache_hit=_optional_bool(tool_call.get("cache_hit")),
+                    fallback_used=_optional_bool(_first_present(tool_call.get("fallback_used"), tool_call.get("fallback"))),
+                )
             for api_call in step.get("api_calls") or []:
                 if not isinstance(api_call, dict):
                     continue
-                    self.record_api_call(
-                        name=str(api_call.get("service") or api_call.get("name") or ""),
-                        endpoint=api_call.get("endpoint"),
-                        params=api_call.get("params") or {},
-                        duration_ms=api_call.get("duration_ms"),
-                        status=api_call.get("status"),
-                        http_status=api_call.get("http_status"),
-                        error=api_call.get("error"),
-                        agent=str(agent_name) if agent_name else None,
-                        cache_hit=api_call.get("cache_hit"),
-                        fallback_used=api_call.get("fallback_used") or api_call.get("fallback"),
-                    )
+                self.record_api_call(
+                    name=str(api_call.get("service") or api_call.get("name") or ""),
+                    endpoint=api_call.get("endpoint"),
+                    params=api_call.get("params") or {},
+                    duration_ms=_first_present(api_call.get("duration_ms"), api_call.get("cost_ms")),
+                    status=api_call.get("status"),
+                    success=api_call.get("success"),
+                    http_status=api_call.get("http_status"),
+                    error=api_call.get("error"),
+                    agent=str(agent_name) if agent_name else None,
+                    component=api_call.get("component"),
+                    call_id=api_call.get("call_id") or api_call.get("id"),
+                    cache_hit=_optional_bool(api_call.get("cache_hit")),
+                    fallback_used=_optional_bool(_first_present(api_call.get("fallback_used"), api_call.get("fallback"))),
+                )
 
     def record_stage_timing(self, stage: str, duration_ms: Any, **metadata: Any) -> None:
         if duration_ms is None:
@@ -567,6 +613,7 @@ class TraceState:
         fallback: Optional[bool] = None,
         mock: Optional[bool] = None,
         cache_hit: Optional[bool] = None,
+        cached_source_usage: Optional[Dict[str, Any]] = None,
         output_chars: Optional[int] = None,
         chunk_count: Optional[int] = None,
     ) -> None:
@@ -592,6 +639,7 @@ class TraceState:
             "ttft_ms": _round_ms(ttft_ms),
             "tokens": sanitize_value(tokens),
             "usage": sanitize_value(tokens),
+            "cached_source_usage": sanitize_value(cached_source_usage) if cached_source_usage is not None else None,
             "chunk_count": int(chunk_count) if chunk_count is not None else None,
             "mock_used": mock_used,
             "fallback_used": fallback_used,
@@ -608,12 +656,48 @@ class TraceState:
             entry["output_chars"] = int(output_chars)
         self.llm_calls.append(sanitize_value(entry))
 
+    def _append_or_merge_call(
+        self,
+        entries: List[Dict[str, Any]],
+        seen_call_ids: set[str],
+        entry: Dict[str, Any],
+    ) -> None:
+        call_id = str(entry.get("call_id") or uuid.uuid4().hex)
+        entry["call_id"] = call_id
+        if call_id not in seen_call_ids:
+            seen_call_ids.add(call_id)
+            entries.append(sanitize_value(entry))
+            return
+
+        for existing in entries:
+            if str(existing.get("call_id")) != call_id:
+                continue
+            for key, value in sanitize_value(entry).items():
+                if value is None:
+                    continue
+                current = existing.get(key)
+                if key == "error" and value:
+                    existing[key] = value
+                elif key == "status" and (
+                    current is None
+                    or current == "unknown"
+                    or str(current).lower() in {"running", "pending", "unknown"}
+                    or str(value).lower() in {"failed", "error", "timeout", "cancelled", "canceled", "aborted"}
+                ):
+                    existing[key] = value
+                elif key == "success" and (current is None or value is False):
+                    existing[key] = value
+                elif current is None or current == {} or current == []:
+                    existing[key] = value
+            return
+
     def record_tool_call(
         self,
         *,
         name: str,
         params: Any = None,
         duration_ms: Any = None,
+        cost_ms: Any = None,
         status: Any = None,
         success: Optional[bool] = None,
         error: Any = None,
@@ -626,9 +710,11 @@ class TraceState:
         if not name:
             return
         attribution = get_trace_attribution()
-        duration = _round_ms(float(duration_ms)) if duration_ms is not None else None
+        raw_duration = _first_present(duration_ms, cost_ms)
+        duration = _round_ms(float(raw_duration)) if raw_duration is not None else None
+        call_id_value = str(call_id) if call_id else uuid.uuid4().hex
         entry = {
-            "call_id": call_id or uuid.uuid4().hex,
+            "call_id": call_id_value,
             "name": name,
             "agent_name": agent or attribution.get("agent_name"),
             "agent": agent or attribution.get("agent_name"),
@@ -642,11 +728,7 @@ class TraceState:
             "cache_hit": None if cache_hit is None else bool(cache_hit),
             "fallback_used": None if fallback_used is None else bool(fallback_used),
         }
-        key = _stable_json({k: v for k, v in entry.items() if k != "call_id"})
-        if key in self._tool_keys:
-            return
-        self._tool_keys.add(key)
-        self.tool_calls.append(sanitize_value(entry))
+        self._append_or_merge_call(self.tool_calls, self._tool_call_ids, entry)
 
     def record_api_call(
         self,
@@ -655,6 +737,7 @@ class TraceState:
         endpoint: Any = None,
         params: Any = None,
         duration_ms: Any = None,
+        cost_ms: Any = None,
         status: Any = None,
         success: Optional[bool] = None,
         http_status: Any = None,
@@ -668,9 +751,11 @@ class TraceState:
         if not name and not endpoint:
             return
         attribution = get_trace_attribution()
-        duration = _round_ms(float(duration_ms)) if duration_ms is not None else None
+        raw_duration = _first_present(duration_ms, cost_ms)
+        duration = _round_ms(float(raw_duration)) if raw_duration is not None else None
+        call_id_value = str(call_id) if call_id else uuid.uuid4().hex
         entry = {
-            "call_id": call_id or uuid.uuid4().hex,
+            "call_id": call_id_value,
             "name": name,
             "agent_name": agent or attribution.get("agent_name"),
             "agent": agent or attribution.get("agent_name"),
@@ -686,11 +771,7 @@ class TraceState:
             "cache_hit": None if cache_hit is None else bool(cache_hit),
             "fallback_used": None if fallback_used is None else bool(fallback_used),
         }
-        key = _stable_json({k: v for k, v in entry.items() if k != "call_id"})
-        if key in self._api_keys:
-            return
-        self._api_keys.add(key)
-        self.api_calls.append(sanitize_value(entry))
+        self._append_or_merge_call(self.api_calls, self._api_call_ids, entry)
 
     def record_error(self, error: BaseException | str, *, status: str = "failed") -> None:
         self.mark_status(status, error=error)
@@ -707,8 +788,30 @@ class TraceState:
         if error:
             self.error = sanitize_value(str(error))
 
-    def to_record(self) -> Dict[str, Any]:
+    def _derived_counts(self) -> Dict[str, int]:
+        agent_call_count = len(self.agent_runs) if self.agent_runs else len(self.agent_timings)
+        failed_agent_count = sum(
+            1
+            for run in self.agent_runs
+            if str(run.get("status") or "").lower() in {"failed", "error", "timeout", "cancelled", "canceled", "aborted"}
+        )
+        all_calls = [*self.llm_calls, *self.tool_calls, *self.api_calls]
         return {
+            "llm_call_count": len(self.llm_calls),
+            "tool_call_count": len(self.tool_calls),
+            "api_call_count": len(self.api_calls),
+            "agent_call_count": agent_call_count,
+            "failed_agent_count": failed_agent_count,
+            "cache_hit_count": sum(1 for call in all_calls if call.get("cache_hit") is True),
+            "fallback_count": sum(
+                1
+                for call in all_calls
+                if call.get("fallback_used") is True or call.get("fallback") is True
+            ),
+        }
+
+    def to_record(self) -> Dict[str, Any]:
+        record = {
             "schema_version": TRACE_SCHEMA_VERSION,
             "created_at": self.started_at,
             "request_id": self.request_id,
@@ -739,6 +842,8 @@ class TraceState:
             "first_token_ms": self.first_body_token_ms,
             "error": self.error,
         }
+        record.update(self._derived_counts())
+        return record
 
     def finish(self) -> Optional[Path]:
         if self._finished:
@@ -947,6 +1052,7 @@ def finish_llm_call(
     fallback: Optional[bool] = None,
     mock: Optional[bool] = None,
     cache_hit: Optional[bool] = None,
+    cached_source_usage: Optional[Dict[str, Any]] = None,
     output_chars: Optional[int] = None,
     chunk_count: Optional[int] = None,
 ) -> None:
@@ -962,6 +1068,7 @@ def finish_llm_call(
             fallback=fallback,
             mock=mock,
             cache_hit=cache_hit,
+            cached_source_usage=cached_source_usage,
             output_chars=output_chars,
             chunk_count=chunk_count,
         )
@@ -972,6 +1079,7 @@ def record_tool_call(
     *,
     params: Any = None,
     duration_ms: Any = None,
+    cost_ms: Any = None,
     status: Any = None,
     success: Optional[bool] = None,
     error: Any = None,
@@ -987,6 +1095,7 @@ def record_tool_call(
             name=name,
             params=params,
             duration_ms=duration_ms,
+            cost_ms=cost_ms,
             status=status,
             success=success,
             error=error,
@@ -1004,6 +1113,7 @@ def record_api_call(
     endpoint: Any = None,
     params: Any = None,
     duration_ms: Any = None,
+    cost_ms: Any = None,
     status: Any = None,
     success: Optional[bool] = None,
     http_status: Any = None,
@@ -1021,6 +1131,7 @@ def record_api_call(
             endpoint=endpoint,
             params=params,
             duration_ms=duration_ms,
+            cost_ms=cost_ms,
             status=status,
             success=success,
             http_status=http_status,

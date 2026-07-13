@@ -24,9 +24,10 @@ EXPERIMENT_DISABLE_CACHE=false
 - `stage_timings`：复用现有编排器阶段耗时，单位为毫秒。
 - `agent_timings`：兼容旧字段，各 Agent 最新一次耗时、状态、token 数和工具调用数量。
 - `agent_runs`：每次 Agent 执行的独立记录，包含 `agent_run_id`、`agent_name`、`started_at`、`completed_at`、`duration_ms`、`status`、`tokens`、`tool_count` 和 `error`。同一 Agent 多次执行不会覆盖。
-- `llm_calls`：每次 LLM 调用的信息，包括 `call_id`、`agent_name`/`component`、`provider`、`model`、`streaming`、`duration_ms`、`ttft_ms`、真实 `tokens`/`usage`、`chunk_count`、`mock_used`、`fallback_used`、`cache_hit`、`success` 和 `error`。
+- `llm_calls`：每次 LLM 调用的信息，包括 `call_id`、`agent_name`/`component`、`provider`、`model`、`streaming`、`duration_ms`、`ttft_ms`、真实 `tokens`/`usage`、`chunk_count`、`mock_used`、`fallback_used`、`cache_hit`、`success` 和 `error`。缓存命中时，本次 `tokens`/`usage` 写 0 或 null；如需排查来源，可参考可选的 `cached_source_usage`，但它不计入本次消耗。
 - `tool_calls`：工具调用名称、`call_id`、`agent_name`/`component`、脱敏后的参数、耗时、状态、成功标记、`cache_hit`、`fallback_used` 和错误。
 - `api_calls`：外部 API 或服务名称、`call_id`、`agent_name`/`component`、端点、脱敏后的参数、耗时、HTTP 状态码、成功标记、`cache_hit`、`fallback_used` 和错误。
+- `schema_version=1.1` 起新增派生汇总字段：`llm_call_count`、`tool_call_count`、`api_call_count`、`agent_call_count`、`failed_agent_count`、`cache_hit_count` 和 `fallback_count`。这些值由 `llm_calls`、`tool_calls`、`api_calls`、`agent_runs` 派生，不单独维护状态。
 - `total_duration_ms`：请求总耗时，单位为毫秒。
 - `first_body_token_ms`：从请求开始到首次用户可见正文 content 的耗时。`phase_update`、`message`、`thinking_step` 等进度事件不计入正文 TTFT。`first_token_ms` 暂保留为兼容别名。
 - `error`：失败时记录的脱敏错误信息。
@@ -34,3 +35,13 @@ EXPERIMENT_DISABLE_CACHE=false
 Trace 文件不会记录完整 Prompt、API Key、授权头、密码、token 或内部思维链。
 
 `EXPERIMENT_STRICT_MODE=true` 时禁止静默 Mock fallback；`EXPERIMENT_DISABLE_CACHE=true` 时实验路径会绕过已接入的缓存读写。二者默认关闭，普通系统行为不变。
+
+## 汇总脚本
+
+运行 `python -m app.scripts.summarize_traces experiments/results/traces` 可以按 trace 目录自动汇总：
+
+- `total_duration_ms` 和 `first_body_token_ms` 的 mean、P50、P90、P95。
+- `stage_timings` 中每个阶段的 mean、P50、P90、P95。
+- `agent_calls` 中每个 Agent 的调用次数和耗时分布。
+- `llm_call_count`、`tool_call_count`、`api_call_count`、`mock_count`、`fallback_count`、`cache_hit_count`。
+- `slowest_stage_by_mean_ms` 和 `slowest_agent_by_mean_ms`，用于快速定位平均耗时最高的阶段或 Agent。

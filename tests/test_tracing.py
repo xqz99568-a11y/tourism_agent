@@ -9,10 +9,11 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from app.agents.attraction import AttractionAgent
 from app.agents.orchestrator import AgentOrchestrator
 from app.agents.base import AgentCapability, AgentConfig, AgentResponse, AgentStatus, BaseAgent
 from app.core.context import ExecutionContext, SessionContext
-from app.core.llm.client import BaseLLMClient, LLMManager, LLMMessage, LLMResponse
+from app.core.llm.client import BaseLLMClient, LLMManager, LLMMessage, LLMResponse, MockLLMClient
 from app.core.llm.manager import EnhancedLLMManager, LLMCallMetrics, SimpleLLMCache
 from app.main import TourismSystemApp
 from app.core.tracing import (
@@ -22,7 +23,9 @@ from app.core.tracing import (
     request_trace,
     trace_component,
 )
+from app.scripts.summarize_traces import summarize
 from app.schemas import DialogMode, IntentType
+from app.tools.base import ToolResult
 
 
 def _trace_records(trace_dir: Path) -> list[dict]:
@@ -61,6 +64,7 @@ def test_tracing_enabled_writes_valid_jsonl_and_redacts_sensitive_fields(
             extracted_info={
                 "destination": "Hangzhou",
                 "api_key": "plain-secret",
+                "tokens": "plural-secret",
                 "nested": {"Authorization": "Bearer token-value"},
             },
             missing_fields=["budget"],
@@ -68,7 +72,7 @@ def test_tracing_enabled_writes_valid_jsonl_and_redacts_sensitive_fields(
         trace.record_stage_timing("intent_parsing", 12.345)
         record_tool_call(
             "poi_search",
-            params={"key": "amap-secret", "city": "Hangzhou"},
+            params={"key": "amap-secret", "city": "Hangzhou", "tokens": "plural-tool-secret"},
             duration_ms=7.5,
             status="completed",
         )
@@ -89,13 +93,177 @@ def test_tracing_enabled_writes_valid_jsonl_and_redacts_sensitive_fields(
     assert record["session_id"] == "session-1"
     assert record["status"] == "completed"
     assert record["extracted_info"]["api_key"] == REDACTED
+    assert record["extracted_info"]["tokens"] == REDACTED
     assert record["extracted_info"]["nested"]["Authorization"] == REDACTED
     assert record["tool_calls"][0]["params"]["key"] == REDACTED
+    assert record["tool_calls"][0]["params"]["tokens"] == REDACTED
     assert record["api_calls"][0]["params"]["token"] == REDACTED
     assert "plain-secret" not in raw
     assert "amap-secret" not in raw
     assert "api-token" not in raw
     assert "token-value" not in raw
+    assert "plural-secret" not in raw
+    assert "plural-tool-secret" not in raw
+    assert record["schema_version"] == "1.1"
+    assert record["tool_call_count"] == 1
+    assert record["api_call_count"] == 1
+    assert record["llm_call_count"] == 0
+
+
+def test_thinking_steps_tool_and_api_calls_are_recorded(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+
+    with request_trace("thinking-request", "thinking-session") as trace:
+        assert trace is not None
+        trace.record_event(
+            {
+                "thinking_steps": [
+                    {
+                        "agent": "Planner",
+                        "tool_calls": [
+                            {
+                                "call_id": "tool-step-1",
+                                "tool_name": "poi_search",
+                                "arguments": {"keywords": "lake"},
+                                "status": "completed",
+                                "cost_ms": 4.5,
+                                "component": "planner.tool",
+                                "cache_hit": False,
+                                "fallback_used": False,
+                            }
+                        ],
+                        "api_calls": [
+                            {
+                                "call_id": "api-step-1",
+                                "service": "amap",
+                                "endpoint": "/v3/place/text",
+                                "params": {"keywords": "lake"},
+                                "status": "failed",
+                                "success": False,
+                                "http_status": 429,
+                                "error": "rate limited",
+                                "cost_ms": 6.75,
+                                "component": "planner.api",
+                                "cache_hit": False,
+                                "fallback_used": True,
+                            }
+                        ],
+                    }
+                ]
+            }
+        )
+
+    record = _trace_records(tmp_path)[0]
+    tool_call = record["tool_calls"][0]
+    assert tool_call["call_id"] == "tool-step-1"
+    assert tool_call["agent_name"] == "Planner"
+    assert tool_call["component"] == "planner.tool"
+    assert tool_call["name"] == "poi_search"
+    assert tool_call["params"] == {"keywords": "lake"}
+    assert tool_call["duration_ms"] == 4.5
+    assert tool_call["cache_hit"] is False
+
+    api_call = record["api_calls"][0]
+    assert api_call["call_id"] == "api-step-1"
+    assert api_call["agent_name"] == "Planner"
+    assert api_call["component"] == "planner.api"
+    assert api_call["name"] == "amap"
+    assert api_call["endpoint"] == "/v3/place/text"
+    assert api_call["duration_ms"] == 6.75
+    assert api_call["http_status"] == 429
+    assert api_call["success"] is False
+    assert api_call["error"] == "rate limited"
+    assert api_call["fallback_used"] is True
+
+
+def test_tool_api_cost_ms_and_call_id_dedupe(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+
+    with request_trace("dedupe-request", "dedupe-session"):
+        record_tool_call(
+            "poi_search",
+            call_id="same-tool-call",
+            params={"keywords": "same"},
+            status="running",
+        )
+        record_tool_call(
+            "poi_search",
+            call_id="same-tool-call",
+            params={"keywords": "same"},
+            duration_ms=5.25,
+            status="completed",
+            cache_hit=False,
+        )
+        record_tool_call(
+            "poi_search",
+            call_id="tool-call-a",
+            params={"keywords": "same"},
+            status="completed",
+        )
+        record_tool_call(
+            "poi_search",
+            call_id="tool-call-b",
+            params={"keywords": "same"},
+            status="completed",
+        )
+        record_api_call(
+            "amap",
+            call_id="api-cost-call",
+            endpoint="/v3/place/text",
+            params={"keywords": "same"},
+            cost_ms=12.5,
+            status="completed",
+            http_status=200,
+            agent="Attraction",
+            component="poi_search",
+            cache_hit=True,
+            fallback_used=True,
+        )
+        record_api_call(
+            "amap",
+            call_id="api-cost-call",
+            endpoint="/v3/place/text",
+            params={"keywords": "same"},
+            status="completed",
+            http_status=200,
+        )
+
+    record = _trace_records(tmp_path)[0]
+    tool_calls = record["tool_calls"]
+    assert [call["call_id"] for call in tool_calls].count("same-tool-call") == 1
+    assert len(tool_calls) == 3
+    assert {call["call_id"] for call in tool_calls} == {
+        "same-tool-call",
+        "tool-call-a",
+        "tool-call-b",
+    }
+
+    same_call = next(call for call in tool_calls if call["call_id"] == "same-tool-call")
+    assert same_call["status"] == "completed"
+    assert same_call["duration_ms"] == 5.25
+    assert same_call["cache_hit"] is False
+
+    api_calls = record["api_calls"]
+    assert len(api_calls) == 1
+    assert api_calls[0]["duration_ms"] == 12.5
+    assert api_calls[0]["duration"] == 12.5
+    assert api_calls[0]["agent_name"] == "Attraction"
+    assert api_calls[0]["component"] == "poi_search"
+    assert api_calls[0]["cache_hit"] is True
+    assert api_calls[0]["fallback_used"] is True
+    assert api_calls[0]["http_status"] == 200
+    assert record["tool_call_count"] == 3
+    assert record["api_call_count"] == 1
+    assert record["cache_hit_count"] == 1
+    assert record["fallback_count"] == 1
 
 
 def test_contextvar_isolates_concurrent_traces(
@@ -123,6 +291,39 @@ def test_contextvar_isolates_concurrent_traces(
     assert records[0]["tool_calls"][0]["params"]["destination"] == "A"
     assert records[1]["extracted_info"]["destination"] == "B"
     assert records[1]["tool_calls"][0]["params"]["destination"] == "B"
+
+
+def test_trace_summary_includes_stage_percentiles_and_slowest_modules(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+
+    for index, planner_ms in enumerate([100.0, 200.0, 300.0]):
+        with request_trace(f"summary-request-{index}", "summary-session") as trace:
+            assert trace is not None
+            trace.record_stage_timing("intent_parsing", 10.0)
+            trace.record_stage_timing("planner", planner_ms)
+            record_tool_call("poi_search", status="completed", cache_hit=index == 0)
+            record_api_call("amap", status="completed", fallback_used=index == 1)
+
+    summary = summarize(tmp_path)
+
+    assert summary["trace_count"] == 3
+    assert summary["unique_request_count"] == 3
+    assert summary["stage_timings"]["planner"] == {
+        "mean": 200.0,
+        "p50": 200.0,
+        "p90": 300.0,
+        "p95": 300.0,
+    }
+    assert summary["slowest_stage_by_mean_ms"] == {"name": "planner", "mean_ms": 200.0}
+    assert summary["slowest_agent_by_mean_ms"] == {"name": "planner", "mean_ms": 200.0}
+    assert summary["tool_call_count"] == 3
+    assert summary["api_call_count"] == 3
+    assert summary["cache_hit_count"] == 1
+    assert summary["fallback_count"] == 1
 
 
 def test_orchestrator_trace_records_clarification_request(
@@ -422,6 +623,158 @@ def test_llm_cache_hit_is_recorded(
     assert len(calls) == 2
     assert calls[0]["cache_hit"] is False
     assert calls[1]["cache_hit"] is True
+    assert calls[0]["tokens"] == {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2}
+    assert calls[1]["tokens"] == {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+    assert calls[1]["cached_source_usage"] == {
+        "prompt_tokens": 1,
+        "completion_tokens": 1,
+        "total_tokens": 2,
+    }
+
+
+def test_strict_mode_rejects_already_initialized_mock_client(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+    monkeypatch.setenv("EXPERIMENT_STRICT_MODE", "true")
+
+    chat_manager = LLMManager.__new__(LLMManager)
+    chat_manager._client = MockLLMClient()
+
+    stream_manager = EnhancedLLMManager.__new__(EnhancedLLMManager)
+    stream_manager._client = MockLLMClient()
+    stream_manager._mock_client = stream_manager._client
+    stream_manager._using_mock = True
+    stream_manager.metrics = LLMCallMetrics()
+    stream_manager._cache = SimpleLLMCache(ttl_seconds=300)
+
+    async def run_mock_calls() -> None:
+        with request_trace("strict-mock-request", "strict-mock-session"):
+            with pytest.raises(RuntimeError):
+                await chat_manager.chat([LLMMessage(role="user", content="hello")])
+            with pytest.raises(RuntimeError):
+                async for _chunk in stream_manager.stream([LLMMessage(role="user", content="hello")]):
+                    pass
+
+    asyncio.run(run_mock_calls())
+
+    calls = _trace_records(tmp_path)[0]["llm_calls"]
+    assert len(calls) == 2
+    assert [call["streaming"] for call in calls] == [False, True]
+    for call in calls:
+        assert call["success"] is False
+        assert call["mock_used"] is True
+        assert call["fallback_used"] is False
+        assert "EXPERIMENT_STRICT_MODE" in call["error"]
+
+
+class _FakePOISearchTool:
+    external_service = "amap"
+
+    def __init__(self) -> None:
+        self.calls: list[dict] = []
+
+    async def execute(self, **kwargs) -> ToolResult:
+        self.calls.append(dict(kwargs))
+        return ToolResult(
+            success=True,
+            data=[
+                {
+                    "id": "poi-west-lake",
+                    "name": "West Lake",
+                    "address": "Hangzhou",
+                    "type": "scenic",
+                }
+            ],
+            api_calls=[
+                {
+                    "call_id": f"amap-search-{len(self.calls)}",
+                    "service": self.external_service,
+                    "endpoint": "/v3/place/text",
+                    "params": dict(kwargs),
+                    "status": "completed",
+                    "success": True,
+                    "http_status": 200,
+                    "cost_ms": 11.25,
+                    "cache_hit": False,
+                }
+            ],
+        )
+
+
+def test_attraction_simulated_poi_search_trace_records_cache_hit(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+
+    agent = AttractionAgent(llm=None)
+    fake_tool = _FakePOISearchTool()
+    agent.poi_search_tool = fake_tool
+    context = ExecutionContext(request_id="attraction-request", session_id="attraction-session")
+    raw_steps: list[dict] = []
+    original_add_thinking_step = context.add_thinking_step
+
+    def capture_thinking_step(**kwargs):
+        raw_steps.append(
+            {
+                "agent": kwargs.get("agent_name"),
+                "step": kwargs.get("step"),
+                "status": kwargs.get("status"),
+                "tool_calls": kwargs.get("tool_calls") or [],
+                "api_calls": kwargs.get("api_calls") or [],
+            }
+        )
+        return original_add_thinking_step(**kwargs)
+
+    context.add_thinking_step = capture_thinking_step  # type: ignore[method-assign]
+    request_cache = {"poi_search": {}, "poi_detail": {}}
+
+    async def run_searches() -> None:
+        with request_trace("attraction-request", "attraction-session") as trace:
+            assert trace is not None
+            first = await agent._search_candidates_concurrent(
+                context,
+                "Hangzhou",
+                ["lake"],
+                request_cache,
+            )
+            second = await agent._search_candidates_concurrent(
+                context,
+                "Hangzhou",
+                ["lake"],
+                request_cache,
+            )
+            assert len(first) == 1
+            assert len(second) == 1
+            trace.record_event({"thinking_steps": raw_steps})
+
+    asyncio.run(run_searches())
+
+    assert fake_tool.calls == [{"keywords": "lake", "city": "Hangzhou", "limit": 8}]
+    record = _trace_records(tmp_path)[0]
+    tool_calls = record["tool_calls"]
+    assert len(tool_calls) == 2
+    assert [call["agent_name"] for call in tool_calls] == ["Attraction", "Attraction"]
+    assert [call["name"] for call in tool_calls] == ["poi_search", "poi_search"]
+    assert [call["params"] for call in tool_calls] == [
+        {"keywords": "lake", "city": "Hangzhou", "limit": 8},
+        {"keywords": "lake", "city": "Hangzhou", "limit": 8},
+    ]
+    assert [call["cache_hit"] for call in tool_calls] == [False, True]
+    assert len({call["call_id"] for call in tool_calls}) == 2
+
+    api_calls = record["api_calls"]
+    assert len(api_calls) == 1
+    assert api_calls[0]["agent_name"] == "Attraction"
+    assert api_calls[0]["name"] == "amap"
+    assert api_calls[0]["endpoint"] == "/v3/place/text"
+    assert api_calls[0]["params"] == {"keywords": "lake", "city": "Hangzhou", "limit": 8}
+    assert api_calls[0]["duration_ms"] == 11.25
+    assert api_calls[0]["cache_hit"] is False
 
 
 def test_progress_events_do_not_count_as_body_ttft(
@@ -456,7 +809,7 @@ def test_progress_events_do_not_count_as_body_ttft(
         assert trace.first_body_token_ms is not None
 
     record = _trace_records(tmp_path)[0]
-    assert record["first_body_token_ms"] is not None
+    assert isinstance(record["first_body_token_ms"], (int, float))
 
 
 def test_mock_fallback_and_strict_mode_are_recorded(

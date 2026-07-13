@@ -880,6 +880,18 @@ async def _traced_llm_manager_chat(
         message_chars=self._estimate_message_chars(messages),
         tool_count=len(tools or []),
     )
+    if is_experiment_strict_mode() and isinstance(client, MockLLMClient):
+        error = RuntimeError("EXPERIMENT_STRICT_MODE forbids Mock LLM client")
+        finish_llm_call(
+            trace_call,
+            provider=self._client_provider_name(client),
+            model=self._client_model_name(client),
+            success=False,
+            error=error,
+            mock=True,
+            fallback=False,
+        )
+        raise error
 
     try:
         response = await client.chat(messages, tools, **kwargs)
@@ -954,6 +966,20 @@ async def _traced_llm_manager_stream(
     )
     chunk_count = 0
     output_chars = 0
+    if is_experiment_strict_mode() and isinstance(client, MockLLMClient):
+        error = RuntimeError("EXPERIMENT_STRICT_MODE forbids Mock LLM client")
+        finish_llm_call(
+            trace_call,
+            provider=self._client_provider_name(client),
+            model=self._client_model_name(client),
+            success=False,
+            error=error,
+            mock=True,
+            fallback=False,
+            output_chars=0,
+            chunk_count=0,
+        )
+        raise error
     try:
         async for chunk in client.stream(messages, tools, **kwargs):
             if chunk_count == 0:

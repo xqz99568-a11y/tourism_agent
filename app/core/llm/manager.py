@@ -230,6 +230,32 @@ async def _traced_enhanced_llm_chat(
 ) -> LLMResponse:
     start_time = time.time()
     self.metrics.total_calls += 1
+    client = self._client
+
+    if is_experiment_strict_mode() and (self._using_mock or isinstance(client, MockLLMClient)):
+        trace_call = start_llm_call(
+            provider=_manager_client_provider_name(client),
+            model=_manager_client_model_name(client),
+            streaming=False,
+            mock=True,
+            fallback=False,
+            message_count=len(messages),
+            message_chars=_estimate_message_chars(messages),
+            tool_count=len(tools or []),
+        )
+        error = RuntimeError("EXPERIMENT_STRICT_MODE forbids Mock LLM client")
+        finish_llm_call(
+            trace_call,
+            provider=_manager_client_provider_name(client),
+            model=_manager_client_model_name(client),
+            success=False,
+            error=error,
+            mock=True,
+            fallback=False,
+        )
+        self.metrics.failed_calls += 1
+        self.metrics.total_latency_ms += (time.time() - start_time) * 1000
+        raise error
 
     cache_allowed = use_cache and not is_experiment_cache_disabled()
     if cache_allowed and self._cache and not tools:
@@ -252,17 +278,17 @@ async def _traced_enhanced_llm_chat(
                 trace_call,
                 provider=_manager_client_provider_name(self._client),
                 model=cached.model,
-                usage=cached.usage,
+                usage={"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
                 success=True,
                 mock=self._using_mock,
                 fallback=False,
                 cache_hit=True,
+                cached_source_usage=cached.usage,
                 output_chars=len(str(cached.content or "")),
                 chunk_count=0,
             )
             return cached
 
-    client = self._client
     trace_call = start_llm_call(
         provider=_manager_client_provider_name(client),
         model=_manager_client_model_name(client),
@@ -361,6 +387,20 @@ async def _traced_enhanced_llm_stream(
     )
     chunk_count = 0
     output_chars = 0
+    if is_experiment_strict_mode() and (self._using_mock or isinstance(client, MockLLMClient)):
+        error = RuntimeError("EXPERIMENT_STRICT_MODE forbids Mock LLM client")
+        finish_llm_call(
+            trace_call,
+            provider=_manager_client_provider_name(client),
+            model=_manager_client_model_name(client),
+            success=False,
+            error=error,
+            mock=True,
+            fallback=False,
+            output_chars=0,
+            chunk_count=0,
+        )
+        raise error
     try:
         async for chunk in client.stream(messages, tools, **kwargs):
             if chunk_count == 0:
