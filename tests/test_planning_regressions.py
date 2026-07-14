@@ -64,7 +64,13 @@ def test_followup_budget_turn_does_not_overwrite_destination_with_origin() -> No
     assert normalized["num_travelers"] == 3
 
 
-def test_partial_slots_are_persisted_before_clarification_finishes(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_partial_slots_are_persisted_before_clarification_finishes(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+
     orchestrator = AgentOrchestrator(object())
     session = SessionContext(session_id="clarification-persist")
 

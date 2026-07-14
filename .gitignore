@@ -51,6 +51,7 @@ logs/
 # Local Phase 1 scratch files (kept locally, never evidence artifacts)
 experiments/benchmark_test.json
 experiments/run_pilot.py
+experiments/results/traces/*.jsonl
 experiments/results/traces/20260714T120104870624Z_TEST001_llm_direct_9e05bfca_31084488.jsonl
 experiments/results/traces/20260714T120448417858Z_TEST001_single_agent_175215b8_6d06dfb1.jsonl
 experiments/results/traces/phase1_baseline/20260714T120524280461Z_23ef22a2-a807-4892-8175-730db9d2137c_f0e77f2d.jsonl
