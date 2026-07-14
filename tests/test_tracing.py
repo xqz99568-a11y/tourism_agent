@@ -15,10 +15,12 @@ from app.agents.base import AgentCapability, AgentConfig, AgentResponse, AgentSt
 from app.core.context import ExecutionContext, SessionContext
 from app.core.llm.client import BaseLLMClient, LLMManager, LLMMessage, LLMResponse, MockLLMClient
 from app.core.llm.manager import EnhancedLLMManager, LLMCallMetrics, SimpleLLMCache
+from app.core.tool_executor import ToolExecutor
 from app.main import TourismSystemApp
 from app.core.tracing import (
     REDACTED,
     record_api_call,
+    record_selected_tool,
     record_tool_call,
     request_trace,
     trace_component,
@@ -104,10 +106,84 @@ def test_tracing_enabled_writes_valid_jsonl_and_redacts_sensitive_fields(
     assert "token-value" not in raw
     assert "plural-secret" not in raw
     assert "plural-tool-secret" not in raw
-    assert record["schema_version"] == "1.1"
+    assert record["schema_version"] == "1.2"
+    assert record["selected_tools"] == ["poi_search"]
+    assert record["goal"]["intent"] == "trip_planning"
+    assert record["goal"]["route"] == "FULL_NEW_PLAN"
+    assert record["goal"]["slots"]["destination"] == "Hangzhou"
     assert record["tool_call_count"] == 1
+    assert record["selected_tool_count"] == 1
     assert record["api_call_count"] == 1
     assert record["llm_call_count"] == 0
+
+
+def test_trace_defaults_goal_and_records_selected_tools_without_execution(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+
+    with request_trace("default-goal-request", "default-goal-session") as trace:
+        assert trace is not None
+        trace.set_intent_info(intent="unknown", route="unknown", extracted_info={"topic": "hello"})
+        record_selected_tool("weather")
+
+    record = _trace_records(tmp_path)[0]
+    assert record["intent"] == "general_chat"
+    assert record["route"] == "GENERAL_CHAT"
+    assert record["selected_agents"] == []
+    assert record["selected_tools"] == ["weather"]
+    assert record["tool_call_count"] == 0
+    assert record["selected_tool_count"] == 1
+    assert record["goal"] == {
+        "intent": "general_chat",
+        "route": "GENERAL_CHAT",
+        "slots": {"topic": "hello"},
+        "constraints": [],
+        "selected_agents": [],
+    }
+
+
+def test_tool_executor_records_tool_trace_and_success_rate(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+
+    class DemoTool:
+        name = "demo_tool"
+        description = "Demo tool"
+        parameters = {"required": ["value"]}
+
+        def validate_params(self, params):
+            return "value" in params
+
+        async def execute(self, **kwargs):
+            return ToolResult(success=True, data={"echo": kwargs["value"]})
+
+    async def run_tools() -> None:
+        executor = ToolExecutor(tools={"demo_tool": DemoTool()})
+        with request_trace("executor-tool-request", "executor-tool-session"):
+            ok = await executor.execute("demo_tool", {"value": "杭州"}, call_id="tool-ok")
+            missing = await executor.execute("missing_tool", {}, call_id="tool-missing")
+            invalid = await executor.execute("demo_tool", {}, call_id="tool-invalid")
+            assert ok.is_completed
+            assert missing.is_failed
+            assert invalid.is_failed
+
+    asyncio.run(run_tools())
+
+    record = _trace_records(tmp_path)[0]
+    assert record["selected_tools"] == ["demo_tool", "missing_tool"]
+    assert record["tool_call_count"] == 3
+    assert record["successful_tool_call_count"] == 1
+    assert record["failed_tool_call_count"] == 2
+    assert record["tool_call_success_rate"] == pytest.approx(1 / 3, abs=0.0001)
+    assert [call["call_id"] for call in record["tool_calls"]] == ["tool-ok", "tool-missing", "tool-invalid"]
+    assert [call["success"] for call in record["tool_calls"]] == [True, False, False]
+    assert [call["name"] for call in record["tool_calls"]] == ["demo_tool", "missing_tool", "demo_tool"]
 
 
 def test_thinking_steps_tool_and_api_calls_are_recorded(

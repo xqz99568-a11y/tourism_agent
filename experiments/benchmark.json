@@ -1,0 +1,29 @@
+{
+  "dataset_id": "tourism_benchmark_v1",
+  "description": "Paper benchmark cases for comparing llm_direct, single_agent, and full_system.",
+  "cases": [
+    {
+      "case_id": "case001",
+      "user_input": "帮我规划杭州3天旅游",
+      "slots": {
+        "destination": "杭州",
+        "duration": 3
+      },
+      "constraints": [
+        "3天行程",
+        "目的地杭州"
+      ],
+      "expected": {
+        "intent": "trip_planning",
+        "route": "FULL_NEW_PLAN",
+        "selected_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "selected_tools": []
+      }
+    }
+  ]
+}

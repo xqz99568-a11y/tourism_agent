@@ -12,6 +12,7 @@ from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING
 
 from app.core.logger import get_logger
+from app.core.tracing import record_selected_tools, record_tool_call
 
 if TYPE_CHECKING:
     from app.tools.base import BaseTool
@@ -120,6 +121,7 @@ class ToolExecutor:
             id=call_id,
             tool_name=tool_name,
             arguments=arguments,
+            start_time=datetime.utcnow(),
         )
 
         self._running_calls[call_id] = call
@@ -134,7 +136,6 @@ class ToolExecutor:
                 raise ValueError(f"Invalid arguments for tool: {tool_name}")
 
             call.status = ToolCallStatus.RUNNING
-            call.start_time = datetime.utcnow()
 
             # 使用信号量控制并发
             async with self._semaphore:
@@ -152,6 +153,8 @@ class ToolExecutor:
 
             if hasattr(result, 'error') and result.error:
                 call.error = result.error
+            if hasattr(result, "success") and result.success is False and not call.error:
+                call.error = "Tool returned unsuccessful result"
 
         except asyncio.TimeoutError:
             call.status = ToolCallStatus.FAILED
@@ -171,9 +174,42 @@ class ToolExecutor:
             logger.exception(f"Tool execution failed: {tool_name}")
 
         finally:
+            if call.end_time is None:
+                call.end_time = datetime.utcnow()
+            if call.start_time is not None:
+                call.execution_time_ms = (
+                    call.end_time - call.start_time
+                ).total_seconds() * 1000
+            record_tool_call(
+                tool_name,
+                params=arguments,
+                duration_ms=call.execution_time_ms,
+                status=call.status.value,
+                success=self._trace_success_from_call(call),
+                error=call.error,
+                call_id=call.id,
+                cache_hit=self._trace_bool_from_result(call.result, "cache_hit"),
+                fallback_used=self._trace_bool_from_result(call.result, "fallback_used"),
+            )
             self._running_calls.pop(call_id, None)
 
         return call
+
+    def _trace_success_from_call(self, call: ToolCall) -> bool:
+        if call.status in {ToolCallStatus.FAILED, ToolCallStatus.CANCELLED}:
+            return False
+        if call.error:
+            return False
+        return call.status == ToolCallStatus.COMPLETED
+
+    def _trace_bool_from_result(self, result: Any, key: str) -> Optional[bool]:
+        if not isinstance(result, dict):
+            return None
+        value = result.get(key)
+        metadata = result.get("metadata")
+        if value is None and isinstance(metadata, dict):
+            value = metadata.get(key)
+        return None if value is None else bool(value)
 
     async def execute_batch(
         self,
@@ -324,10 +360,13 @@ class ToolSelector:
         # 如果有 LLM，使用 LLM 选择
         if self._llm:
             selected = await self._select_with_llm(query, available_tools, max_tools)
+            record_selected_tools(selected)
             return selected
 
         # 使用关键词匹配
-        return self._select_with_keywords(query, available_tools, max_tools)
+        selected = self._select_with_keywords(query, available_tools, max_tools)
+        record_selected_tools(selected)
+        return selected
 
     async def _select_with_llm(
         self,

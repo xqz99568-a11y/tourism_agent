@@ -20,8 +20,10 @@ from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 REDACTED = "[REDACTED]"
-TRACE_SCHEMA_VERSION = "1.1"
+TRACE_SCHEMA_VERSION = "1.2"
 DEFAULT_TRACE_DIR = Path("experiments/results/traces")
+DEFAULT_TRACE_INTENT = "general_chat"
+DEFAULT_TRACE_ROUTE = "GENERAL_CHAT"
 
 _current_trace: ContextVar[Optional["TraceState"]] = ContextVar(
     "tourism_request_trace",
@@ -242,6 +244,36 @@ def _safe_filename_part(value: str) -> str:
     return (safe or "request")[:80]
 
 
+def _default_intent_for_mode(mode: Optional[str]) -> str:
+    if str(mode or "").lower() == "qa":
+        return "destination_knowledge"
+    return DEFAULT_TRACE_INTENT
+
+
+def _default_route_for_mode(mode: Optional[str]) -> str:
+    if str(mode or "").lower() == "qa":
+        return "DESTINATION_QA"
+    return DEFAULT_TRACE_ROUTE
+
+
+def _normalize_trace_intent(intent: Any, mode: Optional[str], route: Optional[str]) -> str:
+    raw = str(intent or "").strip()
+    if raw and raw.lower() not in {"none", "null", "unknown"}:
+        return raw
+    if str(route or "").upper() == DEFAULT_TRACE_ROUTE:
+        return DEFAULT_TRACE_INTENT
+    return _default_intent_for_mode(mode)
+
+
+def _normalize_trace_route(route: Any, mode: Optional[str], intent: Optional[str]) -> str:
+    raw = str(route or "").strip()
+    if raw and raw.lower() not in {"none", "null", "unknown"}:
+        return raw
+    if str(intent or "").strip().lower() == "destination_knowledge":
+        return "DESTINATION_QA"
+    return _default_route_for_mode(mode)
+
+
 def get_trace_attribution() -> Dict[str, Optional[str]]:
     attribution = _current_attribution.get()
     if not attribution:
@@ -276,6 +308,7 @@ class TraceState:
     experiment_group: Optional[str] = None
     repeat_index: Optional[int] = None
     system_variant: Optional[str] = None
+    method: Optional[str] = None
     model_config_name: Optional[str] = None
     user_message_hash: Optional[str] = None
     user_message: Optional[str] = None
@@ -286,8 +319,10 @@ class TraceState:
     intent: Optional[str] = None
     route: Optional[str] = None
     extracted_info: Dict[str, Any] = field(default_factory=dict)
+    constraints: List[Any] = field(default_factory=list)
     missing_fields: List[Any] = field(default_factory=list)
     selected_agents: List[str] = field(default_factory=list)
+    selected_tools: List[str] = field(default_factory=list)
     stage_timings: Dict[str, float] = field(default_factory=dict)
     agent_timings: Dict[str, Dict[str, Any]] = field(default_factory=dict)
     agent_runs: List[Dict[str, Any]] = field(default_factory=list)
@@ -309,6 +344,7 @@ class TraceState:
             experiment_group=_first_env("EXPERIMENT_GROUP", "TRACE_EXPERIMENT_GROUP"),
             repeat_index=_env_int("EXPERIMENT_REPEAT_INDEX", "TRACE_REPEAT_INDEX", "REPEAT_INDEX"),
             system_variant=_first_env("SYSTEM_VARIANT", "TRACE_SYSTEM_VARIANT"),
+            method=_first_env("EXPERIMENT_METHOD", "TRACE_METHOD"),
             model_config_name=_first_env("MODEL_CONFIG_NAME", "TRACE_MODEL_CONFIG_NAME"),
         )
 
@@ -349,6 +385,8 @@ class TraceState:
             self.intent = str(event["intent"])
         if "extracted_info" in event and isinstance(event.get("extracted_info"), dict):
             self.extracted_info = sanitize_value(event["extracted_info"])
+        if "constraints" in event and event.get("constraints") is not None:
+            self.constraints = sanitize_value(event.get("constraints"))
         if "missing_fields" in event and event.get("missing_fields") is not None:
             self.missing_fields = sanitize_value(event.get("missing_fields"))
 
@@ -577,6 +615,11 @@ class TraceState:
             if agent and agent not in self.selected_agents:
                 self.selected_agents.append(agent)
 
+    def add_selected_tools(self, tools: List[str]) -> None:
+        for tool in tools:
+            if tool and tool not in self.selected_tools:
+                self.selected_tools.append(tool)
+
     def set_route(self, route: Any) -> None:
         if route is not None:
             self.route = str(route)
@@ -588,6 +631,7 @@ class TraceState:
         intent: Any = None,
         route: Any = None,
         extracted_info: Any = None,
+        constraints: Any = None,
         missing_fields: Any = None,
     ) -> None:
         if mode is not None:
@@ -598,6 +642,8 @@ class TraceState:
             self.route = str(route)
         if isinstance(extracted_info, dict):
             self.extracted_info = sanitize_value(extracted_info)
+        if constraints is not None:
+            self.constraints = sanitize_value(constraints)
         if missing_fields is not None:
             self.missing_fields = sanitize_value(missing_fields)
 
@@ -709,6 +755,7 @@ class TraceState:
     ) -> None:
         if not name:
             return
+        self.add_selected_tools([name])
         attribution = get_trace_attribution()
         raw_duration = _first_present(duration_ms, cost_ms)
         duration = _round_ms(float(raw_duration)) if raw_duration is not None else None
@@ -729,6 +776,15 @@ class TraceState:
             "fallback_used": None if fallback_used is None else bool(fallback_used),
         }
         self._append_or_merge_call(self.tool_calls, self._tool_call_ids, entry)
+
+    def _goal_record(self, intent: str, route: str, selected_agents: List[str]) -> Dict[str, Any]:
+        return {
+            "intent": intent,
+            "route": route,
+            "slots": self.extracted_info,
+            "constraints": self.constraints,
+            "selected_agents": selected_agents,
+        }
 
     def record_api_call(
         self,
@@ -788,17 +844,27 @@ class TraceState:
         if error:
             self.error = sanitize_value(str(error))
 
-    def _derived_counts(self) -> Dict[str, int]:
+    def _derived_counts(self) -> Dict[str, Any]:
         agent_call_count = len(self.agent_runs) if self.agent_runs else len(self.agent_timings)
         failed_agent_count = sum(
             1
             for run in self.agent_runs
             if str(run.get("status") or "").lower() in {"failed", "error", "timeout", "cancelled", "canceled", "aborted"}
         )
+        successful_tool_call_count = sum(1 for call in self.tool_calls if call.get("success") is True)
+        failed_tool_call_count = sum(1 for call in self.tool_calls if call.get("success") is False)
         all_calls = [*self.llm_calls, *self.tool_calls, *self.api_calls]
         return {
             "llm_call_count": len(self.llm_calls),
             "tool_call_count": len(self.tool_calls),
+            "successful_tool_call_count": successful_tool_call_count,
+            "failed_tool_call_count": failed_tool_call_count,
+            "tool_call_success_rate": (
+                round(successful_tool_call_count / len(self.tool_calls), 4)
+                if self.tool_calls
+                else None
+            ),
+            "selected_tool_count": len(self.selected_tools),
             "api_call_count": len(self.api_calls),
             "agent_call_count": agent_call_count,
             "failed_agent_count": failed_agent_count,
@@ -811,6 +877,9 @@ class TraceState:
         }
 
     def to_record(self) -> Dict[str, Any]:
+        intent = _normalize_trace_intent(self.intent, self.mode, self.route)
+        route = _normalize_trace_route(self.route, self.mode, intent)
+        selected_agents = list(self.selected_agents)
         record = {
             "schema_version": TRACE_SCHEMA_VERSION,
             "created_at": self.started_at,
@@ -821,16 +890,20 @@ class TraceState:
             "experiment_group": self.experiment_group,
             "repeat_index": self.repeat_index,
             "system_variant": self.system_variant,
+            "method": self.method,
             "model_config_name": self.model_config_name,
             "user_message_hash": self.user_message_hash,
             "user_message": self.user_message,
             "status": self.status,
             "mode": self.mode,
-            "intent": self.intent,
-            "route": self.route,
+            "intent": intent,
+            "route": route,
             "extracted_info": self.extracted_info,
+            "constraints": self.constraints,
             "missing_fields": self.missing_fields,
-            "selected_agents": self.selected_agents,
+            "selected_agents": selected_agents,
+            "selected_tools": self.selected_tools,
+            "goal": self._goal_record(intent, route, selected_agents),
             "stage_timings": self.stage_timings,
             "agent_timings": self.agent_timings,
             "agent_runs": self.agent_runs,
@@ -994,10 +1067,26 @@ def set_trace_intent_info(**kwargs: Any) -> None:
         trace.set_intent_info(**kwargs)
 
 
+def set_trace_method(method: Any) -> None:
+    trace = get_current_trace()
+    if trace is not None and method is not None:
+        trace.set_metadata(method=method)
+
+
 def set_trace_selected_agents(agents: List[str]) -> None:
     trace = get_current_trace()
     if trace is not None:
         trace.add_selected_agents(agents)
+
+
+def record_selected_tools(tools: List[str]) -> None:
+    trace = get_current_trace()
+    if trace is not None:
+        trace.add_selected_tools(tools)
+
+
+def record_selected_tool(tool: str) -> None:
+    record_selected_tools([tool])
 
 
 def start_llm_call(

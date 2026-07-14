@@ -20,6 +20,7 @@ from app.core.logger import get_logger
 from app.core.tracing import (
     finish_agent_run,
     record_agent_timing,
+    record_selected_tool,
     record_tool_call,
     start_agent_run,
     trace_component,
@@ -141,6 +142,7 @@ class BaseAgent(ABC):
         arguments: Dict[str, Any] = None,
     ) -> ToolCall:
         """开始工具调用"""
+        record_selected_tool(tool_name)
         call = ToolCall(
             tool_name=tool_name,
             arguments=arguments or {},
@@ -322,6 +324,7 @@ class BaseAgent(ABC):
         fallback_used: Optional[bool] = None,
     ) -> None:
         """记录工具使用 - 增强版"""
+        record_selected_tool(tool_name)
         tool_call_info = {
             "tool_name": tool_name,
             "arguments": arguments,
