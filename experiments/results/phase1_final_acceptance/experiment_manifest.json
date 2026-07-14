@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
-  "created_at": "2026-07-14T12:54:39.166356Z",
-  "run_id": "run_51d3e9e3ff86",
+  "created_at": "2026-07-14T15:17:03.602740Z",
+  "run_id": "run_ba3128e2c004",
   "dataset_id": "phase1_offline_acceptance",
   "dataset_version": "2026-07-14",
   "dataset_path": "experiments/phase1_offline_cases.json",
@@ -12,9 +12,9 @@
     "path": "experiments/phase1_offline_cases.json",
     "sha256": "d09cd2c88fb5457c7351444811fdd6aef8eb81a8bd0454e603cffc31d569f382"
   },
-  "git_commit": "dcb4dda6348d246226e4c6e6665027aece310509",
+  "git_commit": "2190984fb1807495f7197369e471bd8012a7ba39",
   "git": {
-    "commit": "dcb4dda6348d246226e4c6e6665027aece310509"
+    "commit": "2190984fb1807495f7197369e471bd8012a7ba39"
   },
   "methods": [
     "llm_direct",
