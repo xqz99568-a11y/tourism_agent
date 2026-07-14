@@ -9,8 +9,10 @@ from __future__ import annotations
 
 import asyncio
 import csv
+import hashlib
 import json
 import os
+import subprocess
 import time
 import uuid
 from contextlib import contextmanager
@@ -19,6 +21,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Awaitable, Callable, Dict, Iterable, List, Optional
 
+from app.core.config import settings
 from app.core.experiment_metrics import (
     CollaborationMode,
     ExperimentContext,
@@ -33,6 +36,8 @@ from app.core.tracing import (
     DEFAULT_TRACE_DIR,
     DEFAULT_EVALUATION_MODE,
     finish_agent_run,
+    is_experiment_cache_disabled,
+    is_experiment_strict_mode,
     record_planned_tools,
     request_trace,
     set_trace_intent_info,
@@ -91,34 +96,82 @@ class ExperimentRunner:
         method_handlers: Optional[Dict[ExperimentMethod, MethodHandler]] = None,
         app_factory: Optional[Callable[[], Any]] = None,
         llm_factory: Optional[Callable[[], Any]] = None,
+        repeats: int = 1,
+        run_id: Optional[str] = None,
+        repeat_index: int = 0,
+        system_variant: Optional[str] = None,
+        model_config_name: Optional[str] = None,
     ) -> None:
         self.trace_dir = Path(trace_dir)
         self.output_dir = Path(output_dir)
         self.method_handlers = method_handlers or {}
         self.app_factory = app_factory
         self.llm_factory = llm_factory or get_llm
+        self.repeats = _validate_repeats(repeats)
+        self.run_id = str(run_id or f"run_{uuid.uuid4().hex[:12]}")
+        self.repeat_index = _validate_repeat_index(repeat_index)
+        self.system_variant = _optional_text(system_variant)
+        self.model_config_name = _optional_text(model_config_name) or "default"
         self.experiment_records: List[Dict[str, Any]] = []
         self.current_context: Optional[ExperimentContext] = None
 
     # ------------------------------------------------------------------
     # New thesis benchmark API
     # ------------------------------------------------------------------
-    def run(self, case: Dict[str, Any], method: ExperimentMethod = "full_system") -> Dict[str, Any]:
+    def run(
+        self,
+        case: Dict[str, Any],
+        method: ExperimentMethod = "full_system",
+        *,
+        run_id: Optional[str] = None,
+        repeat_index: Optional[int] = None,
+        system_variant: Optional[str] = None,
+        model_config_name: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """Synchronously run one case through one method."""
         try:
             asyncio.get_running_loop()
         except RuntimeError:
-            return asyncio.run(self.arun(case, method=method))
+            return asyncio.run(
+                self.arun(
+                    case,
+                    method=method,
+                    run_id=run_id,
+                    repeat_index=repeat_index,
+                    system_variant=system_variant,
+                    model_config_name=model_config_name,
+                )
+            )
         raise RuntimeError("ExperimentRunner.run() cannot be used inside a running event loop; use arun().")
 
-    async def arun(self, case: Dict[str, Any], method: ExperimentMethod = "full_system") -> Dict[str, Any]:
+    async def arun(
+        self,
+        case: Dict[str, Any],
+        method: ExperimentMethod = "full_system",
+        *,
+        run_id: Optional[str] = None,
+        repeat_index: Optional[int] = None,
+        system_variant: Optional[str] = None,
+        model_config_name: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """Asynchronously run one case through one method."""
         method = self._normalize_method(method)
         normalized_case = self._normalize_case(case)
         case_id = normalized_case["case_id"]
         request_id = f"{case_id}_{method}_{uuid.uuid4().hex[:8]}"
+        effective_run_id = str(run_id or self.run_id)
+        effective_repeat_index = (
+            self.repeat_index
+            if repeat_index is None
+            else _validate_repeat_index(repeat_index)
+        )
+        effective_system_variant = (
+            _optional_text(system_variant) or self.system_variant or method
+        )
+        effective_model_config_name = (
+            _optional_text(model_config_name) or self.model_config_name
+        )
 
-        before = self._trace_files()
         started = time.perf_counter()
         output: Any = None
         error: Optional[str] = None
@@ -129,6 +182,10 @@ class ExperimentRunner:
             "EXPERIMENT_CASE_ID": case_id,
             "EXPERIMENT_METHOD": method,
             "EXPERIMENT_EVALUATION_MODE": normalized_case["evaluation_mode"],
+            "EXPERIMENT_RUN_ID": effective_run_id,
+            "EXPERIMENT_REPEAT_INDEX": str(effective_repeat_index),
+            "SYSTEM_VARIANT": effective_system_variant,
+            "MODEL_CONFIG_NAME": effective_model_config_name,
         }
         self.trace_dir.mkdir(parents=True, exist_ok=True)
 
@@ -140,7 +197,7 @@ class ExperimentRunner:
                 output = {"error": error}
 
         latency_ms = round((time.perf_counter() - started) * 1000, 2)
-        trace = self._load_newest_trace(before)
+        trace = self._load_trace_by_request_id(request_id)
         result = self._build_unified_result(
             case=normalized_case,
             method=method,
@@ -157,16 +214,26 @@ class ExperimentRunner:
         benchmark_path: str | Path = "experiments/benchmark.json",
         *,
         methods: Optional[Iterable[ExperimentMethod]] = None,
+        repeats: Optional[int] = None,
+        run_id: Optional[str] = None,
+        system_variant: Optional[str] = None,
+        model_config_name: Optional[str] = None,
         csv_path: Optional[str | Path] = None,
         json_path: Optional[str | Path] = None,
+        manifest_path: Optional[str | Path] = None,
     ) -> List[Dict[str, Any]]:
         """Run all benchmark cases through all requested methods."""
         return asyncio.run(
             self.arun_benchmark(
                 benchmark_path,
                 methods=methods,
+                repeats=repeats,
+                run_id=run_id,
+                system_variant=system_variant,
+                model_config_name=model_config_name,
                 csv_path=csv_path,
                 json_path=json_path,
+                manifest_path=manifest_path,
             )
         )
 
@@ -175,25 +242,129 @@ class ExperimentRunner:
         benchmark_path: str | Path = "experiments/benchmark.json",
         *,
         methods: Optional[Iterable[ExperimentMethod]] = None,
+        repeats: Optional[int] = None,
+        run_id: Optional[str] = None,
+        system_variant: Optional[str] = None,
+        model_config_name: Optional[str] = None,
         csv_path: Optional[str | Path] = None,
         json_path: Optional[str | Path] = None,
+        manifest_path: Optional[str | Path] = None,
     ) -> List[Dict[str, Any]]:
         benchmark_file = Path(benchmark_path)
         cases = self.load_benchmark(benchmark_file)
         selected_methods = [self._normalize_method(method) for method in (methods or self.METHODS)]
+        effective_repeats = self.repeats if repeats is None else _validate_repeats(repeats)
+        effective_run_id = str(run_id or self.run_id)
 
         results: List[Dict[str, Any]] = []
-        for case in cases:
-            for method in selected_methods:
-                results.append(await self.arun(case, method=method))
+        for repeat_offset in range(effective_repeats):
+            repeat_index = self.repeat_index + repeat_offset
+            for case in cases:
+                for method in selected_methods:
+                    results.append(
+                        await self.arun(
+                            case,
+                            method=method,
+                            run_id=effective_run_id,
+                            repeat_index=repeat_index,
+                            system_variant=system_variant,
+                            model_config_name=model_config_name,
+                        )
+                    )
 
         if csv_path is None:
             csv_path = self.output_dir / "benchmark_results.csv"
         if json_path is None:
             json_path = self.output_dir / "benchmark_results.json"
+        if manifest_path is None:
+            manifest_path = self.output_dir / "experiment_manifest.json"
         self.export_csv(results, csv_path)
         self.export_json(results, json_path)
+        self.write_experiment_manifest(
+            benchmark_path=benchmark_file,
+            output_path=manifest_path,
+            run_id=effective_run_id,
+            repeats=effective_repeats,
+            methods=selected_methods,
+            system_variant=system_variant,
+            model_config_name=model_config_name,
+            result_paths={"csv": csv_path, "json": json_path},
+        )
         return results
+
+    def write_experiment_manifest(
+        self,
+        *,
+        benchmark_path: str | Path,
+        output_path: str | Path,
+        run_id: Optional[str] = None,
+        repeats: Optional[int] = None,
+        methods: Optional[Iterable[ExperimentMethod]] = None,
+        system_variant: Optional[str] = None,
+        model_config_name: Optional[str] = None,
+        result_paths: Optional[Dict[str, str | Path]] = None,
+    ) -> Dict[str, Any]:
+        """Write reproducibility metadata for one benchmark run."""
+        benchmark_file = Path(benchmark_path)
+        raw_bytes = benchmark_file.read_bytes()
+        document = json.loads(raw_bytes.decode("utf-8"))
+        metadata = document if isinstance(document, dict) else {}
+        dataset_id = metadata.get("dataset_id") or benchmark_file.stem
+        dataset_version = (
+            metadata.get("dataset_version")
+            or metadata.get("version")
+            or dataset_id
+        )
+        dataset_sha256 = hashlib.sha256(raw_bytes).hexdigest()
+        cache_disabled = is_experiment_cache_disabled()
+        strict_mode = is_experiment_strict_mode()
+        model = os.getenv("LLM_MODEL") or settings.llm.model
+        temperature = _environment_float("LLM_TEMPERATURE", settings.llm.temperature)
+        resolved_system_variant = _optional_text(system_variant) or self.system_variant
+        resolved_model_config = (
+            _optional_text(model_config_name) or self.model_config_name
+        )
+        commit = _git_commit()
+        manifest = {
+            "schema_version": "1.0",
+            "created_at": datetime.utcnow().isoformat() + "Z",
+            "run_id": str(run_id or self.run_id),
+            "dataset_id": str(dataset_id),
+            "dataset_version": str(dataset_version),
+            "dataset_path": str(benchmark_file),
+            "dataset_sha256": dataset_sha256,
+            "dataset": {
+                "id": str(dataset_id),
+                "version": str(dataset_version),
+                "path": str(benchmark_file),
+                "sha256": dataset_sha256,
+            },
+            "git_commit": commit,
+            "git": {"commit": commit},
+            "methods": list(methods or self.METHODS),
+            "repeats": self.repeats if repeats is None else _validate_repeats(repeats),
+            "repeat_index_start": self.repeat_index,
+            "system_variant": resolved_system_variant or "per_method",
+            "model_config_name": resolved_model_config,
+            "model": str(model),
+            "temperature": temperature,
+            "cache_enabled": not cache_disabled,
+            "cache_disabled": cache_disabled,
+            "strict_mode": strict_mode,
+            "model_config": {
+                "name": resolved_model_config,
+                "model": str(model),
+                "temperature": temperature,
+            },
+            "cache": {"enabled": not cache_disabled, "disabled": cache_disabled},
+            "results": {
+                key: str(value) for key, value in (result_paths or {}).items()
+            },
+        }
+        path = Path(output_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+        return manifest
 
     def load_benchmark(self, benchmark_path: str | Path) -> List[Dict[str, Any]]:
         """Load benchmark.json or the existing data/cases thesis index."""
@@ -221,6 +392,11 @@ class ExperimentRunner:
         fieldnames = [
             "case_id",
             "method",
+            "request_id",
+            "run_id",
+            "repeat_index",
+            "system_variant",
+            "model_config_name",
             "evaluation_mode",
             "status",
             "latency_ms",
@@ -757,6 +933,11 @@ class ExperimentRunner:
         return {
             "case_id": case["case_id"],
             "method": method,
+            "request_id": trace_record.get("request_id"),
+            "run_id": trace_record.get("run_id"),
+            "repeat_index": trace_record.get("repeat_index"),
+            "system_variant": trace_record.get("system_variant"),
+            "model_config_name": trace_record.get("model_config_name"),
             "evaluation_mode": case["evaluation_mode"],
             "output": output,
             "latency": latency_ms,
@@ -802,6 +983,11 @@ class ExperimentRunner:
         return {
             "case_id": result.get("case_id"),
             "method": result.get("method"),
+            "request_id": result.get("request_id"),
+            "run_id": result.get("run_id"),
+            "repeat_index": result.get("repeat_index"),
+            "system_variant": result.get("system_variant"),
+            "model_config_name": result.get("model_config_name"),
             "evaluation_mode": result.get("evaluation_mode"),
             "status": result.get("status"),
             "latency_ms": result.get("latency_ms"),
@@ -835,15 +1021,21 @@ class ExperimentRunner:
             return set()
         return set(self.trace_dir.glob("*.jsonl"))
 
-    def _load_newest_trace(self, before: set[Path]) -> Optional[Dict[str, Any]]:
-        candidates = [path for path in self._trace_files() if path not in before]
-        if not candidates:
-            return None
-        path = max(candidates, key=lambda item: item.stat().st_mtime)
-        line = path.read_text(encoding="utf-8").splitlines()[0]
-        record = json.loads(line)
-        record["trace_file"] = str(path)
-        return record
+    def _load_trace_by_request_id(self, request_id: str) -> Optional[Dict[str, Any]]:
+        """Load only the trace whose persisted request_id exactly matches."""
+        for path in sorted(self._trace_files()):
+            try:
+                lines = path.read_text(encoding="utf-8").splitlines()
+                if not lines:
+                    continue
+                record = json.loads(lines[0])
+            except (OSError, json.JSONDecodeError):
+                continue
+            if record.get("request_id") != request_id:
+                continue
+            record["trace_file"] = str(path)
+            return record
+        return None
 
 
 def _input_dict_to_text(data: Dict[str, Any]) -> str:
@@ -898,6 +1090,60 @@ def _json_tool_result(value: Any) -> str:
     if is_dataclass(value) and not isinstance(value, type):
         value = asdict(value)
     return json.dumps(value, ensure_ascii=False, default=str)
+
+
+def _optional_text(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    text = str(value).strip()
+    return text or None
+
+
+def _validate_repeats(value: Any) -> int:
+    if isinstance(value, bool):
+        raise ValueError("repeats must be a positive integer")
+    try:
+        repeats = int(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("repeats must be a positive integer") from exc
+    if repeats < 1:
+        raise ValueError("repeats must be a positive integer")
+    return repeats
+
+
+def _validate_repeat_index(value: Any) -> int:
+    if isinstance(value, bool):
+        raise ValueError("repeat_index must be a non-negative integer")
+    try:
+        repeat_index = int(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("repeat_index must be a non-negative integer") from exc
+    if repeat_index < 0:
+        raise ValueError("repeat_index must be a non-negative integer")
+    return repeat_index
+
+
+def _environment_float(name: str, default: float) -> float:
+    raw = os.getenv(name)
+    if raw is None:
+        return float(default)
+    try:
+        return float(raw)
+    except ValueError:
+        return float(default)
+
+
+def _git_commit() -> str:
+    try:
+        completed = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return "unknown"
+    return completed.stdout.strip() or "unknown"
 
 
 def _optional_equal(expected: Any, actual: Any) -> Optional[bool]:

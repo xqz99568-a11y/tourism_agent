@@ -1,0 +1,15 @@
+{
+  "dataset_id": "phase1_offline_acceptance",
+  "dataset_version": "2026-07-14",
+  "description": "Two static cases for Phase 1 offline trace acceptance.",
+  "cases": [
+    {
+      "case_id": "offline_001",
+      "user_input": "帮我规划杭州3天旅游"
+    },
+    {
+      "case_id": "offline_002",
+      "user_input": "帮我规划成都4天旅游"
+    }
+  ]
+}

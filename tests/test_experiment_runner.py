@@ -257,3 +257,106 @@ def test_runner_loads_default_benchmark_shape(tmp_path: Path) -> None:
 
     assert cases[0]["case_id"] == "case001"
     assert cases[0]["user_input"] == "帮我规划杭州3天旅游"
+
+
+def test_offline_acceptance_runs_two_cases_three_methods_and_two_repeats(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    async def offline_handler(case):
+        trace = get_current_trace()
+        assert trace is not None
+        trace.mark_first_body_token()
+        return {"case_id": case["case_id"], "source": "offline-static"}
+
+    benchmark_path = tmp_path / "phase1_offline.json"
+    benchmark_path.write_text(
+        json.dumps(
+            {
+                "dataset_id": "phase1_offline_acceptance",
+                "dataset_version": "2026-07-14",
+                "cases": [
+                    {"case_id": "offline_001", "user_input": "杭州三日游"},
+                    {"case_id": "offline_002", "user_input": "成都四日游"},
+                ],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("EXPERIMENT_STRICT_MODE", "true")
+    monkeypatch.setenv("EXPERIMENT_DISABLE_CACHE", "true")
+    monkeypatch.setenv("LLM_MODEL", "offline-static-model")
+    monkeypatch.setenv("LLM_TEMPERATURE", "0")
+
+    trace_dir = tmp_path / "traces"
+    output_dir = tmp_path / "results"
+    runner = ExperimentRunner(
+        trace_dir=trace_dir,
+        output_dir=output_dir,
+        method_handlers={method: offline_handler for method in ExperimentRunner.METHODS},
+        repeats=2,
+        run_id="phase1-offline-run",
+        model_config_name="offline-static",
+    )
+
+    results = runner.run_benchmark(benchmark_path)
+
+    assert len(results) == 12
+    assert {result["repeat_index"] for result in results} == {0, 1}
+    assert {result["method"] for result in results} == set(ExperimentRunner.METHODS)
+    assert {result["system_variant"] for result in results} == set(ExperimentRunner.METHODS)
+    assert {result["run_id"] for result in results} == {"phase1-offline-run"}
+    assert len({result["request_id"] for result in results}) == 12
+
+    trace_records = [
+        json.loads(path.read_text(encoding="utf-8").splitlines()[0])
+        for path in trace_dir.glob("*.jsonl")
+    ]
+    assert len(trace_records) == 12
+    for trace in trace_records:
+        assert trace["case_id"] in {"offline_001", "offline_002"}
+        assert trace["experiment_case_id"] == trace["case_id"]
+        assert trace["method"] in ExperimentRunner.METHODS
+        assert trace["repeat_index"] in {0, 1}
+        assert trace["system_variant"] == trace["method"]
+        assert trace["run_id"] == "phase1-offline-run"
+        assert trace["model_config_name"] == "offline-static"
+
+    manifest = json.loads(
+        (output_dir / "experiment_manifest.json").read_text(encoding="utf-8")
+    )
+    assert manifest["dataset_version"] == "2026-07-14"
+    assert manifest["dataset"]["id"] == "phase1_offline_acceptance"
+    assert len(manifest["dataset_sha256"]) == 64
+    assert len(manifest["git_commit"]) == 40
+    assert manifest["model"] == "offline-static-model"
+    assert manifest["temperature"] == 0.0
+    assert manifest["cache_enabled"] is False
+    assert manifest["strict_mode"] is True
+    assert manifest["repeats"] == 2
+    assert manifest["model_config_name"] == "offline-static"
+    assert len(list(csv.DictReader((output_dir / "benchmark_results.csv").open(encoding="utf-8-sig")))) == 12
+
+
+def test_runner_loads_trace_by_exact_request_id_not_newest_file(tmp_path: Path) -> None:
+    trace_dir = tmp_path / "traces"
+    trace_dir.mkdir()
+    expected_path = trace_dir / "001_expected.jsonl"
+    expected_path.write_text(
+        json.dumps({"request_id": "expected-request", "status": "completed"}) + "\n",
+        encoding="utf-8",
+    )
+    newest_path = trace_dir / "999_newest.jsonl"
+    newest_path.write_text(
+        json.dumps({"request_id": "different-request", "status": "failed"}) + "\n",
+        encoding="utf-8",
+    )
+
+    runner = ExperimentRunner(trace_dir=trace_dir)
+    record = runner._load_trace_by_request_id("expected-request")
+
+    assert record is not None
+    assert record["request_id"] == "expected-request"
+    assert record["status"] == "completed"
+    assert record["trace_file"] == str(expected_path)

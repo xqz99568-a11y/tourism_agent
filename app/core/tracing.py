@@ -20,7 +20,7 @@ from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 REDACTED = "[REDACTED]"
-TRACE_SCHEMA_VERSION = "1.4"
+TRACE_SCHEMA_VERSION = "1.5"
 DEFAULT_TRACE_DIR = Path("experiments/results/traces")
 DEFAULT_TRACE_INTENT = "general_chat"
 DEFAULT_TRACE_ROUTE = "GENERAL_CHAT"
@@ -914,6 +914,7 @@ class TraceState:
             "created_at": self.started_at,
             "request_id": self.request_id,
             "session_id": self.session_id,
+            "case_id": self.experiment_case_id,
             "run_id": self.run_id,
             "experiment_case_id": self.experiment_case_id,
             "experiment_group": self.experiment_group,

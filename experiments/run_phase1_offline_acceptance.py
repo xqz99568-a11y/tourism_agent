@@ -1,0 +1,71 @@
+"""Run the Phase 1 acceptance matrix without LLM or external API calls."""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import sys
+from pathlib import Path
+from typing import Any, Dict
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from app.core.experiment_runner import ExperimentRunner
+from app.core.tracing import get_current_trace
+
+
+async def _offline_handler(case: Dict[str, Any]) -> Dict[str, str]:
+    trace = get_current_trace()
+    if trace is None:
+        raise RuntimeError("offline acceptance requires tracing")
+    trace.mark_first_body_token()
+    return {"case_id": case["case_id"], "source": "offline-static"}
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("experiments/results/phase1_offline_acceptance"),
+    )
+    args = parser.parse_args()
+
+    os.environ["EXPERIMENT_STRICT_MODE"] = "true"
+    os.environ["EXPERIMENT_DISABLE_CACHE"] = "true"
+    os.environ["LLM_MODEL"] = "offline-static-model"
+    os.environ["LLM_TEMPERATURE"] = "0"
+
+    handlers = {method: _offline_handler for method in ExperimentRunner.METHODS}
+    runner = ExperimentRunner(
+        trace_dir=args.output_dir / "traces",
+        output_dir=args.output_dir,
+        method_handlers=handlers,
+        repeats=2,
+        model_config_name="offline-static",
+    )
+    results = runner.run_benchmark("experiments/phase1_offline_cases.json")
+
+    if len(results) != 12 or any(result["status"] != "completed" for result in results):
+        raise RuntimeError("offline acceptance matrix did not produce 12 completed runs")
+
+    print(
+        json.dumps(
+            {
+                "status": "passed",
+                "run_id": runner.run_id,
+                "result_count": len(results),
+                "trace_count": len(list((args.output_dir / "traces").glob("*.jsonl"))),
+                "manifest": str(args.output_dir / "experiment_manifest.json"),
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
