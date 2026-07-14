@@ -72,6 +72,7 @@ def test_tracing_enabled_writes_valid_jsonl_and_redacts_sensitive_fields(
             missing_fields=["budget"],
         )
         trace.record_stage_timing("intent_parsing", 12.345)
+        record_selected_tool("poi_search")
         record_tool_call(
             "poi_search",
             params={"key": "amap-secret", "city": "Hangzhou", "tokens": "plural-tool-secret"},
@@ -106,7 +107,9 @@ def test_tracing_enabled_writes_valid_jsonl_and_redacts_sensitive_fields(
     assert "token-value" not in raw
     assert "plural-secret" not in raw
     assert "plural-tool-secret" not in raw
-    assert record["schema_version"] == "1.2"
+    assert record["schema_version"] == "1.4"
+    assert record["planned_tools"] == ["poi_search"]
+    assert record["executed_tools"] == ["poi_search"]
     assert record["selected_tools"] == ["poi_search"]
     assert record["goal"]["intent"] == "trip_planning"
     assert record["goal"]["route"] == "FULL_NEW_PLAN"
@@ -133,6 +136,8 @@ def test_trace_defaults_goal_and_records_selected_tools_without_execution(
     assert record["intent"] == "general_chat"
     assert record["route"] == "GENERAL_CHAT"
     assert record["selected_agents"] == []
+    assert record["planned_tools"] == ["weather"]
+    assert record["executed_tools"] == []
     assert record["selected_tools"] == ["weather"]
     assert record["tool_call_count"] == 0
     assert record["selected_tool_count"] == 1
@@ -141,8 +146,26 @@ def test_trace_defaults_goal_and_records_selected_tools_without_execution(
         "route": "GENERAL_CHAT",
         "slots": {"topic": "hello"},
         "constraints": [],
+        "planned_agents": [],
         "selected_agents": [],
     }
+
+
+def test_start_agent_run_records_execution_without_changing_plan(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+
+    with request_trace("agent-run-request", "agent-run-session") as trace:
+        assert trace is not None
+        trace.start_agent_run("runtime-only-agent")
+
+    record = _trace_records(tmp_path)[0]
+    assert record["planned_agents"] == []
+    assert record["executed_agents"] == ["runtime-only-agent"]
+    assert record["selected_agents"] == []
 
 
 def test_tool_executor_records_tool_trace_and_success_rate(
@@ -176,7 +199,9 @@ def test_tool_executor_records_tool_trace_and_success_rate(
     asyncio.run(run_tools())
 
     record = _trace_records(tmp_path)[0]
-    assert record["selected_tools"] == ["demo_tool", "missing_tool"]
+    assert record["planned_tools"] == []
+    assert record["executed_tools"] == ["demo_tool", "missing_tool"]
+    assert record["selected_tools"] == []
     assert record["tool_call_count"] == 3
     assert record["successful_tool_call_count"] == 1
     assert record["failed_tool_call_count"] == 2

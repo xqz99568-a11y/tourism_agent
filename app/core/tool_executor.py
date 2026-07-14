@@ -155,6 +155,8 @@ class ToolExecutor:
                 call.error = result.error
             if hasattr(result, "success") and result.success is False and not call.error:
                 call.error = "Tool returned unsuccessful result"
+            if hasattr(result, "success") and result.success is False:
+                call.status = ToolCallStatus.FAILED
 
         except asyncio.TimeoutError:
             call.status = ToolCallStatus.FAILED

@@ -14,6 +14,7 @@ import os
 import time
 import uuid
 from contextlib import contextmanager
+from dataclasses import asdict, is_dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Awaitable, Callable, Dict, Iterable, List, Optional
@@ -26,12 +27,18 @@ from app.core.experiment_metrics import (
     build_experiment_metrics,
     build_experiment_record,
 )
-from app.core.llm.client import LLMMessage, get_llm
+from app.core.llm.client import LLMMessage, ToolDefinition, get_llm
+from app.core.tool_executor import ToolExecutor
 from app.core.tracing import (
     DEFAULT_TRACE_DIR,
+    DEFAULT_EVALUATION_MODE,
+    finish_agent_run,
+    record_planned_tools,
     request_trace,
     set_trace_intent_info,
     set_trace_selected_agents,
+    start_agent_run,
+    trace_component,
 )
 
 
@@ -43,6 +50,8 @@ class ExperimentRunner:
     """Run benchmark cases and export paper-ready trace/CSV records."""
 
     METHODS = ("llm_direct", "single_agent", "full_system")
+    EVALUATION_MODES = (DEFAULT_EVALUATION_MODE, "oracle_slots")
+    SINGLE_AGENT_MAX_TOOL_ROUNDS = 8
 
     TEST_CASES = [
         {
@@ -119,6 +128,7 @@ class ExperimentRunner:
             "TRACE_OUTPUT_DIR": str(self.trace_dir),
             "EXPERIMENT_CASE_ID": case_id,
             "EXPERIMENT_METHOD": method,
+            "EXPERIMENT_EVALUATION_MODE": normalized_case["evaluation_mode"],
         }
         self.trace_dir.mkdir(parents=True, exist_ok=True)
 
@@ -211,11 +221,16 @@ class ExperimentRunner:
         fieldnames = [
             "case_id",
             "method",
+            "evaluation_mode",
             "status",
             "latency_ms",
             "ttft_ms",
             "intent",
             "route",
+            "planned_agents",
+            "executed_agents",
+            "planned_tools",
+            "executed_tools",
             "selected_agents",
             "selected_tools",
             "expected_tools",
@@ -466,15 +481,10 @@ class ExperimentRunner:
             user_message=case["user_input"],
             experiment_case_id=case["case_id"],
             method=method,
+            evaluation_mode=case["evaluation_mode"],
         ) as trace:
             if trace is not None:
-                set_trace_intent_info(
-                    mode="planning",
-                    intent=case.get("expected", {}).get("intent"),
-                    route=case.get("expected", {}).get("route"),
-                    extracted_info=case.get("slots", {}),
-                    constraints=case.get("constraints", []),
-                )
+                self._initialize_trace_for_evaluation(case)
             return await _maybe_await(self.method_handlers[method](case))
 
     async def _run_full_system(self, case: Dict[str, Any], request_id: str) -> str:
@@ -509,14 +519,128 @@ class ExperimentRunner:
             "但需要尽量给出结构化、可执行的旅游建议。\n\n用户请求："
             f"{case['user_input']}"
         )
-        return await self._run_llm_baseline(
-            case=case,
-            request_id=request_id,
+        session_id = f"exp-{case['case_id']}-single_agent-{uuid.uuid4().hex[:8]}"
+        with request_trace(
+            request_id,
+            session_id,
+            user_message=case["user_input"],
+            experiment_case_id=case["case_id"],
             method="single_agent",
-            system_prompt="你是一个单 Agent 旅游规划助手。",
-            user_prompt=prompt,
-            selected_agents=["PlannerAgent"],
-        )
+            evaluation_mode=case["evaluation_mode"],
+        ) as trace:
+            if trace is not None:
+                self._initialize_trace_for_evaluation(case)
+                set_trace_selected_agents(["single_agent"])
+
+            llm = self.llm_factory()
+            tools = self._build_single_agent_tools()
+            executor = ToolExecutor(tools={tool.name: tool for tool in tools})
+            definitions = [
+                ToolDefinition(
+                    name=tool.name,
+                    description=tool.description,
+                    parameters=tool.parameters,
+                )
+                for tool in tools
+            ]
+            messages = [
+                LLMMessage(
+                    role="system",
+                    content=(
+                        "你是一个单 Agent 旅游规划助手。你可以根据需要调用 POI、天气、"
+                        "路线和预算工具。请优先使用工具返回的真实数据，不要调度其他 Agent。"
+                    ),
+                ),
+                LLMMessage(role="user", content=prompt),
+            ]
+
+            agent_run = start_agent_run("single_agent")
+            executed_call_count = 0
+            try:
+                with trace_component("single_agent", agent_name="single_agent"):
+                    for _ in range(self.SINGLE_AGENT_MAX_TOOL_ROUNDS):
+                        response = await llm.chat(messages, tools=definitions)
+                        if not response.tool_calls:
+                            usage = getattr(response, "usage", None) or {}
+                            finish_agent_run(
+                                agent_run,
+                                agent_name="single_agent",
+                                status="completed",
+                                tokens=usage.get("total_tokens"),
+                                tool_count=executed_call_count,
+                            )
+                            return response.content
+
+                        for call in response.tool_calls:
+                            if not call.id:
+                                call.id = uuid.uuid4().hex
+                        record_planned_tools(
+                            [call.name for call in response.tool_calls if call.name]
+                        )
+                        messages.append(
+                            LLMMessage(
+                                role="assistant",
+                                content=response.content or "",
+                                tool_calls=response.tool_calls,
+                            )
+                        )
+
+                        for tool_call in response.tool_calls:
+                            try:
+                                arguments = json.loads(tool_call.arguments or "{}")
+                                if not isinstance(arguments, dict):
+                                    raise ValueError("tool arguments must be a JSON object")
+                            except (json.JSONDecodeError, ValueError) as exc:
+                                tool_content = f"Tool arguments error: {exc}"
+                            else:
+                                call = await executor.execute(
+                                    tool_name=tool_call.name,
+                                    arguments=arguments,
+                                    call_id=tool_call.id,
+                                )
+                                executed_call_count += 1
+                                if call.is_completed and not call.error:
+                                    tool_content = _json_tool_result(call.result)
+                                else:
+                                    tool_content = (
+                                        f"Tool execution error: {call.error or call.status.value}"
+                                    )
+
+                            messages.append(
+                                LLMMessage(
+                                    role="tool",
+                                    content=tool_content,
+                                    name=tool_call.name,
+                                    tool_call_id=tool_call.id,
+                                )
+                            )
+
+                raise RuntimeError("single-agent tool loop exceeded maximum rounds")
+            except BaseException as exc:
+                finish_agent_run(
+                    agent_run,
+                    agent_name="single_agent",
+                    status="failed",
+                    tool_count=executed_call_count,
+                    error=exc,
+                )
+                raise
+
+    def _build_single_agent_tools(self) -> List[Any]:
+        """Build the repository's shared POI, weather, route, and budget tools."""
+        from app.tools.budget_calc import BudgetCalculatorTool, BudgetOptimizerTool
+        from app.tools.poi_search import POIDetailTool, POISearchTool
+        from app.tools.route_plan import RoutePlanningTool
+        from app.tools.weather import WeatherTool
+
+        return [
+            POISearchTool(),
+            POIDetailTool(),
+            WeatherTool(),
+            RoutePlanningTool(),
+            BudgetCalculatorTool(),
+            BudgetOptimizerTool(),
+        ]
 
     async def _run_llm_baseline(
         self,
@@ -535,15 +659,10 @@ class ExperimentRunner:
             user_message=case["user_input"],
             experiment_case_id=case["case_id"],
             method=method,
+            evaluation_mode=case["evaluation_mode"],
         ) as trace:
             if trace is not None:
-                set_trace_intent_info(
-                    mode="planning",
-                    intent=case.get("expected", {}).get("intent"),
-                    route=case.get("expected", {}).get("route"),
-                    extracted_info=case.get("slots", {}),
-                    constraints=case.get("constraints", []),
-                )
+                self._initialize_trace_for_evaluation(case)
                 set_trace_selected_agents(selected_agents)
             llm = self.llm_factory()
             response = await llm.chat(
@@ -583,6 +702,7 @@ class ExperimentRunner:
             expected["selected_agents"] = expected.get("agents")
         if "selected_tools" not in expected and "tools" in expected:
             expected["selected_tools"] = expected.get("tools")
+        evaluation_mode = self._normalize_evaluation_mode(case.get("evaluation_mode"))
 
         return {
             **case,
@@ -591,7 +711,35 @@ class ExperimentRunner:
             "slots": slots,
             "constraints": list(case.get("constraints") or structured.get("constraints") or []),
             "expected": expected,
+            "evaluation_mode": evaluation_mode,
         }
+
+    def _normalize_evaluation_mode(self, evaluation_mode: Any) -> str:
+        normalized = str(evaluation_mode or DEFAULT_EVALUATION_MODE).strip().lower().replace("-", "_")
+        aliases = {
+            "e2e": DEFAULT_EVALUATION_MODE,
+            "end_to_end": DEFAULT_EVALUATION_MODE,
+            "oracle": "oracle_slots",
+            "oracle_slot": "oracle_slots",
+            "oracle_slots": "oracle_slots",
+        }
+        normalized = aliases.get(normalized, normalized)
+        if normalized not in self.EVALUATION_MODES:
+            raise ValueError(f"evaluation_mode must be one of {', '.join(self.EVALUATION_MODES)}")
+        return normalized
+
+    def _initialize_trace_for_evaluation(self, case: Dict[str, Any]) -> None:
+        if case.get("evaluation_mode") == "oracle_slots":
+            expected = case.get("expected") or {}
+            set_trace_intent_info(
+                mode="planning",
+                intent=expected.get("intent"),
+                route=expected.get("route"),
+                extracted_info=case.get("slots", {}),
+                constraints=case.get("constraints", []),
+            )
+            return
+        set_trace_intent_info(mode="planning")
 
     def _build_unified_result(
         self,
@@ -609,6 +757,7 @@ class ExperimentRunner:
         return {
             "case_id": case["case_id"],
             "method": method,
+            "evaluation_mode": case["evaluation_mode"],
             "output": output,
             "latency": latency_ms,
             "latency_ms": latency_ms,
@@ -622,9 +771,9 @@ class ExperimentRunner:
 
     def _score_against_expected(self, expected: Dict[str, Any], trace: Dict[str, Any]) -> Dict[str, Any]:
         expected_tools = _as_list(expected.get("selected_tools") or expected.get("tools"))
-        selected_tools = _as_list(trace.get("selected_tools"))
+        selected_tools = _as_list(trace.get("planned_tools") or trace.get("selected_tools"))
         expected_agents = _as_list(expected.get("selected_agents") or expected.get("agents"))
-        selected_agents = _as_list(trace.get("selected_agents"))
+        selected_agents = _as_list(trace.get("planned_agents") or trace.get("selected_agents"))
 
         tool_accuracy: Optional[float] = None
         if expected_tools:
@@ -653,11 +802,16 @@ class ExperimentRunner:
         return {
             "case_id": result.get("case_id"),
             "method": result.get("method"),
+            "evaluation_mode": result.get("evaluation_mode"),
             "status": result.get("status"),
             "latency_ms": result.get("latency_ms"),
             "ttft_ms": result.get("ttft_ms"),
             "intent": trace.get("intent"),
             "route": trace.get("route"),
+            "planned_agents": "|".join(_as_list(trace.get("planned_agents"))),
+            "executed_agents": "|".join(_as_list(trace.get("executed_agents"))),
+            "planned_tools": "|".join(_as_list(trace.get("planned_tools"))),
+            "executed_tools": "|".join(_as_list(trace.get("executed_tools"))),
             "selected_agents": "|".join(_as_list(trace.get("selected_agents"))),
             "selected_tools": "|".join(_as_list(trace.get("selected_tools"))),
             "expected_tools": "|".join(_as_list(metrics.get("expected_tools") or [])),
@@ -738,6 +892,12 @@ def _as_list(value: Any) -> List[str]:
     if isinstance(value, tuple | set):
         return [str(item) for item in value if item]
     return [str(value)]
+
+
+def _json_tool_result(value: Any) -> str:
+    if is_dataclass(value) and not isinstance(value, type):
+        value = asdict(value)
+    return json.dumps(value, ensure_ascii=False, default=str)
 
 
 def _optional_equal(expected: Any, actual: Any) -> Optional[bool]:

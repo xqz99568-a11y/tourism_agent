@@ -20,10 +20,11 @@ from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 REDACTED = "[REDACTED]"
-TRACE_SCHEMA_VERSION = "1.2"
+TRACE_SCHEMA_VERSION = "1.4"
 DEFAULT_TRACE_DIR = Path("experiments/results/traces")
 DEFAULT_TRACE_INTENT = "general_chat"
 DEFAULT_TRACE_ROUTE = "GENERAL_CHAT"
+DEFAULT_EVALUATION_MODE = "end_to_end"
 
 _current_trace: ContextVar[Optional["TraceState"]] = ContextVar(
     "tourism_request_trace",
@@ -309,6 +310,7 @@ class TraceState:
     repeat_index: Optional[int] = None
     system_variant: Optional[str] = None
     method: Optional[str] = None
+    evaluation_mode: str = DEFAULT_EVALUATION_MODE
     model_config_name: Optional[str] = None
     user_message_hash: Optional[str] = None
     user_message: Optional[str] = None
@@ -321,8 +323,10 @@ class TraceState:
     extracted_info: Dict[str, Any] = field(default_factory=dict)
     constraints: List[Any] = field(default_factory=list)
     missing_fields: List[Any] = field(default_factory=list)
-    selected_agents: List[str] = field(default_factory=list)
-    selected_tools: List[str] = field(default_factory=list)
+    planned_agents: List[str] = field(default_factory=list)
+    executed_agents: List[str] = field(default_factory=list)
+    planned_tools: List[str] = field(default_factory=list)
+    executed_tools: List[str] = field(default_factory=list)
     stage_timings: Dict[str, float] = field(default_factory=dict)
     agent_timings: Dict[str, Dict[str, Any]] = field(default_factory=dict)
     agent_runs: List[Dict[str, Any]] = field(default_factory=list)
@@ -345,6 +349,8 @@ class TraceState:
             repeat_index=_env_int("EXPERIMENT_REPEAT_INDEX", "TRACE_REPEAT_INDEX", "REPEAT_INDEX"),
             system_variant=_first_env("SYSTEM_VARIANT", "TRACE_SYSTEM_VARIANT"),
             method=_first_env("EXPERIMENT_METHOD", "TRACE_METHOD"),
+            evaluation_mode=_first_env("EXPERIMENT_EVALUATION_MODE", "TRACE_EVALUATION_MODE")
+            or DEFAULT_EVALUATION_MODE,
             model_config_name=_first_env("MODEL_CONFIG_NAME", "TRACE_MODEL_CONFIG_NAME"),
         )
 
@@ -475,7 +481,7 @@ class TraceState:
                     continue
                 agent_name = item.get("agent") or item.get("agent_name")
                 if agent_name:
-                    self.add_selected_agents([str(agent_name)])
+                    self.add_executed_agents([str(agent_name)])
                     self.record_agent_timing(
                         str(agent_name),
                         item.get("execution_time_ms"),
@@ -548,7 +554,7 @@ class TraceState:
     ) -> None:
         if not agent_name:
             return
-        self.add_selected_agents([agent_name])
+        self.add_executed_agents([agent_name])
         current = self.agent_timings.get(agent_name, {})
         if duration_ms is not None:
             current["duration_ms"] = _round_ms(float(duration_ms))
@@ -568,7 +574,7 @@ class TraceState:
     def start_agent_run(self, agent_name: str) -> Optional[Dict[str, Any]]:
         if not agent_name:
             return None
-        self.add_selected_agents([agent_name])
+        self.add_executed_agents([agent_name])
         return {
             "agent_run_id": uuid.uuid4().hex,
             "agent_name": agent_name,
@@ -607,18 +613,34 @@ class TraceState:
             "error": sanitize_value(str(error)) if error else None,
         }
         if entry["agent_name"]:
-            self.add_selected_agents([str(entry["agent_name"])])
+            self.add_executed_agents([str(entry["agent_name"])])
         self.agent_runs.append(sanitize_value(entry))
 
-    def add_selected_agents(self, agents: List[str]) -> None:
+    def add_planned_agents(self, agents: List[str]) -> None:
         for agent in agents:
-            if agent and agent not in self.selected_agents:
-                self.selected_agents.append(agent)
+            if agent and agent not in self.planned_agents:
+                self.planned_agents.append(agent)
+
+    def add_executed_agents(self, agents: List[str]) -> None:
+        for agent in agents:
+            if agent and agent not in self.executed_agents:
+                self.executed_agents.append(agent)
+
+    def add_planned_tools(self, tools: List[str]) -> None:
+        for tool in tools:
+            if tool and tool not in self.planned_tools:
+                self.planned_tools.append(tool)
+
+    def add_executed_tools(self, tools: List[str]) -> None:
+        for tool in tools:
+            if tool and tool not in self.executed_tools:
+                self.executed_tools.append(tool)
+
+    def add_selected_agents(self, agents: List[str]) -> None:
+        self.add_planned_agents(agents)
 
     def add_selected_tools(self, tools: List[str]) -> None:
-        for tool in tools:
-            if tool and tool not in self.selected_tools:
-                self.selected_tools.append(tool)
+        self.add_planned_tools(tools)
 
     def set_route(self, route: Any) -> None:
         if route is not None:
@@ -755,7 +777,7 @@ class TraceState:
     ) -> None:
         if not name:
             return
-        self.add_selected_tools([name])
+        self.add_executed_tools([name])
         attribution = get_trace_attribution()
         raw_duration = _first_present(duration_ms, cost_ms)
         duration = _round_ms(float(raw_duration)) if raw_duration is not None else None
@@ -763,6 +785,7 @@ class TraceState:
         entry = {
             "call_id": call_id_value,
             "name": name,
+            "tool_name": name,
             "agent_name": agent or attribution.get("agent_name"),
             "agent": agent or attribution.get("agent_name"),
             "component": component or attribution.get("component"),
@@ -777,13 +800,14 @@ class TraceState:
         }
         self._append_or_merge_call(self.tool_calls, self._tool_call_ids, entry)
 
-    def _goal_record(self, intent: str, route: str, selected_agents: List[str]) -> Dict[str, Any]:
+    def _goal_record(self, intent: str, route: str, planned_agents: List[str]) -> Dict[str, Any]:
         return {
             "intent": intent,
             "route": route,
             "slots": self.extracted_info,
             "constraints": self.constraints,
-            "selected_agents": selected_agents,
+            "planned_agents": planned_agents,
+            "selected_agents": planned_agents,
         }
 
     def record_api_call(
@@ -864,7 +888,9 @@ class TraceState:
                 if self.tool_calls
                 else None
             ),
-            "selected_tool_count": len(self.selected_tools),
+            "planned_tool_count": len(self.planned_tools),
+            "executed_tool_count": len(self.executed_tools),
+            "selected_tool_count": len(self.planned_tools),
             "api_call_count": len(self.api_calls),
             "agent_call_count": agent_call_count,
             "failed_agent_count": failed_agent_count,
@@ -879,7 +905,10 @@ class TraceState:
     def to_record(self) -> Dict[str, Any]:
         intent = _normalize_trace_intent(self.intent, self.mode, self.route)
         route = _normalize_trace_route(self.route, self.mode, intent)
-        selected_agents = list(self.selected_agents)
+        planned_agents = list(self.planned_agents)
+        executed_agents = list(self.executed_agents)
+        planned_tools = list(self.planned_tools)
+        executed_tools = list(self.executed_tools)
         record = {
             "schema_version": TRACE_SCHEMA_VERSION,
             "created_at": self.started_at,
@@ -891,6 +920,7 @@ class TraceState:
             "repeat_index": self.repeat_index,
             "system_variant": self.system_variant,
             "method": self.method,
+            "evaluation_mode": self.evaluation_mode,
             "model_config_name": self.model_config_name,
             "user_message_hash": self.user_message_hash,
             "user_message": self.user_message,
@@ -901,9 +931,13 @@ class TraceState:
             "extracted_info": self.extracted_info,
             "constraints": self.constraints,
             "missing_fields": self.missing_fields,
-            "selected_agents": selected_agents,
-            "selected_tools": self.selected_tools,
-            "goal": self._goal_record(intent, route, selected_agents),
+            "planned_agents": planned_agents,
+            "executed_agents": executed_agents,
+            "planned_tools": planned_tools,
+            "executed_tools": executed_tools,
+            "selected_agents": planned_agents,
+            "selected_tools": planned_tools,
+            "goal": self._goal_record(intent, route, planned_agents),
             "stage_timings": self.stage_timings,
             "agent_timings": self.agent_timings,
             "agent_runs": self.agent_runs,
@@ -1074,15 +1108,25 @@ def set_trace_method(method: Any) -> None:
 
 
 def set_trace_selected_agents(agents: List[str]) -> None:
+    """Backward-compatible alias for planner-selected agents."""
+    set_trace_planned_agents(agents)
+
+
+def set_trace_planned_agents(agents: List[str]) -> None:
     trace = get_current_trace()
     if trace is not None:
-        trace.add_selected_agents(agents)
+        trace.add_planned_agents(agents)
 
 
 def record_selected_tools(tools: List[str]) -> None:
+    """Backward-compatible alias for planner-selected tools."""
+    record_planned_tools(tools)
+
+
+def record_planned_tools(tools: List[str]) -> None:
     trace = get_current_trace()
     if trace is not None:
-        trace.add_selected_tools(tools)
+        trace.add_planned_tools(tools)
 
 
 def record_selected_tool(tool: str) -> None:

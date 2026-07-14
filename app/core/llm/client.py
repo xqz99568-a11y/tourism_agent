@@ -55,6 +55,7 @@ class LLMMessage:
     content: str
     name: Optional[str] = None
     tool_call_id: Optional[str] = None
+    tool_calls: List[Any] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         result: dict = {
@@ -65,6 +66,11 @@ class LLMMessage:
             result["name"] = self.name
         if self.tool_call_id:
             result["tool_call_id"] = self.tool_call_id
+        if self.tool_calls:
+            result["tool_calls"] = [
+                call.to_dict() if hasattr(call, "to_dict") else call
+                for call in self.tool_calls
+            ]
         return result
 
 
@@ -318,13 +324,7 @@ class OllamaClient(BaseLLMClient):
     ) -> LLMResponse:
         """发送对话请求"""
         # 转换消息格式 (Ollama 格式)
-        ollama_messages = []
-        for msg in messages:
-            role = msg.role.value if hasattr(msg.role, 'value') else msg.role
-            ollama_messages.append({
-                "role": role,
-                "content": msg.content,
-            })
+        ollama_messages = [msg.to_dict() for msg in messages]
 
         request_data: Dict[str, Any] = {
             "model": self.model,

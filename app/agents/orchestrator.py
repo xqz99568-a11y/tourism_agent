@@ -31,6 +31,7 @@ from app.core.llm.mode_detector import mode_detector, DialogModeDetector
 from app.core.logger import get_logger
 from app.core.tracing import (
     mark_trace_status,
+    record_planned_tools,
     record_stage_timing,
     record_trace_event,
     request_trace,
@@ -513,6 +514,22 @@ class TaskPlanner:
             "requires_review": False,
         },
     }
+
+    AGENT_TOOL_MAP: Dict[str, List[str]] = {
+        "attraction": ["poi_search", "poi_detail"],
+        "weather": ["weather_query"],
+        "itinerary": ["route_planning"],
+        "budget": ["budget_calculator"],
+    }
+
+    def tools_for_plan(self, plan: PlanSchema) -> List[str]:
+        """Return the tools implied by the task planner's selected agents."""
+        tools: List[str] = []
+        for task in plan.tasks:
+            for tool_name in self.AGENT_TOOL_MAP.get(task.agent_name, []):
+                if tool_name not in tools:
+                    tools.append(tool_name)
+        return tools
 
     def create_plan(
         self,
@@ -1319,6 +1336,7 @@ class AgentOrchestrator:
             f"missing_fields={plan.missing_fields}"
         )
         set_trace_selected_agents([task.agent_name for task in plan.tasks])
+        record_planned_tools(self.task_planner.tools_for_plan(plan))
         set_trace_intent_info(missing_fields=plan.missing_fields or [])
 
         # 检查是否需要追问

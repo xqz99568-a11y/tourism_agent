@@ -121,3 +121,25 @@ def test_create_plan_does_not_reask_duration_after_duration_is_persisted() -> No
     )
 
     assert "travel_time" not in (plan.missing_fields or [])
+
+
+def test_task_planner_reports_tools_separately_from_runtime_execution() -> None:
+    planner = TaskPlanner()
+
+    plan = planner.create_plan(
+        IntentType.TRIP_PLANNING,
+        {
+            "destination": "杭州",
+            "duration": 3,
+            "budget_amount": 4000,
+            "num_travelers": 2,
+        },
+    )
+
+    assert planner.tools_for_plan(plan) == [
+        "poi_search",
+        "poi_detail",
+        "weather_query",
+        "route_planning",
+        "budget_calculator",
+    ]
