@@ -4,12 +4,12 @@
   "run_id": "run_51d3e9e3ff86",
   "dataset_id": "phase1_offline_acceptance",
   "dataset_version": "2026-07-14",
-  "dataset_path": "experiments\\phase1_offline_cases.json",
+  "dataset_path": "experiments/phase1_offline_cases.json",
   "dataset_sha256": "d09cd2c88fb5457c7351444811fdd6aef8eb81a8bd0454e603cffc31d569f382",
   "dataset": {
     "id": "phase1_offline_acceptance",
     "version": "2026-07-14",
-    "path": "experiments\\phase1_offline_cases.json",
+    "path": "experiments/phase1_offline_cases.json",
     "sha256": "d09cd2c88fb5457c7351444811fdd6aef8eb81a8bd0454e603cffc31d569f382"
   },
   "git_commit": "dcb4dda6348d246226e4c6e6665027aece310509",
@@ -40,7 +40,7 @@
     "disabled": true
   },
   "results": {
-    "csv": "experiments\\results\\phase1_final_acceptance\\benchmark_results.csv",
-    "json": "experiments\\results\\phase1_final_acceptance\\benchmark_results.json"
+    "csv": "experiments/results/phase1_final_acceptance/benchmark_results.csv",
+    "json": "experiments/results/phase1_final_acceptance/benchmark_results.json"
   }
 }

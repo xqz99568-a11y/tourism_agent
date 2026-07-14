@@ -331,12 +331,12 @@ class ExperimentRunner:
             "run_id": str(run_id or self.run_id),
             "dataset_id": str(dataset_id),
             "dataset_version": str(dataset_version),
-            "dataset_path": str(benchmark_file),
+            "dataset_path": benchmark_file.as_posix(),
             "dataset_sha256": dataset_sha256,
             "dataset": {
                 "id": str(dataset_id),
                 "version": str(dataset_version),
-                "path": str(benchmark_file),
+                "path": benchmark_file.as_posix(),
                 "sha256": dataset_sha256,
             },
             "git_commit": commit,
@@ -358,7 +358,8 @@ class ExperimentRunner:
             },
             "cache": {"enabled": not cache_disabled, "disabled": cache_disabled},
             "results": {
-                key: str(value) for key, value in (result_paths or {}).items()
+                key: Path(value).as_posix()
+                for key, value in (result_paths or {}).items()
             },
         }
         path = Path(output_path)

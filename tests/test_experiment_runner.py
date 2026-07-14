@@ -328,6 +328,20 @@ def test_offline_acceptance_runs_two_cases_three_methods_and_two_repeats(
     )
     assert manifest["dataset_version"] == "2026-07-14"
     assert manifest["dataset"]["id"] == "phase1_offline_acceptance"
+    assert manifest["dataset_path"] == benchmark_path.as_posix()
+    assert manifest["dataset"]["path"] == benchmark_path.as_posix()
+    assert manifest["results"] == {
+        "csv": (output_dir / "benchmark_results.csv").as_posix(),
+        "json": (output_dir / "benchmark_results.json").as_posix(),
+    }
+    assert all(
+        "\\" not in path
+        for path in (
+            manifest["dataset_path"],
+            manifest["dataset"]["path"],
+            *manifest["results"].values(),
+        )
+    )
     assert len(manifest["dataset_sha256"]) == 64
     assert len(manifest["git_commit"]) == 40
     assert manifest["model"] == "offline-static-model"
