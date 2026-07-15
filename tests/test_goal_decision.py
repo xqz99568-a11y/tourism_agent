@@ -170,6 +170,18 @@ def test_tools_for_agents_uses_unified_mapping() -> None:
             ["attraction"],
         ),
         (
+            IntentType.TRIP_PLANNING,
+            GoalRoute.CLARIFICATION_ANSWER,
+            {},
+            ["attraction", "weather", "itinerary", "budget"],
+        ),
+        (
+            IntentType.TRIP_PLANNING,
+            GoalRoute.INCOMPLETE_PLANNING,
+            {},
+            ["attraction", "weather", "itinerary", "budget"],
+        ),
+        (
             IntentType.BUDGET_CONTROL,
             GoalRoute.FOLLOW_UP,
             {"budget_amount": 3000},
@@ -221,6 +233,105 @@ def test_select_agents_policy(
         for agent in expected_agents
         for tool in AGENT_TOOL_MAP[agent]
     ]
+
+
+@pytest.mark.parametrize(
+    ("intent", "expected_agents"),
+    [
+        (
+            IntentType.TRIP_PLANNING,
+            ["attraction", "weather", "itinerary", "budget"],
+        ),
+        (IntentType.ATTRACTION_RECOMMENDATION, ["attraction"]),
+        (IntentType.BUDGET_CONTROL, ["budget"]),
+        (IntentType.WEATHER_ADJUSTMENT, ["weather", "itinerary"]),
+    ],
+)
+def test_clarification_answer_selects_agents_for_intent(
+    intent: IntentType,
+    expected_agents: list[str],
+) -> None:
+    assert select_agents(intent, GoalRoute.CLARIFICATION_ANSWER, {}) == (
+        expected_agents
+    )
+
+
+@pytest.mark.parametrize(
+    ("intent", "expected_agents"),
+    [
+        (
+            IntentType.TRIP_PLANNING,
+            ["attraction", "weather", "itinerary", "budget"],
+        ),
+        (IntentType.ATTRACTION_RECOMMENDATION, ["attraction"]),
+        (IntentType.ROUTE_CONSULTATION, ["attraction"]),
+        (IntentType.BUDGET_CONTROL, ["budget"]),
+        (IntentType.WEATHER_ADJUSTMENT, ["weather", "itinerary"]),
+        (
+            IntentType.ITINERARY_PLANNING,
+            ["attraction", "itinerary"],
+        ),
+    ],
+)
+def test_incomplete_planning_preserves_planned_agents_for_intent(
+    intent: IntentType,
+    expected_agents: list[str],
+) -> None:
+    assert select_agents(intent, GoalRoute.INCOMPLETE_PLANNING, {}) == (
+        expected_agents
+    )
+
+
+@pytest.mark.parametrize(
+    ("intent", "expected_agents"),
+    [
+        (IntentType.ATTRACTION_RECOMMENDATION, ["attraction"]),
+        (IntentType.ROUTE_CONSULTATION, ["attraction"]),
+        (IntentType.BUDGET_CONTROL, ["budget"]),
+        (IntentType.WEATHER_ADJUSTMENT, ["weather", "itinerary"]),
+        (
+            IntentType.ITINERARY_PLANNING,
+            ["attraction", "itinerary"],
+        ),
+    ],
+)
+def test_direct_task_selects_agents_for_intent(
+    intent: IntentType,
+    expected_agents: list[str],
+) -> None:
+    assert select_agents(intent, GoalRoute.DIRECT_TASK, {}) == expected_agents
+
+
+@pytest.mark.parametrize(
+    ("changed_slots", "expected_agents"),
+    [
+        (
+            {"budget_amount": 3000, "interests": ["博物馆"]},
+            ["attraction", "itinerary", "budget"],
+        ),
+        (
+            {"duration_days": 5, "preferences": ["轻松"]},
+            ["attraction", "itinerary", "budget"],
+        ),
+        (
+            {"start_date": "2026-08-01", "end_date": "2026-08-05"},
+            ["weather", "itinerary"],
+        ),
+        (
+            {"destination": "杭州"},
+            ["attraction", "weather", "itinerary", "budget"],
+        ),
+    ],
+)
+def test_follow_up_unions_agents_for_multiple_changed_slots(
+    changed_slots: dict[str, object],
+    expected_agents: list[str],
+) -> None:
+    assert select_agents(
+        IntentType.TRIP_PLANNING,
+        GoalRoute.FOLLOW_UP,
+        changed_slots,
+    ) == expected_agents
 
 
 def test_mutable_defaults_are_not_shared() -> None:

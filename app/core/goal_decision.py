@@ -23,8 +23,26 @@ AGENT_TOOL_MAP: dict[str, list[str]] = {
 }
 
 _FULL_PLAN_AGENTS = ["attraction", "weather", "itinerary", "budget"]
+_CLARIFICATION_AGENTS_BY_INTENT: dict[IntentType, list[str]] = {
+    IntentType.TRIP_PLANNING: _FULL_PLAN_AGENTS,
+    IntentType.ATTRACTION_RECOMMENDATION: ["attraction"],
+    IntentType.BUDGET_CONTROL: ["budget"],
+    IntentType.WEATHER_ADJUSTMENT: ["weather", "itinerary"],
+}
+_PLANNING_AGENTS_BY_INTENT: dict[IntentType, list[str]] = {
+    **_CLARIFICATION_AGENTS_BY_INTENT,
+    IntentType.ROUTE_CONSULTATION: ["attraction"],
+    IntentType.ITINERARY_PLANNING: ["attraction", "itinerary"],
+}
+_DIRECT_TASK_AGENTS_BY_INTENT: dict[IntentType, list[str]] = {
+    intent: agents
+    for intent, agents in _PLANNING_AGENTS_BY_INTENT.items()
+    if intent != IntentType.TRIP_PLANNING
+}
 _BUDGET_SLOTS = frozenset({"budget", "budget_amount", "budget_level"})
 _DURATION_SLOTS = frozenset({"duration", "duration_days", "travel_time"})
+_DATE_SLOTS = frozenset({"start_date", "end_date"})
+_DESTINATION_SLOTS = frozenset({"destination"})
 _PREFERENCE_SLOTS = frozenset(
     {
         "interests",
@@ -61,30 +79,40 @@ def select_agents(
     if route == GoalRoute.FULL_NEW_PLAN:
         return list(_FULL_PLAN_AGENTS)
 
-    if (
-        route == GoalRoute.DIRECT_TASK
-        and intent == IntentType.ATTRACTION_RECOMMENDATION
-    ):
-        return ["attraction"]
+    if route == GoalRoute.CLARIFICATION_ANSWER:
+        return list(_CLARIFICATION_AGENTS_BY_INTENT.get(intent, []))
+
+    if route == GoalRoute.INCOMPLETE_PLANNING:
+        return list(_PLANNING_AGENTS_BY_INTENT.get(intent, []))
+
+    if route == GoalRoute.DIRECT_TASK:
+        return list(_DIRECT_TASK_AGENTS_BY_INTENT.get(intent, []))
 
     if route != GoalRoute.FOLLOW_UP:
         return []
 
     changed_slot_names = set(changed_slots)
+    selected_agents: set[str] = set()
 
     if intent == IntentType.WEATHER_ADJUSTMENT:
-        return ["weather", "itinerary"]
+        selected_agents.update(("weather", "itinerary"))
 
-    if changed_slot_names and changed_slot_names <= _BUDGET_SLOTS:
-        return ["budget"]
+    if changed_slot_names & _BUDGET_SLOTS:
+        selected_agents.add("budget")
 
     if changed_slot_names & _DURATION_SLOTS:
-        return ["itinerary", "budget"]
+        selected_agents.update(("itinerary", "budget"))
 
     if changed_slot_names & _PREFERENCE_SLOTS:
-        return ["attraction", "itinerary"]
+        selected_agents.update(("attraction", "itinerary"))
 
-    return []
+    if changed_slot_names & _DATE_SLOTS:
+        selected_agents.update(("weather", "itinerary"))
+
+    if changed_slot_names & _DESTINATION_SLOTS:
+        selected_agents.update(_FULL_PLAN_AGENTS)
+
+    return [agent for agent in _FULL_PLAN_AGENTS if agent in selected_agents]
 
 
 def tools_for_agents(selected_agents: list[str]) -> list[str]:
