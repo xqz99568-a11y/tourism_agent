@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import hashlib
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
@@ -19,6 +20,7 @@ OFFLINE_ENV_NAMES = (
 )
 
 FIXED_CITY_IDS = ("beijing", "hangzhou", "xian", "shenzhen", "guilin")
+FIXED_DATA_SNAPSHOT_DIRS = ("pois", "weather", "restaurants", "accommodation", "transport")
 
 CITY_ALIASES = {
     "beijing": ("beijing", "bj", "北京", "北京市"),
@@ -902,12 +904,27 @@ class FixedTourismData:
         pending = []
         known_count = 0
         free_count = 0
+        estimated_count = 0
+        estimated_total = 0.0
         for poi in selected:
             amount = self._ticket_amount(poi)
             name = str(poi.get("name") or poi.get("id"))
             if amount is None:
+                estimate = self._estimated_ticket_amount(poi)
                 pending.append(name)
-                details.append({"name": name, "status": "unknown", "counted_amount_yuan": 0.0})
+                estimated_count += 1
+                estimated_total += estimate["amount"]
+                ticket_sum += estimate["amount"]
+                details.append(
+                    {
+                        "name": name,
+                        "status": "estimated",
+                        "parsed_ticket_yuan": None,
+                        "counted_amount_yuan": estimate["amount"],
+                        "estimation_rule": estimate["rule"],
+                        "estimation_basis": estimate["basis"],
+                    }
+                )
                 continue
             if amount == 0:
                 free_count += 1
@@ -922,15 +939,55 @@ class FixedTourismData:
             "ticket_cost_per_person": round(ticket_sum, 2),
             "details": details,
             "summary": {
-                "fallback_applied": False,
                 "poi_source_field": "fixed_poi_dataset",
                 "source": "fixed_poi_ticketing",
                 "known_ticket_count": known_count,
                 "free_ticket_count": free_count,
+                "estimated_ticket_count": estimated_count,
+                "estimated_ticket_total_per_person": round(estimated_total, 2),
                 "pending_confirmation_count": len(pending),
                 "pending_confirmation_pois": pending,
                 "ignored_non_ticket_count": 0,
+                "fallback_applied": estimated_count > 0,
+                "experiment_estimate_rule": (
+                    "unknown adult ticket prices are counted with explicit fixed category estimates, "
+                    "not treated as zero"
+                ),
             },
+        }
+
+    def _estimated_ticket_amount(self, poi: Dict[str, Any]) -> Dict[str, Any]:
+        classification = poi.get("classification") or {}
+        category = str(
+            classification.get("primary_category")
+            or poi.get("category")
+            or ""
+        ).strip().lower()
+        tags = [
+            str(tag).strip().lower()
+            for tag in _as_list(classification.get("tags") or poi.get("tags"))
+        ]
+        if any(tag in {"免费", "free"} for tag in tags):
+            return {
+                "amount": 0.0,
+                "rule": "experiment_ticket_estimate_v1.free_tag",
+                "basis": "POI tag indicates free entry",
+            }
+        category_estimates = {
+            "museum": 80.0,
+            "history_culture": 60.0,
+            "nature": 35.0,
+            "nature_park": 35.0,
+            "urban_landmark": 40.0,
+            "theme_park": 180.0,
+            "family_science": 80.0,
+            "indoor_venue": 60.0,
+        }
+        amount = category_estimates.get(category, 50.0)
+        return {
+            "amount": amount,
+            "rule": "experiment_ticket_estimate_v1.category_default",
+            "basis": f"primary_category={category or 'unknown'}",
         }
 
     def _metadata_payload(self, metadata: Dict[str, Any]) -> Dict[str, Any]:
@@ -946,3 +1003,33 @@ class FixedTourismData:
 @lru_cache(maxsize=1)
 def get_fixed_tourism_data() -> FixedTourismData:
     return FixedTourismData()
+
+
+def fixed_data_file_manifest(data_root: Path = DATA_ROOT) -> Dict[str, Any]:
+    """Return SHA-256 hashes for the fixed data files used by experiments."""
+    files: List[Dict[str, Any]] = []
+    for directory in FIXED_DATA_SNAPSHOT_DIRS:
+        folder = data_root / directory
+        for city_id in FIXED_CITY_IDS:
+            path = folder / f"{city_id}.json"
+            if not path.exists():
+                continue
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            files.append(
+                {
+                    "kind": directory,
+                    "city_id": city_id,
+                    "path": path.relative_to(REPO_ROOT).as_posix(),
+                    "sha256": digest,
+                }
+            )
+    files.sort(key=lambda item: (item["kind"], item["city_id"], item["path"]))
+    combined_source = json.dumps(files, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    return {
+        "schema_version": "fixed_data_manifest_v1",
+        "city_ids": list(FIXED_CITY_IDS),
+        "snapshot_dirs": list(FIXED_DATA_SNAPSHOT_DIRS),
+        "file_count": len(files),
+        "combined_sha256": hashlib.sha256(combined_source).hexdigest(),
+        "files": files,
+    }

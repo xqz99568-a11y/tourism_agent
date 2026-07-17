@@ -107,7 +107,10 @@ def test_tracing_enabled_writes_valid_jsonl_and_redacts_sensitive_fields(
     assert "token-value" not in raw
     assert "plural-secret" not in raw
     assert "plural-tool-secret" not in raw
-    assert record["schema_version"] == "1.5"
+    assert record["schema_version"] == "1.6"
+    assert "input_hash" in record
+    assert "result_hash" in record
+    assert "offline_data" in record
     assert record["planned_tools"] == ["poi_search"]
     assert record["executed_tools"] == ["poi_search"]
     assert record["selected_tools"] == ["poi_search"]

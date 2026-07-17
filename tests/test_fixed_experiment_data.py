@@ -156,7 +156,10 @@ def test_experiment_runner_enables_formal_offline_mode_for_methods(tmp_path) -> 
         method="full_system",
     )
 
-    assert result["output"] == {"case_id": "offline-env", "offline": True}
+    assert result["method"] == "adaptive_multi_agent"
+    assert result["raw_output"] == {"case_id": "offline-env", "offline": True}
+    assert result["output"]["schema_version"] == "ctp-experiment-output-v1"
+    assert result["output"]["raw_output"] == {"case_id": "offline-env", "offline": True}
 
 
 def test_invalid_weather_scenario_fails_without_sunny_fallback(monkeypatch) -> None:

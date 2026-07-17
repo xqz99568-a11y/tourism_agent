@@ -15,7 +15,7 @@ from app.core.llm.client import ToolCall
 from app.core.tracing import get_current_trace, record_selected_tool, set_trace_selected_agents
 
 
-def test_runner_runs_same_case_through_three_methods_and_exports_csv(
+def test_runner_runs_same_case_through_four_methods_and_exports_csv(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> None:
@@ -52,7 +52,8 @@ def test_runner_runs_same_case_through_three_methods_and_exports_csv(
         method_handlers={
             "llm_direct": fake_handler,
             "single_agent": fake_handler,
-            "full_system": fake_handler,
+            "fixed_multi_agent": fake_handler,
+            "adaptive_multi_agent": fake_handler,
         },
     )
 
@@ -61,7 +62,8 @@ def test_runner_runs_same_case_through_three_methods_and_exports_csv(
     assert [(item["case_id"], item["method"]) for item in results] == [
         ("case001", "llm_direct"),
         ("case001", "single_agent"),
-        ("case001", "full_system"),
+        ("case001", "fixed_multi_agent"),
+        ("case001", "adaptive_multi_agent"),
     ]
     for result in results:
         assert set(result) >= {"case_id", "method", "output", "latency", "trace"}
@@ -80,7 +82,12 @@ def test_runner_runs_same_case_through_three_methods_and_exports_csv(
 
     csv_path = tmp_path / "results" / "benchmark_results.csv"
     rows = list(csv.DictReader(csv_path.open(encoding="utf-8-sig")))
-    assert [row["method"] for row in rows] == ["llm_direct", "single_agent", "full_system"]
+    assert [row["method"] for row in rows] == [
+        "llm_direct",
+        "single_agent",
+        "fixed_multi_agent",
+        "adaptive_multi_agent",
+    ]
     assert all(row["case_id"] == "case001" for row in rows)
     assert all(row["evaluation_mode"] == "end_to_end" for row in rows)
     assert all(row["tool_selection_accuracy"] == "1.0" for row in rows)
@@ -207,15 +214,14 @@ def test_single_agent_uses_tourism_tools_and_separates_planned_from_executed(
         method="single_agent",
     )
 
-    assert result["output"] == "tool-backed plan"
+    assert result["output"]["schema_version"] == "ctp-experiment-output-v1"
+    assert result["output"]["final_answer"] == "tool-backed plan"
+    assert result["raw_output"] == "tool-backed plan"
     assert len(fake_llm.calls) == 2
     assert {tool.name for tool in fake_llm.calls[0][1]} == {
         "poi_search",
-        "poi_detail",
         "weather_query",
-        "route_planning",
         "budget_calculator",
-        "budget_optimizer",
     }
     second_messages = fake_llm.calls[1][0]
     assert second_messages[-2].role == "assistant"
@@ -259,7 +265,7 @@ def test_runner_loads_default_benchmark_shape(tmp_path: Path) -> None:
     assert cases[0]["user_input"] == "帮我规划杭州3天旅游"
 
 
-def test_offline_acceptance_runs_two_cases_three_methods_and_two_repeats(
+def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> None:
@@ -302,18 +308,18 @@ def test_offline_acceptance_runs_two_cases_three_methods_and_two_repeats(
 
     results = runner.run_benchmark(benchmark_path)
 
-    assert len(results) == 12
+    assert len(results) == 16
     assert {result["repeat_index"] for result in results} == {0, 1}
     assert {result["method"] for result in results} == set(ExperimentRunner.METHODS)
     assert {result["system_variant"] for result in results} == set(ExperimentRunner.METHODS)
     assert {result["run_id"] for result in results} == {"phase1-offline-run"}
-    assert len({result["request_id"] for result in results}) == 12
+    assert len({result["request_id"] for result in results}) == 16
 
     trace_records = [
         json.loads(path.read_text(encoding="utf-8").splitlines()[0])
         for path in trace_dir.glob("*.jsonl")
     ]
-    assert len(trace_records) == 12
+    assert len(trace_records) == 16
     for trace in trace_records:
         assert trace["case_id"] in {"offline_001", "offline_002"}
         assert trace["experiment_case_id"] == trace["case_id"]
@@ -350,7 +356,7 @@ def test_offline_acceptance_runs_two_cases_three_methods_and_two_repeats(
     assert manifest["strict_mode"] is True
     assert manifest["repeats"] == 2
     assert manifest["model_config_name"] == "offline-static"
-    assert len(list(csv.DictReader((output_dir / "benchmark_results.csv").open(encoding="utf-8-sig")))) == 12
+    assert len(list(csv.DictReader((output_dir / "benchmark_results.csv").open(encoding="utf-8-sig")))) == 16
 
 
 def test_runner_loads_trace_by_exact_request_id_not_newest_file(tmp_path: Path) -> None:
