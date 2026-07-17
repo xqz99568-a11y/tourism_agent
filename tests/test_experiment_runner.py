@@ -359,6 +359,29 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     assert len(list(csv.DictReader((output_dir / "benchmark_results.csv").open(encoding="utf-8-sig")))) == 16
 
 
+def test_phase1_offline_acceptance_script_checks_sixteen_runs(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    from experiments import run_phase1_offline_acceptance as acceptance
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "run_phase1_offline_acceptance.py",
+            "--output-dir",
+            str(tmp_path / "phase1_acceptance"),
+        ],
+    )
+
+    assert acceptance.main() == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["result_count"] == 16
+    assert payload["expected_count"] == 16
+
+
 def test_runner_loads_trace_by_exact_request_id_not_newest_file(tmp_path: Path) -> None:
     trace_dir = tmp_path / "traces"
     trace_dir.mkdir()

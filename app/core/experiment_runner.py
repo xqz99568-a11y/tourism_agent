@@ -40,6 +40,7 @@ from app.core.tracing import (
     finish_agent_run,
     is_experiment_cache_disabled,
     is_experiment_strict_mode,
+    mark_trace_status,
     record_planned_tools,
     record_tool_call,
     request_trace,
@@ -820,6 +821,7 @@ class ExperimentRunner:
                                     error=tool_content,
                                     call_id=tool_call.id,
                                 )
+                                mark_trace_status("failed", error=tool_content)
                             else:
                                 call = await executor.execute(
                                     tool_name=tool_call.name,
@@ -833,6 +835,7 @@ class ExperimentRunner:
                                     tool_content = (
                                         f"Tool execution error: {call.error or call.status.value}"
                                     )
+                                    mark_trace_status("failed", error=tool_content)
 
                             messages.append(
                                 LLMMessage(
@@ -936,6 +939,7 @@ class ExperimentRunner:
                 if tool_name in planned_tool_set
             ]
             agent_run = start_agent_run(agent_name)
+            agent_error: Optional[str] = None
             try:
                 with trace_component(agent_name, agent_name=agent_name):
                     for tool_name in agent_tools:
@@ -946,11 +950,15 @@ class ExperimentRunner:
                             call_id=f"{agent_name}-{tool_name}-{uuid.uuid4().hex[:6]}",
                         )
                         tool_results[tool_name] = call.result
+                        if call.is_failed or call.error:
+                            agent_error = f"{tool_name}: {call.error or call.status.value}"
+                            mark_trace_status("failed", error=agent_error)
                 finish_agent_run(
                     agent_run,
                     agent_name=agent_name,
-                    status="completed",
+                    status="failed" if agent_error else "completed",
                     tool_count=len(agent_tools),
+                    error=agent_error,
                 )
             except BaseException as exc:
                 finish_agent_run(

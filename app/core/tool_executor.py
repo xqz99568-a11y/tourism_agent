@@ -129,11 +129,29 @@ class ToolExecutor:
         try:
             tool = self.get_tool(tool_name)
             if tool is None:
-                raise ValueError(f"Tool not found: {tool_name}")
+                call.status = ToolCallStatus.FAILED
+                call.error = f"Tool not found: {tool_name}"
+                call.result = self._standard_error_payload(
+                    tool_name=tool_name,
+                    arguments=arguments,
+                    code="tool_not_found",
+                    message=call.error,
+                    tool=None,
+                )
+                return call
 
             # 检查参数
             if not tool.validate_params(arguments):
-                raise ValueError(f"Invalid arguments for tool: {tool_name}")
+                call.status = ToolCallStatus.FAILED
+                call.error = f"Invalid arguments for tool: {tool_name}"
+                call.result = self._standard_error_payload(
+                    tool_name=tool_name,
+                    arguments=arguments,
+                    code="invalid_arguments",
+                    message=call.error,
+                    tool=tool,
+                )
+                return call
 
             call.status = ToolCallStatus.RUNNING
 
@@ -157,10 +175,25 @@ class ToolExecutor:
                 call.error = "Tool returned unsuccessful result"
             if hasattr(result, "success") and result.success is False:
                 call.status = ToolCallStatus.FAILED
+                if call.result is None:
+                    call.result = self._standard_error_payload(
+                        tool_name=tool_name,
+                        arguments=arguments,
+                        code="tool_unsuccessful",
+                        message=call.error or "Tool returned unsuccessful result",
+                        tool=tool,
+                    )
 
         except asyncio.TimeoutError:
             call.status = ToolCallStatus.FAILED
             call.error = f"Tool execution timed out after {self.config.timeout}s"
+            call.result = self._standard_error_payload(
+                tool_name=tool_name,
+                arguments=arguments,
+                code="timeout",
+                message=call.error,
+                retryable=True,
+            )
             call.end_time = datetime.utcnow()
             call.execution_time_ms = (
                 call.end_time - call.start_time
@@ -169,6 +202,12 @@ class ToolExecutor:
         except Exception as e:
             call.status = ToolCallStatus.FAILED
             call.error = str(e)
+            call.result = self._standard_error_payload(
+                tool_name=tool_name,
+                arguments=arguments,
+                code="execution_error",
+                message=call.error,
+            )
             call.end_time = datetime.utcnow()
             call.execution_time_ms = (
                 call.end_time - call.start_time
@@ -196,6 +235,39 @@ class ToolExecutor:
             self._running_calls.pop(call_id, None)
 
         return call
+
+    def _standard_error_payload(
+        self,
+        *,
+        tool_name: str,
+        arguments: Dict[str, Any],
+        code: str,
+        message: str,
+        retryable: bool = False,
+        tool: Optional["BaseTool"] = None,
+    ) -> Dict[str, Any]:
+        service = getattr(tool, "external_service", "") if tool is not None else ""
+        is_fixed_offline_tool = service in {"fixed_offline_dataset", "fixed_offline_evaluator"}
+        return {
+            "schema_version": "research_tool_result_v1",
+            "tool_contract_version": "ctp-research-tools-v1.0",
+            "tool_name": tool_name,
+            "status": "failed",
+            "success": False,
+            "input": arguments or {},
+            "data": {},
+            "error": {
+                "code": code,
+                "message": message,
+                "retryable": bool(retryable),
+            },
+            "metadata": {
+                "offline": is_fixed_offline_tool,
+                "source_mode": "frozen_offline" if is_fixed_offline_tool else "tool_executor",
+                "real_time_api_allowed": False,
+                "error_code": code,
+            },
+        }
 
     def _trace_success_from_call(self, call: ToolCall) -> bool:
         if call.status in {ToolCallStatus.FAILED, ToolCallStatus.CANCELLED}:

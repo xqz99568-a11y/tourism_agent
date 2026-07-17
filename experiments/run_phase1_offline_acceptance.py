@@ -46,10 +46,19 @@ def main() -> int:
         repeats=2,
         model_config_name="offline-static",
     )
-    results = runner.run_benchmark("experiments/phase1_offline_cases.json")
+    benchmark_path = Path("experiments/phase1_offline_cases.json")
+    benchmark_doc = json.loads(benchmark_path.read_text(encoding="utf-8"))
+    expected_count = (
+        len(benchmark_doc.get("cases") or [])
+        * len(ExperimentRunner.METHODS)
+        * runner.repeats
+    )
+    results = runner.run_benchmark(benchmark_path)
 
-    if len(results) != 12 or any(result["status"] != "completed" for result in results):
-        raise RuntimeError("offline acceptance matrix did not produce 12 completed runs")
+    if len(results) != expected_count or any(result["status"] != "completed" for result in results):
+        raise RuntimeError(
+            f"offline acceptance matrix did not produce {expected_count} completed runs"
+        )
 
     print(
         json.dumps(
@@ -57,6 +66,7 @@ def main() -> int:
                 "status": "passed",
                 "run_id": runner.run_id,
                 "result_count": len(results),
+                "expected_count": expected_count,
                 "trace_count": len(list((args.output_dir / "traces").glob("*.jsonl"))),
                 "manifest": str(args.output_dir / "experiment_manifest.json"),
             },

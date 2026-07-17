@@ -235,8 +235,9 @@ class ResearchWeatherTool(BaseTool):
                     "source_file_id": raw.get("source_file_id"),
                     "record_count": len(daily_weather),
                     "real_time_api_allowed": False,
+                    "canonical_city_id": _canonical_weather_city_key(city_value),
                     "weather_date_mapping_rule": (
-                        "sha256(city + date) selects one fixed scenario when date is provided"
+                        "sha256(canonical_city_id + date) selects one fixed scenario when date is provided"
                         if start_date_value
                         else "scenario_type is used only when no concrete date is provided"
                     ),
@@ -663,9 +664,17 @@ def _fixed_weather_scenario_for_date(
     if not start_date:
         return fallback or "sunny"
     scenarios = ["sunny", "rain", "high_temperature", "low_temperature", "continuous_change"]
-    key = f"{str(city or '').strip().lower()}|{start_date}"
+    key = f"{_canonical_weather_city_key(city)}|{start_date}"
     digest = hashlib.sha256(key.encode("utf-8")).hexdigest()
     return scenarios[int(digest[:8], 16) % len(scenarios)]
+
+
+def _canonical_weather_city_key(city: Any) -> str:
+    try:
+        city_id = get_fixed_tourism_data().resolve_city_id(city)
+    except Exception:
+        city_id = None
+    return city_id or str(city or "").strip().lower()
 
 
 def _as_text_list(value: Any) -> List[str]:

@@ -49,6 +49,8 @@ MODEL_CONFIG_NAME=default
 - `schema_version=1.4` 起将计划选择与真实执行拆分为 `planned_agents`、`executed_agents`、`planned_tools` 和 `executed_tools`；`record_tool_call()` 只更新执行侧字段。
 - `schema_version=1.5` 起新增顶层 `case_id` 兼容字段；Runner 保证 `case_id`、`method`、`repeat_index`、`system_variant`、`run_id` 和 `model_config_name` 随每条实验 Trace 一起持久化。
 - `schema_version=1.6` 起新增 `input_hash`、`result_hash` 和 `offline_data`，用于记录输入摘要、输出摘要和固定数据快照摘要。
+- 工具调用只要 `success=false`、`status=failed/error/timeout/cancelled` 或存在错误信息，统一方法输出的 `execution_status` 必须为 `failed`，实验结果顶层 `status` 也必须为 `failed`。
+- 工具参数缺失、工具不存在、超时或执行异常也必须写入一次 `tool_calls`，并保留 `research_tool_result_v1` 统一错误结果，避免成功率与工具失败率统计口径不一致。
 - `total_duration_ms`：请求总耗时，单位为毫秒。
 - `first_body_token_ms`：从请求开始到首次用户可见正文 content 的耗时。`phase_update`、`message`、`thinking_step` 等进度事件不计入正文 TTFT。`first_token_ms` 暂保留为兼容别名。
 - `error`：失败时记录的脱敏错误信息。

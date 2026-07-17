@@ -1,4 +1,5 @@
 import asyncio
+import json
 import sys
 from pathlib import Path
 from types import SimpleNamespace
@@ -10,6 +11,7 @@ if str(ROOT) not in sys.path:
 from app.core.experiment_runner import ExperimentRunner
 from app.core.fixed_data import get_fixed_tourism_data
 from app.core.llm.client import ToolCall
+from app.core.tool_executor import ToolExecutor
 from app.tools.research_tools import (
     GENERATION_TOOL_NAMES,
     ResearchBudgetCalculatorTool,
@@ -126,6 +128,22 @@ def test_weather_is_uniquely_determined_by_city_and_date() -> None:
     assert sunny_request.data["data"]["scenario_selection"] == "city_date_hash"
 
 
+def test_weather_city_aliases_share_same_city_date_mapping() -> None:
+    chinese_request = asyncio.run(
+        ResearchWeatherTool().execute(city="杭州", date="2026-08-01", days=2)
+    )
+    english_request = asyncio.run(
+        ResearchWeatherTool().execute(city="Hangzhou", date="2026-08-01", days=2)
+    )
+
+    assert chinese_request.success is True
+    assert english_request.success is True
+    assert chinese_request.data["data"]["scenario_type"] == english_request.data["data"]["scenario_type"]
+    assert chinese_request.data["data"]["daily_weather"] == english_request.data["data"]["daily_weather"]
+    assert chinese_request.data["metadata"]["canonical_city_id"] == "hangzhou"
+    assert english_request.data["metadata"]["canonical_city_id"] == "hangzhou"
+
+
 def test_unknown_ticket_prices_use_explicit_experiment_estimates() -> None:
     result = get_fixed_tourism_data().calculate_budget(
         destination="Hangzhou",
@@ -150,6 +168,23 @@ def test_research_tool_failures_have_standard_error_payload() -> None:
     assert result.data["status"] == "failed"
     assert result.data["error"]["code"] == "invalid_arguments"
     assert result.data["error"]["retryable"] is False
+
+
+def test_tool_executor_invalid_arguments_return_standard_error_payload() -> None:
+    executor = ToolExecutor(tools={"budget_calculator": ResearchBudgetCalculatorTool()})
+
+    call = asyncio.run(
+        executor.execute("budget_calculator", {"city": "Hangzhou"}, call_id="missing-days")
+    )
+
+    assert call.is_failed
+    assert call.result["schema_version"] == "research_tool_result_v1"
+    assert call.result["tool_contract_version"] == "ctp-research-tools-v1.0"
+    assert call.result["tool_name"] == "budget_calculator"
+    assert call.result["status"] == "failed"
+    assert call.result["success"] is False
+    assert call.result["error"]["code"] == "invalid_arguments"
+    assert call.result["metadata"]["offline"] is True
 
 
 def test_constraint_checker_reports_applicable_constraints() -> None:
@@ -261,8 +296,46 @@ def test_invalid_json_tool_arguments_are_recorded_as_failed_tool_calls(tmp_path:
 
     assert result["trace"]["tool_call_count"] == 1
     assert result["trace"]["failed_tool_call_count"] == 1
+    assert result["trace"]["status"] == "failed"
+    assert result["status"] == "failed"
+    assert result["output"]["execution_status"] == "failed"
     assert result["trace"]["tool_calls"][0]["tool_name"] == "poi_search"
     assert result["trace"]["tool_calls"][0]["success"] is False
+
+
+def test_failed_tool_call_marks_method_output_and_result_failed(tmp_path: Path) -> None:
+    class FakeLLM:
+        def __init__(self):
+            self.calls = 0
+
+        async def chat(self, messages, tools=None):
+            self.calls += 1
+            if self.calls == 1:
+                return SimpleNamespace(
+                    content="",
+                    tool_calls=[
+                        ToolCall(
+                            id="missing-days",
+                            name="budget_calculator",
+                            arguments=json.dumps({"city": "Hangzhou"}),
+                        )
+                    ],
+                    usage={"total_tokens": 1},
+                )
+            return SimpleNamespace(content="recovered", tool_calls=[], usage={"total_tokens": 1})
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    result = runner.run(
+        {"case_id": "failed-tool-status", "user_input": "Calculate Hangzhou budget"},
+        method="single_agent",
+    )
+
+    assert result["trace"]["failed_tool_call_count"] == 1
+    assert result["trace"]["status"] == "failed"
+    assert result["output"]["called_tools"][0]["status"] == "failed"
+    assert result["output"]["called_tools"][0]["success"] is False
+    assert result["output"]["execution_status"] == "failed"
+    assert result["status"] == "failed"
 
 
 def test_real_m2_and_m3_use_same_unified_tool_results(tmp_path: Path) -> None:
@@ -287,3 +360,16 @@ def test_real_m2_and_m3_use_same_unified_tool_results(tmp_path: Path) -> None:
     assert m2["output"]["daily_itinerary"] == m3["output"]["daily_itinerary"]
     assert m2["result_hash"]
     assert m2["offline_data"]["combined_sha256"] == m3["offline_data"]["combined_sha256"]
+
+
+def test_beijing_accommodation_sources_do_not_reference_wrong_xian_source() -> None:
+    data = json.loads((ROOT / "data" / "accommodation" / "beijing.json").read_text(encoding="utf-8"))
+    bad_sources = [
+        source
+        for area in data.get("accommodation_areas", [])
+        for source in area.get("sources", [])
+        if "西安旅游网" in source.get("source_name", "")
+        or str(source.get("url") or "").startswith("https://www.tang.org.cn/")
+    ]
+
+    assert bad_sources == []
