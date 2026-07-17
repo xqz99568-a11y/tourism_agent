@@ -1,0 +1,1099 @@
+{
+  "metadata": {
+    "file_id": "ctp_accommodation_area_hangzhou_v1_0",
+    "schema_version": "ctp-accommodation-area-schema-v1.0",
+    "dataset_version": "CTP-ACCOMMODATION-v1.0",
+    "city_id": "hangzhou",
+    "city_name": "杭州",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "data_mode": "frozen_offline",
+    "record_count": 7,
+    "price_basis": {
+      "unit": "room_per_night",
+      "standard_room_occupancy": 2,
+      "statistic": "fixed_reference_price",
+      "live_price_allowed": false
+    }
+  },
+  "accommodation_areas": [
+    {
+      "id": "hz_ha001",
+      "name": "湖滨—龙翔桥住宿区",
+      "aliases": [
+        "湖滨住宿区",
+        "龙翔桥住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "上城区"
+        ],
+        "area_ids": [
+          "hz_z01"
+        ],
+        "center_coordinate": {
+          "latitude": 30.256,
+          "longitude": 120.1628,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz001",
+          "hz005",
+          "hz013"
+        ]
+      },
+      "classification": {
+        "area_type": "city_center_scenic_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "midscale_hotel",
+          "upscale_hotel",
+          "luxury_hotel"
+        ],
+        "tags": [
+          "西湖步行可达",
+          "地铁便利",
+          "餐饮购物集中",
+          "价格较高"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "medium",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 230,
+            "reference_price_cny": 360,
+            "maximum_price_cny": 480
+          },
+          "comfort": {
+            "minimum_price_cny": 520,
+            "reference_price_cny": 720,
+            "maximum_price_cny": 950
+          },
+          "premium": {
+            "minimum_price_cny": 1100,
+            "reference_price_cny": 1600,
+            "maximum_price_cny": 2500
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "hz_ha001",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "walk"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合第一次到杭州和西湖核心行程",
+          "餐饮、购物与夜游便利"
+        ],
+        "disadvantages": [
+          "节假日人流密集",
+          "湖景及高端住宿价格较高"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_ha001_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E6%B9%96%E6%BB%A8%E2%80%94%E9%BE%99%E7%BF%94%E6%A1%A5%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_ha001_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "旅荐网公开住宿攻略",
+          "url": "https://www.15386.cn/post/156121.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_ha001_03",
+          "source_type": "public_price_reference",
+          "source_name": "美团住宿攻略（固定实验房价校准）",
+          "url": "https://guide.meituan.com/stay/hangzhou",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "hz_ha002",
+      "name": "武林广场—凤起路住宿区",
+      "aliases": [
+        "武林广场住宿区",
+        "凤起路住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "拱墅区"
+        ],
+        "area_ids": [
+          "hz_z04"
+        ],
+        "center_coordinate": {
+          "latitude": 30.274,
+          "longitude": 120.155,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz030",
+          "hz018",
+          "hz019"
+        ]
+      },
+      "classification": {
+        "area_type": "commercial_business_center",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "business_hotel",
+          "midscale_hotel",
+          "luxury_hotel"
+        ],
+        "tags": [
+          "核心商圈",
+          "商务住宿",
+          "地铁换乘",
+          "购物方便"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "medium",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 210,
+            "reference_price_cny": 330,
+            "maximum_price_cny": 450
+          },
+          "comfort": {
+            "minimum_price_cny": 480,
+            "reference_price_cny": 680,
+            "maximum_price_cny": 900
+          },
+          "premium": {
+            "minimum_price_cny": 1000,
+            "reference_price_cny": 1450,
+            "maximum_price_cny": 2300
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "hz_ha002",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合商务出行并兼顾西湖游览",
+          "酒店档次和餐饮选择丰富"
+        ],
+        "disadvantages": [
+          "大型活动期间交通拥挤",
+          "核心商圈房价高于外围"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_ha002_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E6%AD%A6%E6%9E%97%E5%B9%BF%E5%9C%BA%E2%80%94%E5%87%A4%E8%B5%B7%E8%B7%AF%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_ha002_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "旅荐网公开住宿攻略",
+          "url": "https://www.15386.cn/post/156121.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_ha002_03",
+          "source_type": "public_price_reference",
+          "source_name": "美团住宿攻略（固定实验房价校准）",
+          "url": "https://guide.meituan.com/stay/hangzhou",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "hz_ha003",
+      "name": "河坊街—南宋御街住宿区",
+      "aliases": [
+        "河坊街住宿区",
+        "南宋御街住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "上城区"
+        ],
+        "area_ids": [
+          "hz_z01"
+        ],
+        "center_coordinate": {
+          "latitude": 30.2426,
+          "longitude": 120.1671,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz004",
+          "hz015"
+        ]
+      },
+      "classification": {
+        "area_type": "historic_scenic_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "boutique_hotel",
+          "guesthouse",
+          "midscale_hotel"
+        ],
+        "tags": [
+          "历史街区",
+          "特色民宿",
+          "小吃集中",
+          "夜间游客较多"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "medium",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 180,
+            "reference_price_cny": 300,
+            "maximum_price_cny": 400
+          },
+          "comfort": {
+            "minimum_price_cny": 420,
+            "reference_price_cny": 580,
+            "maximum_price_cny": 760
+          },
+          "premium": {
+            "minimum_price_cny": 850,
+            "reference_price_cny": 1200,
+            "maximum_price_cny": 1800
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "hz_ha003",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "walk"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "便于体验老城、河坊街与吴山区域",
+          "特色住宿和本地餐饮集中"
+        ],
+        "disadvantages": [
+          "临街房间可能受游客噪声影响",
+          "部分历史街区车辆到达不便"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_ha003_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E6%B2%B3%E5%9D%8A%E8%A1%97%E2%80%94%E5%8D%97%E5%AE%8B%E5%BE%A1%E8%A1%97%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_ha003_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "旅荐网公开住宿攻略",
+          "url": "https://www.15386.cn/post/156121.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_ha003_03",
+          "source_type": "public_price_reference",
+          "source_name": "美团住宿攻略（固定实验房价校准）",
+          "url": "https://guide.meituan.com/stay/hangzhou",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "hz_ha004",
+      "name": "杭州东站—彭埠住宿区",
+      "aliases": [
+        "杭州东站住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "上城区"
+        ],
+        "area_ids": [
+          "hz_z05"
+        ],
+        "center_coordinate": {
+          "latitude": 30.293,
+          "longitude": 120.212,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": []
+      },
+      "classification": {
+        "area_type": "railway_hub_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "business_hotel",
+          "midscale_hotel"
+        ],
+        "tags": [
+          "高铁枢纽",
+          "经济型集中",
+          "适合短住",
+          "换乘便利"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "high",
+        "nightlife_level": "low",
+        "dining_convenience": "high",
+        "shopping_convenience": "medium",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 140,
+            "reference_price_cny": 240,
+            "maximum_price_cny": 320
+          },
+          "comfort": {
+            "minimum_price_cny": 340,
+            "reference_price_cny": 480,
+            "maximum_price_cny": 620
+          },
+          "premium": {
+            "minimum_price_cny": 700,
+            "reference_price_cny": 950,
+            "maximum_price_cny": 1400
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "hz_ha004",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "rail"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "conditional",
+        "elderly": "suitable",
+        "children": "conditional",
+        "wheelchair": "conditional",
+        "budget_traveler": "suitable"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合高铁抵离和次日换乘",
+          "经济型与商务型选择较多"
+        ],
+        "disadvantages": [
+          "车站周边环境偏交通功能型",
+          "与西湖步行游览区域距离较远"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_ha004_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E6%9D%AD%E5%B7%9E%E4%B8%9C%E7%AB%99%E2%80%94%E5%BD%AD%E5%9F%A0%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_ha004_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/hangzhou17/sl8156295",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_ha004_03",
+          "source_type": "public_price_reference",
+          "source_name": "美团住宿攻略（固定实验房价校准）",
+          "url": "https://guide.meituan.com/stay/hangzhou",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "hz_ha005",
+      "name": "西溪天堂—蒋村住宿区",
+      "aliases": [
+        "西溪住宿区",
+        "蒋村住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "西湖区"
+        ],
+        "area_ids": [
+          "hz_z03"
+        ],
+        "center_coordinate": {
+          "latitude": 30.2686,
+          "longitude": 120.0833,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz024",
+          "hz003",
+          "hz016"
+        ]
+      },
+      "classification": {
+        "area_type": "quiet_ecological_area",
+        "supported_lodging_types": [
+          "guesthouse",
+          "midscale_hotel",
+          "resort_hotel",
+          "upscale_hotel"
+        ],
+        "tags": [
+          "环境安静",
+          "湿地周边",
+          "度假型住宿",
+          "适合家庭"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "low",
+        "nightlife_level": "low",
+        "dining_convenience": "medium",
+        "shopping_convenience": "medium",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 200,
+            "reference_price_cny": 320,
+            "maximum_price_cny": 430
+          },
+          "comfort": {
+            "minimum_price_cny": 480,
+            "reference_price_cny": 680,
+            "maximum_price_cny": 900
+          },
+          "premium": {
+            "minimum_price_cny": 1000,
+            "reference_price_cny": 1500,
+            "maximum_price_cny": 2400
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "hz_ha005",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "walk"
+        ],
+        "transport_convenience": "medium"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "靠近西溪湿地且夜间较安静",
+          "适合休闲度假和亲子行程"
+        ],
+        "disadvantages": [
+          "与湖滨、河坊街距离较远",
+          "夜间餐饮密度低于核心商圈"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_ha005_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E8%A5%BF%E6%BA%AA%E5%A4%A9%E5%A0%82%E2%80%94%E8%92%8B%E6%9D%91%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_ha005_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "旅荐网公开住宿攻略",
+          "url": "https://www.15386.cn/post/156121.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_ha005_03",
+          "source_type": "public_price_reference",
+          "source_name": "美团住宿攻略（固定实验房价校准）",
+          "url": "https://guide.meituan.com/stay/hangzhou",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "hz_ha006",
+      "name": "滨江—星光大道住宿区",
+      "aliases": [
+        "滨江住宿区",
+        "星光大道住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "滨江区"
+        ],
+        "area_ids": [
+          "hz_z05"
+        ],
+        "center_coordinate": {
+          "latitude": 30.208,
+          "longitude": 120.214,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz008",
+          "hz021"
+        ]
+      },
+      "classification": {
+        "area_type": "technology_business_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "business_hotel",
+          "midscale_hotel",
+          "serviced_apartment"
+        ],
+        "tags": [
+          "科技商务区",
+          "公寓型住宿",
+          "性价比较高",
+          "跨江通勤"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "medium",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 170,
+            "reference_price_cny": 280,
+            "maximum_price_cny": 380
+          },
+          "comfort": {
+            "minimum_price_cny": 420,
+            "reference_price_cny": 580,
+            "maximum_price_cny": 780
+          },
+          "premium": {
+            "minimum_price_cny": 900,
+            "reference_price_cny": 1300,
+            "maximum_price_cny": 2000
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "hz_ha006",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "suitable"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "商务住宿和服务式公寓较集中",
+          "相对湖滨核心区更容易控制预算"
+        ],
+        "disadvantages": [
+          "前往灵隐和西湖北线时间较长",
+          "跨江高峰期可能拥堵"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_ha006_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E6%BB%A8%E6%B1%9F%E2%80%94%E6%98%9F%E5%85%89%E5%A4%A7%E9%81%93%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_ha006_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "旅荐网公开住宿攻略",
+          "url": "https://www.15386.cn/post/156121.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_ha006_03",
+          "source_type": "public_price_reference",
+          "source_name": "美团住宿攻略（固定实验房价校准）",
+          "url": "https://guide.meituan.com/stay/hangzhou",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "hz_ha007",
+      "name": "灵隐—天竺住宿区",
+      "aliases": [
+        "灵隐住宿区",
+        "天竺住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "西湖区"
+        ],
+        "area_ids": [
+          "hz_z02"
+        ],
+        "center_coordinate": {
+          "latitude": 30.2389,
+          "longitude": 120.0964,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz002",
+          "hz012",
+          "hz022"
+        ]
+      },
+      "classification": {
+        "area_type": "quiet_scenic_resort_area",
+        "supported_lodging_types": [
+          "guesthouse",
+          "boutique_hotel",
+          "resort_hotel",
+          "upscale_hotel"
+        ],
+        "tags": [
+          "景区周边",
+          "环境清幽",
+          "民宿度假",
+          "公共交通有限"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "low",
+        "nightlife_level": "low",
+        "dining_convenience": "medium",
+        "shopping_convenience": "low",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 240,
+            "reference_price_cny": 380,
+            "maximum_price_cny": 520
+          },
+          "comfort": {
+            "minimum_price_cny": 580,
+            "reference_price_cny": 820,
+            "maximum_price_cny": 1100
+          },
+          "premium": {
+            "minimum_price_cny": 1300,
+            "reference_price_cny": 1900,
+            "maximum_price_cny": 3200
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "hz_ha007",
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "hotel_shuttle",
+          "walk"
+        ],
+        "transport_convenience": "medium"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合灵隐、龙井和茶文化主题行程",
+          "夜间环境安静且度假感较强"
+        ],
+        "disadvantages": [
+          "住宿与餐饮价格跨度较大",
+          "地铁不能直接到达核心住宿点"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_ha007_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E7%81%B5%E9%9A%90%E2%80%94%E5%A4%A9%E7%AB%BA%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_ha007_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/hangzhou17/sl8156295",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_ha007_03",
+          "source_type": "public_price_reference",
+          "source_name": "美团住宿攻略（固定实验房价校准）",
+          "url": "https://guide.meituan.com/stay/hangzhou",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    }
+  ]
+}

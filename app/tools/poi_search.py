@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 import httpx
 
 from app.core.config import settings
+from app.core.fixed_data import FixedDataError, get_fixed_tourism_data, is_formal_offline_mode
 from app.core.logger import get_logger
 from app.tools.base import BaseTool, ToolResult
 
@@ -97,6 +98,25 @@ class POISearchTool(BaseTool):
         """Execute a POI text search."""
         if not self.validate_params({"keywords": keywords, "city": city}):
             return ToolResult(success=False, error="Invalid parameters")
+
+        if is_formal_offline_mode():
+            try:
+                self.external_service = "fixed_offline_dataset"
+                results = get_fixed_tourism_data().search_pois(
+                    keywords=keywords,
+                    city=city,
+                    category=category,
+                    limit=limit,
+                )
+                metadata = {
+                    "offline": True,
+                    "count": len(results),
+                    "data_source": "fixed_poi_dining_accommodation_dataset",
+                    "real_time_api_allowed": False,
+                }
+                return ToolResult(success=True, data=results, metadata=metadata, api_calls=[])
+            except FixedDataError as exc:
+                return ToolResult(success=False, error=str(exc), metadata={"offline": True})
 
         params = {
             "key": self.api_key,
@@ -240,6 +260,21 @@ class POIDetailTool(BaseTool):
         """Fetch POI detail."""
         if not self.validate_params({"poi_id": poi_id}):
             return ToolResult(success=False, error="Invalid parameters")
+
+        if is_formal_offline_mode():
+            try:
+                self.external_service = "fixed_offline_dataset"
+                detail = get_fixed_tourism_data().get_poi_detail(poi_id)
+                metadata = {
+                    "offline": True,
+                    "data_source": "fixed_poi_dining_accommodation_dataset",
+                    "real_time_api_allowed": False,
+                    "source_file_id": detail.get("source_file_id"),
+                    "dataset_version": detail.get("dataset_version"),
+                }
+                return ToolResult(success=True, data=detail, metadata=metadata, api_calls=[])
+            except FixedDataError as exc:
+                return ToolResult(success=False, error=str(exc), metadata={"offline": True})
 
         params = {
             "key": self.api_key,

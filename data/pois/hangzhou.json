@@ -1,207 +1,6352 @@
 {
-  "city": "杭州",
-  "city_code": "hangzhou",
-  "version": "v1",
+  "metadata": {
+    "file_id": "ctp_poi_hangzhou_v1_0",
+    "schema_version": "ctp-poi-schema-v1.0",
+    "dataset_version": "CTP-POI-v1.0",
+    "city_id": "hangzhou",
+    "city_name": "杭州",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "data_mode": "frozen_offline",
+    "record_count": 30
+  },
   "pois": [
     {
       "id": "hz001",
-      "name": "西湖",
-      "city": "杭州",
-      "area": "西湖区",
-      "category": "自然风光",
-      "tags": ["夜景", "拍照", "轻松游", "经典景点"],
-      "ticket_price": 0,
-      "opening_hours": "00:00-23:59",
-      "recommended_duration": 2.5,
-      "visit_duration_hours": 2.5,
-      "best_time": ["上午", "傍晚", "晚上"],
-      "suitable_for": ["老人", "情侣", "家庭", "摄影"],
-      "indoor_outdoor": "outdoor",
-      "indoor": false,
-      "intensity": "low",
-      "walk_level": "low",
-      "popular": "high",
-      "description": "杭州代表性景点，适合休闲观光和夜景体验。"
+      "name": "西湖风景名胜区",
+      "aliases": [
+        "西湖"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z01",
+        "address": "西湖, 西湖区, 杭州市, 浙江省, 中国",
+        "coordinate": {
+          "latitude": 30.2459837,
+          "longitude": 120.1431317,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz001"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "history_culture",
+          "nature_park"
+        ],
+        "tags": [
+          "湖景",
+          "世界遗产",
+          "免费"
+        ]
+      },
+      "description": "西湖风景名胜区，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz001",
+        "area_id": "hz_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz001_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%A5%BF%E6%B9%96+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz001_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "hz002",
-      "name": "灵隐寺",
-      "city": "杭州",
-      "area": "西湖区",
-      "category": "历史文化",
-      "tags": ["寺庙", "文化", "祈福"],
-      "ticket_price": 45,
-      "opening_hours": "07:00-18:00",
-      "recommended_duration": 2.0,
-      "visit_duration_hours": 2.0,
-      "best_time": ["上午", "下午"],
-      "suitable_for": ["家庭", "文化游"],
-      "indoor_outdoor": "mixed",
-      "indoor": false,
-      "intensity": "medium",
-      "walk_level": "medium",
-      "popular": "high",
-      "description": "历史悠久的佛教文化景点，适合文化体验。"
+      "name": "灵隐飞来峰景区",
+      "aliases": [
+        "飞来峰"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "杭州市",
+        "area_id": "hz_z02",
+        "address": "飞来峰, 杭州市, 浙江省, 310013, 中国",
+        "coordinate": {
+          "latitude": 30.2388764,
+          "longitude": 120.0964157,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz002"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture"
+        ],
+        "tags": [
+          "寺院",
+          "石刻",
+          "人文"
+        ]
+      },
+      "description": "灵隐飞来峰景区，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz002",
+        "area_id": "hz_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz002_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%A3%9E%E6%9D%A5%E5%B3%B0+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz002_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "hz003",
-      "name": "西溪湿地",
-      "city": "杭州",
-      "area": "西湖区",
-      "category": "自然风光",
-      "tags": ["亲子", "生态", "慢游"],
-      "ticket_price": 80,
-      "opening_hours": "08:00-17:30",
-      "recommended_duration": 3.0,
-      "visit_duration_hours": 3.0,
-      "best_time": ["上午", "下午"],
-      "suitable_for": ["亲子", "家庭", "摄影"],
-      "indoor_outdoor": "outdoor",
-      "indoor": false,
-      "intensity": "low",
-      "walk_level": "low",
-      "popular": "medium",
-      "description": "城市生态湿地，适合亲子与自然观察。"
+      "name": "西溪国家湿地公园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z03",
+        "address": "西溪国家湿地公园, 西湖区, 杭州市, 浙江省, 中国",
+        "coordinate": {
+          "latitude": 30.2673045,
+          "longitude": 120.0632592,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz003"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "湿地",
+          "生态",
+          "游船"
+        ]
+      },
+      "description": "西溪国家湿地公园，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz003",
+        "area_id": "hz_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz003_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%A5%BF%E6%BA%AA%E5%9B%BD%E5%AE%B6%E6%B9%BF%E5%9C%B0%E5%85%AC%E5%9B%AD+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz003_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "hz004",
-      "name": "河坊街",
-      "city": "杭州",
-      "area": "上城区",
-      "category": "美食",
-      "tags": ["美食", "夜游", "老街"],
-      "ticket_price": 0,
-      "opening_hours": "10:00-22:00",
-      "recommended_duration": 1.5,
-      "visit_duration_hours": 1.5,
-      "best_time": ["下午", "晚上"],
-      "suitable_for": ["家庭", "情侣", "美食爱好者"],
-      "indoor_outdoor": "mixed",
-      "indoor": false,
-      "intensity": "low",
-      "walk_level": "low",
-      "popular": "high",
-      "description": "杭州知名老街，兼具小吃与传统文化氛围。"
+      "name": "清河坊历史文化街区",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "上城区",
+        "area_id": "hz_z01",
+        "address": "清河坊历史文化街区, 清河坊社区, 清波街道, 上城区, 杭州市, 浙江省, 310009, 中国",
+        "coordinate": {
+          "latitude": 30.2425657,
+          "longitude": 120.1670819,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz004"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "老街",
+          "小吃",
+          "购物"
+        ]
+      },
+      "description": "清河坊历史文化街区，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz004",
+        "area_id": "hz_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz004_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B8%85%E6%B2%B3%E5%9D%8A%E5%8E%86%E5%8F%B2%E6%96%87%E5%8C%96%E8%A1%97%E5%8C%BA+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz004_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "hz005",
-      "name": "浙江省博物馆（孤山馆区）",
-      "city": "杭州",
-      "area": "西湖区",
-      "category": "历史文化",
-      "tags": ["博物馆", "室内", "文化"],
-      "ticket_price": 0,
-      "opening_hours": "09:00-17:00 周一闭馆",
-      "recommended_duration": 1.5,
-      "visit_duration_hours": 1.5,
-      "best_time": ["上午", "下午"],
-      "suitable_for": ["老人", "学生", "亲子"],
-      "indoor_outdoor": "indoor",
-      "indoor": true,
-      "intensity": "low",
-      "walk_level": "low",
-      "popular": "medium",
-      "description": "省级综合博物馆，适合雨天和文化行程。"
+      "name": "浙江省博物馆孤山馆区",
+      "aliases": [
+        "浙江省博物馆"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z01",
+        "address": "浙江省博物馆, 孤山路, 北山街道, 西湖区, 杭州市, 浙江省, 310007, 中国",
+        "coordinate": {
+          "latitude": 30.2535309,
+          "longitude": 120.1387829,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz005"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "室内",
+          "免费"
+        ]
+      },
+      "description": "浙江省博物馆孤山馆区，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz005",
+        "area_id": "hz_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz005_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B5%99%E6%B1%9F%E7%9C%81%E5%8D%9A%E7%89%A9%E9%A6%86+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz005_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "hz006",
       "name": "雷峰塔景区",
-      "city": "杭州",
-      "area": "西湖区",
-      "category": "历史文化",
-      "tags": ["地标", "观景", "拍照"],
-      "ticket_price": 40,
-      "opening_hours": "08:00-20:30",
-      "recommended_duration": 1.5,
-      "visit_duration_hours": 1.5,
-      "best_time": ["下午", "傍晚"],
-      "suitable_for": ["情侣", "摄影", "家庭"],
-      "indoor_outdoor": "mixed",
-      "indoor": false,
-      "intensity": "medium",
-      "walk_level": "medium",
-      "popular": "high",
-      "description": "西湖地标建筑，夕阳和夜景观赏效果佳。"
+      "aliases": [
+        "雷峰塔"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z01",
+        "address": "雷峰塔, 电梯, 汪庄, 北山街道, 西湖区, 杭州市, 浙江省, 310002, 中国",
+        "coordinate": {
+          "latitude": 30.2338837,
+          "longitude": 120.1450125,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz006"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture"
+        ],
+        "tags": [
+          "塔",
+          "登高",
+          "西湖景观"
+        ]
+      },
+      "description": "雷峰塔景区，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.13,
+          "recommended": 1.5,
+          "maximum": 1.87
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mo-Su 09:00-17:30",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz006",
+        "area_id": "hz_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz006_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%9B%B7%E5%B3%B0%E5%A1%94%E6%99%AF%E5%8C%BA+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz006_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "hz007",
       "name": "中国丝绸博物馆",
-      "city": "杭州",
-      "area": "西湖区",
-      "category": "历史文化",
-      "tags": ["博物馆", "室内", "手工体验"],
-      "ticket_price": 0,
-      "opening_hours": "09:00-17:00 周一闭馆",
-      "recommended_duration": 1.5,
-      "visit_duration_hours": 1.5,
-      "best_time": ["上午", "下午"],
-      "suitable_for": ["老人", "亲子", "学生"],
-      "indoor_outdoor": "indoor",
-      "indoor": true,
-      "intensity": "low",
-      "walk_level": "low",
-      "popular": "medium",
-      "description": "丝绸主题国家级博物馆，内容丰富且节奏平缓。"
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z01",
+        "address": "中国丝绸博物馆, 73-1, 玉皇山路, 南山村, 西湖街道, 西湖区, 杭州市, 浙江省, 310002, 中国",
+        "coordinate": {
+          "latitude": 30.225126,
+          "longitude": 120.1465083,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz007"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "丝绸",
+          "室内"
+        ]
+      },
+      "description": "中国丝绸博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "12:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mo 12:00-17:00; Tu-Su 09:00-17:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": 0,
+            "applicable_date_ranges": [],
+            "conditions": [
+              "general_admission"
+            ],
+            "verification_status": "verified_public_snapshot"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz007",
+        "area_id": "hz_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz007_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%E4%B8%9D%E7%BB%B8%E5%8D%9A%E7%89%A9%E9%A6%86+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours",
+            "ticketing"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz007_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz007_03",
+          "source_type": "official_website",
+          "source_name": "中国丝绸博物馆官方网站（chinasilkmuseum.com）",
+          "url": "http://chinasilkmuseum.com",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
     },
     {
       "id": "hz008",
-      "name": "钱江新城灯光秀",
-      "city": "杭州",
-      "area": "上城区",
-      "category": "夜景",
-      "tags": ["夜景", "灯光", "摄影"],
-      "ticket_price": 0,
-      "opening_hours": "19:30-21:00",
-      "recommended_duration": 1.0,
-      "visit_duration_hours": 1.0,
-      "best_time": ["晚上"],
-      "suitable_for": ["情侣", "家庭", "摄影"],
-      "indoor_outdoor": "outdoor",
-      "indoor": false,
-      "intensity": "low",
-      "walk_level": "low",
-      "popular": "high",
-      "description": "城市夜景代表项目，适合短时夜间打卡。"
+      "name": "钱江新城城市阳台",
+      "aliases": [
+        "城市阳台"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "上城区",
+        "area_id": "hz_z05",
+        "address": "城市阳台, 之江路, 市民中心, 四季青街道, 上城区, 杭州市, 浙江省, 310026, 中国",
+        "coordinate": {
+          "latitude": 30.2441989,
+          "longitude": 120.2124962,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz008"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "灯光",
+          "江景",
+          "夜游"
+        ]
+      },
+      "description": "钱江新城城市阳台，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.13,
+          "recommended": 1.5,
+          "maximum": 1.87
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz008",
+        "area_id": "hz_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz008_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%9F%8E%E5%B8%82%E9%98%B3%E5%8F%B0+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz008_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "hz009",
       "name": "良渚博物院",
-      "city": "杭州",
-      "area": "余杭区",
-      "category": "历史文化",
-      "tags": ["博物馆", "室内", "世界遗产"],
-      "ticket_price": 0,
-      "opening_hours": "09:00-17:00 周一闭馆",
-      "recommended_duration": 2.0,
-      "visit_duration_hours": 2.0,
-      "best_time": ["上午", "下午"],
-      "suitable_for": ["老人", "学生", "文化爱好者"],
-      "indoor_outdoor": "indoor",
-      "indoor": true,
-      "intensity": "low",
-      "walk_level": "low",
-      "popular": "medium",
-      "description": "良渚文明主题博物院，适合深度文化游。"
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "余杭区",
+        "area_id": "hz_z06",
+        "address": "良渚博物院, 梧桐圩路, 良渚街道, 余杭区, 杭州市, 浙江省, 311115, 中国",
+        "coordinate": {
+          "latitude": 30.3796615,
+          "longitude": 120.0231332,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz009"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "良渚文化",
+          "室内"
+        ]
+      },
+      "description": "良渚博物院，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz009",
+        "area_id": "hz_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz009_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%89%AF%E6%B8%9A%E5%8D%9A%E7%89%A9%E9%99%A2+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz009_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "hz010",
       "name": "九溪烟树",
-      "city": "杭州",
-      "area": "西湖区",
-      "category": "自然风光",
-      "tags": ["徒步", "山景", "摄影"],
-      "ticket_price": 0,
-      "opening_hours": "00:00-23:59",
-      "recommended_duration": 2.0,
-      "visit_duration_hours": 2.0,
-      "best_time": ["上午", "下午"],
-      "suitable_for": ["摄影", "自然爱好者"],
-      "indoor_outdoor": "outdoor",
-      "indoor": false,
-      "intensity": "high",
-      "walk_level": "high",
-      "popular": "medium",
-      "description": "自然步道景观，环境优美但步行强度较高。"
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z02",
+        "address": "九溪烟树, 九溪路, 西湖街道, 西湖区, 杭州市, 浙江省, 310008, 中国",
+        "coordinate": {
+          "latitude": 30.2046172,
+          "longitude": 120.1085446,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz010"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "溪流",
+          "徒步",
+          "森林"
+        ]
+      },
+      "description": "九溪烟树，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz010",
+        "area_id": "hz_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz010_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B9%9D%E6%BA%AA%E7%83%9F%E6%A0%91+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz010_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz011",
+      "name": "宋城",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z02",
+        "address": "宋城, 148, 之江路, 转塘街道, 西湖区, 杭州市, 浙江省, 310024, 中国",
+        "coordinate": {
+          "latitude": 30.1721536,
+          "longitude": 120.0941645,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz011"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science"
+        ],
+        "tags": [
+          "演出",
+          "主题公园",
+          "亲子"
+        ]
+      },
+      "description": "宋城，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.75,
+          "recommended": 5.0,
+          "maximum": 6.25
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz011",
+        "area_id": "hz_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz011_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%AE%8B%E5%9F%8E+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz011_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz012",
+      "name": "中国茶叶博物馆双峰馆区",
+      "aliases": [
+        "中国茶叶博物馆（双峰馆区）"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z02",
+        "address": "中国茶叶博物馆（双峰馆区）, 88, 龙井路, 外鸡笼山, 西湖街道, 西湖区, 杭州市, 浙江省, 310008, 中国",
+        "coordinate": {
+          "latitude": 30.2347538,
+          "longitude": 120.1155532,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz012"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue",
+          "nature_park"
+        ],
+        "tags": [
+          "茶文化",
+          "博物馆",
+          "园林"
+        ]
+      },
+      "description": "中国茶叶博物馆双峰馆区，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [
+            {
+              "open": "09:00",
+              "close": "16:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "09:00",
+              "close": "16:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "09:00",
+              "close": "16:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "09:00",
+              "close": "16:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "09:00",
+              "close": "16:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "09:00",
+              "close": "16:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Tu-Su 09:00-16:00; Mo off; PH 09:00-16:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": 0,
+            "applicable_date_ranges": [],
+            "conditions": [
+              "general_admission"
+            ],
+            "verification_status": "verified_public_snapshot"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.35,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz012",
+        "area_id": "hz_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz012_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%E8%8C%B6%E5%8F%B6%E5%8D%9A%E7%89%A9%E9%A6%86%EF%BC%88%E5%8F%8C%E5%B3%B0%E9%A6%86%E5%8C%BA%EF%BC%89+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours",
+            "ticketing"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz012_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz012_03",
+          "source_type": "official_website",
+          "source_name": "中国茶叶博物馆双峰馆区官方网站（teamuseum.cn）",
+          "url": "https://www.teamuseum.cn/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz013",
+      "name": "岳王庙",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z01",
+        "address": "岳王庙, 80, 北山街, 北山街道, 西湖区, 杭州市, 浙江省, 310007, 中国",
+        "coordinate": {
+          "latitude": 30.2547029,
+          "longitude": 120.1298095,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz013"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture"
+        ],
+        "tags": [
+          "岳飞",
+          "古迹",
+          "西湖"
+        ]
+      },
+      "description": "岳王庙，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.13,
+          "recommended": 1.5,
+          "maximum": 1.87
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "07:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "07:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "07:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "07:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "07:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "07:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "07:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "07:00-18:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz013",
+        "area_id": "hz_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz013_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%B2%B3%E7%8E%8B%E5%BA%99+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz013_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz014",
+      "name": "三潭印月",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z01",
+        "address": "三潭印月, 汪庄, 北山街道, 西湖区, 杭州市, 浙江省, 中国",
+        "coordinate": {
+          "latitude": 30.240816,
+          "longitude": 120.1404964,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz014"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "history_culture",
+          "nature_park"
+        ],
+        "tags": [
+          "西湖",
+          "游船",
+          "世界遗产"
+        ]
+      },
+      "description": "三潭印月，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz014",
+        "area_id": "hz_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz014_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%89%E6%BD%AD%E5%8D%B0%E6%9C%88+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz014_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz015",
+      "name": "杭州博物馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "上城区",
+        "area_id": "hz_z01",
+        "address": "杭州博物馆, 粮道山, 定安路社区, 清波街道, 上城区, 杭州市, 浙江省, 310002, 中国",
+        "coordinate": {
+          "latitude": 30.2417704,
+          "longitude": 120.1617609,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz015"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "室内",
+          "免费"
+        ]
+      },
+      "description": "杭州博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz015",
+        "area_id": "hz_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz015_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%9D%AD%E5%B7%9E%E5%8D%9A%E7%89%A9%E9%A6%86+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz015_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz016",
+      "name": "中国湿地博物馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z03",
+        "address": "中国湿地博物馆, 402, 天目山路, 留下街道, 西湖区, 杭州市, 浙江省, 310013, 中国",
+        "coordinate": {
+          "latitude": 30.2664423,
+          "longitude": 120.0826183,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz016"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue",
+          "nature_park"
+        ],
+        "tags": [
+          "博物馆",
+          "湿地",
+          "室内"
+        ]
+      },
+      "description": "中国湿地博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz016",
+        "area_id": "hz_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz016_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%E6%B9%BF%E5%9C%B0%E5%8D%9A%E7%89%A9%E9%A6%86+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz016_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz017",
+      "name": "西溪湿地洪园",
+      "aliases": [
+        "洪园"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "余杭区",
+        "area_id": "hz_z03",
+        "address": "洪园, 五常大道, 荆丰村, 五常街道, 余杭区, 杭州市, 浙江省, 310023, 中国",
+        "coordinate": {
+          "latitude": 30.2507093,
+          "longitude": 120.0459596,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz017"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "湿地",
+          "公园",
+          "生态"
+        ]
+      },
+      "description": "西溪湿地洪园，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz017",
+        "area_id": "hz_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz017_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B4%AA%E5%9B%AD+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz017_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz018",
+      "name": "中国刀剪剑博物馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "拱墅区",
+        "area_id": "hz_z04",
+        "address": "中国刀剪剑博物馆, 桥西直街, 拱宸桥, 拱宸桥街道, 拱墅区, 杭州市, 浙江省, 310015, 中国",
+        "coordinate": {
+          "latitude": 30.3185471,
+          "longitude": 120.133527,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz018"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "工艺美术",
+          "室内"
+        ]
+      },
+      "description": "中国刀剪剑博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz018",
+        "area_id": "hz_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz018_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%E5%88%80%E5%89%AA%E5%89%91%E5%8D%9A%E7%89%A9%E9%A6%86+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz018_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz019",
+      "name": "中国京杭大运河博物馆",
+      "aliases": [
+        "京杭大运河博物馆"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "拱墅区",
+        "area_id": "hz_z04",
+        "address": "京杭大运河博物馆, 运河广场, 拱宸桥, 拱宸桥街道, 拱墅区, 杭州市, 浙江省, 310015, 中国",
+        "coordinate": {
+          "latitude": 30.3197193,
+          "longitude": 120.1369894,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz019"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "运河",
+          "室内"
+        ]
+      },
+      "description": "中国京杭大运河博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz019",
+        "area_id": "hz_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz019_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%BA%AC%E6%9D%AD%E5%A4%A7%E8%BF%90%E6%B2%B3%E5%8D%9A%E7%89%A9%E9%A6%86+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz019_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz020",
+      "name": "良渚古城遗址公园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "余杭区",
+        "area_id": "hz_z06",
+        "address": "良渚古城遗址公园, 良渚大道, 乌山头, 瓶窑镇, 余杭区, 杭州市, 浙江省, 311115, 中国",
+        "coordinate": {
+          "latitude": 30.3820108,
+          "longitude": 119.9794203,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz020"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture"
+        ],
+        "tags": [
+          "遗址",
+          "世界遗产",
+          "户外"
+        ]
+      },
+      "description": "良渚古城遗址公园，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz020",
+        "area_id": "hz_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz020_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%89%AF%E6%B8%9A%E5%8F%A4%E5%9F%8E%E9%81%97%E5%9D%80%E5%85%AC%E5%9B%AD+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz020_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz021",
+      "name": "湘湖国家旅游度假区",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "萧山区",
+        "area_id": "hz_z05",
+        "address": "湘湖国家旅游度假区, 萧山区, 杭州市, 浙江省, 中国",
+        "coordinate": {
+          "latitude": 30.1382556,
+          "longitude": 120.2108891,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz021"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "湖景",
+          "公园",
+          "亲子"
+        ]
+      },
+      "description": "湘湖国家旅游度假区，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz021",
+        "area_id": "hz_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz021_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B9%98%E6%B9%96%E5%9B%BD%E5%AE%B6%E6%97%85%E6%B8%B8%E5%BA%A6%E5%81%87%E5%8C%BA+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz021_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz022",
+      "name": "杭州植物园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z02",
+        "address": "杭州植物园, 灵隐街道, 西湖区, 杭州市, 浙江省, 中国",
+        "coordinate": {
+          "latitude": 30.2542611,
+          "longitude": 120.1155179,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz022"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "植物园",
+          "公园",
+          "亲子"
+        ]
+      },
+      "description": "杭州植物园，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz022",
+        "area_id": "hz_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz022_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%9D%AD%E5%B7%9E%E6%A4%8D%E7%89%A9%E5%9B%AD+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz022_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz023",
+      "name": "云栖竹径",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z02",
+        "address": "云栖竹径, 西湖街道, 西湖区, 杭州市, 浙江省, 310008, 中国",
+        "coordinate": {
+          "latitude": 30.1932011,
+          "longitude": 120.0857388,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz023"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "竹林",
+          "徒步",
+          "清凉"
+        ]
+      },
+      "description": "云栖竹径，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz023",
+        "area_id": "hz_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz023_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%BA%91%E6%A0%96%E7%AB%B9%E5%BE%84+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz023_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz024",
+      "name": "西溪天堂",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "西湖区",
+        "area_id": "hz_z03",
+        "address": "西溪天堂, 沈家湾, 蒋村街道, 西湖区, 杭州市, 浙江省, 中国",
+        "coordinate": {
+          "latitude": 30.2686158,
+          "longitude": 120.0832815,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz024"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "街区",
+          "餐饮",
+          "休闲"
+        ]
+      },
+      "description": "西溪天堂，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz024",
+        "area_id": "hz_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz024_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%A5%BF%E6%BA%AA%E5%A4%A9%E5%A0%82+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz024_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz025",
+      "name": "千岛湖中心湖区",
+      "aliases": [
+        "千岛湖"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "淳安县",
+        "area_id": "hz_z06",
+        "address": "千岛湖, 溧宁高速, 阔畈, 金峰乡, 淳安县, 杭州市, 浙江省, 中国",
+        "coordinate": {
+          "latitude": 29.6675246,
+          "longitude": 118.9282238,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz025"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "湖景",
+          "游船",
+          "远郊"
+        ]
+      },
+      "description": "千岛湖中心湖区，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 5.25,
+          "recommended": 7.0,
+          "maximum": 8.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz025",
+        "area_id": "hz_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "car"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz025_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%8D%83%E5%B2%9B%E6%B9%96+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz025_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz026",
+      "name": "桥西历史文化街区",
+      "aliases": [
+        "桥西直街"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "拱墅区",
+        "area_id": "hz_z04",
+        "address": "桥西直街, 拱宸桥, 拱宸桥街道, 拱墅区, 杭州市, 浙江省, 310015, 中国",
+        "coordinate": {
+          "latitude": 30.3185583,
+          "longitude": 120.1338779,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz026"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture",
+          "local_life"
+        ],
+        "tags": [
+          "运河",
+          "街区",
+          "历史"
+        ]
+      },
+      "description": "桥西历史文化街区，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "history_lover",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz026",
+        "area_id": "hz_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz026_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%A1%A5%E8%A5%BF%E7%9B%B4%E8%A1%97+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz026_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz027",
+      "name": "天目山景区",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "临安区",
+        "area_id": "hz_z06",
+        "address": "天目山景区, 临安区, 杭州市, 浙江省, 中国",
+        "coordinate": {
+          "latitude": 30.3348134,
+          "longitude": 119.4353293,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz027"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "森林",
+          "登山",
+          "自然保护"
+        ]
+      },
+      "description": "天目山景区，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 4.5,
+          "recommended": 6.0,
+          "maximum": 7.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz027",
+        "area_id": "hz_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "car"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz027_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%A4%A9%E7%9B%AE%E5%B1%B1%E6%99%AF%E5%8C%BA+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz027_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz028",
+      "name": "杭州乐园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "萧山区",
+        "area_id": "hz_z05",
+        "address": "杭州乐园, 2555, 风情大道, 城厢街道, 萧山区, 杭州市, 浙江省, 311202, 中国",
+        "coordinate": {
+          "latitude": 30.1626113,
+          "longitude": 120.2412071,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz028"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science"
+        ],
+        "tags": [
+          "主题公园",
+          "游乐设施",
+          "亲子"
+        ]
+      },
+      "description": "杭州乐园，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 4.5,
+          "recommended": 6.0,
+          "maximum": 7.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "10:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "10:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "10:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "10:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "10:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "09:30",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "09:30",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mo-Fr 10:00-17:00; Sa-Su 09:30-17:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "student"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz028",
+        "area_id": "hz_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz028_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%9D%AD%E5%B7%9E%E4%B9%90%E5%9B%AD+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz028_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz029",
+      "name": "杭州长乔极地海洋公园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "萧山区",
+        "area_id": "hz_z05",
+        "address": "杭州长乔极地海洋公园, 湘湖路, 城厢街道, 萧山区, 杭州市, 浙江省, 311202, 中国",
+        "coordinate": {
+          "latitude": 30.1450146,
+          "longitude": 120.2222211,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz029"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science",
+          "indoor_venue"
+        ],
+        "tags": [
+          "海洋馆",
+          "室内",
+          "亲子"
+        ]
+      },
+      "description": "杭州长乔极地海洋公园，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.75,
+          "recommended": 5.0,
+          "maximum": 6.25
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz029",
+        "area_id": "hz_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz029_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%9D%AD%E5%B7%9E%E9%95%BF%E4%B9%94%E6%9E%81%E5%9C%B0%E6%B5%B7%E6%B4%8B%E5%85%AC%E5%9B%AD+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz029_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "hz030",
+      "name": "武林夜市",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "district": "拱墅区",
+        "area_id": "hz_z04",
+        "address": "武林夜市, 武林街道, 拱墅区, 杭州市, 浙江省, 中国",
+        "coordinate": {
+          "latitude": 30.2644231,
+          "longitude": 120.1563826,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "hz030"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "夜市",
+          "小吃",
+          "夜游"
+        ]
+      },
+      "description": "武林夜市，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.13,
+          "recommended": 1.5,
+          "maximum": 1.87
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "hz030",
+        "area_id": "hz_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz030_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%AD%A6%E6%9E%97%E5%A4%9C%E5%B8%82+%E6%9D%AD%E5%B7%9E+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_hz030_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·杭州景点页",
+          "url": "https://you.ctrip.com/sight/hangzhou14.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     }
   ]
 }

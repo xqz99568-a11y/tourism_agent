@@ -1,0 +1,1107 @@
+{
+  "metadata": {
+    "file_id": "ctp_accommodation_area_guilin_v1_0",
+    "schema_version": "ctp-accommodation-area-schema-v1.0",
+    "dataset_version": "CTP-ACCOMMODATION-v1.0",
+    "city_id": "guilin",
+    "city_name": "桂林",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "data_mode": "frozen_offline",
+    "record_count": 7,
+    "price_basis": {
+      "unit": "room_per_night",
+      "standard_room_occupancy": 2,
+      "statistic": "fixed_reference_price",
+      "live_price_allowed": false
+    }
+  },
+  "accommodation_areas": [
+    {
+      "id": "gl_ha001",
+      "name": "两江四湖—中心广场住宿区",
+      "aliases": [
+        "两江四湖住宿区",
+        "桂林中心住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "districts": [
+          "秀峰区",
+          "象山区"
+        ],
+        "area_ids": [
+          "gl_z01"
+        ],
+        "center_coordinate": {
+          "latitude": 25.277,
+          "longitude": 110.293,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "gl003",
+          "gl004",
+          "gl005",
+          "gl007",
+          "gl008"
+        ]
+      },
+      "classification": {
+        "area_type": "city_center_scenic_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "midscale_hotel",
+          "upscale_hotel",
+          "luxury_hotel"
+        ],
+        "tags": [
+          "城市中心",
+          "景点集中",
+          "夜游方便",
+          "餐饮丰富"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "medium",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 120,
+            "reference_price_cny": 200,
+            "maximum_price_cny": 280
+          },
+          "comfort": {
+            "minimum_price_cny": 300,
+            "reference_price_cny": 420,
+            "maximum_price_cny": 550
+          },
+          "premium": {
+            "minimum_price_cny": 650,
+            "reference_price_cny": 900,
+            "maximum_price_cny": 1400
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "gl_ha001",
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "walk"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合第一次到桂林及两江四湖夜游",
+          "餐饮、购物和市区景点集中"
+        ],
+        "disadvantages": [
+          "旅游旺季核心街区人流较多",
+          "临街住宿可能受夜间活动影响"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl_ha001_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%A1%82%E6%9E%97%20%E4%B8%A4%E6%B1%9F%E5%9B%9B%E6%B9%96%E2%80%94%E4%B8%AD%E5%BF%83%E5%B9%BF%E5%9C%BA%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_gl_ha001_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/guilin33/location224",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_gl_ha001_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/guilin33/location224",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "gl_ha002",
+      "name": "桂林站—象山住宿区",
+      "aliases": [
+        "桂林站住宿区",
+        "象山住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "districts": [
+          "象山区"
+        ],
+        "area_ids": [
+          "gl_z01"
+        ],
+        "center_coordinate": {
+          "latitude": 25.2671,
+          "longitude": 110.2848,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "gl002",
+          "gl003"
+        ]
+      },
+      "classification": {
+        "area_type": "railway_hub_economy_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "business_hotel",
+          "midscale_hotel"
+        ],
+        "tags": [
+          "火车站周边",
+          "经济型集中",
+          "象山景区较近",
+          "适合短住"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "high",
+        "nightlife_level": "low",
+        "dining_convenience": "high",
+        "shopping_convenience": "medium",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 80,
+            "reference_price_cny": 160,
+            "maximum_price_cny": 220
+          },
+          "comfort": {
+            "minimum_price_cny": 240,
+            "reference_price_cny": 340,
+            "maximum_price_cny": 450
+          },
+          "premium": {
+            "minimum_price_cny": 520,
+            "reference_price_cny": 750,
+            "maximum_price_cny": 1100
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "gl_ha002",
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "rail",
+          "walk"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "conditional",
+        "elderly": "suitable",
+        "children": "conditional",
+        "wheelchair": "conditional",
+        "budget_traveler": "suitable"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合火车抵离并兼顾象鼻山行程",
+          "经济型与快捷住宿选择较多"
+        ],
+        "disadvantages": [
+          "车站附近交通噪声较明显",
+          "环境体验不如滨水与度假区域"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl_ha002_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%A1%82%E6%9E%97%20%E6%A1%82%E6%9E%97%E7%AB%99%E2%80%94%E8%B1%A1%E5%B1%B1%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_gl_ha002_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/guilin33/location224",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_gl_ha002_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/guilin33/location224",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "gl_ha003",
+      "name": "七星—穿山住宿区",
+      "aliases": [
+        "七星区住宿区",
+        "穿山住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "districts": [
+          "七星区"
+        ],
+        "area_ids": [
+          "gl_z02"
+        ],
+        "center_coordinate": {
+          "latitude": 25.27,
+          "longitude": 110.317,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "gl010",
+          "gl029",
+          "gl030"
+        ]
+      },
+      "classification": {
+        "area_type": "quiet_local_residential_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "business_hotel",
+          "midscale_hotel",
+          "serviced_apartment"
+        ],
+        "tags": [
+          "本地生活区",
+          "相对安静",
+          "性价比较高",
+          "适合家庭"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "low",
+        "nightlife_level": "low",
+        "dining_convenience": "high",
+        "shopping_convenience": "medium",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 80,
+            "reference_price_cny": 160,
+            "maximum_price_cny": 220
+          },
+          "comfort": {
+            "minimum_price_cny": 240,
+            "reference_price_cny": 350,
+            "maximum_price_cny": 460
+          },
+          "premium": {
+            "minimum_price_cny": 550,
+            "reference_price_cny": 800,
+            "maximum_price_cny": 1200
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "gl_ha003",
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "walk"
+        ],
+        "transport_convenience": "medium"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "suitable"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "生活配套较完整且夜间相对安静",
+          "比核心景区更容易控制预算"
+        ],
+        "disadvantages": [
+          "前往阳朔及西部景区仍需换乘",
+          "夜间旅游活动较少"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl_ha003_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%A1%82%E6%9E%97%20%E4%B8%83%E6%98%9F%E2%80%94%E7%A9%BF%E5%B1%B1%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_gl_ha003_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/guilin33/location224",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_gl_ha003_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/guilin33/location224",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "gl_ha004",
+      "name": "芦笛岩—鲁家村住宿区",
+      "aliases": [
+        "芦笛岩住宿区",
+        "鲁家村住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "districts": [
+          "秀峰区"
+        ],
+        "area_ids": [
+          "gl_z03"
+        ],
+        "center_coordinate": {
+          "latitude": 25.305,
+          "longitude": 110.261,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "gl009"
+        ]
+      },
+      "classification": {
+        "area_type": "quiet_scenic_village_area",
+        "supported_lodging_types": [
+          "guesthouse",
+          "family_hotel",
+          "midscale_hotel",
+          "resort_hotel"
+        ],
+        "tags": [
+          "景区周边",
+          "村落环境",
+          "安静",
+          "适合自驾"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "low",
+        "nightlife_level": "low",
+        "dining_convenience": "medium",
+        "shopping_convenience": "low",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 100,
+            "reference_price_cny": 180,
+            "maximum_price_cny": 250
+          },
+          "comfort": {
+            "minimum_price_cny": 280,
+            "reference_price_cny": 400,
+            "maximum_price_cny": 550
+          },
+          "premium": {
+            "minimum_price_cny": 650,
+            "reference_price_cny": 950,
+            "maximum_price_cny": 1500
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "gl_ha004",
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "car",
+          "walk"
+        ],
+        "transport_convenience": "medium"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "靠近芦笛岩且住宿环境相对安静",
+          "适合家庭或偏好村落体验的游客"
+        ],
+        "disadvantages": [
+          "公共交通和夜间餐饮少于市中心",
+          "不适合依赖步行覆盖市区全部景点"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl_ha004_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%A1%82%E6%9E%97%20%E8%8A%A6%E7%AC%9B%E5%B2%A9%E2%80%94%E9%B2%81%E5%AE%B6%E6%9D%91%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_gl_ha004_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/guilin33/location224",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_gl_ha004_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/guilin33/location224",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "gl_ha005",
+      "name": "阳朔西街—叠翠路住宿区",
+      "aliases": [
+        "阳朔西街住宿区",
+        "西街住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "districts": [
+          "阳朔县"
+        ],
+        "area_ids": [
+          "gl_z04"
+        ],
+        "center_coordinate": {
+          "latitude": 24.7785,
+          "longitude": 110.496,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "gl012",
+          "gl018",
+          "gl019"
+        ]
+      },
+      "classification": {
+        "area_type": "tourist_nightlife_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "guesthouse",
+          "boutique_hotel",
+          "midscale_hotel"
+        ],
+        "tags": [
+          "阳朔中心",
+          "夜生活",
+          "餐饮便利",
+          "可能嘈杂"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "high",
+        "nightlife_level": "high",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 130,
+            "reference_price_cny": 240,
+            "maximum_price_cny": 320
+          },
+          "comfort": {
+            "minimum_price_cny": 350,
+            "reference_price_cny": 500,
+            "maximum_price_cny": 680
+          },
+          "premium": {
+            "minimum_price_cny": 800,
+            "reference_price_cny": 1200,
+            "maximum_price_cny": 2000
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "gl_ha005",
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "walk",
+          "e_bike"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "conditional",
+        "elderly": "conditional",
+        "children": "conditional",
+        "wheelchair": "conditional",
+        "budget_traveler": "suitable"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "餐饮、租车、夜游和旅行服务集中",
+          "适合第一次到阳朔的游客"
+        ],
+        "disadvantages": [
+          "西街临街房间夜间噪声较高",
+          "节假日人流密集"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl_ha005_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%A1%82%E6%9E%97%20%E9%98%B3%E6%9C%94%E8%A5%BF%E8%A1%97%E2%80%94%E5%8F%A0%E7%BF%A0%E8%B7%AF%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_gl_ha005_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "China Travel Guide住宿区域攻略",
+          "url": "https://china-travel.org/where-to-stay-in-guilin/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_gl_ha005_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/guilin33/location224",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "gl_ha006",
+      "name": "遇龙河—骥马村住宿区",
+      "aliases": [
+        "遇龙河住宿区",
+        "骥马村住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "districts": [
+          "阳朔县"
+        ],
+        "area_ids": [
+          "gl_z04"
+        ],
+        "center_coordinate": {
+          "latitude": 24.787,
+          "longitude": 110.455,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "gl015",
+          "gl016",
+          "gl017"
+        ]
+      },
+      "classification": {
+        "area_type": "quiet_rural_resort_area",
+        "supported_lodging_types": [
+          "guesthouse",
+          "boutique_hotel",
+          "resort_hotel",
+          "upscale_hotel"
+        ],
+        "tags": [
+          "田园度假",
+          "环境安静",
+          "民宿集中",
+          "交通依赖接驳"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "low",
+        "nightlife_level": "low",
+        "dining_convenience": "medium",
+        "shopping_convenience": "low",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 190,
+            "reference_price_cny": 320,
+            "maximum_price_cny": 450
+          },
+          "comfort": {
+            "minimum_price_cny": 500,
+            "reference_price_cny": 700,
+            "maximum_price_cny": 950
+          },
+          "premium": {
+            "minimum_price_cny": 1100,
+            "reference_price_cny": 1700,
+            "maximum_price_cny": 2800
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "gl_ha006",
+        "recommended_arrival_modes": [
+          "taxi",
+          "car",
+          "hotel_shuttle",
+          "e_bike"
+        ],
+        "transport_convenience": "medium"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合遇龙河、骑行和田园度假",
+          "夜间安静且中高端民宿较集中"
+        ],
+        "disadvantages": [
+          "公共交通与深夜餐饮有限",
+          "前往西街通常需要接驳"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl_ha006_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%A1%82%E6%9E%97%20%E9%81%87%E9%BE%99%E6%B2%B3%E2%80%94%E9%AA%A5%E9%A9%AC%E6%9D%91%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_gl_ha006_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "China Travel Guide住宿区域攻略",
+          "url": "https://china-travel.org/where-to-stay-in-guilin/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_gl_ha006_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/guilin33/location224",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "gl_ha007",
+      "name": "兴坪古镇—漓江码头住宿区",
+      "aliases": [
+        "兴坪住宿区",
+        "漓江码头住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "districts": [
+          "阳朔县"
+        ],
+        "area_ids": [
+          "gl_z05"
+        ],
+        "center_coordinate": {
+          "latitude": 24.918,
+          "longitude": 110.527,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "gl001",
+          "gl020",
+          "gl021",
+          "gl022"
+        ]
+      },
+      "classification": {
+        "area_type": "scenic_town_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "guesthouse",
+          "boutique_hotel",
+          "midscale_hotel"
+        ],
+        "tags": [
+          "古镇住宿",
+          "漓江景观",
+          "摄影日出",
+          "夜间安静"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "low",
+        "nightlife_level": "low",
+        "dining_convenience": "medium",
+        "shopping_convenience": "low",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 100,
+            "reference_price_cny": 180,
+            "maximum_price_cny": 260
+          },
+          "comfort": {
+            "minimum_price_cny": 280,
+            "reference_price_cny": 400,
+            "maximum_price_cny": 550
+          },
+          "premium": {
+            "minimum_price_cny": 650,
+            "reference_price_cny": 950,
+            "maximum_price_cny": 1500
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "gl_ha007",
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "car",
+          "walk"
+        ],
+        "transport_convenience": "medium"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合漓江、相公山和兴坪深度行程",
+          "便于早晚错峰拍摄"
+        ],
+        "disadvantages": [
+          "夜间购物和餐饮选择有限",
+          "与阳朔西街及桂林市区距离较远"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl_ha007_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%A1%82%E6%9E%97%20%E5%85%B4%E5%9D%AA%E5%8F%A4%E9%95%87%E2%80%94%E6%BC%93%E6%B1%9F%E7%A0%81%E5%A4%B4%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_gl_ha007_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/guilin33/location224",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_gl_ha007_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/guilin33/location224",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    }
+  ]
+}

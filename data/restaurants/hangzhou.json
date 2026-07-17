@@ -1,56 +1,1196 @@
 {
-  "city": "杭州",
-  "version": "v1",
-  "restaurants": [
+  "metadata": {
+    "file_id": "ctp_dining_area_hangzhou_v1_0",
+    "schema_version": "ctp-dining-area-schema-v1.0",
+    "dataset_version": "CTP-DINING-v1.0",
+    "city_id": "hangzhou",
+    "city_name": "杭州",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "data_mode": "frozen_offline",
+    "record_count": 7,
+    "price_basis": {
+      "unit": "person_per_meal",
+      "statistic": "fixed_reference_price",
+      "live_price_allowed": false
+    }
+  },
+  "dining_areas": [
     {
-      "id": "hz_rest001",
-      "name": "楼外楼",
-      "area": "西湖区",
-      "category": "杭帮菜",
-      "signature_dishes": ["西湖醋鱼", "龙井虾仁", "叫花鸡"],
-      "price_range": "人均150-200元",
-      "rating": 4.5,
-      "address": "杭州市西湖区孤山路30号"
+      "id": "hz_da001",
+      "name": "河坊街—高银街餐饮区",
+      "aliases": [
+        "河坊街餐饮区",
+        "高银街美食街"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "上城区"
+        ],
+        "area_ids": [
+          "hz_z01"
+        ],
+        "center_coordinate": {
+          "latitude": 30.2426,
+          "longitude": 120.1671,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz004",
+          "hz015"
+        ]
+      },
+      "classification": {
+        "area_type": "traditional_food_district",
+        "cuisine_types": [
+          "hangzhou_cuisine",
+          "local_snack",
+          "jiangnan_cuisine"
+        ],
+        "tags": [
+          "历史街区",
+          "传统小吃",
+          "杭帮菜",
+          "游客型街区"
+        ]
+      },
+      "service_profile": {
+        "supported_meal_types": [
+          "breakfast",
+          "lunch",
+          "dinner"
+        ],
+        "service_windows": [
+          {
+            "meal_type": "breakfast",
+            "start": "07:00",
+            "end": "10:00"
+          },
+          {
+            "meal_type": "lunch",
+            "start": "11:00",
+            "end": "14:00"
+          },
+          {
+            "meal_type": "dinner",
+            "start": "17:00",
+            "end": "21:30"
+          }
+        ],
+        "average_wait_minutes": {
+          "off_peak": 10,
+          "peak": 40
+        },
+        "reservation_recommended": false,
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "person_per_meal",
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 20,
+            "reference_price_cny": 40,
+            "maximum_price_cny": 60
+          },
+          "comfort": {
+            "minimum_price_cny": 60,
+            "reference_price_cny": 100,
+            "maximum_price_cny": 150
+          },
+          "premium": {
+            "minimum_price_cny": 180,
+            "reference_price_cny": 280,
+            "maximum_price_cny": 450
+          }
+        },
+        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+      },
+      "dietary_support": {
+        "vegetarian": "conditional",
+        "halal": "conditional",
+        "child_friendly": "suitable",
+        "allergy_information": "unknown"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional"
+      },
+      "transport": {
+        "matrix_node_id": "hz_da001",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "weather_suitability": {
+        "sunny": "suitable",
+        "rain": "conditional",
+        "high_temperature": "conditional",
+        "low_temperature": "conditional"
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
+          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
+          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
+          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_da001_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E6%B2%B3%E5%9D%8A%E8%A1%97%E2%80%94%E9%AB%98%E9%93%B6%E8%A1%97%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_da001_02",
+          "source_type": "public_web_reference",
+          "source_name": "维基百科公开地理资料",
+          "url": "https://zh.wikipedia.org/wiki/%E6%B2%B3%E5%9D%8A%E8%A1%97",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "service_profile"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_da001_03",
+          "source_type": "public_price_reference",
+          "source_name": "杭州网（固定实验价格校准）",
+          "url": "https://ori.hangzhou.com.cn/ornews/content/2026-01/01/content_9154737.htm",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
     },
     {
-      "id": "hz_rest002",
-      "name": "知味观",
-      "area": "上城区",
-      "category": "杭帮菜",
-      "signature_dishes": ["小笼包", "猫耳朵", "西湖藕粉"],
-      "price_range": "人均80-120元",
-      "rating": 4.3,
-      "address": "杭州市上城区河坊街180号"
+      "id": "hz_da002",
+      "name": "湖滨—龙翔桥餐饮区",
+      "aliases": [
+        "湖滨餐饮区",
+        "龙翔桥餐饮区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "上城区"
+        ],
+        "area_ids": [
+          "hz_z01"
+        ],
+        "center_coordinate": {
+          "latitude": 30.256,
+          "longitude": 120.1628,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz001",
+          "hz005",
+          "hz013"
+        ]
+      },
+      "classification": {
+        "area_type": "scenic_commercial_district",
+        "cuisine_types": [
+          "hangzhou_cuisine",
+          "chinese_regional_cuisine",
+          "international_cuisine"
+        ],
+        "tags": [
+          "西湖周边",
+          "核心商圈",
+          "商场餐饮",
+          "选择丰富"
+        ]
+      },
+      "service_profile": {
+        "supported_meal_types": [
+          "lunch",
+          "dinner"
+        ],
+        "service_windows": [
+          {
+            "meal_type": "lunch",
+            "start": "11:00",
+            "end": "14:30"
+          },
+          {
+            "meal_type": "dinner",
+            "start": "17:00",
+            "end": "22:00"
+          }
+        ],
+        "average_wait_minutes": {
+          "off_peak": 15,
+          "peak": 45
+        },
+        "reservation_recommended": true,
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "person_per_meal",
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 30,
+            "reference_price_cny": 55,
+            "maximum_price_cny": 80
+          },
+          "comfort": {
+            "minimum_price_cny": 90,
+            "reference_price_cny": 140,
+            "maximum_price_cny": 200
+          },
+          "premium": {
+            "minimum_price_cny": 250,
+            "reference_price_cny": 380,
+            "maximum_price_cny": 600
+          }
+        },
+        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+      },
+      "dietary_support": {
+        "vegetarian": "conditional",
+        "halal": "conditional",
+        "child_friendly": "suitable",
+        "allergy_information": "unknown"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional"
+      },
+      "transport": {
+        "matrix_node_id": "hz_da002",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "weather_suitability": {
+        "sunny": "suitable",
+        "rain": "suitable",
+        "high_temperature": "suitable",
+        "low_temperature": "suitable"
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
+          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
+          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
+          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_da002_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E6%B9%96%E6%BB%A8%E2%80%94%E9%BE%99%E7%BF%94%E6%A1%A5%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_da002_02",
+          "source_type": "public_web_reference",
+          "source_name": "杭州旅游网",
+          "url": "https://travel.hangzhou.com.cn/lyzx/content/2025-03/20/content_8926923.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "service_profile"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_da002_03",
+          "source_type": "public_price_reference",
+          "source_name": "杭州网（固定实验价格校准）",
+          "url": "https://ori.hangzhou.com.cn/ornews/content/2026-01/01/content_9154737.htm",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
     },
     {
-      "id": "hz_rest003",
-      "name": "新白鹿",
-      "area": "西湖区",
-      "category": "杭帮菜",
-      "signature_dishes": ["糖醋排骨", "蛋黄鸡翅", "西湖牛肉羹"],
-      "price_range": "人均60-100元",
-      "rating": 4.2,
-      "address": "杭州市西湖区延安路98号"
+      "id": "hz_da003",
+      "name": "武林—中山北路餐饮区",
+      "aliases": [
+        "武林餐饮区",
+        "中山北路美食区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "拱墅区"
+        ],
+        "area_ids": [
+          "hz_z04"
+        ],
+        "center_coordinate": {
+          "latitude": 30.2644,
+          "longitude": 120.1564,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz030",
+          "hz018",
+          "hz019"
+        ]
+      },
+      "classification": {
+        "area_type": "commercial_night_district",
+        "cuisine_types": [
+          "hangzhou_cuisine",
+          "cafe",
+          "chinese_regional_cuisine"
+        ],
+        "tags": [
+          "武林商圈",
+          "网红餐饮",
+          "夜市",
+          "夜间消费"
+        ]
+      },
+      "service_profile": {
+        "supported_meal_types": [
+          "lunch",
+          "dinner",
+          "late_night"
+        ],
+        "service_windows": [
+          {
+            "meal_type": "lunch",
+            "start": "11:30",
+            "end": "14:00"
+          },
+          {
+            "meal_type": "dinner",
+            "start": "17:00",
+            "end": "22:00"
+          },
+          {
+            "meal_type": "late_night",
+            "start": "22:00",
+            "end": "02:00"
+          }
+        ],
+        "average_wait_minutes": {
+          "off_peak": 15,
+          "peak": 45
+        },
+        "reservation_recommended": true,
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "person_per_meal",
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 25,
+            "reference_price_cny": 50,
+            "maximum_price_cny": 75
+          },
+          "comfort": {
+            "minimum_price_cny": 80,
+            "reference_price_cny": 130,
+            "maximum_price_cny": 180
+          },
+          "premium": {
+            "minimum_price_cny": 220,
+            "reference_price_cny": 330,
+            "maximum_price_cny": 520
+          }
+        },
+        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+      },
+      "dietary_support": {
+        "vegetarian": "conditional",
+        "halal": "conditional",
+        "child_friendly": "suitable",
+        "allergy_information": "unknown"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional"
+      },
+      "transport": {
+        "matrix_node_id": "hz_da003",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "weather_suitability": {
+        "sunny": "suitable",
+        "rain": "suitable",
+        "high_temperature": "conditional",
+        "low_temperature": "suitable"
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
+          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
+          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
+          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_da003_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E6%AD%A6%E6%9E%97%E2%80%94%E4%B8%AD%E5%B1%B1%E5%8C%97%E8%B7%AF%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_da003_02",
+          "source_type": "public_web_reference",
+          "source_name": "杭州网",
+          "url": "https://hznews.hangzhou.com.cn/chengshi/content/2025-05/21/content_8999258.htm",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "service_profile"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_da003_03",
+          "source_type": "public_price_reference",
+          "source_name": "杭州网（固定实验价格校准）",
+          "url": "https://ori.hangzhou.com.cn/ornews/content/2026-01/01/content_9154737.htm",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
     },
     {
-      "id": "hz_rest004",
-      "name": "外婆家",
-      "area": "上城区",
-      "category": "杭帮菜",
-      "signature_dishes": ["茶香鸡", "红烧肉", "西湖醋鱼"],
-      "price_range": "人均80-120元",
-      "rating": 4.3,
-      "address": "杭州市上城区湖滨路12号"
+      "id": "hz_da004",
+      "name": "胜利河—大兜路餐饮区",
+      "aliases": [
+        "胜利河美食街",
+        "大兜路餐饮区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "拱墅区"
+        ],
+        "area_ids": [
+          "hz_z04"
+        ],
+        "center_coordinate": {
+          "latitude": 30.302,
+          "longitude": 120.1516,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz019",
+          "hz026",
+          "hz018"
+        ]
+      },
+      "classification": {
+        "area_type": "night_food_street",
+        "cuisine_types": [
+          "hangzhou_cuisine",
+          "barbecue",
+          "hotpot",
+          "vegetarian_cuisine"
+        ],
+        "tags": [
+          "运河周边",
+          "夜宵",
+          "烧烤",
+          "杭帮菜",
+          "素食选择"
+        ]
+      },
+      "service_profile": {
+        "supported_meal_types": [
+          "lunch",
+          "dinner",
+          "late_night"
+        ],
+        "service_windows": [
+          {
+            "meal_type": "lunch",
+            "start": "11:30",
+            "end": "14:00"
+          },
+          {
+            "meal_type": "dinner",
+            "start": "17:00",
+            "end": "22:00"
+          },
+          {
+            "meal_type": "late_night",
+            "start": "22:00",
+            "end": "02:00"
+          }
+        ],
+        "average_wait_minutes": {
+          "off_peak": 10,
+          "peak": 40
+        },
+        "reservation_recommended": false,
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "person_per_meal",
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 20,
+            "reference_price_cny": 40,
+            "maximum_price_cny": 60
+          },
+          "comfort": {
+            "minimum_price_cny": 60,
+            "reference_price_cny": 100,
+            "maximum_price_cny": 150
+          },
+          "premium": {
+            "minimum_price_cny": 180,
+            "reference_price_cny": 260,
+            "maximum_price_cny": 400
+          }
+        },
+        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+      },
+      "dietary_support": {
+        "vegetarian": "suitable",
+        "halal": "conditional",
+        "child_friendly": "suitable",
+        "allergy_information": "unknown"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional"
+      },
+      "transport": {
+        "matrix_node_id": "hz_da004",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "weather_suitability": {
+        "sunny": "suitable",
+        "rain": "suitable",
+        "high_temperature": "conditional",
+        "low_temperature": "suitable"
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
+          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
+          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
+          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_da004_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E8%83%9C%E5%88%A9%E6%B2%B3%E2%80%94%E5%A4%A7%E5%85%9C%E8%B7%AF%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_da004_02",
+          "source_type": "public_web_reference",
+          "source_name": "杭州网",
+          "url": "https://hznews.hangzhou.com.cn/chengshi/content/2024-12/13/content_8825631.htm",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "service_profile"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_da004_03",
+          "source_type": "public_price_reference",
+          "source_name": "杭州网（固定实验价格校准）",
+          "url": "https://ori.hangzhou.com.cn/ornews/content/2026-01/01/content_9154737.htm",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
     },
     {
-      "id": "hz_rest005",
-      "name": "张生记",
-      "area": "上城区",
-      "category": "杭帮菜",
-      "signature_dishes": ["老鸭煲", "东坡肉", "炸响铃"],
-      "price_range": "人均100-150元",
-      "rating": 4.2,
-      "address": "杭州市上城区仁和路83号"
+      "id": "hz_da005",
+      "name": "灵隐—天竺餐饮区",
+      "aliases": [
+        "灵隐餐饮区",
+        "天竺餐饮区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "西湖区"
+        ],
+        "area_ids": [
+          "hz_z02"
+        ],
+        "center_coordinate": {
+          "latitude": 30.2389,
+          "longitude": 120.0964,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz002",
+          "hz012",
+          "hz022"
+        ]
+      },
+      "classification": {
+        "area_type": "scenic_dining_district",
+        "cuisine_types": [
+          "hangzhou_cuisine",
+          "vegetarian_cuisine",
+          "tea_meal"
+        ],
+        "tags": [
+          "景区周边",
+          "素食",
+          "茶文化",
+          "适合午餐"
+        ]
+      },
+      "service_profile": {
+        "supported_meal_types": [
+          "lunch",
+          "dinner"
+        ],
+        "service_windows": [
+          {
+            "meal_type": "lunch",
+            "start": "11:00",
+            "end": "14:00"
+          },
+          {
+            "meal_type": "dinner",
+            "start": "17:00",
+            "end": "21:30"
+          }
+        ],
+        "average_wait_minutes": {
+          "off_peak": 10,
+          "peak": 35
+        },
+        "reservation_recommended": false,
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "person_per_meal",
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 25,
+            "reference_price_cny": 45,
+            "maximum_price_cny": 70
+          },
+          "comfort": {
+            "minimum_price_cny": 80,
+            "reference_price_cny": 120,
+            "maximum_price_cny": 170
+          },
+          "premium": {
+            "minimum_price_cny": 200,
+            "reference_price_cny": 300,
+            "maximum_price_cny": 480
+          }
+        },
+        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+      },
+      "dietary_support": {
+        "vegetarian": "suitable",
+        "halal": "conditional",
+        "child_friendly": "suitable",
+        "allergy_information": "unknown"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional"
+      },
+      "transport": {
+        "matrix_node_id": "hz_da005",
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "walk"
+        ]
+      },
+      "weather_suitability": {
+        "sunny": "suitable",
+        "rain": "suitable",
+        "high_temperature": "conditional",
+        "low_temperature": "suitable"
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
+          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
+          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
+          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_da005_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E7%81%B5%E9%9A%90%E2%80%94%E5%A4%A9%E7%AB%BA%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_da005_02",
+          "source_type": "public_web_reference",
+          "source_name": "杭州灵隐寺官网",
+          "url": "https://www.lingyinsi.org/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "service_profile"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_da005_03",
+          "source_type": "public_price_reference",
+          "source_name": "杭州网（固定实验价格校准）",
+          "url": "https://ori.hangzhou.com.cn/ornews/content/2026-01/01/content_9154737.htm",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "hz_da006",
+      "name": "西溪天堂—蒋村餐饮区",
+      "aliases": [
+        "西溪天堂餐饮区",
+        "蒋村餐饮区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "西湖区"
+        ],
+        "area_ids": [
+          "hz_z03"
+        ],
+        "center_coordinate": {
+          "latitude": 30.2686,
+          "longitude": 120.0833,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz024",
+          "hz003",
+          "hz016"
+        ]
+      },
+      "classification": {
+        "area_type": "scenic_commercial_district",
+        "cuisine_types": [
+          "hangzhou_cuisine",
+          "jiangnan_cuisine",
+          "cafe"
+        ],
+        "tags": [
+          "湿地周边",
+          "度假餐饮",
+          "家庭聚餐",
+          "商场餐饮"
+        ]
+      },
+      "service_profile": {
+        "supported_meal_types": [
+          "lunch",
+          "dinner"
+        ],
+        "service_windows": [
+          {
+            "meal_type": "lunch",
+            "start": "11:00",
+            "end": "14:30"
+          },
+          {
+            "meal_type": "dinner",
+            "start": "17:00",
+            "end": "22:00"
+          }
+        ],
+        "average_wait_minutes": {
+          "off_peak": 10,
+          "peak": 35
+        },
+        "reservation_recommended": true,
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "person_per_meal",
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 30,
+            "reference_price_cny": 55,
+            "maximum_price_cny": 80
+          },
+          "comfort": {
+            "minimum_price_cny": 90,
+            "reference_price_cny": 140,
+            "maximum_price_cny": 200
+          },
+          "premium": {
+            "minimum_price_cny": 250,
+            "reference_price_cny": 380,
+            "maximum_price_cny": 600
+          }
+        },
+        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+      },
+      "dietary_support": {
+        "vegetarian": "conditional",
+        "halal": "conditional",
+        "child_friendly": "suitable",
+        "allergy_information": "unknown"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional"
+      },
+      "transport": {
+        "matrix_node_id": "hz_da006",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "walk"
+        ]
+      },
+      "weather_suitability": {
+        "sunny": "suitable",
+        "rain": "suitable",
+        "high_temperature": "suitable",
+        "low_temperature": "suitable"
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
+          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
+          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
+          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_da006_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E8%A5%BF%E6%BA%AA%E5%A4%A9%E5%A0%82%E2%80%94%E8%92%8B%E6%9D%91%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_da006_02",
+          "source_type": "public_web_reference",
+          "source_name": "西溪国家湿地公园官网",
+          "url": "https://www.xixiwetland.com.cn/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "service_profile"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_da006_03",
+          "source_type": "public_price_reference",
+          "source_name": "杭州网（固定实验价格校准）",
+          "url": "https://ori.hangzhou.com.cn/ornews/content/2026-01/01/content_9154737.htm",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "hz_da007",
+      "name": "钱江新城—万象城餐饮区",
+      "aliases": [
+        "钱江新城餐饮区",
+        "万象城餐饮区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "hangzhou",
+        "city_name": "杭州",
+        "districts": [
+          "上城区"
+        ],
+        "area_ids": [
+          "hz_z05"
+        ],
+        "center_coordinate": {
+          "latitude": 30.2442,
+          "longitude": 120.2125,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "hz008"
+        ]
+      },
+      "classification": {
+        "area_type": "business_commercial_district",
+        "cuisine_types": [
+          "hangzhou_cuisine",
+          "international_cuisine",
+          "fine_dining"
+        ],
+        "tags": [
+          "商务商圈",
+          "商场餐饮",
+          "高端餐饮",
+          "适合晚餐"
+        ]
+      },
+      "service_profile": {
+        "supported_meal_types": [
+          "lunch",
+          "dinner"
+        ],
+        "service_windows": [
+          {
+            "meal_type": "lunch",
+            "start": "11:00",
+            "end": "14:30"
+          },
+          {
+            "meal_type": "dinner",
+            "start": "17:00",
+            "end": "22:00"
+          }
+        ],
+        "average_wait_minutes": {
+          "off_peak": 15,
+          "peak": 45
+        },
+        "reservation_recommended": true,
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "person_per_meal",
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 35,
+            "reference_price_cny": 65,
+            "maximum_price_cny": 95
+          },
+          "comfort": {
+            "minimum_price_cny": 100,
+            "reference_price_cny": 160,
+            "maximum_price_cny": 230
+          },
+          "premium": {
+            "minimum_price_cny": 280,
+            "reference_price_cny": 420,
+            "maximum_price_cny": 680
+          }
+        },
+        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+      },
+      "dietary_support": {
+        "vegetarian": "conditional",
+        "halal": "conditional",
+        "child_friendly": "suitable",
+        "allergy_information": "unknown"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional"
+      },
+      "transport": {
+        "matrix_node_id": "hz_da007",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "weather_suitability": {
+        "sunny": "suitable",
+        "rain": "suitable",
+        "high_temperature": "suitable",
+        "low_temperature": "suitable"
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
+          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
+          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
+          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_hz_da007_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%9D%AD%E5%B7%9E%20%E9%92%B1%E6%B1%9F%E6%96%B0%E5%9F%8E%E2%80%94%E4%B8%87%E8%B1%A1%E5%9F%8E%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_hz_da007_02",
+          "source_type": "public_web_reference",
+          "source_name": "杭州网消费频道",
+          "url": "https://xiaofei.hangzhou.com.cn/xfdc/content/2023-05/04/content_9548642.htm",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "service_profile"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_hz_da007_03",
+          "source_type": "public_price_reference",
+          "source_name": "杭州网（固定实验价格校准）",
+          "url": "https://ori.hangzhou.com.cn/ornews/content/2026-01/01/content_9154737.htm",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
     }
   ]
 }

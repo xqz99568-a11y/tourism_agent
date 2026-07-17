@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
+from app.core.fixed_data import FixedDataError, get_fixed_tourism_data, is_formal_offline_mode
 from app.tools.base import BaseTool, ToolResult
 
 
@@ -95,6 +96,19 @@ class BudgetCalculatorTool(BaseTool):
                 "enum": ["economy", "medium", "luxury"],
                 "default": "medium",
             },
+            "poi_ids": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "固定实验 POI ID 列表",
+            },
+            "dining_area_id": {
+                "type": "string",
+                "description": "固定餐饮区域 ID",
+            },
+            "accommodation_area_id": {
+                "type": "string",
+                "description": "固定住宿区域 ID",
+            },
         },
         "required": ["destination", "duration"],
     }
@@ -108,10 +122,34 @@ class BudgetCalculatorTool(BaseTool):
         duration: int,
         num_travelers: int = 1,
         budget_level: str = "medium",
+        poi_ids: Optional[List[str]] = None,
+        dining_area_id: Optional[str] = None,
+        accommodation_area_id: Optional[str] = None,
         **kwargs,
     ) -> ToolResult:
         """计算预算"""
         try:
+            if is_formal_offline_mode():
+                result = get_fixed_tourism_data().calculate_budget(
+                    destination=destination,
+                    duration=duration,
+                    num_travelers=num_travelers,
+                    budget_level=budget_level,
+                    poi_ids=poi_ids,
+                    dining_area_id=dining_area_id,
+                    accommodation_area_id=accommodation_area_id,
+                )
+                return ToolResult(
+                    success=True,
+                    data=result,
+                    metadata={
+                        "offline": True,
+                        "data_source": "fixed_budget_rules",
+                        "real_time_api_allowed": False,
+                    },
+                    api_calls=[],
+                )
+
             level = BudgetLevel(budget_level)
             estimate = self._calculate_estimate(
                 destination, duration, num_travelers, level
@@ -144,6 +182,8 @@ class BudgetCalculatorTool(BaseTool):
             )
 
         except Exception as e:
+            if isinstance(e, FixedDataError):
+                return ToolResult(success=False, error=str(e), metadata={"offline": True})
             return ToolResult(success=False, error=str(e))
 
     def _calculate_estimate(

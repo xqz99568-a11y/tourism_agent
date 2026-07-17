@@ -186,6 +186,7 @@ class ExperimentRunner:
             "EXPERIMENT_REPEAT_INDEX": str(effective_repeat_index),
             "SYSTEM_VARIANT": effective_system_variant,
             "MODEL_CONFIG_NAME": effective_model_config_name,
+            "TOURISM_FORMAL_EXPERIMENT_OFFLINE": "true",
         }
         self.trace_dir.mkdir(parents=True, exist_ok=True)
 
@@ -357,6 +358,11 @@ class ExperimentRunner:
                 "temperature": temperature,
             },
             "cache": {"enabled": not cache_disabled, "disabled": cache_disabled},
+            "offline_data": {
+                "enabled": True,
+                "env": "TOURISM_FORMAL_EXPERIMENT_OFFLINE",
+                "policy": "formal experiments use frozen local datasets and forbid real-time tourism APIs",
+            },
             "results": {
                 key: Path(value).as_posix()
                 for key, value in (result_paths or {}).items()

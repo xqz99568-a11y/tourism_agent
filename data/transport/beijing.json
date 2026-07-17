@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "file_id": "ctp_transport_beijing_v1_0",
+    "schema_version": "ctp-transport-area-matrix-schema-v1.0",
+    "dataset_version": "CTP-TRANSPORT-v1.0",
+    "city_id": "beijing",
+    "city_name": "北京",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "data_mode": "frozen_offline",
+    "scenario_nature": "controlled_experiment_matrix",
+    "record_count": 21,
+    "allowed_modes": ["walking", "public_transit", "taxi"],
+    "source": {
+      "source_type": "manual_experiment_design",
+      "description": "Area-level fixed transport matrix for controlled experiments. Values are constants and must not be replaced by real-time map APIs during formal experiments.",
+      "verification_status": "pending"
+    }
+  },
+  "area_nodes": [
+    {"area_id": "bj_z01", "label": "central_core"},
+    {"area_id": "bj_z02", "label": "inner_northeast"},
+    {"area_id": "bj_z03", "label": "northwest"},
+    {"area_id": "bj_z04", "label": "east_business"},
+    {"area_id": "bj_z05", "label": "southeast_subcenter"},
+    {"area_id": "bj_z06", "label": "north_suburban"}
+  ],
+  "mode_rules": {
+    "walking": {"unit": "area_pair", "cost_cny": 0, "long_distance_allowed": false},
+    "public_transit": {"unit": "area_pair", "fare_model": "fixed_matrix"},
+    "taxi": {"unit": "area_pair", "fare_model": "fixed_matrix"}
+  },
+  "links": [
+    {"origin_area_id": "bj_z01", "destination_area_id": "bj_z01", "distance_km": 2.0, "duration_minutes": {"walking": 25, "public_transit": 8, "taxi": 10}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 18}},
+    {"origin_area_id": "bj_z01", "destination_area_id": "bj_z02", "distance_km": 6.0, "duration_minutes": {"walking": 80, "public_transit": 22, "taxi": 25}, "cost_cny": {"walking": 0, "public_transit": 4, "taxi": 35}},
+    {"origin_area_id": "bj_z01", "destination_area_id": "bj_z03", "distance_km": 14.0, "duration_minutes": {"walking": 180, "public_transit": 38, "taxi": 45}, "cost_cny": {"walking": 0, "public_transit": 6, "taxi": 70}},
+    {"origin_area_id": "bj_z01", "destination_area_id": "bj_z04", "distance_km": 10.0, "duration_minutes": {"walking": 130, "public_transit": 30, "taxi": 38}, "cost_cny": {"walking": 0, "public_transit": 5, "taxi": 55}},
+    {"origin_area_id": "bj_z01", "destination_area_id": "bj_z05", "distance_km": 28.0, "duration_minutes": {"walking": 360, "public_transit": 55, "taxi": 70}, "cost_cny": {"walking": 0, "public_transit": 7, "taxi": 130}},
+    {"origin_area_id": "bj_z01", "destination_area_id": "bj_z06", "distance_km": 45.0, "duration_minutes": {"walking": 560, "public_transit": 80, "taxi": 95}, "cost_cny": {"walking": 0, "public_transit": 9, "taxi": 210}},
+    {"origin_area_id": "bj_z02", "destination_area_id": "bj_z02", "distance_km": 2.5, "duration_minutes": {"walking": 30, "public_transit": 8, "taxi": 10}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 18}},
+    {"origin_area_id": "bj_z02", "destination_area_id": "bj_z03", "distance_km": 13.0, "duration_minutes": {"walking": 170, "public_transit": 36, "taxi": 42}, "cost_cny": {"walking": 0, "public_transit": 6, "taxi": 65}},
+    {"origin_area_id": "bj_z02", "destination_area_id": "bj_z04", "distance_km": 6.0, "duration_minutes": {"walking": 80, "public_transit": 20, "taxi": 24}, "cost_cny": {"walking": 0, "public_transit": 4, "taxi": 35}},
+    {"origin_area_id": "bj_z02", "destination_area_id": "bj_z05", "distance_km": 24.0, "duration_minutes": {"walking": 310, "public_transit": 50, "taxi": 62}, "cost_cny": {"walking": 0, "public_transit": 7, "taxi": 115}},
+    {"origin_area_id": "bj_z02", "destination_area_id": "bj_z06", "distance_km": 42.0, "duration_minutes": {"walking": 520, "public_transit": 78, "taxi": 90}, "cost_cny": {"walking": 0, "public_transit": 9, "taxi": 195}},
+    {"origin_area_id": "bj_z03", "destination_area_id": "bj_z03", "distance_km": 3.0, "duration_minutes": {"walking": 35, "public_transit": 8, "taxi": 12}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 20}},
+    {"origin_area_id": "bj_z03", "destination_area_id": "bj_z04", "distance_km": 16.0, "duration_minutes": {"walking": 210, "public_transit": 45, "taxi": 52}, "cost_cny": {"walking": 0, "public_transit": 6, "taxi": 80}},
+    {"origin_area_id": "bj_z03", "destination_area_id": "bj_z05", "distance_km": 36.0, "duration_minutes": {"walking": 450, "public_transit": 75, "taxi": 88}, "cost_cny": {"walking": 0, "public_transit": 8, "taxi": 170}},
+    {"origin_area_id": "bj_z03", "destination_area_id": "bj_z06", "distance_km": 24.0, "duration_minutes": {"walking": 300, "public_transit": 55, "taxi": 65}, "cost_cny": {"walking": 0, "public_transit": 7, "taxi": 115}},
+    {"origin_area_id": "bj_z04", "destination_area_id": "bj_z04", "distance_km": 3.0, "duration_minutes": {"walking": 35, "public_transit": 8, "taxi": 12}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 20}},
+    {"origin_area_id": "bj_z04", "destination_area_id": "bj_z05", "distance_km": 26.0, "duration_minutes": {"walking": 330, "public_transit": 58, "taxi": 68}, "cost_cny": {"walking": 0, "public_transit": 7, "taxi": 125}},
+    {"origin_area_id": "bj_z04", "destination_area_id": "bj_z06", "distance_km": 38.0, "duration_minutes": {"walking": 480, "public_transit": 76, "taxi": 88}, "cost_cny": {"walking": 0, "public_transit": 9, "taxi": 180}},
+    {"origin_area_id": "bj_z05", "destination_area_id": "bj_z05", "distance_km": 4.0, "duration_minutes": {"walking": 50, "public_transit": 10, "taxi": 15}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 24}},
+    {"origin_area_id": "bj_z05", "destination_area_id": "bj_z06", "distance_km": 58.0, "duration_minutes": {"walking": 720, "public_transit": 105, "taxi": 125}, "cost_cny": {"walking": 0, "public_transit": 10, "taxi": 260}},
+    {"origin_area_id": "bj_z06", "destination_area_id": "bj_z06", "distance_km": 5.0, "duration_minutes": {"walking": 60, "public_transit": 12, "taxi": 18}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 28}}
+  ]
+}

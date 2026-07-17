@@ -1,0 +1,1102 @@
+{
+  "metadata": {
+    "file_id": "ctp_accommodation_area_shenzhen_v1_0",
+    "schema_version": "ctp-accommodation-area-schema-v1.0",
+    "dataset_version": "CTP-ACCOMMODATION-v1.0",
+    "city_id": "shenzhen",
+    "city_name": "深圳",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "data_mode": "frozen_offline",
+    "record_count": 7,
+    "price_basis": {
+      "unit": "room_per_night",
+      "standard_room_occupancy": 2,
+      "statistic": "fixed_reference_price",
+      "live_price_allowed": false
+    }
+  },
+  "accommodation_areas": [
+    {
+      "id": "sz_ha001",
+      "name": "福田CBD—会展中心住宿区",
+      "aliases": [
+        "福田中心区住宿区",
+        "会展中心住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "districts": [
+          "福田区"
+        ],
+        "area_ids": [
+          "sz_z01"
+        ],
+        "center_coordinate": {
+          "latitude": 22.535,
+          "longitude": 114.055,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "sz002",
+          "sz022"
+        ]
+      },
+      "classification": {
+        "area_type": "business_cbd",
+        "supported_lodging_types": [
+          "business_hotel",
+          "midscale_hotel",
+          "upscale_hotel",
+          "luxury_hotel"
+        ],
+        "tags": [
+          "城市中心",
+          "商务出行",
+          "地铁换乘",
+          "中高端集中"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "medium",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 240,
+            "reference_price_cny": 380,
+            "maximum_price_cny": 520
+          },
+          "comfort": {
+            "minimum_price_cny": 600,
+            "reference_price_cny": 850,
+            "maximum_price_cny": 1100
+          },
+          "premium": {
+            "minimum_price_cny": 1300,
+            "reference_price_cny": 1900,
+            "maximum_price_cny": 3000
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "sz_ha001",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "rail"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合商务、会展和城市中心行程",
+          "公共交通、餐饮和购物配套完善"
+        ],
+        "disadvantages": [
+          "工作日商务需求较高",
+          "住宿成本高于外围区域"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz_ha001_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%B7%B1%E5%9C%B3%20%E7%A6%8F%E7%94%B0CBD%E2%80%94%E4%BC%9A%E5%B1%95%E4%B8%AD%E5%BF%83%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz_ha001_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/Shenzhen30",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_sz_ha001_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/shenzhen30/h1375",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "sz_ha002",
+      "name": "罗湖口岸—深圳站住宿区",
+      "aliases": [
+        "罗湖口岸住宿区",
+        "深圳站住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "districts": [
+          "罗湖区"
+        ],
+        "area_ids": [
+          "sz_z02"
+        ],
+        "center_coordinate": {
+          "latitude": 22.531,
+          "longitude": 114.116,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "sz006",
+          "sz028"
+        ]
+      },
+      "classification": {
+        "area_type": "railway_border_hub_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "business_hotel",
+          "midscale_hotel"
+        ],
+        "tags": [
+          "火车站周边",
+          "口岸换乘",
+          "经济型集中",
+          "老城商业"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "high",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 150,
+            "reference_price_cny": 260,
+            "maximum_price_cny": 350
+          },
+          "comfort": {
+            "minimum_price_cny": 380,
+            "reference_price_cny": 520,
+            "maximum_price_cny": 680
+          },
+          "premium": {
+            "minimum_price_cny": 800,
+            "reference_price_cny": 1100,
+            "maximum_price_cny": 1600
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "sz_ha002",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "rail",
+          "border_crossing"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "conditional",
+        "elderly": "suitable",
+        "children": "conditional",
+        "wheelchair": "conditional",
+        "budget_traveler": "suitable"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合深圳站抵离及罗湖口岸行程",
+          "经济型住宿和老城餐饮较集中"
+        ],
+        "disadvantages": [
+          "交通枢纽附近噪声和人流较高",
+          "距西部滨海景点较远"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz_ha002_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%B7%B1%E5%9C%B3%20%E7%BD%97%E6%B9%96%E5%8F%A3%E5%B2%B8%E2%80%94%E6%B7%B1%E5%9C%B3%E7%AB%99%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz_ha002_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/shenzhen30/location215",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_sz_ha002_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/shenzhen30/h1375",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "sz_ha003",
+      "name": "华强北—燕南住宿区",
+      "aliases": [
+        "华强北住宿区",
+        "燕南住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "districts": [
+          "福田区"
+        ],
+        "area_ids": [
+          "sz_z01"
+        ],
+        "center_coordinate": {
+          "latitude": 22.5458,
+          "longitude": 114.0859,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "sz005"
+        ]
+      },
+      "classification": {
+        "area_type": "commercial_economy_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "business_hotel",
+          "midscale_hotel",
+          "serviced_apartment"
+        ],
+        "tags": [
+          "核心商圈",
+          "经济型选择",
+          "餐饮丰富",
+          "交通便利"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "medium",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 170,
+            "reference_price_cny": 280,
+            "maximum_price_cny": 380
+          },
+          "comfort": {
+            "minimum_price_cny": 420,
+            "reference_price_cny": 580,
+            "maximum_price_cny": 760
+          },
+          "premium": {
+            "minimum_price_cny": 850,
+            "reference_price_cny": 1200,
+            "maximum_price_cny": 1800
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "sz_ha003",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "suitable"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "住宿档次覆盖较完整且出行方便",
+          "适合购物、商务和预算控制"
+        ],
+        "disadvantages": [
+          "商业街周边白天人流密集",
+          "部分临街住宿可能较嘈杂"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz_ha003_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%B7%B1%E5%9C%B3%20%E5%8D%8E%E5%BC%BA%E5%8C%97%E2%80%94%E7%87%95%E5%8D%97%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz_ha003_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/Shenzhen30",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_sz_ha003_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/shenzhen30/h1375",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "sz_ha004",
+      "name": "海上世界—蛇口住宿区",
+      "aliases": [
+        "海上世界住宿区",
+        "蛇口住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "districts": [
+          "南山区"
+        ],
+        "area_ids": [
+          "sz_z04"
+        ],
+        "center_coordinate": {
+          "latitude": 22.483,
+          "longitude": 113.913,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "sz010",
+          "sz027"
+        ]
+      },
+      "classification": {
+        "area_type": "waterfront_international_area",
+        "supported_lodging_types": [
+          "serviced_apartment",
+          "boutique_hotel",
+          "upscale_hotel",
+          "luxury_hotel"
+        ],
+        "tags": [
+          "滨海住宿",
+          "国际化",
+          "餐饮丰富",
+          "相对安静"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "low",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "medium",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 230,
+            "reference_price_cny": 380,
+            "maximum_price_cny": 500
+          },
+          "comfort": {
+            "minimum_price_cny": 550,
+            "reference_price_cny": 780,
+            "maximum_price_cny": 1000
+          },
+          "premium": {
+            "minimum_price_cny": 1200,
+            "reference_price_cny": 1700,
+            "maximum_price_cny": 2800
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "sz_ha004",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "ferry"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "滨海环境和国际餐饮体验较好",
+          "适合蛇口、海上世界及邮轮相关行程"
+        ],
+        "disadvantages": [
+          "距罗湖和东部景区较远",
+          "高端与服务式公寓占比较高"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz_ha004_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%B7%B1%E5%9C%B3%20%E6%B5%B7%E4%B8%8A%E4%B8%96%E7%95%8C%E2%80%94%E8%9B%87%E5%8F%A3%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz_ha004_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/Shenzhen30",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_sz_ha004_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/shenzhen30/h1375",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "sz_ha005",
+      "name": "华侨城—世界之窗住宿区",
+      "aliases": [
+        "华侨城住宿区",
+        "世界之窗住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "districts": [
+          "南山区"
+        ],
+        "area_ids": [
+          "sz_z03"
+        ],
+        "center_coordinate": {
+          "latitude": 22.537,
+          "longitude": 113.974,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "sz007",
+          "sz012",
+          "sz014"
+        ]
+      },
+      "classification": {
+        "area_type": "theme_park_family_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "family_hotel",
+          "midscale_hotel",
+          "upscale_hotel"
+        ],
+        "tags": [
+          "主题乐园周边",
+          "亲子友好",
+          "地铁便利",
+          "适合多日游"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "medium",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 230,
+            "reference_price_cny": 360,
+            "maximum_price_cny": 480
+          },
+          "comfort": {
+            "minimum_price_cny": 520,
+            "reference_price_cny": 720,
+            "maximum_price_cny": 950
+          },
+          "premium": {
+            "minimum_price_cny": 1100,
+            "reference_price_cny": 1600,
+            "maximum_price_cny": 2500
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "sz_ha005",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "walk"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "集中覆盖世界之窗、欢乐谷和锦绣中华",
+          "亲子型与中档住宿选择较多"
+        ],
+        "disadvantages": [
+          "节假日主题乐园客流集中",
+          "距罗湖老城和盐田较远"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz_ha005_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%B7%B1%E5%9C%B3%20%E5%8D%8E%E4%BE%A8%E5%9F%8E%E2%80%94%E4%B8%96%E7%95%8C%E4%B9%8B%E7%AA%97%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz_ha005_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/shenzhen30/location213",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_sz_ha005_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/shenzhen30/h1375",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "sz_ha006",
+      "name": "后海—深圳湾住宿区",
+      "aliases": [
+        "后海住宿区",
+        "深圳湾住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "districts": [
+          "南山区"
+        ],
+        "area_ids": [
+          "sz_z04"
+        ],
+        "center_coordinate": {
+          "latitude": 22.518,
+          "longitude": 113.947,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "sz001",
+          "sz026"
+        ]
+      },
+      "classification": {
+        "area_type": "quiet_upscale_business_area",
+        "supported_lodging_types": [
+          "serviced_apartment",
+          "business_hotel",
+          "upscale_hotel",
+          "luxury_hotel"
+        ],
+        "tags": [
+          "总部商务区",
+          "高端住宿",
+          "滨海休闲",
+          "环境较好"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "low",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 280,
+            "reference_price_cny": 450,
+            "maximum_price_cny": 600
+          },
+          "comfort": {
+            "minimum_price_cny": 650,
+            "reference_price_cny": 900,
+            "maximum_price_cny": 1200
+          },
+          "premium": {
+            "minimum_price_cny": 1400,
+            "reference_price_cny": 2100,
+            "maximum_price_cny": 3500
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "sz_ha006",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "walk"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "suitable",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合商务、高端住宿和深圳湾滨海行程",
+          "环境与大型商业配套较好"
+        ],
+        "disadvantages": [
+          "整体价格较高",
+          "经济型住宿选择相对有限"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz_ha006_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%B7%B1%E5%9C%B3%20%E5%90%8E%E6%B5%B7%E2%80%94%E6%B7%B1%E5%9C%B3%E6%B9%BE%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz_ha006_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/shenzhen30/location213g22",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_sz_ha006_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/shenzhen30/h1375",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "sz_ha007",
+      "name": "大梅沙—盐田滨海住宿区",
+      "aliases": [
+        "大梅沙住宿区",
+        "盐田滨海住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "districts": [
+          "盐田区"
+        ],
+        "area_ids": [
+          "sz_z05"
+        ],
+        "center_coordinate": {
+          "latitude": 22.595,
+          "longitude": 114.306,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "sz003",
+          "sz013",
+          "sz015"
+        ]
+      },
+      "classification": {
+        "area_type": "coastal_resort_area",
+        "supported_lodging_types": [
+          "guesthouse",
+          "family_hotel",
+          "resort_hotel",
+          "upscale_hotel"
+        ],
+        "tags": [
+          "海滨度假",
+          "亲子住宿",
+          "景区周边",
+          "周末需求高"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "medium",
+        "nightlife_level": "low",
+        "dining_convenience": "medium",
+        "shopping_convenience": "medium",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 190,
+            "reference_price_cny": 320,
+            "maximum_price_cny": 450
+          },
+          "comfort": {
+            "minimum_price_cny": 480,
+            "reference_price_cny": 680,
+            "maximum_price_cny": 900
+          },
+          "premium": {
+            "minimum_price_cny": 1000,
+            "reference_price_cny": 1500,
+            "maximum_price_cny": 2500
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "sz_ha007",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "car"
+        ],
+        "transport_convenience": "medium"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合海滨、东部华侨城和亲子度假",
+          "度假型住宿选择较集中"
+        ],
+        "disadvantages": [
+          "周末和节假日需求波动明显",
+          "前往福田、南山中心区耗时较长"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz_ha007_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E6%B7%B1%E5%9C%B3%20%E5%A4%A7%E6%A2%85%E6%B2%99%E2%80%94%E7%9B%90%E7%94%B0%E6%BB%A8%E6%B5%B7%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz_ha007_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/shenzhen30/location213",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_sz_ha007_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/shenzhen30/h1375",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    }
+  ]
+}

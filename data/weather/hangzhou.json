@@ -1,0 +1,327 @@
+{
+  "metadata": {
+    "file_id": "ctp_weather_hangzhou_v1_0",
+    "schema_version": "ctp-weather-scenario-schema-v1.0",
+    "dataset_version": "CTP-WEATHER-v1.0",
+    "city_id": "hangzhou",
+    "city_name": "杭州",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "data_mode": "frozen_offline",
+    "scenario_nature": "controlled_synthetic",
+    "real_time_api_allowed": false,
+    "maximum_trip_days": 5,
+    "record_count": 5,
+    "required_scenario_types": [
+      "sunny",
+      "rain",
+      "high_temperature",
+      "low_temperature",
+      "continuous_change"
+    ],
+    "thresholds": {
+      "high_temperature_max_c_gte": 35,
+      "low_temperature_max_c_lte": 8
+    },
+    "source": {
+      "source_type": "manual_experiment_design",
+      "description": "根据实验协议人工设计的固定天气场景，不表示任何具体日期的真实天气。网页气候资料仅用于校准城市相对温度阈值和降雨强度。",
+      "climate_reference_sources": [
+        {
+          "source_name": "Weather Atlas 杭州气候资料",
+          "url": "https://www.weather-atlas.com/zh/china/hangzhou-climate",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "temperature_background",
+            "precipitation_background",
+            "humidity_background"
+          ]
+        },
+        {
+          "source_name": "中国气象局高温预警参考",
+          "url": "https://weather.cma.cn/web/alarm/61000041600000_20250616095534.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "high_temperature_threshold_reference"
+          ]
+        }
+      ]
+    }
+  },
+  "weather_scenarios": [
+    {
+      "id": "hz_ws01",
+      "scenario_type": "sunny",
+      "name": "连续晴天",
+      "risk_level": "low",
+      "days": [
+        {
+          "day_index": 1,
+          "state": "sunny",
+          "temperature_min_c": 19,
+          "temperature_max_c": 28,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 2,
+          "state": "sunny",
+          "temperature_min_c": 20,
+          "temperature_max_c": 29,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 3,
+          "state": "sunny",
+          "temperature_min_c": 21,
+          "temperature_max_c": 30,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 4,
+          "state": "sunny",
+          "temperature_min_c": 20,
+          "temperature_max_c": 29,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 5,
+          "state": "sunny",
+          "temperature_min_c": 19,
+          "temperature_max_c": 28,
+          "precipitation_mm": 0
+        }
+      ],
+      "planning_constraints": {
+        "dynamic_adjustment_required": false,
+        "indoor_preference": false,
+        "minimum_indoor_activity_ratio": 0,
+        "avoid_time_windows": [],
+        "maximum_continuous_outdoor_hours": 3.5,
+        "mandatory_actions": []
+      }
+    },
+    {
+      "id": "hz_ws02",
+      "scenario_type": "rain",
+      "name": "连续降雨",
+      "risk_level": "medium",
+      "days": [
+        {
+          "day_index": 1,
+          "state": "rain",
+          "temperature_min_c": 18,
+          "temperature_max_c": 24,
+          "precipitation_mm": 18
+        },
+        {
+          "day_index": 2,
+          "state": "rain",
+          "temperature_min_c": 18,
+          "temperature_max_c": 23,
+          "precipitation_mm": 32
+        },
+        {
+          "day_index": 3,
+          "state": "rain",
+          "temperature_min_c": 19,
+          "temperature_max_c": 25,
+          "precipitation_mm": 12
+        },
+        {
+          "day_index": 4,
+          "state": "rain",
+          "temperature_min_c": 17,
+          "temperature_max_c": 22,
+          "precipitation_mm": 25
+        },
+        {
+          "day_index": 5,
+          "state": "rain",
+          "temperature_min_c": 18,
+          "temperature_max_c": 24,
+          "precipitation_mm": 15
+        }
+      ],
+      "planning_constraints": {
+        "dynamic_adjustment_required": true,
+        "indoor_preference": true,
+        "minimum_indoor_activity_ratio": 0.65,
+        "avoid_time_windows": [],
+        "maximum_continuous_outdoor_hours": 1,
+        "mandatory_actions": [
+          "提供博物馆或室内文化场所替代方案",
+          "降低西湖长距离步行和露天游船优先级"
+        ]
+      }
+    },
+    {
+      "id": "hz_ws03",
+      "scenario_type": "high_temperature",
+      "name": "连续高温",
+      "risk_level": "high",
+      "days": [
+        {
+          "day_index": 1,
+          "state": "high_temperature",
+          "temperature_min_c": 27,
+          "temperature_max_c": 35,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 2,
+          "state": "high_temperature",
+          "temperature_min_c": 28,
+          "temperature_max_c": 37,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 3,
+          "state": "high_temperature",
+          "temperature_min_c": 29,
+          "temperature_max_c": 39,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 4,
+          "state": "high_temperature",
+          "temperature_min_c": 28,
+          "temperature_max_c": 38,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 5,
+          "state": "high_temperature",
+          "temperature_min_c": 27,
+          "temperature_max_c": 36,
+          "precipitation_mm": 0
+        }
+      ],
+      "planning_constraints": {
+        "dynamic_adjustment_required": true,
+        "indoor_preference": true,
+        "minimum_indoor_activity_ratio": 0.6,
+        "avoid_time_windows": [
+          "10:30-16:30"
+        ],
+        "maximum_continuous_outdoor_hours": 1,
+        "mandatory_actions": [
+          "减少午间西湖环湖步行",
+          "安排空调场所休息和补水"
+        ]
+      }
+    },
+    {
+      "id": "hz_ws04",
+      "scenario_type": "low_temperature",
+      "name": "持续低温",
+      "risk_level": "medium",
+      "days": [
+        {
+          "day_index": 1,
+          "state": "low_temperature",
+          "temperature_min_c": 3,
+          "temperature_max_c": 8,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 2,
+          "state": "low_temperature",
+          "temperature_min_c": 1,
+          "temperature_max_c": 6,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 3,
+          "state": "low_temperature",
+          "temperature_min_c": 0,
+          "temperature_max_c": 5,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 4,
+          "state": "low_temperature",
+          "temperature_min_c": 2,
+          "temperature_max_c": 7,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 5,
+          "state": "low_temperature",
+          "temperature_min_c": 3,
+          "temperature_max_c": 8,
+          "precipitation_mm": 0
+        }
+      ],
+      "planning_constraints": {
+        "dynamic_adjustment_required": true,
+        "indoor_preference": true,
+        "minimum_indoor_activity_ratio": 0.5,
+        "avoid_time_windows": [
+          "18:00-24:00"
+        ],
+        "maximum_continuous_outdoor_hours": 1.5,
+        "mandatory_actions": [
+          "减少夜间滨水活动",
+          "优先选择可避风的室内景点"
+        ]
+      }
+    },
+    {
+      "id": "hz_ws05",
+      "scenario_type": "continuous_change",
+      "name": "连续天气变化",
+      "risk_level": "high",
+      "days": [
+        {
+          "day_index": 1,
+          "state": "sunny",
+          "temperature_min_c": 20,
+          "temperature_max_c": 29,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 2,
+          "state": "rain",
+          "temperature_min_c": 17,
+          "temperature_max_c": 23,
+          "precipitation_mm": 26
+        },
+        {
+          "day_index": 3,
+          "state": "high_temperature",
+          "temperature_min_c": 28,
+          "temperature_max_c": 37,
+          "precipitation_mm": 0
+        },
+        {
+          "day_index": 4,
+          "state": "rain",
+          "temperature_min_c": 16,
+          "temperature_max_c": 22,
+          "precipitation_mm": 18
+        },
+        {
+          "day_index": 5,
+          "state": "low_temperature",
+          "temperature_min_c": 3,
+          "temperature_max_c": 8,
+          "precipitation_mm": 0
+        }
+      ],
+      "planning_constraints": {
+        "dynamic_adjustment_required": true,
+        "indoor_preference": false,
+        "minimum_indoor_activity_ratio": null,
+        "avoid_time_windows": [],
+        "maximum_continuous_outdoor_hours": null,
+        "mandatory_actions": [
+          "必须按天读取天气条件",
+          "不得将同一规划策略直接复制到全部日期",
+          "至少提供一个天气变化后的行程调整"
+        ]
+      }
+    }
+  ]
+}

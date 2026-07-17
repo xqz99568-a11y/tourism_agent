@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional
 import httpx
 
 from app.core.config import settings
+from app.core.fixed_data import FixedDataError, get_fixed_tourism_data, is_formal_offline_mode
 from app.core.logger import get_logger
 from app.tools.base import BaseTool, ToolResult
 
@@ -42,8 +43,26 @@ class RoutePlanningTool(BaseTool):
                 "type": "string",
                 "description": "途经点，多个用|分隔",
             },
+            "city": {
+                "type": "string",
+                "description": "固定实验城市",
+            },
+            "mode": {
+                "type": "string",
+                "description": "固定交通方式：walking、public_transit、taxi",
+                "enum": ["walking", "public_transit", "taxi"],
+                "default": "public_transit",
+            },
+            "origin_node_id": {
+                "type": "string",
+                "description": "固定交通矩阵起点节点 ID",
+            },
+            "destination_node_id": {
+                "type": "string",
+                "description": "固定交通矩阵终点节点 ID",
+            },
         },
-        "required": ["origin", "destination"],
+        "required": [],
     }
 
     def __init__(self):
@@ -52,10 +71,14 @@ class RoutePlanningTool(BaseTool):
 
     async def execute(
         self,
-        origin: str,
-        destination: str,
+        origin: Optional[str] = None,
+        destination: Optional[str] = None,
         strategy: str = "1",
         waypoints: Optional[str] = None,
+        city: Optional[str] = None,
+        mode: str = "public_transit",
+        origin_node_id: Optional[str] = None,
+        destination_node_id: Optional[str] = None,
         **kwargs,
     ) -> ToolResult:
         """执行路线规划"""
@@ -63,6 +86,32 @@ class RoutePlanningTool(BaseTool):
             return ToolResult(success=False, error="Invalid parameters")
 
         try:
+            if is_formal_offline_mode():
+                fixed_origin = origin_node_id or origin
+                fixed_destination = destination_node_id or destination
+                if not fixed_origin or not fixed_destination:
+                    return ToolResult(success=False, error="origin and destination are required")
+                route = get_fixed_tourism_data().route(
+                    origin=fixed_origin,
+                    destination=fixed_destination,
+                    city=city,
+                    mode=kwargs.get("transport_mode") or mode,
+                )
+                return ToolResult(
+                    success=True,
+                    data=route,
+                    metadata={
+                        "offline": True,
+                        "data_source": "fixed_transport_area_matrix",
+                        "real_time_api_allowed": False,
+                        "source_file_id": route.get("source_file_id"),
+                        "dataset_version": route.get("dataset_version"),
+                    },
+                    api_calls=[],
+                )
+
+            if not origin or not destination:
+                return ToolResult(success=False, error="origin and destination are required")
             params = {
                 "key": self.api_key,
                 "origin": origin,
@@ -121,6 +170,8 @@ class RoutePlanningTool(BaseTool):
                 return ToolResult(success=True, data=result)
 
         except Exception as e:
+            if isinstance(e, FixedDataError):
+                return ToolResult(success=False, error=str(e), metadata={"offline": True})
             logger.exception(f"Route planning failed: {e}")
             return ToolResult(success=False, error=str(e))
 
@@ -159,6 +210,24 @@ class WalkingRouteTool(BaseTool):
     ) -> ToolResult:
         """执行步行路线规划"""
         try:
+            if is_formal_offline_mode():
+                route = get_fixed_tourism_data().route(
+                    origin=origin,
+                    destination=destination,
+                    city=kwargs.get("city"),
+                    mode="walking",
+                )
+                return ToolResult(
+                    success=True,
+                    data=route,
+                    metadata={
+                        "offline": True,
+                        "data_source": "fixed_transport_area_matrix",
+                        "real_time_api_allowed": False,
+                    },
+                    api_calls=[],
+                )
+
             params = {
                 "key": self.api_key,
                 "origin": origin,
@@ -195,6 +264,8 @@ class WalkingRouteTool(BaseTool):
                 return ToolResult(success=True, data=result)
 
         except Exception as e:
+            if isinstance(e, FixedDataError):
+                return ToolResult(success=False, error=str(e), metadata={"offline": True})
             logger.exception(f"Walking route planning failed: {e}")
             return ToolResult(success=False, error=str(e))
 

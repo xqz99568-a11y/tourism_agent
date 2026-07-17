@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from app.agents.base import AgentCapability, AgentConfig, AgentResponse, AgentStatus, BaseAgent
 from app.core.context import ExecutionContext, SessionContext
+from app.core.fixed_data import FixedDataError, get_fixed_tourism_data, is_formal_offline_mode
 from app.core.llm.client import LLMMessage
 from app.core.logger import get_logger
 
@@ -289,7 +290,46 @@ class BudgetAgent(BaseAgent):
                 },
             }
 
-        if has_daily_plans:
+        fixed_budget = None
+        if is_formal_offline_mode():
+            try:
+                fixed_budget = get_fixed_tourism_data().calculate_budget(
+                    destination=destination,
+                    duration=duration,
+                    num_travelers=num_travelers,
+                    budget_level=budget_level,
+                )
+            except FixedDataError as exc:
+                logger.warning(f"Fixed budget data unavailable in formal offline mode: {exc}")
+                return AgentResponse(
+                    agent_name=self.name,
+                    status=AgentStatus.FAILED,
+                    content=f"固定预算数据不可用：{exc}",
+                    data={
+                        "offline": True,
+                        "calculation_source": "fixed_offline_dataset",
+                        "fixed_budget_required": True,
+                        "error_type": "fixed_budget_unavailable",
+                        "error": str(exc),
+                    },
+                    error=str(exc),
+                    metadata={
+                        "offline": True,
+                        "fixed_budget_required": True,
+                        "legacy_estimator_used": False,
+                    },
+                )
+
+        if fixed_budget:
+            fixed_breakdown = fixed_budget.get("breakdown") or {}
+            transport_cost = float((fixed_breakdown.get("transport") or {}).get("recommended") or 0)
+            hotel_cost = float((fixed_breakdown.get("accommodation") or {}).get("recommended") or 0)
+            food_cost = float((fixed_breakdown.get("food") or {}).get("recommended") or 0)
+            other_cost = float((fixed_breakdown.get("other") or {}).get("recommended") or 0)
+            ticket_breakdown = fixed_budget.get("ticket_breakdown") or ticket_breakdown
+            computed_ticket_cost = float(ticket_breakdown.get("ticket_cost") or 0)
+            estimated_by = "fixed_offline_dataset"
+        elif has_daily_plans:
             transport_cost = self._estimate_transport_cost_from_daily_plans(daily_plans, duration, num_travelers, budget_level, dest_factor, user_prefs)
             hotel_cost = self._estimate_hotel_cost_from_daily_plans(daily_plans, duration, num_travelers, budget_level, dest_factor, user_prefs)
             food_cost = self._estimate_food_cost_from_daily_plans(destination, daily_plans, duration, num_travelers, budget_level, dest_factor, user_prefs)
@@ -370,6 +410,9 @@ class BudgetAgent(BaseAgent):
         )
 
         inputs_for_result = self._normalize_budget_inputs(context, session)
+        if fixed_budget:
+            inputs_for_result["offline"] = True
+            inputs_for_result["fixed_dataset_versions"] = fixed_budget.get("dataset_versions")
         messages = self.build_messages(session, system_prompt)
 
         try:
@@ -1328,11 +1371,13 @@ class BudgetAgent(BaseAgent):
         if budget_limit is not None:
             budget_gap = round(total_with_buffer - budget_limit, 2) if total_with_buffer > budget_limit else 0.0
         applied_rules = []
+        if inputs.get("offline"):
+            applied_rules.append("fixed_offline_dataset")
         if pois:
             applied_rules.append("poi_list_price_extraction")
         if daily_plans:
             applied_rules.append("daily_plans_based_estimation")
-        if not pois and not daily_plans:
+        if not pois and not daily_plans and not inputs.get("offline"):
             applied_rules.append("budget_level_fallback")
         ticket_summary = ticket_breakdown.get("summary") or {}
         if ticket_summary.get("pending_confirmation_count"):
@@ -1385,6 +1430,8 @@ class BudgetAgent(BaseAgent):
             },
             "optimization_suggestions": optimization_suggestions,
         }
+        if inputs.get("fixed_dataset_versions"):
+            result["fixed_dataset_versions"] = inputs.get("fixed_dataset_versions")
         if pois:
             result["poi_count"] = len(pois)
             result["avg_ticket_per_poi"] = round(ticket_cost / max(len(pois), 1) / max(num_travelers, 1), 2)

@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 import httpx
 
 from app.core.config import settings
+from app.core.fixed_data import FixedDataError, get_fixed_tourism_data, is_formal_offline_mode
 from app.core.logger import get_logger
 from app.tools.base import BaseTool, ToolResult
 
@@ -38,6 +39,17 @@ class WeatherTool(BaseTool):
                 "enum": ["base", "all"],
                 "default": "all",
             },
+            "scenario_type": {
+                "type": "string",
+                "description": "固定实验天气场景",
+                "enum": ["sunny", "rain", "high_temperature", "low_temperature", "continuous_change"],
+                "default": "sunny",
+            },
+            "days": {
+                "type": "integer",
+                "description": "返回的 day_index 天数",
+                "default": 5,
+            },
         },
         "required": ["city"],
     }
@@ -51,6 +63,8 @@ class WeatherTool(BaseTool):
         self,
         city: str,
         extensions: str = "all",
+        scenario_type: str = "sunny",
+        days: int = 5,
         **kwargs,
     ) -> ToolResult:
         """查询天气预报"""
@@ -58,6 +72,25 @@ class WeatherTool(BaseTool):
             return ToolResult(success=False, error="Invalid parameters")
 
         try:
+            if is_formal_offline_mode():
+                result = get_fixed_tourism_data().weather_query(
+                    city=city,
+                    scenario_type=kwargs.get("weather_scenario") or scenario_type,
+                    days=kwargs.get("duration") or days,
+                )
+                return ToolResult(
+                    success=True,
+                    data=result,
+                    metadata={
+                        "offline": True,
+                        "data_source": "fixed_weather_scenario_dataset",
+                        "real_time_api_allowed": False,
+                        "source_file_id": result.get("source_file_id"),
+                        "dataset_version": result.get("dataset_version"),
+                    },
+                    api_calls=[],
+                )
+
             params = {
                 "key": self.api_key,
                 "city": city,
@@ -136,6 +169,8 @@ class WeatherTool(BaseTool):
                 )
 
         except Exception as e:
+            if isinstance(e, FixedDataError):
+                return ToolResult(success=False, error=str(e), metadata={"offline": True})
             logger.exception(f"Weather query failed: {e}")
             self.record_api_call(
                 endpoint="/v3/weather/weatherInfo",

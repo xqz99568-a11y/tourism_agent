@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from app.agents.base import AgentCapability, AgentConfig, AgentResponse, AgentStatus, BaseAgent
 from app.core.context import ExecutionContext, SessionContext
+from app.core.fixed_data import FixedDataError, get_fixed_tourism_data, is_formal_offline_mode
 from app.core.logger import get_logger
 from app.services.weather_client import QWeatherWeatherClient
 
@@ -134,6 +135,74 @@ class WeatherAgent(BaseAgent):
             reasoning_content=f"目的地：{destination or '坐标定位'}\n出行天数：{request['requested_days']} 天\n起始日期：{request['start_date'] or '未提供'}",
             reasoning_type="fact",
         )
+
+        if is_formal_offline_mode():
+            scenario_type = (
+                context.extracted_info.get("weather_scenario")
+                or context.extracted_info.get("scenario_type")
+                or context.extracted_info.get("weather_type")
+                or "sunny"
+            )
+            self._record_tool_usage(
+                context,
+                step_name="读取固定天气场景",
+                tool_name="fixed_weather_dataset",
+                arguments={
+                    "city": destination,
+                    "scenario_type": scenario_type,
+                    "requested_days": request["requested_days"],
+                },
+            )
+            try:
+                result = get_fixed_tourism_data().weather_query(
+                    city=destination,
+                    scenario_type=scenario_type,
+                    days=request["requested_days"],
+                )
+                self._record_thinking_reasoning(
+                    context,
+                    step_name="固定天气风险评估",
+                    reasoning_content=f"天气场景：{result.get('scenario_type')}\n风险等级：{result.get('risk_level')}\n覆盖天数：{result.get('coverage_days', 0)} 天",
+                    reasoning_type="analysis",
+                )
+                self._record_thinking_complete(
+                    context,
+                    step_name="固定天气风险评估",
+                    result_summary=f"固定天气处理完成：{result.get('scenario_type')} / {result.get('risk_level')} 风险。",
+                )
+                return AgentResponse(
+                    agent_name=self.name,
+                    status=AgentStatus.COMPLETED,
+                    content=self._build_weather_summary(result),
+                    data=result,
+                    metadata={
+                        "provider": "fixed_weather_dataset",
+                        "offline": True,
+                        "degraded": False,
+                        "coverage_days": result.get("coverage_days", 0),
+                    },
+                )
+            except FixedDataError as exc:
+                return AgentResponse(
+                    agent_name=self.name,
+                    status=AgentStatus.FAILED,
+                    content=f"固定天气场景不可用：{exc}",
+                    data={
+                        "provider": "fixed_weather_dataset",
+                        "offline": True,
+                        "fixed_weather_required": True,
+                        "error_type": "fixed_weather_unavailable",
+                        "error": str(exc),
+                    },
+                    error=str(exc),
+                    metadata={
+                        "provider": "fixed_weather_dataset",
+                        "offline": True,
+                        "degraded": False,
+                        "fixed_weather_required": True,
+                    },
+                )
+
         self._record_tool_usage(
             context,
             step_name="调用天气接口",
@@ -412,7 +481,8 @@ class WeatherAgent(BaseAgent):
     def _build_weather_summary(self, result: Dict[str, Any]) -> str:
         temp = result.get("temperature_range") or {}
         temp_text = f"{temp.get('min')} - {temp.get('max')}°C" if temp.get("min") is not None and temp.get("max") is not None else "暂无温度区间"
-        lines = [f"## {(result.get('destination') or '目的地')} 天气", "- 数据来源：和风天气（QWeather）", f"- 天气类型：{result.get('weather_type')}", f"- 风险等级：{result.get('risk_level')}", f"- 温度区间：{temp_text}"]
+        source_text = "固定天气场景数据集" if result.get("provider") == "fixed_weather_dataset" else "和风天气（QWeather）"
+        lines = [f"## {(result.get('destination') or '目的地')} 天气", f"- 数据来源：{source_text}", f"- 天气类型：{result.get('weather_type')}", f"- 风险等级：{result.get('risk_level')}", f"- 温度区间：{temp_text}"]
         if result.get("warnings"):
             lines.append(f"- 降级说明：{'；'.join(str(item) for item in result['warnings'])}")
         daily_forecasts = result.get("daily_forecasts") or []

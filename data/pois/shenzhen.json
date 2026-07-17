@@ -1,19 +1,6483 @@
 ﻿{
-  "city": "深圳",
-  "city_code": "shenzhen",
-  "version": "v2",
+  "metadata": {
+    "file_id": "ctp_poi_shenzhen_v1_0",
+    "schema_version": "ctp-poi-schema-v1.0",
+    "dataset_version": "CTP-POI-v1.0",
+    "city_id": "shenzhen",
+    "city_name": "深圳",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "data_mode": "frozen_offline",
+    "record_count": 30
+  },
   "pois": [
-    {"id": "sz001", "name": "深圳湾公园", "city": "深圳", "area": "南山区", "category": "自然风光", "tags": ["海景", "散步", "拍照"], "best_time": ["afternoon", "evening"], "estimated_duration": 120, "ticket_price": 0, "opening_hours": "06:00-23:00", "walk_level": "low", "popular": "high", "photo_score": 92, "food_score": 30, "night_score": 80},
-    {"id": "sz002", "name": "莲花山公园", "city": "深圳", "area": "福田区", "category": "自然风光", "tags": ["公园", "城市景观", "轻徒步"], "best_time": ["morning", "afternoon"], "estimated_duration": 100, "ticket_price": 0, "opening_hours": "06:00-22:30", "walk_level": "medium", "popular": "high", "photo_score": 80, "food_score": 20, "night_score": 45},
-    {"id": "sz003", "name": "大梅沙海滨公园", "city": "深圳", "area": "盐田区", "category": "自然风光", "tags": ["海滨", "沙滩", "拍照"], "best_time": ["morning", "afternoon"], "estimated_duration": 180, "ticket_price": 0, "opening_hours": "06:30-23:00", "walk_level": "low", "popular": "high", "photo_score": 90, "food_score": 25, "night_score": 50},
-    {"id": "sz004", "name": "南头古城", "city": "深圳", "area": "南山区", "category": "历史文化", "tags": ["古城", "街区", "文化"], "best_time": ["morning", "afternoon"], "estimated_duration": 120, "ticket_price": 0, "opening_hours": "10:00-22:00", "walk_level": "low", "popular": "high", "photo_score": 84, "food_score": 55, "night_score": 62},
-    {"id": "sz005", "name": "深圳博物馆", "city": "深圳", "area": "福田区", "category": "历史文化", "tags": ["博物馆", "室内", "文化"], "best_time": ["morning", "afternoon"], "estimated_duration": 100, "ticket_price": 0, "opening_hours": "10:00-18:00", "walk_level": "low", "popular": "medium", "photo_score": 66, "food_score": 20, "night_score": 20},
-    {"id": "sz006", "name": "东门步行街", "city": "深圳", "area": "罗湖区", "category": "美食", "tags": ["步行街", "小吃", "夜游"], "best_time": ["afternoon", "evening"], "estimated_duration": 120, "ticket_price": 0, "opening_hours": "10:00-23:00", "walk_level": "low", "popular": "high", "photo_score": 72, "food_score": 90, "night_score": 76},
-    {"id": "sz007", "name": "水围夜市", "city": "深圳", "area": "福田区", "category": "美食", "tags": ["夜市", "本地小吃", "夜游"], "best_time": ["evening"], "estimated_duration": 90, "ticket_price": 0, "opening_hours": "17:00-01:00", "walk_level": "low", "popular": "high", "photo_score": 68, "food_score": 93, "night_score": 82},
-    {"id": "sz008", "name": "欢乐港湾", "city": "深圳", "area": "宝安区", "category": "夜景", "tags": ["摩天轮", "海景", "灯光"], "best_time": ["afternoon", "evening"], "estimated_duration": 120, "ticket_price": 0, "opening_hours": "10:00-22:00", "walk_level": "low", "popular": "high", "photo_score": 94, "food_score": 58, "night_score": 96},
-    {"id": "sz009", "name": "人才公园", "city": "深圳", "area": "南山区", "category": "夜景", "tags": ["江景", "夜跑", "灯光"], "best_time": ["afternoon", "evening"], "estimated_duration": 90, "ticket_price": 0, "opening_hours": "06:00-23:00", "walk_level": "low", "popular": "high", "photo_score": 88, "food_score": 35, "night_score": 90},
-    {"id": "sz010", "name": "海上世界文化艺术中心", "city": "深圳", "area": "南山区", "category": "历史文化", "tags": ["艺术", "室内", "建筑"], "best_time": ["morning", "afternoon"], "estimated_duration": 100, "ticket_price": 0, "opening_hours": "10:00-19:00", "walk_level": "low", "popular": "medium", "photo_score": 78, "food_score": 35, "night_score": 40},
-    {"id": "sz011", "name": "甘坑古镇", "city": "深圳", "area": "龙岗区", "category": "历史文化", "tags": ["古镇", "夜游", "拍照"], "best_time": ["afternoon", "evening"], "estimated_duration": 150, "ticket_price": 0, "opening_hours": "10:00-22:00", "walk_level": "low", "popular": "high", "photo_score": 86, "food_score": 68, "night_score": 84},
-    {"id": "sz012", "name": "香蜜公园", "city": "深圳", "area": "福田区", "category": "自然风光", "tags": ["公园", "轻松", "亲子"], "best_time": ["morning", "afternoon"], "estimated_duration": 90, "ticket_price": 0, "opening_hours": "06:00-22:30", "walk_level": "low", "popular": "medium", "photo_score": 70, "food_score": 20, "night_score": 28}
+    {
+      "id": "sz001",
+      "name": "深圳湾公园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "福田区",
+        "area_id": "sz_z04",
+        "address": "深圳湾公园, 滨海大道辅路, 金城社区, 沙头街道, 福田区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.524592,
+          "longitude": 113.9879591,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz001"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "海景",
+          "散步",
+          "免费"
+        ]
+      },
+      "description": "深圳湾公园，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz001",
+        "area_id": "sz_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz001_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B7%B1%E5%9C%B3%E6%B9%BE%E5%85%AC%E5%9B%AD+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz001_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz002",
+      "name": "莲花山公园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "福田区",
+        "area_id": "sz_z01",
+        "address": "莲花山公园, 6030, 莲花街道, 福田区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.5566275,
+          "longitude": 114.0532386,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz002"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "公园",
+          "城市景观",
+          "轻徒步"
+        ]
+      },
+      "description": "莲花山公园，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mo-Su 06:00-23:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz002",
+        "area_id": "sz_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz002_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%8E%B2%E8%8A%B1%E5%B1%B1%E5%85%AC%E5%9B%AD+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz002_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz002_03",
+          "source_type": "official_website",
+          "source_name": "莲花山公园官方网站（sz.gov.cn）",
+          "url": "https://www.sz.gov.cn/szzt2010/gysz/csgy/content/post_10776567.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz003",
+      "name": "大梅沙海滨公园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "盐田区",
+        "area_id": "sz_z05",
+        "address": "大梅沙海滨公园, 33号, 盐梅路, 大梅沙社区, 梅沙街道, 盐田区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.5943462,
+          "longitude": 114.3020948,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz003"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "海滨",
+          "沙滩",
+          "亲子"
+        ]
+      },
+      "description": "大梅沙海滨公园，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": 0,
+            "applicable_date_ranges": [],
+            "conditions": [
+              "general_admission"
+            ],
+            "verification_status": "verified_public_snapshot"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz003",
+        "area_id": "sz_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz003_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%A4%A7%E6%A2%85%E6%B2%99%E6%B5%B7%E6%BB%A8%E5%85%AC%E5%9B%AD+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "ticketing"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz003_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz004",
+      "name": "南头古城",
+      "aliases": [
+        "世界之窗"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "南山区",
+        "area_id": "sz_z03",
+        "address": "南头古城, 南头街道, 南山区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.5462391,
+          "longitude": 113.9158929,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz004"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture",
+          "local_life"
+        ],
+        "tags": [
+          "古城",
+          "街区",
+          "文化"
+        ]
+      },
+      "description": "南头古城，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz004",
+        "area_id": "sz_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz004_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%8D%97%E5%A4%B4%E5%8F%A4%E5%9F%8E+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz004_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz005",
+      "name": "深圳博物馆古代艺术馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "福田区",
+        "area_id": "sz_z01",
+        "address": "深圳博物馆古代艺术馆, 6, 同心路, 通新岭小区南区, 通新岭社区, 华强北街道, 福田区, 深圳市, 广东省, 518027, 中国",
+        "coordinate": {
+          "latitude": 22.5448303,
+          "longitude": 114.0962008,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz005"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "室内",
+          "免费"
+        ]
+      },
+      "description": "深圳博物馆古代艺术馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [
+            {
+              "open": "10:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "10:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "10:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "10:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "10:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "10:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Tu-Su 10:00-18:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz005",
+        "area_id": "sz_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz005_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B7%B1%E5%9C%B3%E5%8D%9A%E7%89%A9%E9%A6%86%E5%8F%A4%E4%BB%A3%E8%89%BA%E6%9C%AF%E9%A6%86+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz005_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz006",
+      "name": "东门步行街",
+      "aliases": [
+        "东门老街"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "罗湖区",
+        "area_id": "sz_z02",
+        "address": "东门老街, 东门商业步行街, 东门社区, 东门街道, 罗湖区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.5470489,
+          "longitude": 114.1158592,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz006"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "步行街",
+          "小吃",
+          "夜游"
+        ]
+      },
+      "description": "东门步行街，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz006",
+        "area_id": "sz_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz006_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%9C%E9%97%A8%E8%80%81%E8%A1%97+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz006_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz007",
+      "name": "深圳世界之窗",
+      "aliases": [
+        "世界之窗"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "南山区",
+        "area_id": "sz_z03",
+        "address": "世界之窗, 红树街, 白石洲, 白石洲东社区, 沙河街道, 南山区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.5375058,
+          "longitude": 113.9686115,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz007"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science"
+        ],
+        "tags": [
+          "主题公园",
+          "亲子",
+          "演出"
+        ]
+      },
+      "description": "深圳世界之窗，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 5.25,
+          "recommended": 7.0,
+          "maximum": 8.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "student"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz007",
+        "area_id": "sz_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz007_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%96%E7%95%8C%E4%B9%8B%E7%AA%97+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz007_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz008",
+      "name": "欢乐港湾",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "宝安区",
+        "area_id": "sz_z04",
+        "address": "欢乐港湾, 金科路, 海裕社区, 新安街道, 宝安区, 深圳市, 广东省, 518100, 中国",
+        "coordinate": {
+          "latitude": 22.5463106,
+          "longitude": 113.881011,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz008"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "摩天轮",
+          "海景",
+          "灯光"
+        ]
+      },
+      "description": "欢乐港湾，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz008",
+        "area_id": "sz_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz008_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%AC%A2%E4%B9%90%E6%B8%AF%E6%B9%BE+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz008_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz009",
+      "name": "深圳野生动物园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "南山区",
+        "area_id": "sz_z03",
+        "address": "深圳野生动物园, 4065, 西丽湖路, 丽湖社区, 西丽街道, 南山区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.5998002,
+          "longitude": 113.9682793,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz009"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science"
+        ],
+        "tags": [
+          "动物",
+          "亲子",
+          "户外"
+        ]
+      },
+      "description": "深圳野生动物园，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 4.5,
+          "recommended": 6.0,
+          "maximum": 7.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "09:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "09:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "09:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "09:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "09:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "09:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "09:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mo-Su 09:30-18:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "student"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz009",
+        "area_id": "sz_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz009_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B7%B1%E5%9C%B3%E9%87%8E%E7%94%9F%E5%8A%A8%E7%89%A9%E5%9B%AD+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz009_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz009_03",
+          "source_type": "official_website",
+          "source_name": "深圳野生动物园官方网站（szzoo.net）",
+          "url": "http://www.szzoo.net",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz010",
+      "name": "海上世界文化艺术中心",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "南山区",
+        "area_id": "sz_z04",
+        "address": "海上世界文化艺术中心, 1187号, 望海路, 招商街道, 南山区, 深圳市, 广东省, 518067, 中国",
+        "coordinate": {
+          "latitude": 22.4831641,
+          "longitude": 113.9120268,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz010"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "indoor_venue"
+        ],
+        "tags": [
+          "艺术",
+          "室内",
+          "建筑"
+        ]
+      },
+      "description": "海上世界文化艺术中心，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "10:00",
+              "close": "22:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "10:00",
+              "close": "22:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "10:00",
+              "close": "22:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "10:00",
+              "close": "22:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "10:00",
+              "close": "22:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "10:00",
+              "close": "22:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "10:00",
+              "close": "22:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mo-Su 10:00-22:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz010",
+        "area_id": "sz_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz010_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B5%B7%E4%B8%8A%E4%B8%96%E7%95%8C%E6%96%87%E5%8C%96%E8%89%BA%E6%9C%AF%E4%B8%AD%E5%BF%83+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz010_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz010_03",
+          "source_type": "official_website",
+          "source_name": "海上世界文化艺术中心官方网站（designsociety.cn）",
+          "url": "http://www.designsociety.cn",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz011",
+      "name": "甘坑古镇",
+      "aliases": [
+        "甘坑客家小镇"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "龙岗区",
+        "area_id": "sz_z06",
+        "address": "甘坑客家小镇, 甘李路, 甘坑, 吉华街道, 龙岗区, 深圳市, 广东省, 518100, 中国",
+        "coordinate": {
+          "latitude": 22.6589693,
+          "longitude": 114.0995854,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz011"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture",
+          "urban_landmark"
+        ],
+        "tags": [
+          "古镇",
+          "夜游",
+          "亲子"
+        ]
+      },
+      "description": "甘坑古镇，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz011",
+        "area_id": "sz_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz011_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E7%94%98%E5%9D%91%E5%AE%A2%E5%AE%B6%E5%B0%8F%E9%95%87+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz011_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz012",
+      "name": "深圳欢乐谷",
+      "aliases": [
+        "欢乐谷"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "南山区",
+        "area_id": "sz_z03",
+        "address": "欢乐谷, 侨城西街, 文昌街社区, 沙河街道, 南山区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.5446307,
+          "longitude": 113.9753562,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz012"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science"
+        ],
+        "tags": [
+          "主题公园",
+          "游乐设施",
+          "亲子"
+        ]
+      },
+      "description": "深圳欢乐谷，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 5.25,
+          "recommended": 7.0,
+          "maximum": 8.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "student"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz012",
+        "area_id": "sz_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz012_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%AC%A2%E4%B9%90%E8%B0%B7+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz012_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz013",
+      "name": "东部华侨城",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "盐田区",
+        "area_id": "sz_z05",
+        "address": "东部华侨城, 盐田街道, 盐田区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.6227583,
+          "longitude": 114.2834698,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz013"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science"
+        ],
+        "tags": [
+          "度假区",
+          "主题公园",
+          "山景"
+        ]
+      },
+      "description": "东部华侨城，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 5.25,
+          "recommended": 7.0,
+          "maximum": 8.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "student"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz013",
+        "area_id": "sz_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz013_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%9C%E9%83%A8%E5%8D%8E%E4%BE%A8%E5%9F%8E+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz013_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz014",
+      "name": "锦绣中华民俗村",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "南山区",
+        "area_id": "sz_z03",
+        "address": "锦绣中华民俗村, 云天路, 东方社区, 沙河街道, 南山区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.5333761,
+          "longitude": 113.9836201,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz014"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science",
+          "local_life"
+        ],
+        "tags": [
+          "主题公园",
+          "民俗",
+          "演出"
+        ]
+      },
+      "description": "锦绣中华民俗村，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 5.25,
+          "recommended": 7.0,
+          "maximum": 8.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "student",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz014",
+        "area_id": "sz_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz014_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%94%A6%E7%BB%A3%E4%B8%AD%E5%8D%8E%E6%B0%91%E4%BF%97%E6%9D%91+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz014_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz014_03",
+          "source_type": "official_website",
+          "source_name": "锦绣中华民俗村官方网站（szjxzh.com.cn）",
+          "url": "https://www.szjxzh.com.cn/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz015",
+      "name": "小梅沙海洋世界",
+      "aliases": [],
+      "operational_status": "unknown",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "盐田区",
+        "area_id": "sz_z05",
+        "address": "小梅沙海洋世界, 盐葵路, 小梅沙社区, 梅沙街道, 盐田区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.6065074,
+          "longitude": 114.3265184,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz015"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science",
+          "indoor_venue"
+        ],
+        "tags": [
+          "海洋馆",
+          "室内",
+          "亲子"
+        ]
+      },
+      "description": "小梅沙海洋世界，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.75,
+          "recommended": 5.0,
+          "maximum": 6.25
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": "公开地图快照曾标记为 closed，当前营业状态需要官网复核。",
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz015",
+        "area_id": "sz_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "公开地图中的 closed 标记可能已经过时，未据此直接认定景点停业。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz015_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%B0%8F%E6%A2%85%E6%B2%99%E6%B5%B7%E6%B4%8B%E4%B8%96%E7%95%8C+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz015_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz015_03",
+          "source_type": "official_website",
+          "source_name": "小梅沙海洋世界官方网站（szxms.com.cn）",
+          "url": "http://www.szxms.com.cn/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz016",
+      "name": "仙湖植物园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "罗湖区",
+        "area_id": "sz_z02",
+        "address": "仙湖植物园, 160, 莲塘街道, 罗湖区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.5807888,
+          "longitude": 114.1757386,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz016"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "植物园",
+          "湖景",
+          "亲子"
+        ]
+      },
+      "description": "仙湖植物园，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz016",
+        "area_id": "sz_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz016_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%BB%99%E6%B9%96%E6%A4%8D%E7%89%A9%E5%9B%AD+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz016_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz017",
+      "name": "梧桐山国家森林公园",
+      "aliases": [
+        "梧桐山"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "深圳市",
+        "area_id": "sz_z02",
+        "address": "梧桐山, 深圳市, 广东省, 518081, 中国",
+        "coordinate": {
+          "latitude": 22.582268,
+          "longitude": 114.2146672,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz017"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "登山",
+          "森林",
+          "城市全景"
+        ]
+      },
+      "description": "梧桐山国家森林公园，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 5.25,
+          "recommended": 7.0,
+          "maximum": 8.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz017",
+        "area_id": "sz_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz017_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%A2%A7%E6%A1%90%E5%B1%B1+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz017_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz018",
+      "name": "杨梅坑",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "龙岗区",
+        "area_id": "sz_z06",
+        "address": "杨梅坑, 大鹏新区, 龙岗区, 深圳市, 广东省, 518100, 中国",
+        "coordinate": {
+          "latitude": 22.5474858,
+          "longitude": 114.5663819,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz018"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "海岸",
+          "骑行",
+          "远郊"
+        ]
+      },
+      "description": "杨梅坑，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.75,
+          "recommended": 5.0,
+          "maximum": 6.25
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz018",
+        "area_id": "sz_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "car"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz018_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%9D%A8%E6%A2%85%E5%9D%91+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz018_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz019",
+      "name": "较场尾",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "龙岗区",
+        "area_id": "sz_z06",
+        "address": "较场尾, 大鹏新区, 龙岗区, 深圳市, 广东省, 518100, 中国",
+        "coordinate": {
+          "latitude": 22.5922831,
+          "longitude": 114.5061164,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz019"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park",
+          "urban_landmark"
+        ],
+        "tags": [
+          "海滨",
+          "民宿区",
+          "夜游"
+        ]
+      },
+      "description": "较场尾，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz019",
+        "area_id": "sz_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "car"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz019_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%BE%83%E5%9C%BA%E5%B0%BE+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz019_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz020",
+      "name": "大鹏所城",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "龙岗区",
+        "area_id": "sz_z06",
+        "address": "大鹏所城, 大鹏街道, 大鹏新区, 龙岗区, 深圳市, 广东省, 518100, 中国",
+        "coordinate": {
+          "latitude": 22.5978742,
+          "longitude": 114.507692,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz020"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture"
+        ],
+        "tags": [
+          "古城",
+          "海防",
+          "免费"
+        ]
+      },
+      "description": "大鹏所城，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz020",
+        "area_id": "sz_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz020_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%A4%A7%E9%B9%8F%E6%89%80%E5%9F%8E+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz020_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz021",
+      "name": "中英街",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "盐田区",
+        "area_id": "sz_z05",
+        "address": "中英街, 菜園角, 沙頭角市中心, 沙头角街道, 盐田区, 深圳市, 广东省, 香港, 中国",
+        "coordinate": {
+          "latitude": 22.5467427,
+          "longitude": 114.2263886,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz021"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture"
+        ],
+        "tags": [
+          "边境街区",
+          "历史",
+          "购物"
+        ]
+      },
+      "description": "中英街，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz021",
+        "area_id": "sz_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz021_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E8%8B%B1%E8%A1%97+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz021_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz022",
+      "name": "深圳市当代艺术与城市规划馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "福田区",
+        "area_id": "sz_z01",
+        "address": "深圳市当代艺术与城市规划馆, 184, 福中路, 福中社区, 莲花街道, 福田区, 深圳市, 广东省, 518038, 中国",
+        "coordinate": {
+          "latitude": 22.5485263,
+          "longitude": 114.0566989,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz022"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "indoor_venue"
+        ],
+        "tags": [
+          "艺术馆",
+          "室内",
+          "免费"
+        ]
+      },
+      "description": "深圳市当代艺术与城市规划馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [
+            {
+              "open": "10:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "10:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "10:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "10:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "10:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "10:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Tu-Su 10:00-18:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz022",
+        "area_id": "sz_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz022_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%BD%93%E4%BB%A3%E8%89%BA%E6%9C%AF%E4%B8%8E%E5%9F%8E%E5%B8%82%E8%A7%84%E5%88%92%E9%A6%86+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz022_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz023",
+      "name": "深圳科学技术馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "光明区",
+        "area_id": "sz_z05",
+        "address": "深圳科学技术馆, 8, 光辉大道, 新湖街道, 光明区, 深圳市, 广东省, 518107, 中国",
+        "coordinate": {
+          "latitude": 22.7751148,
+          "longitude": 113.9386023,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz023"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "indoor_venue"
+        ],
+        "tags": [
+          "科技馆",
+          "室内",
+          "亲子"
+        ]
+      },
+      "description": "深圳科学技术馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [
+            {
+              "open": "10:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "10:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "10:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "09:30",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "09:30",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "We-Fr 10:00-17:00; Sa-Su,PH 09:30-17:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz023",
+        "area_id": "sz_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz023_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B7%B1%E5%9C%B3%E7%A7%91%E5%AD%A6%E6%8A%80%E6%9C%AF%E9%A6%86+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz023_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_sz023_03",
+          "source_type": "official_website",
+          "source_name": "深圳科学技术馆官方网站（szstm.org.cn）",
+          "url": "https://www.szstm.org.cn/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz024",
+      "name": "深圳市天文台",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "龙岗区",
+        "area_id": "sz_z06",
+        "address": "深圳市天文台, 天文路, 南澳街道, 大鹏新区, 龙岗区, 深圳市, 广东省, 518100, 中国",
+        "coordinate": {
+          "latitude": 22.4826799,
+          "longitude": 114.5557147,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz024"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "天文台",
+          "海岸栈道",
+          "摄影"
+        ]
+      },
+      "description": "深圳市天文台，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz024",
+        "area_id": "sz_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "car"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz024_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B7%B1%E5%9C%B3%E5%B8%82%E5%A4%A9%E6%96%87%E5%8F%B0+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz024_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz025",
+      "name": "福田红树林生态公园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "福田区",
+        "area_id": "sz_z01",
+        "address": "福田红树林生态公园, 沙头街道, 福田区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.5118181,
+          "longitude": 114.0347317,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz025"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "湿地",
+          "观鸟",
+          "免费"
+        ]
+      },
+      "description": "福田红树林生态公园，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "06:00",
+              "close": "23:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mo-Su 06:00-23:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz025",
+        "area_id": "sz_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz025_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E7%A6%8F%E7%94%B0%E7%BA%A2%E6%A0%91%E6%9E%97%E7%94%9F%E6%80%81%E5%85%AC%E5%9B%AD+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz025_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz026",
+      "name": "欢乐海岸",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "南山区",
+        "area_id": "sz_z04",
+        "address": "欢乐海岸, 东方社区, 沙河街道, 南山区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.5259532,
+          "longitude": 113.9830035,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz026"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "商业街区",
+          "夜景",
+          "餐饮"
+        ]
+      },
+      "description": "欢乐海岸，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz026",
+        "area_id": "sz_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz026_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%AC%A2%E4%B9%90%E6%B5%B7%E5%B2%B8+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz026_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz027",
+      "name": "海上世界",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "南山区",
+        "area_id": "sz_z04",
+        "address": "海上世界, 招商街道, 南山区, 深圳市, 广东省, 518000, 中国",
+        "coordinate": {
+          "latitude": 22.4860651,
+          "longitude": 113.9118315,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz027"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "商业街区",
+          "音乐喷泉",
+          "餐饮"
+        ]
+      },
+      "description": "海上世界，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz027",
+        "area_id": "sz_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz027_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B5%B7%E4%B8%8A%E4%B8%96%E7%95%8C+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz027_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz028",
+      "name": "深圳珠宝博物馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": null,
+        "area_id": "sz_z02",
+        "address": null,
+        "coordinate": {
+          "latitude": null,
+          "longitude": null,
+          "coordinate_system": "WGS84",
+          "verification_status": "pending"
+        },
+        "transport_node_id": "sz028"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "珠宝",
+          "室内"
+        ]
+      },
+      "description": "深圳珠宝博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz028",
+        "area_id": "sz_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "pending",
+        "verified_at": null,
+        "verified_by": null,
+        "notes": [
+          "行政区待核验。",
+          "详细地址待核验。",
+          "经纬度待核验。",
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz028_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B7%B1%E5%9C%B3%E7%8F%A0%E5%AE%9D%E5%8D%9A%E7%89%A9%E9%A6%86+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "pending"
+        },
+        {
+          "source_id": "src_sz028_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz029",
+      "name": "深圳红立方",
+      "aliases": [
+        "龙岗区科技馆"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "龙岗区",
+        "area_id": "sz_z06",
+        "address": "龙岗区科技馆, 三馆西路, 紫薇社区, 龙城街道, 龙岗区, 深圳市, 广东省, 518100, 中国",
+        "coordinate": {
+          "latitude": 22.7208379,
+          "longitude": 114.2427263,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz029"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science",
+          "indoor_venue"
+        ],
+        "tags": [
+          "科技馆",
+          "青少年宫",
+          "室内"
+        ]
+      },
+      "description": "深圳红立方，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz029",
+        "area_id": "sz_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz029_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%BE%99%E5%B2%97%E5%8C%BA%E7%A7%91%E6%8A%80%E9%A6%86+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz029_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "sz030",
+      "name": "深圳美术馆新馆",
+      "aliases": [
+        "深圳美术馆（新馆）"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "shenzhen",
+        "city_name": "深圳",
+        "district": "龙华区",
+        "area_id": "sz_z03",
+        "address": "深圳美术馆（新馆）, 30, 腾龙路, 南源新村, 民治街道, 龙华区, 深圳市, 广东省, 518131, 中国",
+        "coordinate": {
+          "latitude": 22.6276978,
+          "longitude": 114.0187698,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "sz030"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "indoor_venue"
+        ],
+        "tags": [
+          "美术馆",
+          "艺术",
+          "室内"
+        ]
+      },
+      "description": "深圳美术馆新馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Tu-Su 09:00-17:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": 0,
+            "applicable_date_ranges": [],
+            "conditions": [
+              "general_admission"
+            ],
+            "verification_status": "verified_public_snapshot"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "sz030",
+        "area_id": "sz_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_sz030_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B7%B1%E5%9C%B3%E7%BE%8E%E6%9C%AF%E9%A6%86%E6%96%B0%E9%A6%86+%E6%B7%B1%E5%9C%B3+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours",
+            "ticketing"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_sz030_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·深圳景点页",
+          "url": "https://you.ctrip.com/sight/shenzhen26.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    }
   ]
 }

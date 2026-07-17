@@ -1,19 +1,6358 @@
-﻿{
-  "city": "桂林",
-  "city_code": "guilin",
-  "version": "v2",
+{
+  "metadata": {
+    "file_id": "ctp_poi_guilin_v1_0",
+    "schema_version": "ctp-poi-schema-v1.0",
+    "dataset_version": "CTP-POI-v1.0",
+    "city_id": "guilin",
+    "city_name": "桂林",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "data_mode": "frozen_offline",
+    "record_count": 30
+  },
   "pois": [
-    {"id": "gl001", "name": "漓江", "city": "桂林", "area": "象山区", "category": "自然风光", "tags": ["山水", "经典", "拍照"], "best_time": ["morning", "afternoon"], "estimated_duration": 180, "ticket_price": 0, "opening_hours": "00:00-23:59", "walk_level": "low", "popular": "high", "photo_score": 95, "food_score": 20, "night_score": 40},
-    {"id": "gl002", "name": "象鼻山", "city": "桂林", "area": "象山区", "category": "自然风光", "tags": ["地标", "山水", "经典"], "best_time": ["morning", "afternoon"], "estimated_duration": 120, "ticket_price": 55, "opening_hours": "07:00-21:30", "walk_level": "medium", "popular": "high", "photo_score": 92, "food_score": 20, "night_score": 45},
-    {"id": "gl003", "name": "两江四湖", "city": "桂林", "area": "秀峰区", "category": "夜景", "tags": ["夜游", "江景", "灯光"], "best_time": ["evening"], "estimated_duration": 120, "ticket_price": 210, "opening_hours": "18:30-21:30", "walk_level": "low", "popular": "high", "photo_score": 88, "food_score": 30, "night_score": 95},
-    {"id": "gl004", "name": "日月双塔文化公园", "city": "桂林", "area": "秀峰区", "category": "夜景", "tags": ["夜景", "地标", "公园"], "best_time": ["afternoon", "evening"], "estimated_duration": 90, "ticket_price": 0, "opening_hours": "08:00-22:00", "walk_level": "low", "popular": "high", "photo_score": 90, "food_score": 30, "night_score": 90},
-    {"id": "gl005", "name": "靖江王府", "city": "桂林", "area": "秀峰区", "category": "历史文化", "tags": ["王府", "古迹", "文化"], "best_time": ["morning", "afternoon"], "estimated_duration": 120, "ticket_price": 100, "opening_hours": "08:00-18:00", "walk_level": "medium", "popular": "high", "photo_score": 75, "food_score": 20, "night_score": 35},
-    {"id": "gl006", "name": "桂林博物馆", "city": "桂林", "area": "临桂区", "category": "历史文化", "tags": ["博物馆", "室内", "文化"], "best_time": ["morning", "afternoon"], "estimated_duration": 100, "ticket_price": 0, "opening_hours": "09:00-17:00", "walk_level": "low", "popular": "medium", "photo_score": 65, "food_score": 20, "night_score": 20},
-    {"id": "gl007", "name": "东西巷", "city": "桂林", "area": "秀峰区", "category": "美食", "tags": ["老街", "步行街", "美食"], "best_time": ["afternoon", "evening"], "estimated_duration": 120, "ticket_price": 0, "opening_hours": "10:00-22:30", "walk_level": "low", "popular": "high", "photo_score": 80, "food_score": 92, "night_score": 78},
-    {"id": "gl008", "name": "正阳步行街", "city": "桂林", "area": "秀峰区", "category": "美食", "tags": ["步行街", "小吃", "夜游"], "best_time": ["afternoon", "evening"], "estimated_duration": 100, "ticket_price": 0, "opening_hours": "10:00-23:00", "walk_level": "low", "popular": "high", "photo_score": 72, "food_score": 88, "night_score": 75},
-    {"id": "gl009", "name": "南溪山公园", "city": "桂林", "area": "象山区", "category": "自然风光", "tags": ["公园", "山景", "轻松"], "best_time": ["morning", "afternoon"], "estimated_duration": 100, "ticket_price": 6, "opening_hours": "07:30-18:30", "walk_level": "medium", "popular": "medium", "photo_score": 78, "food_score": 20, "night_score": 25},
-    {"id": "gl010", "name": "穿山公园", "city": "桂林", "area": "七星区", "category": "自然风光", "tags": ["公园", "山景", "江景"], "best_time": ["morning", "afternoon"], "estimated_duration": 110, "ticket_price": 0, "opening_hours": "00:00-23:59", "walk_level": "medium", "popular": "medium", "photo_score": 82, "food_score": 20, "night_score": 35},
-    {"id": "gl011", "name": "榕杉湖景区", "city": "桂林", "area": "秀峰区", "category": "夜景", "tags": ["湖景", "散步", "夜景"], "best_time": ["afternoon", "evening"], "estimated_duration": 90, "ticket_price": 0, "opening_hours": "00:00-23:59", "walk_level": "low", "popular": "medium", "photo_score": 84, "food_score": 35, "night_score": 82},
-    {"id": "gl012", "name": "桂林米粉文化中心", "city": "桂林", "area": "秀峰区", "category": "美食", "tags": ["米粉", "本地小吃", "文化"], "best_time": ["morning", "afternoon"], "estimated_duration": 80, "ticket_price": 0, "opening_hours": "09:00-20:00", "walk_level": "low", "popular": "medium", "photo_score": 58, "food_score": 90, "night_score": 30}
+    {
+      "id": "gl001",
+      "name": "漓江精华游船",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": null,
+        "area_id": "gl_z05",
+        "address": null,
+        "coordinate": {
+          "latitude": null,
+          "longitude": null,
+          "coordinate_system": "WGS84",
+          "verification_status": "pending"
+        },
+        "transport_node_id": "gl001"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "山水",
+          "游船",
+          "经典景点"
+        ]
+      },
+      "description": "漓江精华游船，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.37,
+          "recommended": 4.5,
+          "maximum": 5.63
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl001",
+        "area_id": "gl_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "pending",
+        "verified_at": null,
+        "verified_by": null,
+        "notes": [
+          "行政区待核验。",
+          "详细地址待核验。",
+          "经纬度待核验。",
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl001_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%BC%93%E6%B1%9F%E6%99%AF%E5%8C%BA+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "pending"
+        },
+        {
+          "source_id": "src_gl001_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl002",
+      "name": "象鼻山景区",
+      "aliases": [
+        "象鼻山"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z01",
+        "address": "象鼻山, 滨江路, 象山街道, 象山区, 桂林市, 广西壮族自治区, 541001, 中国",
+        "coordinate": {
+          "latitude": 25.2700731,
+          "longitude": 110.2915099,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl002"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "地标",
+          "山水",
+          "免费"
+        ]
+      },
+      "description": "象鼻山景区，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl002",
+        "area_id": "gl_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl002_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%B1%A1%E9%BC%BB%E5%B1%B1+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl002_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl003",
+      "name": "两江四湖夜游",
+      "aliases": [
+        "两江四湖景区渔人码头"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "秀峰区",
+        "area_id": "gl_z01",
+        "address": "两江四湖景区渔人码头, 滨江路, 中心广场社区, 秀峰街道, 秀峰区, 桂林市, 广西壮族自治区, 541001, 中国",
+        "coordinate": {
+          "latitude": 25.2745688,
+          "longitude": 110.2935709,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl003"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "夜游",
+          "游船",
+          "灯光"
+        ]
+      },
+      "description": "两江四湖夜游，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl003",
+        "area_id": "gl_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl003_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%A4%E6%B1%9F%E5%9B%9B%E6%B9%96+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl003_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl004",
+      "name": "日月双塔文化公园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z01",
+        "address": "日月双塔文化公园, 象山街道, 象山区, 桂林市, 广西壮族自治区, 中国",
+        "coordinate": {
+          "latitude": 25.2740632,
+          "longitude": 110.2901666,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl004"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "nature_park",
+          "urban_landmark"
+        ],
+        "tags": [
+          "地标",
+          "湖景",
+          "夜游"
+        ]
+      },
+      "description": "日月双塔文化公园，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.13,
+          "recommended": 1.5,
+          "maximum": 1.87
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl004",
+        "area_id": "gl_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl004_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%97%A5%E6%9C%88%E5%8F%8C%E5%A1%94%E6%96%87%E5%8C%96%E5%85%AC%E5%9B%AD+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl004_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl005",
+      "name": "独秀峰王城景区",
+      "aliases": [
+        "Solitary Beauty Peak"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z01",
+        "address": "Solitary Beauty Peak, 桂林市, 广西壮族自治区, 541001, 中国",
+        "coordinate": {
+          "latitude": 25.286138,
+          "longitude": 110.2949077,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl005"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture"
+        ],
+        "tags": [
+          "王府",
+          "登高",
+          "历史"
+        ]
+      },
+      "description": "独秀峰王城景区，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl005",
+        "area_id": "gl_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl005_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=Solitary+Beauty+Peak+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl005_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl006",
+      "name": "桂林博物馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z03",
+        "address": "桂林博物馆, 公园北路, 临桂镇, 临桂区, 桂林市, 广西壮族自治区, 541199, 中国",
+        "coordinate": {
+          "latitude": 25.2480775,
+          "longitude": 110.160095,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl006"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "室内",
+          "免费"
+        ]
+      },
+      "description": "桂林博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl006",
+        "area_id": "gl_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl006_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%A1%82%E6%9E%97%E5%8D%9A%E7%89%A9%E9%A6%86+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl006_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl007",
+      "name": "东西巷历史文化街区",
+      "aliases": [
+        "东西巷"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "秀峰区",
+        "area_id": "gl_z01",
+        "address": "东西巷, 秀峰街道, 秀峰区, 桂林市, 广西壮族自治区, 中国",
+        "coordinate": {
+          "latitude": 25.2816373,
+          "longitude": 110.2944604,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl007"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "老街",
+          "美食",
+          "夜游"
+        ]
+      },
+      "description": "东西巷历史文化街区，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl007",
+        "area_id": "gl_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl007_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%9C%E8%A5%BF%E5%B7%B7+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl007_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl008",
+      "name": "正阳步行街",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "秀峰区",
+        "area_id": "gl_z01",
+        "address": "正阳步行街, 中心广场社区, 秀峰街道, 秀峰区, 桂林市, 广西壮族自治区, 541001, 中国",
+        "coordinate": {
+          "latitude": 25.2766069,
+          "longitude": 110.2928671,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl008"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "步行街",
+          "小吃",
+          "购物"
+        ]
+      },
+      "description": "正阳步行街，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.13,
+          "recommended": 1.5,
+          "maximum": 1.87
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl008",
+        "area_id": "gl_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl008_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%AD%A3%E9%98%B3%E6%AD%A5%E8%A1%8C%E8%A1%97+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl008_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl009",
+      "name": "芦笛岩",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "秀峰区",
+        "area_id": "gl_z03",
+        "address": "芦笛岩, 1, 甲山街道, 秀峰区, 桂林市, 广西壮族自治区, 541001, 中国",
+        "coordinate": {
+          "latitude": 25.3118577,
+          "longitude": 110.267057,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl009"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "indoor_venue",
+          "nature_park"
+        ],
+        "tags": [
+          "溶洞",
+          "室内",
+          "地质景观"
+        ]
+      },
+      "description": "芦笛岩，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mo-Su 08:00-18:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl009",
+        "area_id": "gl_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl009_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%8A%A6%E7%AC%9B%E5%B2%A9+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl009_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_gl009_03",
+          "source_type": "official_website",
+          "source_name": "芦笛岩官方网站（glludiyan.com）",
+          "url": "https://www.glludiyan.com/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl010",
+      "name": "七星景区",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z02",
+        "address": "七星景区, 1, 七星区街道, 七星区, 桂林市, 广西壮族自治区, 541004, 中国",
+        "coordinate": {
+          "latitude": 25.2745044,
+          "longitude": 110.3084356,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl010"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "公园",
+          "山景",
+          "溶洞"
+        ]
+      },
+      "description": "七星景区，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.63,
+          "recommended": 3.5,
+          "maximum": 4.37
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "06:00",
+              "close": "19:30",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "06:00",
+              "close": "19:30",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "06:00",
+              "close": "19:30",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "06:00",
+              "close": "19:30",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "06:00",
+              "close": "19:30",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "06:00",
+              "close": "19:30",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "06:00",
+              "close": "19:30",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mar-Nov 06:00-19:30; Dec-Feb 06:30-19:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl010",
+        "area_id": "gl_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl010_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%83%E6%98%9F%E6%99%AF%E5%8C%BA+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl010_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_gl010_03",
+          "source_type": "official_website",
+          "source_name": "七星景区官方网站（glqxjq.cn）",
+          "url": "https://www.glqxjq.cn/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl011",
+      "name": "龙脊梯田",
+      "aliases": [
+        "龙脊梯田景区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": null,
+        "area_id": "gl_z06",
+        "address": null,
+        "coordinate": {
+          "latitude": null,
+          "longitude": null,
+          "coordinate_system": "WGS84",
+          "verification_status": "pending"
+        },
+        "transport_node_id": "gl011"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "梯田",
+          "徒步",
+          "摄影"
+        ]
+      },
+      "description": "龙脊梯田，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 4.5,
+          "recommended": 6.0,
+          "maximum": 7.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl011",
+        "area_id": "gl_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "car"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "pending",
+        "verified_at": null,
+        "verified_by": null,
+        "notes": [
+          "行政区待核验。",
+          "详细地址待核验。",
+          "经纬度待核验。",
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl011_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%BE%99%E8%84%8A%E6%A2%AF%E7%94%B0+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "pending"
+        },
+        {
+          "source_id": "src_gl011_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl012",
+      "name": "阳朔西街",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z04",
+        "address": "阳朔西街, 阳朔县, 桂林市, 广西壮族自治区, 541999, 中国",
+        "coordinate": {
+          "latitude": 24.7781732,
+          "longitude": 110.4904614,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl012"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "老街",
+          "美食",
+          "夜游"
+        ]
+      },
+      "description": "阳朔西街，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl012",
+        "area_id": "gl_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl012_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%98%B3%E6%9C%94%E8%A5%BF%E8%A1%97+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl012_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl013",
+      "name": "桂海碑林博物馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z01",
+        "address": "桂海碑林博物馆, 1, 龙隐路, 穿山街道, 七星区, 桂林市, 广西壮族自治区, 350011, 中国",
+        "coordinate": {
+          "latitude": 25.2738285,
+          "longitude": 110.3014541,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl013"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "碑刻",
+          "室内"
+        ]
+      },
+      "description": "桂海碑林博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "09:00-17:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl013",
+        "area_id": "gl_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl013_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%A1%82%E6%B5%B7%E7%A2%91%E6%9E%97%E5%8D%9A%E7%89%A9%E9%A6%86+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl013_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_gl013_03",
+          "source_type": "official_website",
+          "source_name": "桂海碑林博物馆官方网站（ghbl.org.cn）",
+          "url": "http://www.ghbl.org.cn",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl014",
+      "name": "银子岩",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "荔浦市",
+        "area_id": "gl_z04",
+        "address": "银子岩, G321, 荔浦市, 桂林市, 广西壮族自治区, 中国",
+        "coordinate": {
+          "latitude": 24.6445903,
+          "longitude": 110.4341012,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl014"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "indoor_venue",
+          "nature_park"
+        ],
+        "tags": [
+          "溶洞",
+          "室内",
+          "地质景观"
+        ]
+      },
+      "description": "银子岩，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl014",
+        "area_id": "gl_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl014_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%93%B6%E5%AD%90%E5%B2%A9+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl014_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl015",
+      "name": "遇龙河竹筏漂流",
+      "aliases": [
+        "遇龙河"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z04",
+        "address": "遇龙河, 桂林市, 广西壮族自治区, 中国",
+        "coordinate": {
+          "latitude": 24.8446955,
+          "longitude": 110.3446496,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl015"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "竹筏",
+          "山水",
+          "户外"
+        ]
+      },
+      "description": "遇龙河竹筏漂流，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl015",
+        "area_id": "gl_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl015_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%81%87%E9%BE%99%E6%B2%B3+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl015_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl016",
+      "name": "阳朔十里画廊",
+      "aliases": [
+        "十里画廊"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z04",
+        "address": "十里画廊, G321, 阳朔县, 桂林市, 广西壮族自治区, 541907, 中国",
+        "coordinate": {
+          "latitude": 24.7369853,
+          "longitude": 110.486052,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl016"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "骑行",
+          "山水",
+          "乡村"
+        ]
+      },
+      "description": "阳朔十里画廊，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl016",
+        "area_id": "gl_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl016_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%98%B3%E6%9C%94%E5%8D%81%E9%87%8C%E7%94%BB%E5%BB%8A+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl016_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl017",
+      "name": "世外桃源景区",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z04",
+        "address": "世外桃源景区, G321, 阳朔县, 桂林市, 广西壮族自治区, 中国",
+        "coordinate": {
+          "latitude": 24.8647851,
+          "longitude": 110.3883396,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl017"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "local_life",
+          "nature_park"
+        ],
+        "tags": [
+          "山水",
+          "民俗",
+          "游船"
+        ]
+      },
+      "description": "世外桃源景区，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl017",
+        "area_id": "gl_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl017_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%96%E5%A4%96%E6%A1%83%E6%BA%90%E6%99%AF%E5%8C%BA+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl017_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl018",
+      "name": "印象刘三姐山水实景演出",
+      "aliases": [
+        "印象刘三姐"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z04",
+        "address": "印象刘三姐, 田园路, 阳朔县, 桂林市, 广西壮族自治区, 514900, 中国",
+        "coordinate": {
+          "latitude": 24.7699694,
+          "longitude": 110.5035926,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl018"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "nature_park",
+          "urban_landmark"
+        ],
+        "tags": [
+          "演出",
+          "夜游",
+          "山水"
+        ]
+      },
+      "description": "印象刘三姐山水实景演出，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.13,
+          "recommended": 1.5,
+          "maximum": 1.87
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl018",
+        "area_id": "gl_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl018_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%8D%B0%E8%B1%A1%E5%88%98%E4%B8%89%E5%A7%90+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl018_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl019",
+      "name": "桂林千古情景区",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z04",
+        "address": "桂林千古情景区, 千古情大道, 阳朔县, 桂林市, 广西壮族自治区, 541901, 中国",
+        "coordinate": {
+          "latitude": 24.7737969,
+          "longitude": 110.4638772,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl019"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science"
+        ],
+        "tags": [
+          "演出",
+          "主题景区",
+          "亲子"
+        ]
+      },
+      "description": "桂林千古情景区，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl019",
+        "area_id": "gl_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl019_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%A1%82%E6%9E%97%E5%8D%83%E5%8F%A4%E6%83%85%E6%99%AF%E5%8C%BA+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl019_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl020",
+      "name": "相公山",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z05",
+        "address": "相公山, 桂林市, 广西壮族自治区, 541906, 中国",
+        "coordinate": {
+          "latitude": 24.9258349,
+          "longitude": 110.4790377,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl020"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "日出",
+          "登高",
+          "摄影"
+        ]
+      },
+      "description": "相公山，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl020",
+        "area_id": "gl_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl020_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E7%9B%B8%E5%85%AC%E5%B1%B1+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl020_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl021",
+      "name": "兴坪古镇",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z05",
+        "address": "兴坪古镇, 新榕街, 阳朔县, 桂林市, 广西壮族自治区, 541906, 中国",
+        "coordinate": {
+          "latitude": 24.9176001,
+          "longitude": 110.5340329,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl021"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture"
+        ],
+        "tags": [
+          "古镇",
+          "漓江",
+          "免费"
+        ]
+      },
+      "description": "兴坪古镇，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl021",
+        "area_id": "gl_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl021_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%85%B4%E5%9D%AA%E5%8F%A4%E9%95%87+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl021_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl022",
+      "name": "九马画山",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z05",
+        "address": "九马画山, 桂林市, 广西壮族自治区, 541906, 中国",
+        "coordinate": {
+          "latitude": 24.9384064,
+          "longitude": 110.4906918,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl022"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "漓江",
+          "山水",
+          "摄影"
+        ]
+      },
+      "description": "九马画山，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl022",
+        "area_id": "gl_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl022_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B9%9D%E9%A9%AC%E7%94%BB%E5%B1%B1+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl022_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl023",
+      "name": "桂林美术馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z03",
+        "address": "桂林美术馆, 龙船坪路, 南门街道, 象山区, 桂林市, 广西壮族自治区, 541002, 中国",
+        "coordinate": {
+          "latitude": 25.2522648,
+          "longitude": 110.286544,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl023"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "indoor_venue"
+        ],
+        "tags": [
+          "美术馆",
+          "艺术",
+          "室内"
+        ]
+      },
+      "description": "桂林美术馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl023",
+        "area_id": "gl_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl023_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%A1%82%E6%9E%97%E7%BE%8E%E6%9C%AF%E9%A6%86+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl023_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl024",
+      "name": "甑皮岩遗址博物馆",
+      "aliases": [
+        "甑皮岩"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z03",
+        "address": "甑皮岩, 桂林市, 广西壮族自治区, 541000, 中国",
+        "coordinate": {
+          "latitude": 25.2163279,
+          "longitude": 110.278341,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl024"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "遗址",
+          "博物馆",
+          "室内"
+        ]
+      },
+      "description": "甑皮岩遗址博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl024",
+        "area_id": "gl_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl024_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E7%94%91%E7%9A%AE%E5%B2%A9+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl024_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl025",
+      "name": "冠岩景区",
+      "aliases": [
+        "冠岩"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z06",
+        "address": "冠岩, 草坪回族乡, 雁山区, 桂林市, 广西壮族自治区, 中国",
+        "coordinate": {
+          "latitude": 25.0536458,
+          "longitude": 110.4531604,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl025"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "溶洞",
+          "漓江",
+          "地质景观"
+        ]
+      },
+      "description": "冠岩景区，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl025",
+        "area_id": "gl_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "car"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl025_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%86%A0%E5%B2%A9+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl025_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl026",
+      "name": "红军长征湘江战役纪念馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "全州县",
+        "area_id": "gl_z06",
+        "address": "红军长征湘江战役纪念馆, G322, 全州县, 桂林市, 广西壮族自治区, 中国",
+        "coordinate": {
+          "latitude": 25.9140644,
+          "longitude": 110.9446068,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl026"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "纪念馆",
+          "历史",
+          "室内"
+        ]
+      },
+      "description": "红军长征湘江战役纪念馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl026",
+        "area_id": "gl_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl026_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E7%BA%A2%E5%86%9B%E9%95%BF%E5%BE%81%E6%B9%98%E6%B1%9F%E6%88%98%E5%BD%B9%E7%BA%AA%E5%BF%B5%E9%A6%86+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl026_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl027",
+      "name": "八角寨景区",
+      "aliases": [
+        "八角寨风景区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "资源县",
+        "area_id": "gl_z06",
+        "address": "八角寨风景区, 龙脊棧道, 资源县, 桂林市, 广西壮族自治区, 中国",
+        "coordinate": {
+          "latitude": 26.2772189,
+          "longitude": 110.7281229,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl027"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "丹霞",
+          "登山",
+          "远郊"
+        ]
+      },
+      "description": "八角寨景区，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 4.5,
+          "recommended": 6.0,
+          "maximum": 7.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl027",
+        "area_id": "gl_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "car"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl027_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%85%AB%E8%A7%92%E5%AF%A8%E9%A3%8E%E6%99%AF%E5%8C%BA+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl027_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl028",
+      "name": "八路军桂林办事处纪念馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "叠彩区",
+        "area_id": "gl_z02",
+        "address": "广西壮族自治区桂林市叠彩区中山北路96号",
+        "coordinate": {
+          "latitude": null,
+          "longitude": null,
+          "coordinate_system": "WGS84",
+          "verification_status": "pending"
+        },
+        "transport_node_id": "gl028"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "纪念馆",
+          "历史",
+          "室内"
+        ]
+      },
+      "description": "八路军桂林办事处纪念馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl028",
+        "area_id": "gl_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "pending",
+        "verified_at": null,
+        "verified_by": null,
+        "notes": [
+          "经纬度待核验。",
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl028_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%85%AB%E8%B7%AF%E5%86%9B%E5%8A%9E%E4%BA%8B%E5%A4%84+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "pending"
+        },
+        {
+          "source_id": "src_gl028_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_type": "public_reference",
+          "source_name": "八路军桂林办事处旧址公开资料页",
+          "url": "https://zh.wikipedia.org/wiki/%E5%85%AB%E8%B7%AF%E5%86%9B%E6%A1%82%E6%9E%97%E5%8A%9E%E4%BA%8B%E5%A4%84%E6%97%A7%E5%9D%80",
+          "covered_fields": [
+            "location.address",
+            "location.district"
+          ],
+          "verification_status": "supporting_reference",
+          "source_id": "src_gl028_03",
+          "accessed_at": "2026-07-17"
+        }
+      ]
+    },
+    {
+      "id": "gl029",
+      "name": "穿山公园",
+      "aliases": [
+        "穿山景区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z02",
+        "address": "穿山景区, 55, 七星区街道, 七星区, 桂林市, 广西壮族自治区, 541004, 中国",
+        "coordinate": {
+          "latitude": 25.2548565,
+          "longitude": 110.2998748,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl029"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "公园",
+          "山景",
+          "江景"
+        ]
+      },
+      "description": "穿山公园，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "08:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "08:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "08:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "08:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "08:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "08:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "08:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mo-Su 08:00-17:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl029",
+        "area_id": "gl_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl029_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E7%A9%BF%E5%B1%B1%E6%99%AF%E5%8C%BA+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl029_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_gl029_03",
+          "source_type": "official_website",
+          "source_name": "穿山公园官方网站（gleyes.com）",
+          "url": "https://www.gleyes.com/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "gl030",
+      "name": "桂海晴岚",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "guilin",
+        "city_name": "桂林",
+        "district": "桂林市",
+        "area_id": "gl_z02",
+        "address": "桂海晴岚, 七星区, 桂林市, 广西壮族自治区, 中国",
+        "coordinate": {
+          "latitude": 25.2722113,
+          "longitude": 110.3574712,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "gl030"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "草地",
+          "山景",
+          "亲子"
+        ]
+      },
+      "description": "桂海晴岚，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "gl030",
+        "area_id": "gl_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_gl030_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%A1%82%E6%B5%B7%E6%99%B4%E5%B2%9A+%E6%A1%82%E6%9E%97+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_gl030_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·桂林景点页",
+          "url": "https://you.ctrip.com/sight/guilin28.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    }
   ]
 }

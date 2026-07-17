@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "file_id": "ctp_transport_guilin_v1_0",
+    "schema_version": "ctp-transport-area-matrix-schema-v1.0",
+    "dataset_version": "CTP-TRANSPORT-v1.0",
+    "city_id": "guilin",
+    "city_name": "桂林",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "data_mode": "frozen_offline",
+    "scenario_nature": "controlled_experiment_matrix",
+    "record_count": 21,
+    "allowed_modes": ["walking", "public_transit", "taxi"],
+    "source": {"source_type": "manual_experiment_design", "description": "Area-level fixed transport matrix for controlled experiments. public_transit means fixed public-transport approximation; real-time map APIs are forbidden during formal experiments.", "verification_status": "pending"}
+  },
+  "area_nodes": [
+    {"area_id": "gl_z01", "label": "city_core"},
+    {"area_id": "gl_z02", "label": "east_scenic"},
+    {"area_id": "gl_z03", "label": "north_scenic"},
+    {"area_id": "gl_z04", "label": "yangshuo"},
+    {"area_id": "gl_z05", "label": "longji"},
+    {"area_id": "gl_z06", "label": "airport_station"}
+  ],
+  "mode_rules": {
+    "walking": {"unit": "area_pair", "cost_cny": 0, "long_distance_allowed": false},
+    "public_transit": {"unit": "area_pair", "fare_model": "fixed_matrix"},
+    "taxi": {"unit": "area_pair", "fare_model": "fixed_matrix"}
+  },
+  "links": [
+    {"origin_area_id": "gl_z01", "destination_area_id": "gl_z01", "distance_km": 2.0, "duration_minutes": {"walking": 25, "public_transit": 8, "taxi": 10}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 16}},
+    {"origin_area_id": "gl_z01", "destination_area_id": "gl_z02", "distance_km": 8.0, "duration_minutes": {"walking": 105, "public_transit": 24, "taxi": 30}, "cost_cny": {"walking": 0, "public_transit": 4, "taxi": 38}},
+    {"origin_area_id": "gl_z01", "destination_area_id": "gl_z03", "distance_km": 12.0, "duration_minutes": {"walking": 155, "public_transit": 36, "taxi": 42}, "cost_cny": {"walking": 0, "public_transit": 5, "taxi": 58}},
+    {"origin_area_id": "gl_z01", "destination_area_id": "gl_z04", "distance_km": 66.0, "duration_minutes": {"walking": 820, "public_transit": 120, "taxi": 135}, "cost_cny": {"walking": 0, "public_transit": 12, "taxi": 300}},
+    {"origin_area_id": "gl_z01", "destination_area_id": "gl_z05", "distance_km": 78.0, "duration_minutes": {"walking": 960, "public_transit": 150, "taxi": 170}, "cost_cny": {"walking": 0, "public_transit": 14, "taxi": 360}},
+    {"origin_area_id": "gl_z01", "destination_area_id": "gl_z06", "distance_km": 28.0, "duration_minutes": {"walking": 350, "public_transit": 55, "taxi": 65}, "cost_cny": {"walking": 0, "public_transit": 7, "taxi": 125}},
+    {"origin_area_id": "gl_z02", "destination_area_id": "gl_z02", "distance_km": 2.5, "duration_minutes": {"walking": 30, "public_transit": 8, "taxi": 10}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 16}},
+    {"origin_area_id": "gl_z02", "destination_area_id": "gl_z03", "distance_km": 14.0, "duration_minutes": {"walking": 180, "public_transit": 40, "taxi": 48}, "cost_cny": {"walking": 0, "public_transit": 5, "taxi": 68}},
+    {"origin_area_id": "gl_z02", "destination_area_id": "gl_z04", "distance_km": 70.0, "duration_minutes": {"walking": 860, "public_transit": 126, "taxi": 145}, "cost_cny": {"walking": 0, "public_transit": 12, "taxi": 320}},
+    {"origin_area_id": "gl_z02", "destination_area_id": "gl_z05", "distance_km": 82.0, "duration_minutes": {"walking": 1000, "public_transit": 155, "taxi": 175}, "cost_cny": {"walking": 0, "public_transit": 14, "taxi": 380}},
+    {"origin_area_id": "gl_z02", "destination_area_id": "gl_z06", "distance_km": 36.0, "duration_minutes": {"walking": 450, "public_transit": 72, "taxi": 82}, "cost_cny": {"walking": 0, "public_transit": 8, "taxi": 165}},
+    {"origin_area_id": "gl_z03", "destination_area_id": "gl_z03", "distance_km": 3.0, "duration_minutes": {"walking": 35, "public_transit": 8, "taxi": 12}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 18}},
+    {"origin_area_id": "gl_z03", "destination_area_id": "gl_z04", "distance_km": 75.0, "duration_minutes": {"walking": 920, "public_transit": 138, "taxi": 155}, "cost_cny": {"walking": 0, "public_transit": 13, "taxi": 340}},
+    {"origin_area_id": "gl_z03", "destination_area_id": "gl_z05", "distance_km": 68.0, "duration_minutes": {"walking": 830, "public_transit": 130, "taxi": 150}, "cost_cny": {"walking": 0, "public_transit": 12, "taxi": 310}},
+    {"origin_area_id": "gl_z03", "destination_area_id": "gl_z06", "distance_km": 40.0, "duration_minutes": {"walking": 500, "public_transit": 78, "taxi": 90}, "cost_cny": {"walking": 0, "public_transit": 8, "taxi": 180}},
+    {"origin_area_id": "gl_z04", "destination_area_id": "gl_z04", "distance_km": 5.0, "duration_minutes": {"walking": 60, "public_transit": 12, "taxi": 18}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 24}},
+    {"origin_area_id": "gl_z04", "destination_area_id": "gl_z05", "distance_km": 125.0, "duration_minutes": {"walking": 1500, "public_transit": 220, "taxi": 250}, "cost_cny": {"walking": 0, "public_transit": 18, "taxi": 560}},
+    {"origin_area_id": "gl_z04", "destination_area_id": "gl_z06", "distance_km": 85.0, "duration_minutes": {"walking": 1040, "public_transit": 155, "taxi": 175}, "cost_cny": {"walking": 0, "public_transit": 14, "taxi": 390}},
+    {"origin_area_id": "gl_z05", "destination_area_id": "gl_z05", "distance_km": 5.0, "duration_minutes": {"walking": 60, "public_transit": 12, "taxi": 18}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 24}},
+    {"origin_area_id": "gl_z05", "destination_area_id": "gl_z06", "distance_km": 95.0, "duration_minutes": {"walking": 1160, "public_transit": 175, "taxi": 205}, "cost_cny": {"walking": 0, "public_transit": 16, "taxi": 430}},
+    {"origin_area_id": "gl_z06", "destination_area_id": "gl_z06", "distance_km": 4.0, "duration_minutes": {"walking": 50, "public_transit": 10, "taxi": 15}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 22}}
+  ]
+}

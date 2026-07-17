@@ -1,0 +1,1110 @@
+{
+  "metadata": {
+    "file_id": "ctp_accommodation_area_xian_v1_0",
+    "schema_version": "ctp-accommodation-area-schema-v1.0",
+    "dataset_version": "CTP-ACCOMMODATION-v1.0",
+    "city_id": "xian",
+    "city_name": "西安",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "data_mode": "frozen_offline",
+    "record_count": 7,
+    "price_basis": {
+      "unit": "room_per_night",
+      "standard_room_occupancy": 2,
+      "statistic": "fixed_reference_price",
+      "live_price_allowed": false
+    }
+  },
+  "accommodation_areas": [
+    {
+      "id": "xa_ha001",
+      "name": "钟鼓楼—回民街住宿区",
+      "aliases": [
+        "钟楼住宿区",
+        "鼓楼住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "districts": [
+          "碑林区",
+          "莲湖区"
+        ],
+        "area_ids": [
+          "xa_z01"
+        ],
+        "center_coordinate": {
+          "latitude": 34.262,
+          "longitude": 108.942,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "xa006",
+          "xa013",
+          "xa014"
+        ]
+      },
+      "classification": {
+        "area_type": "city_center_historic_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "midscale_hotel",
+          "boutique_hotel",
+          "guesthouse"
+        ],
+        "tags": [
+          "市中心",
+          "美食集中",
+          "地铁便利",
+          "夜间较热闹"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "medium",
+        "nightlife_level": "high",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 150,
+            "reference_price_cny": 260,
+            "maximum_price_cny": 350
+          },
+          "comfort": {
+            "minimum_price_cny": 380,
+            "reference_price_cny": 520,
+            "maximum_price_cny": 680
+          },
+          "premium": {
+            "minimum_price_cny": 800,
+            "reference_price_cny": 1100,
+            "maximum_price_cny": 1700
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "xa_ha001",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "walk"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "suitable"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合第一次到西安和老城核心行程",
+          "回民街、钟鼓楼及地铁步行可达"
+        ],
+        "disadvantages": [
+          "夜间游客较多且可能有噪声",
+          "节假日道路拥挤"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa_ha001_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E9%92%9F%E9%BC%93%E6%A5%BC%E2%80%94%E5%9B%9E%E6%B0%91%E8%A1%97%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa_ha001_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "西安旅游网公开住宿攻略",
+          "url": "https://www.tang.org.cn/83307.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_xa_ha001_03",
+          "source_type": "public_price_reference",
+          "source_name": "西安旅游网公开住宿攻略（固定实验房价校准）",
+          "url": "https://www.tang.org.cn/83307.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "xa_ha002",
+      "name": "永宁门—南门住宿区",
+      "aliases": [
+        "永宁门住宿区",
+        "南门住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "districts": [
+          "碑林区"
+        ],
+        "area_ids": [
+          "xa_z02"
+        ],
+        "center_coordinate": {
+          "latitude": 34.255,
+          "longitude": 108.948,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "xa002",
+          "xa008",
+          "xa011"
+        ]
+      },
+      "classification": {
+        "area_type": "historic_boutique_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "boutique_hotel",
+          "midscale_hotel",
+          "upscale_hotel"
+        ],
+        "tags": [
+          "城墙景观",
+          "设计型住宿",
+          "相对安静",
+          "地铁便利"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "low",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 160,
+            "reference_price_cny": 260,
+            "maximum_price_cny": 360
+          },
+          "comfort": {
+            "minimum_price_cny": 400,
+            "reference_price_cny": 560,
+            "maximum_price_cny": 750
+          },
+          "premium": {
+            "minimum_price_cny": 850,
+            "reference_price_cny": 1250,
+            "maximum_price_cny": 2000
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "xa_ha002",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "walk"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "接近城墙、碑林和西安博物院",
+          "比钟楼核心街区相对安静"
+        ],
+        "disadvantages": [
+          "城墙活动或节日期间人流上升",
+          "景观与精品住宿价格偏高"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa_ha002_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E6%B0%B8%E5%AE%81%E9%97%A8%E2%80%94%E5%8D%97%E9%97%A8%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa_ha002_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "西安旅游网公开住宿攻略",
+          "url": "https://www.tang.org.cn/83307.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_xa_ha002_03",
+          "source_type": "public_price_reference",
+          "source_name": "西安旅游网公开住宿攻略（固定实验房价校准）",
+          "url": "https://www.tang.org.cn/83307.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "xa_ha003",
+      "name": "大雁塔—大唐不夜城住宿区",
+      "aliases": [
+        "大雁塔住宿区",
+        "大唐不夜城住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "districts": [
+          "雁塔区",
+          "曲江新区"
+        ],
+        "area_ids": [
+          "xa_z03"
+        ],
+        "center_coordinate": {
+          "latitude": 34.218,
+          "longitude": 108.961,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "xa003",
+          "xa004",
+          "xa005",
+          "xa015"
+        ]
+      },
+      "classification": {
+        "area_type": "scenic_family_area",
+        "supported_lodging_types": [
+          "family_hotel",
+          "midscale_hotel",
+          "upscale_hotel",
+          "luxury_hotel"
+        ],
+        "tags": [
+          "景区周边",
+          "亲子友好",
+          "夜游方便",
+          "中高端集中"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "medium",
+        "nightlife_level": "high",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 200,
+            "reference_price_cny": 320,
+            "maximum_price_cny": 450
+          },
+          "comfort": {
+            "minimum_price_cny": 480,
+            "reference_price_cny": 680,
+            "maximum_price_cny": 900
+          },
+          "premium": {
+            "minimum_price_cny": 1000,
+            "reference_price_cny": 1500,
+            "maximum_price_cny": 2500
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "xa_ha003",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "walk"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "便于安排大雁塔和大唐不夜城夜游",
+          "家庭型与中高端酒店较丰富"
+        ],
+        "disadvantages": [
+          "夜游结束时段人流集中",
+          "与钟楼老城片区存在通勤时间"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa_ha003_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E5%A4%A7%E9%9B%81%E5%A1%94%E2%80%94%E5%A4%A7%E5%94%90%E4%B8%8D%E5%A4%9C%E5%9F%8E%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa_ha003_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "西安旅游网公开住宿攻略",
+          "url": "https://www.tang.org.cn/83307.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_xa_ha003_03",
+          "source_type": "public_price_reference",
+          "source_name": "西安旅游网公开住宿攻略（固定实验房价校准）",
+          "url": "https://www.tang.org.cn/83307.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "xa_ha004",
+      "name": "西安北站—行政中心住宿区",
+      "aliases": [
+        "西安北站住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "districts": [
+          "未央区"
+        ],
+        "area_ids": [
+          "xa_z04"
+        ],
+        "center_coordinate": {
+          "latitude": 34.376,
+          "longitude": 108.94,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "xa012",
+          "xa020"
+        ]
+      },
+      "classification": {
+        "area_type": "high_speed_rail_hub_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "business_hotel",
+          "midscale_hotel"
+        ],
+        "tags": [
+          "高铁枢纽",
+          "经济型集中",
+          "适合短住",
+          "地铁换乘"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "high",
+        "nightlife_level": "low",
+        "dining_convenience": "medium",
+        "shopping_convenience": "medium",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 120,
+            "reference_price_cny": 200,
+            "maximum_price_cny": 280
+          },
+          "comfort": {
+            "minimum_price_cny": 300,
+            "reference_price_cny": 420,
+            "maximum_price_cny": 550
+          },
+          "premium": {
+            "minimum_price_cny": 650,
+            "reference_price_cny": 900,
+            "maximum_price_cny": 1300
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "xa_ha004",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "rail"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "conditional",
+        "elderly": "suitable",
+        "children": "conditional",
+        "wheelchair": "conditional",
+        "budget_traveler": "suitable"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合早班或晚班高铁行程",
+          "经济型与商务型住宿相对集中"
+        ],
+        "disadvantages": [
+          "距离钟楼、大雁塔等景点较远",
+          "车站周边夜间旅游活动较少"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa_ha004_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E8%A5%BF%E5%AE%89%E5%8C%97%E7%AB%99%E2%80%94%E8%A1%8C%E6%94%BF%E4%B8%AD%E5%BF%83%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa_ha004_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/xian10/location174",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_xa_ha004_03",
+          "source_type": "public_price_reference",
+          "source_name": "西安旅游网公开住宿攻略（固定实验房价校准）",
+          "url": "https://www.tang.org.cn/83307.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "xa_ha005",
+      "name": "高新—唐延路住宿区",
+      "aliases": [
+        "西安高新住宿区",
+        "唐延路住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "districts": [
+          "雁塔区",
+          "高新区"
+        ],
+        "area_ids": [
+          "xa_z06"
+        ],
+        "center_coordinate": {
+          "latitude": 34.2256,
+          "longitude": 108.887,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "xa017",
+          "xa022"
+        ]
+      },
+      "classification": {
+        "area_type": "business_district",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "business_hotel",
+          "midscale_hotel",
+          "upscale_hotel"
+        ],
+        "tags": [
+          "商务住宿",
+          "设施较新",
+          "中高端集中",
+          "距老城较远"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "medium",
+        "nightlife_level": "medium",
+        "dining_convenience": "high",
+        "shopping_convenience": "high",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 160,
+            "reference_price_cny": 280,
+            "maximum_price_cny": 380
+          },
+          "comfort": {
+            "minimum_price_cny": 420,
+            "reference_price_cny": 600,
+            "maximum_price_cny": 800
+          },
+          "premium": {
+            "minimum_price_cny": 950,
+            "reference_price_cny": 1400,
+            "maximum_price_cny": 2200
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "xa_ha005",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi"
+        ],
+        "transport_convenience": "high"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "适合商务出行和偏好现代设施的游客",
+          "住宿档次覆盖较完整"
+        ],
+        "disadvantages": [
+          "与钟鼓楼和临潼景区距离较远",
+          "工作日通勤高峰明显"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa_ha005_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E9%AB%98%E6%96%B0%E2%80%94%E5%94%90%E5%BB%B6%E8%B7%AF%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa_ha005_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "西安旅游网公开住宿攻略",
+          "url": "https://www.tang.org.cn/83307.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_xa_ha005_03",
+          "source_type": "public_price_reference",
+          "source_name": "西安旅游网公开住宿攻略（固定实验房价校准）",
+          "url": "https://www.tang.org.cn/83307.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "xa_ha006",
+      "name": "临潼兵马俑—华清宫住宿区",
+      "aliases": [
+        "临潼住宿区",
+        "兵马俑住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "districts": [
+          "临潼区"
+        ],
+        "area_ids": [
+          "xa_z05"
+        ],
+        "center_coordinate": {
+          "latitude": 34.376,
+          "longitude": 109.21,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "xa001",
+          "xa007",
+          "xa010",
+          "xa021"
+        ]
+      },
+      "classification": {
+        "area_type": "scenic_suburban_area",
+        "supported_lodging_types": [
+          "economy_hotel",
+          "guesthouse",
+          "midscale_hotel",
+          "resort_hotel"
+        ],
+        "tags": [
+          "兵马俑周边",
+          "华清宫周边",
+          "适合早游",
+          "离市中心较远"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "low",
+        "nightlife_level": "low",
+        "dining_convenience": "medium",
+        "shopping_convenience": "low",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 150,
+            "reference_price_cny": 260,
+            "maximum_price_cny": 350
+          },
+          "comfort": {
+            "minimum_price_cny": 380,
+            "reference_price_cny": 550,
+            "maximum_price_cny": 750
+          },
+          "premium": {
+            "minimum_price_cny": 850,
+            "reference_price_cny": 1200,
+            "maximum_price_cny": 1800
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "xa_ha006",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "car"
+        ],
+        "transport_convenience": "medium"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "可减少兵马俑和华清宫游览日通勤",
+          "适合安排临潼深度行程"
+        ],
+        "disadvantages": [
+          "夜间餐饮和购物选择少于市区",
+          "不适合连续游览西安市区景点"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa_ha006_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E4%B8%B4%E6%BD%BC%E5%85%B5%E9%A9%AC%E4%BF%91%E2%80%94%E5%8D%8E%E6%B8%85%E5%AE%AB%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa_ha006_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "携程酒店公开区域页",
+          "url": "https://hotels.ctrip.com/hotel/xian10/location174",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_xa_ha006_03",
+          "source_type": "public_price_reference",
+          "source_name": "西安旅游网公开住宿攻略（固定实验房价校准）",
+          "url": "https://www.tang.org.cn/83307.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "xa_ha007",
+      "name": "曲江池—南湖住宿区",
+      "aliases": [
+        "曲江池住宿区",
+        "南湖住宿区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "districts": [
+          "雁塔区",
+          "曲江新区"
+        ],
+        "area_ids": [
+          "xa_z03"
+        ],
+        "center_coordinate": {
+          "latitude": 34.2016,
+          "longitude": 108.98,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "xa009",
+          "xa015",
+          "xa024"
+        ]
+      },
+      "classification": {
+        "area_type": "quiet_upscale_residential_area",
+        "supported_lodging_types": [
+          "serviced_apartment",
+          "midscale_hotel",
+          "upscale_hotel",
+          "luxury_hotel"
+        ],
+        "tags": [
+          "环境安静",
+          "公园周边",
+          "高端住宿",
+          "适合度假"
+        ]
+      },
+      "stay_profile": {
+        "standard_check_in": "14:00",
+        "standard_check_out": "12:00",
+        "noise_level": "low",
+        "nightlife_level": "low",
+        "dining_convenience": "medium",
+        "shopping_convenience": "medium",
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "room_per_night",
+        "standard_room_occupancy": 2,
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 220,
+            "reference_price_cny": 350,
+            "maximum_price_cny": 480
+          },
+          "comfort": {
+            "minimum_price_cny": 550,
+            "reference_price_cny": 780,
+            "maximum_price_cny": 1050
+          },
+          "premium": {
+            "minimum_price_cny": 1200,
+            "reference_price_cny": 1800,
+            "maximum_price_cny": 3000
+          }
+        },
+        "experiment_calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+      },
+      "transport": {
+        "matrix_node_id": "xa_ha007",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "taxi",
+          "car"
+        ],
+        "transport_convenience": "medium"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "suitable",
+        "budget_traveler": "conditional"
+      },
+      "tradeoffs": {
+        "advantages": [
+          "临近曲江池且夜间环境安静",
+          "适合家庭和中高端度假需求"
+        ],
+        "disadvantages": [
+          "经济型住宿相对较少",
+          "前往钟楼老城需要额外交通时间"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "住宿价格为 2026-07-17 冻结的固定实验参数，不代表实时房价。",
+          "实验默认每间标准客房入住 2 人，并默认存在可预订房间，不模拟实时库存。",
+          "reference_price_cny 是预算计算的唯一房价输入，禁止 Agent 自行搜索或估价。",
+          "14:00 入住和 12:00 退房是区域级实验统一值，不代表任一具体酒店承诺。",
+          "正式实验禁止调用实时酒店、地图或预订 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa_ha007_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E6%9B%B2%E6%B1%9F%E6%B1%A0%E2%80%94%E5%8D%97%E6%B9%96%E4%BD%8F%E5%AE%BF%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa_ha007_02",
+          "source_type": "public_accommodation_reference",
+          "source_name": "西安旅游网公开住宿攻略",
+          "url": "https://www.tang.org.cn/83307.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "transport",
+            "tradeoffs"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_xa_ha007_03",
+          "source_type": "public_price_reference",
+          "source_name": "携程酒店公开区域页（固定实验房价校准）",
+          "url": "https://hotels.ctrip.com/hotel/xian10/location174",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    }
+  ]
+}

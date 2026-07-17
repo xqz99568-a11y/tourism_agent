@@ -1,207 +1,6523 @@
 {
-  "city": "西安",
-  "city_code": "xian",
-  "version": "v1",
+  "metadata": {
+    "file_id": "ctp_poi_xian_v1_0",
+    "schema_version": "ctp-poi-schema-v1.0",
+    "dataset_version": "CTP-POI-v1.0",
+    "city_id": "xian",
+    "city_name": "西安",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "data_mode": "frozen_offline",
+    "record_count": 30
+  },
   "pois": [
     {
       "id": "xa001",
-      "name": "秦始皇帝陵博物院（兵马俑）",
-      "city": "西安",
-      "area": "临潼区",
-      "category": "历史文化",
-      "tags": ["世界遗产", "博物馆", "经典景点"],
-      "ticket_price": 120,
-      "opening_hours": "08:30-18:00",
-      "recommended_duration": 3.0,
-      "visit_duration_hours": 3.0,
-      "best_time": ["上午", "下午"],
-      "suitable_for": ["家庭", "学生", "历史爱好者"],
-      "indoor_outdoor": "mixed",
-      "indoor": false,
-      "intensity": "medium",
-      "walk_level": "medium",
-      "popular": "high",
-      "description": "西安代表性历史景点，文化价值高。"
+      "name": "秦始皇帝陵博物院",
+      "aliases": [
+        "兵马俑",
+        "秦始皇兵马俑"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "临潼区",
+        "area_id": "xa_z05",
+        "address": "兵马俑, 连霍高速, 行者街道, 临潼区, 西安市, 陕西省, 710600, 中国",
+        "coordinate": {
+          "latitude": 34.4025434,
+          "longitude": 109.2111418,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa001"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "兵马俑",
+          "博物馆",
+          "世界遗产"
+        ]
+      },
+      "description": "秦始皇帝陵博物院，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.35,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa001",
+        "area_id": "xa_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa001_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%85%B5%E9%A9%AC%E4%BF%91+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa001_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "xa002",
       "name": "西安城墙",
-      "city": "西安",
-      "area": "碑林区",
-      "category": "历史文化",
-      "tags": ["地标", "骑行", "夜景"],
-      "ticket_price": 54,
-      "opening_hours": "08:00-22:00",
-      "recommended_duration": 2.0,
-      "visit_duration_hours": 2.0,
-      "best_time": ["下午", "晚上"],
-      "suitable_for": ["家庭", "情侣", "摄影"],
-      "indoor_outdoor": "outdoor",
-      "indoor": false,
-      "intensity": "medium",
-      "walk_level": "medium",
-      "popular": "high",
-      "description": "古城核心景观，白天与夜景体验都较好。"
+      "aliases": [
+        "西安明城墙",
+        "明城墙"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "新城区",
+        "area_id": "xa_z02",
+        "address": "西安城墙, 东大街, 西一路街道, 新城区, 西安市, 陕西省, 710004, 中国",
+        "coordinate": {
+          "latitude": 34.2651226,
+          "longitude": 108.9207577,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa002"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture",
+          "urban_landmark"
+        ],
+        "tags": [
+          "城墙",
+          "骑行",
+          "夜景"
+        ]
+      },
+      "description": "西安城墙，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "08:00",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mo-Su 08:00-18:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "history_lover",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa002",
+        "area_id": "xa_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa002_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%A5%BF%E5%AE%89%E5%9F%8E%E5%A2%99+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa002_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "xa003",
       "name": "陕西历史博物馆",
-      "city": "西安",
-      "area": "雁塔区",
-      "category": "历史文化",
-      "tags": ["博物馆", "室内", "文物"],
-      "ticket_price": 0,
-      "opening_hours": "09:00-17:30 周一闭馆",
-      "recommended_duration": 2.0,
-      "visit_duration_hours": 2.0,
-      "best_time": ["上午", "下午"],
-      "suitable_for": ["老人", "学生", "家庭"],
-      "indoor_outdoor": "indoor",
-      "indoor": true,
-      "intensity": "low",
-      "walk_level": "low",
-      "popular": "high",
-      "description": "馆藏丰富，雨天和文化行程首选。"
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "雁塔区",
+        "area_id": "xa_z03",
+        "address": "陕西历史博物馆, 91, 育华社区, 小寨路街道, 雁塔区, 西安市, 陕西省, 710000, 中国",
+        "coordinate": {
+          "latitude": 34.2259093,
+          "longitude": 108.9503368,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa003"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "室内",
+          "免费"
+        ]
+      },
+      "description": "陕西历史博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "09:00",
+              "close": "17:30",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Tu-Su 09:00-17:30",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": 0,
+            "applicable_date_ranges": [],
+            "conditions": [
+              "general_admission"
+            ],
+            "verification_status": "verified_public_snapshot"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa003",
+        "area_id": "xa_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa003_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%99%95%E8%A5%BF%E5%8E%86%E5%8F%B2%E5%8D%9A%E7%89%A9%E9%A6%86+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours",
+            "ticketing"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa003_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa003_03",
+          "source_type": "official_website",
+          "source_name": "陕西历史博物馆官方网站（sxhm.com）",
+          "url": "https://www.sxhm.com/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
     },
     {
       "id": "xa004",
-      "name": "大雁塔",
-      "city": "西安",
-      "area": "雁塔区",
-      "category": "历史文化",
-      "tags": ["地标", "佛教文化", "广场"],
-      "ticket_price": 50,
-      "opening_hours": "08:30-18:00",
-      "recommended_duration": 1.5,
-      "visit_duration_hours": 1.5,
-      "best_time": ["上午", "下午"],
-      "suitable_for": ["家庭", "文化游"],
-      "indoor_outdoor": "mixed",
-      "indoor": false,
-      "intensity": "medium",
-      "walk_level": "medium",
-      "popular": "high",
-      "description": "西安著名地标，适合与周边景点联游。"
+      "name": "大雁塔文化休闲景区",
+      "aliases": [
+        "大雁塔"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "雁塔区",
+        "area_id": "xa_z03",
+        "address": "大雁塔, 雁塔西步行街, 大雁塔街道, 雁塔区, 西安市, 陕西省, 710064, 中国",
+        "coordinate": {
+          "latitude": 34.2197968,
+          "longitude": 108.9594259,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa004"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture"
+        ],
+        "tags": [
+          "古塔",
+          "广场",
+          "历史"
+        ]
+      },
+      "description": "大雁塔文化休闲景区，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa004",
+        "area_id": "xa_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa004_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%A4%A7%E9%9B%81%E5%A1%94+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa004_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "xa005",
       "name": "大唐不夜城",
-      "city": "西安",
-      "area": "雁塔区",
-      "category": "夜景",
-      "tags": ["夜景", "演艺", "步行街"],
-      "ticket_price": 0,
-      "opening_hours": "17:00-23:00",
-      "recommended_duration": 2.0,
-      "visit_duration_hours": 2.0,
-      "best_time": ["晚上"],
-      "suitable_for": ["情侣", "家庭", "摄影"],
-      "indoor_outdoor": "outdoor",
-      "indoor": false,
-      "intensity": "low",
-      "walk_level": "low",
-      "popular": "high",
-      "description": "西安热门夜游街区，演艺与灯光氛围浓。"
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "雁塔区",
+        "area_id": "xa_z03",
+        "address": "大唐不夜城, 大雁塔街道, 雁塔区, 西安市, 陕西省, 中国",
+        "coordinate": {
+          "latitude": 34.2154878,
+          "longitude": 108.9599829,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa005"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "夜游",
+          "演出",
+          "步行街"
+        ]
+      },
+      "description": "大唐不夜城，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa005",
+        "area_id": "xa_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa005_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%A4%A7%E5%94%90%E4%B8%8D%E5%A4%9C%E5%9F%8E+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa005_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "xa006",
       "name": "回民街",
-      "city": "西安",
-      "area": "莲湖区",
-      "category": "美食",
-      "tags": ["美食", "夜游", "小吃"],
-      "ticket_price": 0,
-      "opening_hours": "10:00-23:00",
-      "recommended_duration": 1.5,
-      "visit_duration_hours": 1.5,
-      "best_time": ["下午", "晚上"],
-      "suitable_for": ["家庭", "美食爱好者"],
-      "indoor_outdoor": "mixed",
-      "indoor": false,
-      "intensity": "low",
-      "walk_level": "low",
-      "popular": "high",
-      "description": "西安代表性美食街区，适合轻松逛吃。"
+      "aliases": [
+        "北院门"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "莲湖区",
+        "area_id": "xa_z01",
+        "address": "北院门, 北院门街道, 莲湖区, 西安市, 陕西省, 710001, 中国",
+        "coordinate": {
+          "latitude": 34.2649614,
+          "longitude": 108.9390549,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa006"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "小吃",
+          "老街",
+          "夜游"
+        ]
+      },
+      "description": "回民街，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa006",
+        "area_id": "xa_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa006_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%8C%97%E9%99%A2%E9%97%A8+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa006_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "xa007",
       "name": "华清宫",
-      "city": "西安",
-      "area": "临潼区",
-      "category": "历史文化",
-      "tags": ["园林", "历史", "演出"],
-      "ticket_price": 120,
-      "opening_hours": "07:30-19:00",
-      "recommended_duration": 2.5,
-      "visit_duration_hours": 2.5,
-      "best_time": ["上午", "下午"],
-      "suitable_for": ["家庭", "文化游"],
-      "indoor_outdoor": "outdoor",
-      "indoor": false,
-      "intensity": "medium",
-      "walk_level": "medium",
-      "popular": "medium",
-      "description": "唐文化与园林景观融合景区，游览范围较大。"
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "临潼区",
+        "area_id": "xa_z05",
+        "address": "华清宫, 骊山街道, 临潼区, 西安市, 陕西省, 中国",
+        "coordinate": {
+          "latitude": 34.3649458,
+          "longitude": 109.2075385,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa007"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture",
+          "nature_park"
+        ],
+        "tags": [
+          "宫苑",
+          "历史",
+          "园林"
+        ]
+      },
+      "description": "华清宫，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa007",
+        "area_id": "xa_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa007_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%8D%8E%E6%B8%85%E5%AE%AB+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa007_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "xa008",
-      "name": "碑林博物馆",
-      "city": "西安",
-      "area": "碑林区",
-      "category": "历史文化",
-      "tags": ["博物馆", "书法", "室内"],
-      "ticket_price": 65,
-      "opening_hours": "08:00-18:00",
-      "recommended_duration": 1.5,
-      "visit_duration_hours": 1.5,
-      "best_time": ["上午", "下午"],
-      "suitable_for": ["学生", "文化爱好者"],
-      "indoor_outdoor": "indoor",
-      "indoor": true,
-      "intensity": "low",
-      "walk_level": "low",
-      "popular": "medium",
-      "description": "碑刻与书法主题博物馆，文化体验突出。"
+      "name": "西安碑林博物馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "碑林区",
+        "area_id": "xa_z02",
+        "address": "西安碑林博物馆, 15, 三学街, 三学街社区, 柏树林街道, 碑林区, 西安市, 陕西省, 710001, 中国",
+        "coordinate": {
+          "latitude": 34.2550498,
+          "longitude": 108.9481311,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa008"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "碑刻",
+          "博物馆",
+          "书法"
+        ]
+      },
+      "description": "西安碑林博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mo-Su 09:00-17:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.35,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa008",
+        "area_id": "xa_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa008_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%A5%BF%E5%AE%89%E7%A2%91%E6%9E%97%E5%8D%9A%E7%89%A9%E9%A6%86+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa008_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa008_03",
+          "source_type": "official_website",
+          "source_name": "西安碑林博物馆官方网站（beilin-museum.com）",
+          "url": "https://www.beilin-museum.com/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
     },
     {
       "id": "xa009",
       "name": "曲江池遗址公园",
-      "city": "西安",
-      "area": "雁塔区",
-      "category": "自然风光",
-      "tags": ["公园", "散步", "亲子"],
-      "ticket_price": 0,
-      "opening_hours": "00:00-23:59",
-      "recommended_duration": 1.5,
-      "visit_duration_hours": 1.5,
-      "best_time": ["上午", "傍晚"],
-      "suitable_for": ["老人", "亲子", "家庭"],
-      "indoor_outdoor": "outdoor",
-      "indoor": false,
-      "intensity": "low",
-      "walk_level": "low",
-      "popular": "medium",
-      "description": "城市休闲公园，适合低强度慢游。"
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "雁塔区",
+        "area_id": "xa_z03",
+        "address": "曲江池遗址公园, 曲江街道, 雁塔区, 西安市, 陕西省, 中国",
+        "coordinate": {
+          "latitude": 34.2015535,
+          "longitude": 108.9799987,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa009"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "公园",
+          "湖景",
+          "免费"
+        ]
+      },
+      "description": "曲江池遗址公园，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "00:00",
+              "close": "23:59",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "00:00",
+              "close": "23:59",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "00:00",
+              "close": "23:59",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "00:00",
+              "close": "23:59",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "00:00",
+              "close": "23:59",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "00:00",
+              "close": "23:59",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "00:00",
+              "close": "23:59",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "24/7",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa009",
+        "area_id": "xa_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa009_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%9B%B2%E6%B1%9F%E6%B1%A0%E9%81%97%E5%9D%80%E5%85%AC%E5%9B%AD+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa009_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     },
     {
       "id": "xa010",
       "name": "骊山景区",
-      "city": "西安",
-      "area": "临潼区",
-      "category": "自然风光",
-      "tags": ["登山", "观景", "徒步"],
-      "ticket_price": 70,
-      "opening_hours": "08:00-18:00",
-      "recommended_duration": 3.0,
-      "visit_duration_hours": 3.0,
-      "best_time": ["上午", "下午"],
-      "suitable_for": ["自然爱好者", "摄影"],
-      "indoor_outdoor": "outdoor",
-      "indoor": false,
-      "intensity": "high",
-      "walk_level": "high",
-      "popular": "medium",
-      "description": "山地步行景区，风景好但体力要求较高。"
+      "aliases": [
+        "骊山"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "西安市",
+        "area_id": "xa_z05",
+        "address": "骊山, 西安市, 陕西省, 中国",
+        "coordinate": {
+          "latitude": 34.3334669,
+          "longitude": 109.2762902,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa010"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "history_culture",
+          "nature_park"
+        ],
+        "tags": [
+          "登山",
+          "自然",
+          "历史"
+        ]
+      },
+      "description": "骊山景区，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "high"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "history_lover",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa010",
+        "area_id": "xa_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa010_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%AA%8A%E5%B1%B1+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa010_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa011",
+      "name": "西安博物院",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "碑林区",
+        "area_id": "xa_z02",
+        "address": "西安博物院, 荐福寺路, 夏家庄社区, 南稍门社区, 长安路街道, 碑林区, 西安市, 陕西省, 710064, 中国",
+        "coordinate": {
+          "latitude": 34.2388895,
+          "longitude": 108.9355818,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa011"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "小雁塔",
+          "免费"
+        ]
+      },
+      "description": "西安博物院，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.35,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa011",
+        "area_id": "xa_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa011_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%A5%BF%E5%AE%89%E5%8D%9A%E7%89%A9%E9%99%A2+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa011_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa012",
+      "name": "大明宫国家遗址公园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "新城区",
+        "area_id": "xa_z04",
+        "address": "大明宫国家遗址公园, 新城区, 西安市, 陕西省, 中国",
+        "coordinate": {
+          "latitude": 34.293893,
+          "longitude": 108.9585109,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa012"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture",
+          "nature_park"
+        ],
+        "tags": [
+          "遗址",
+          "公园",
+          "历史"
+        ]
+      },
+      "description": "大明宫国家遗址公园，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "history_lover",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa012",
+        "area_id": "xa_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa012_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%A4%A7%E6%98%8E%E5%AE%AB%E5%9B%BD%E5%AE%B6%E9%81%97%E5%9D%80%E5%85%AC%E5%9B%AD+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa012_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa012_03",
+          "source_type": "official_website",
+          "source_name": "大明宫国家遗址公园官方网站（dmgpark.com）",
+          "url": "http://dmgpark.com/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa013",
+      "name": "西安钟楼",
+      "aliases": [
+        "钟楼"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "碑林区",
+        "area_id": "xa_z01",
+        "address": "钟楼, 钟楼环岛, 钟楼社区, 书院门社区, 南院门街道, 碑林区, 西安市, 陕西省, 710001, 中国",
+        "coordinate": {
+          "latitude": 34.2610119,
+          "longitude": 108.9423419,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa013"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture",
+          "urban_landmark"
+        ],
+        "tags": [
+          "钟楼",
+          "地标",
+          "夜景"
+        ]
+      },
+      "description": "西安钟楼，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.13,
+          "recommended": 1.5,
+          "maximum": 1.87
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa013",
+        "area_id": "xa_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa013_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%92%9F%E6%A5%BC+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa013_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa014",
+      "name": "西安鼓楼",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "莲湖区",
+        "area_id": "xa_z01",
+        "address": "西安鼓楼, 北院门, 北院门街道, 莲湖区, 西安市, 陕西省, 710001, 中国",
+        "coordinate": {
+          "latitude": 34.2617657,
+          "longitude": 108.9388419,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa014"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture",
+          "urban_landmark"
+        ],
+        "tags": [
+          "鼓楼",
+          "地标",
+          "夜景"
+        ]
+      },
+      "description": "西安鼓楼，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 0.75,
+          "recommended": 1.0,
+          "maximum": 1.25
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa014",
+        "area_id": "xa_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa014_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%A5%BF%E5%AE%89%E9%BC%93%E6%A5%BC+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa014_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa015",
+      "name": "大唐芙蓉园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "雁塔区",
+        "area_id": "xa_z03",
+        "address": "大唐芙蓉园, 芙蓉南路, 曲江街道, 雁塔区, 西安市, 陕西省, 710054, 中国",
+        "coordinate": {
+          "latitude": 34.214938,
+          "longitude": 108.9693398,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa015"
+      },
+      "classification": {
+        "primary_category": "history_culture",
+        "secondary_categories": [
+          "history_culture",
+          "nature_park",
+          "urban_landmark"
+        ],
+        "tags": [
+          "园林",
+          "演出",
+          "夜景"
+        ]
+      },
+      "description": "大唐芙蓉园，以历史遗迹和人文体验为主，适合历史文化类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover",
+          "nature_lover",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa015",
+        "area_id": "xa_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa015_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%A4%A7%E5%94%90%E8%8A%99%E8%93%89%E5%9B%AD+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa015_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa015_03",
+          "source_type": "official_website",
+          "source_name": "大唐芙蓉园官方网站（tangparadise.cn）",
+          "url": "https://www.tangparadise.cn/scenic/datang",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa016",
+      "name": "永兴坊",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "新城区",
+        "area_id": "xa_z01",
+        "address": "永兴坊, 化育巷, 中山门街道, 新城区, 西安市, 陕西省, 710005, 中国",
+        "coordinate": {
+          "latitude": 34.2664678,
+          "longitude": 108.965429,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa016"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "小吃",
+          "非遗",
+          "夜游"
+        ]
+      },
+      "description": "永兴坊，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa016",
+        "area_id": "xa_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa016_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B0%B8%E5%85%B4%E5%9D%8A+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa016_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa017",
+      "name": "陕西考古博物馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "长安区",
+        "area_id": "xa_z06",
+        "address": "陕西考古博物馆, 终南大道, 郭杜街道, 长安区, 西安市, 陕西省, 710119, 中国",
+        "coordinate": {
+          "latitude": 34.1202406,
+          "longitude": 108.8780682,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa017"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "考古",
+          "博物馆",
+          "室内"
+        ]
+      },
+      "description": "陕西考古博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [],
+          "thu": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Th-Tu 09:00-17:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": 0,
+            "applicable_date_ranges": [],
+            "conditions": [
+              "general_admission"
+            ],
+            "verification_status": "verified_public_snapshot"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa017",
+        "area_id": "xa_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa017_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%99%95%E8%A5%BF%E8%80%83%E5%8F%A4%E5%8D%9A%E7%89%A9%E9%A6%86+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours",
+            "ticketing"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa017_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa017_03",
+          "source_type": "official_website",
+          "source_name": "陕西考古博物馆官方网站（shxkgy.cn）",
+          "url": "https://www.shxkgy.cn/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa018",
+      "name": "西安事变纪念馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "新城区",
+        "area_id": "xa_z02",
+        "address": "西安事变纪念馆, 东新街, 中山门街道, 新城区, 西安市, 陕西省, 710005, 中国",
+        "coordinate": {
+          "latitude": 34.2588428,
+          "longitude": 108.9629444,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa018"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "纪念馆",
+          "近代史",
+          "免费"
+        ]
+      },
+      "description": "西安事变纪念馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.13,
+          "recommended": 1.5,
+          "maximum": 1.87
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa018",
+        "area_id": "xa_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa018_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%A5%BF%E5%AE%89%E4%BA%8B%E5%8F%98%E7%BA%AA%E5%BF%B5%E9%A6%86+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa018_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa018_03",
+          "source_type": "official_website",
+          "source_name": "西安事变纪念馆官方网站（xasb.net）",
+          "url": "https://www.xasb.net",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa019",
+      "name": "汉景帝阳陵博物院",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "渭城区（咸阳市）",
+        "area_id": "xa_z04",
+        "address": "陕西省咸阳市渭城区西安咸阳国际机场专线公路东段",
+        "coordinate": {
+          "latitude": null,
+          "longitude": null,
+          "coordinate_system": "WGS84",
+          "verification_status": "pending"
+        },
+        "transport_node_id": "xa019"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "陵墓",
+          "博物馆",
+          "考古"
+        ]
+      },
+      "description": "汉景帝阳陵博物院，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 2.25,
+          "recommended": 3.0,
+          "maximum": 3.75
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.35,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa019",
+        "area_id": "xa_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "pending",
+        "verified_at": null,
+        "verified_by": null,
+        "notes": [
+          "经纬度待核验。",
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。",
+          "该景点实际位于咸阳市，因服务西安旅游线路而保留在西安实验城市集合中。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa019_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B1%89%E9%98%B3%E9%99%B5%E5%9B%BD%E5%AE%B6%E8%80%83%E5%8F%A4%E9%81%97%E5%9D%80%E5%85%AC%E5%9B%AD+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "pending"
+        },
+        {
+          "source_id": "src_xa019_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa019_03",
+          "source_type": "official_website",
+          "source_name": "汉景帝阳陵博物院官方网站（hylae.com）",
+          "url": "https://www.hylae.com/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa020",
+      "name": "汉城湖景区",
+      "aliases": [
+        "汉城湖旅游集散中心"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "未央区",
+        "area_id": "xa_z04",
+        "address": "汉城湖旅游集散中心, 丰景路, 未央宫街道, 未央区, 西安市, 陕西省, 710016, 中国",
+        "coordinate": {
+          "latitude": 34.3140969,
+          "longitude": 108.9166149,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa020"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "history_culture",
+          "nature_park"
+        ],
+        "tags": [
+          "湖景",
+          "遗址",
+          "免费"
+        ]
+      },
+      "description": "汉城湖景区，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "history_lover",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa020",
+        "area_id": "xa_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa020_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%B1%89%E5%9F%8E%E6%B9%96%E6%97%85%E6%B8%B8%E9%9B%86%E6%95%A3%E4%B8%AD%E5%BF%83+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa020_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa021",
+      "name": "临潼博物馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "临潼区",
+        "area_id": "xa_z05",
+        "address": "临潼博物馆, 华清东路, 骊山街道, 临潼区, 西安市, 陕西省, 710600, 中国",
+        "coordinate": {
+          "latitude": 34.3658409,
+          "longitude": 109.2119421,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa021"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "历史",
+          "室内"
+        ]
+      },
+      "description": "临潼博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.5,
+          "recommended": 2.0,
+          "maximum": 2.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa021",
+        "area_id": "xa_z05",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa021_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%B4%E6%BD%BC%E5%8D%9A%E7%89%A9%E9%A6%86+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa021_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa022",
+      "name": "大唐西市博物馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "莲湖区",
+        "area_id": "xa_z01",
+        "address": "大唐西市博物馆, 118, 劳动南路, 草阳社区, 西关街道, 莲湖区, 西安市, 陕西省, 710000, 中国",
+        "coordinate": {
+          "latitude": 34.2491473,
+          "longitude": 108.9033611,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa022"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "博物馆",
+          "丝绸之路",
+          "室内"
+        ]
+      },
+      "description": "大唐西市博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa022",
+        "area_id": "xa_z01",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa022_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%A4%A7%E5%94%90%E8%A5%BF%E5%B8%82%E5%8D%9A%E7%89%A9%E9%A6%86+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa022_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa023",
+      "name": "小南门早市",
+      "aliases": [
+        "勿幕门"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "莲湖区",
+        "area_id": "xa_z02",
+        "address": "勿幕门, 四府街, 双仁府社区, 北院门街道, 莲湖区, 西安市, 陕西省, 710002, 中国",
+        "coordinate": {
+          "latitude": 34.2533796,
+          "longitude": 108.9314181,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa023"
+      },
+      "classification": {
+        "primary_category": "urban_landmark",
+        "secondary_categories": [
+          "local_life",
+          "urban_landmark"
+        ],
+        "tags": [
+          "早市",
+          "早餐",
+          "本地生活"
+        ]
+      },
+      "description": "小南门早市，以城市地标、街区风貌或本地生活体验为主，适合城市漫游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 0.75,
+          "recommended": 1.0,
+          "maximum": 1.25
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          },
+          {
+            "start": "19:00",
+            "end": "21:00",
+            "priority": 3
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa023",
+        "area_id": "xa_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa023_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%8B%BF%E5%B9%95%E9%97%A8+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa023_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa024",
+      "name": "曲江海洋极地公园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "雁塔区",
+        "area_id": "xa_z03",
+        "address": "曲江海洋极地公园, 曲江街道, 雁塔区, 西安市, 陕西省, 中国",
+        "coordinate": {
+          "latitude": 34.2168352,
+          "longitude": 108.9758293,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa024"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science",
+          "indoor_venue"
+        ],
+        "tags": [
+          "海洋馆",
+          "室内",
+          "亲子"
+        ]
+      },
+      "description": "曲江海洋极地公园，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa024",
+        "area_id": "xa_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa024_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E6%9B%B2%E6%B1%9F%E6%B5%B7%E6%B4%8B%E6%9E%81%E5%9C%B0%E5%85%AC%E5%9B%AD+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa024_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa025",
+      "name": "秦岭野生动物园",
+      "aliases": [
+        "西安秦岭野生动物园"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "长安区",
+        "area_id": "xa_z06",
+        "address": "西安秦岭野生动物园, 关中环线, 北杜角, 长安区, 西安市, 陕西省, 中国",
+        "coordinate": {
+          "latitude": 34.0488269,
+          "longitude": 108.8651073,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa025"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science"
+        ],
+        "tags": [
+          "动物",
+          "亲子",
+          "户外"
+        ]
+      },
+      "description": "秦岭野生动物园，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 4.5,
+          "recommended": 6.0,
+          "maximum": 7.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "08:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "08:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "08:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "08:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "08:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "08:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "08:30",
+              "close": "18:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "08:30-18:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "student"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa025",
+        "area_id": "xa_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa025_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E8%A5%BF%E5%AE%89%E7%A7%A6%E5%B2%AD%E9%87%8E%E7%94%9F%E5%8A%A8%E7%89%A9%E5%9B%AD+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa025_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa025_03",
+          "source_type": "official_website",
+          "source_name": "秦岭野生动物园官方网站（xianzoo.com）",
+          "url": "https://www.xianzoo.com/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "operational_status"
+          ],
+          "verification_status": "official_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa026",
+      "name": "西安半坡博物馆",
+      "aliases": [
+        "半坡博物馆"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "灞桥区",
+        "area_id": "xa_z02",
+        "address": "半坡博物馆, 半坡路, 半坡, 延河社区, 红旗街道, 灞桥区, 西安市, 陕西省, 710065, 中国",
+        "coordinate": {
+          "latitude": 34.2740167,
+          "longitude": 109.0479754,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa026"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "history_culture",
+          "indoor_venue"
+        ],
+        "tags": [
+          "史前文明",
+          "博物馆",
+          "室内"
+        ]
+      },
+      "description": "西安半坡博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "history_lover"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa026",
+        "area_id": "xa_z02",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa026_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E5%8D%8A%E5%9D%A1%E5%8D%9A%E7%89%A9%E9%A6%86+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa026_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa027",
+      "name": "秦岭四宝科学公园",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "周至县",
+        "area_id": "xa_z04",
+        "address": "秦岭四宝科学公园, 周至县, 西安市, 陕西省, 中国",
+        "coordinate": {
+          "latitude": 34.0624275,
+          "longitude": 108.319277,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa027"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science"
+        ],
+        "tags": [
+          "大熊猫",
+          "动物",
+          "亲子"
+        ]
+      },
+      "description": "秦岭四宝科学公园，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.0,
+          "recommended": 4.0,
+          "maximum": 5.0
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa027",
+        "area_id": "xa_z04",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa027_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E7%A7%A6%E5%B2%AD%E5%9B%9B%E5%AE%9D%E7%A7%91%E5%AD%A6%E5%85%AC%E5%9B%AD+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa027_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa028",
+      "name": "翠华山旅游风景区",
+      "aliases": [
+        "翠华山"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "西安市",
+        "area_id": "xa_z06",
+        "address": "翠华山, 西安市, 陕西省, 中国",
+        "coordinate": {
+          "latitude": 33.9831889,
+          "longitude": 109.0026197,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa028"
+      },
+      "classification": {
+        "primary_category": "nature",
+        "secondary_categories": [
+          "nature_park"
+        ],
+        "tags": [
+          "登山",
+          "地质",
+          "湖景"
+        ]
+      },
+      "description": "翠华山旅游风景区，以自然景观、园林或户外游览为主，适合自然观光与休闲需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 4.5,
+          "recommended": 6.0,
+          "maximum": 7.5
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "08:00",
+            "end": "11:00",
+            "priority": 1
+          },
+          {
+            "start": "15:00",
+            "end": "18:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "high",
+        "walking_level": "high",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "nature_lover"
+        ],
+        "elderly": {
+          "level": "conditional",
+          "reason": "步行或体力消耗可能较大，建议缩短连续游览时间并安排休息。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "可以安排亲子游览，但互动性、步行量或现场安全条件需提前确认。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa028",
+        "area_id": "xa_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "car"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa028_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E7%BF%A0%E5%8D%8E%E5%B1%B1+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa028_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa029",
+      "name": "白鹿原影视城",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "蓝田县",
+        "area_id": "xa_z06",
+        "address": "白鹿原影视城, 蓝田县, 西安市, 陕西省, 中国",
+        "coordinate": {
+          "latitude": 34.0779783,
+          "longitude": 109.2709566,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa029"
+      },
+      "classification": {
+        "primary_category": "family_entertainment",
+        "secondary_categories": [
+          "family_science",
+          "local_life"
+        ],
+        "tags": [
+          "影视城",
+          "演出",
+          "民俗"
+        ]
+      },
+      "description": "白鹿原影视城，以亲子互动或主题娱乐体验为主，适合家庭出游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 3.75,
+          "recommended": 5.0,
+          "maximum": 6.25
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:00",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "17:00",
+            "priority": 2
+          }
+        ],
+        "intensity": "medium",
+        "walking_level": "medium",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [],
+          "tue": [],
+          "wed": [],
+          "thu": [],
+          "fri": [],
+          "sat": [],
+          "sun": []
+        },
+        "special_dates": [],
+        "display_text": null,
+        "verification_status": "pending"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "mixed",
+        "outdoor_ratio": 0.5,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "雨天可游览，但露天区域、山水景观或步行体验可能受影响。",
+          "high_temperature": "高温时应减少连续室外步行时间并及时补水。",
+          "low_temperature": "低温时注意保暖，并根据户外暴露时间调整行程。"
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student",
+          "city_walk"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子共同游览，需由监护人结合现场安全要求安排。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa029",
+        "area_id": "xa_z06",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "当前开放时间未获得可靠的景区公告支持。",
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa029_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E7%99%BD%E9%B9%BF%E5%8E%9F%E5%BD%B1%E8%A7%86%E5%9F%8E+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa029_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
+    },
+    {
+      "id": "xa030",
+      "name": "陕西自然博物馆",
+      "aliases": [],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "district": "雁塔区",
+        "area_id": "xa_z03",
+        "address": "陕西自然博物馆, 88, 长安南路, 长延堡街道, 雁塔区, 西安市, 陕西省, 710000, 中国",
+        "coordinate": {
+          "latitude": 34.1962901,
+          "longitude": 108.9415122,
+          "coordinate_system": "WGS84",
+          "verification_status": "verified_public_snapshot"
+        },
+        "transport_node_id": "xa030"
+      },
+      "classification": {
+        "primary_category": "museum",
+        "secondary_categories": [
+          "family_science",
+          "indoor_venue"
+        ],
+        "tags": [
+          "自然博物馆",
+          "室内",
+          "亲子"
+        ]
+      },
+      "description": "陕西自然博物馆，以展览、历史文化或科普体验为主，适合室内参观类旅游需求。",
+      "visit_profile": {
+        "duration_hours": {
+          "minimum": 1.87,
+          "recommended": 2.5,
+          "maximum": 3.13
+        },
+        "recommended_visit_windows": [
+          {
+            "start": "09:30",
+            "end": "12:00",
+            "priority": 1
+          },
+          {
+            "start": "13:30",
+            "end": "16:30",
+            "priority": 2
+          }
+        ],
+        "intensity": "low",
+        "walking_level": "low",
+        "popularity_level": "medium"
+      },
+      "opening_hours": {
+        "timezone": "Asia/Shanghai",
+        "weekly": {
+          "mon": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "tue": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "wed": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "thu": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "fri": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sat": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ],
+          "sun": [
+            {
+              "open": "09:00",
+              "close": "17:00",
+              "last_entry": null
+            }
+          ]
+        },
+        "special_dates": [],
+        "display_text": "Mo-Su 09:00-17:00",
+        "verification_status": "community_snapshot"
+      },
+      "ticketing": {
+        "currency": "CNY",
+        "pricing_mode": "rule_based",
+        "price_rules": [
+          {
+            "rule_id": "adult_default",
+            "visitor_type": "adult",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "student_default",
+            "visitor_type": "student",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "child_default",
+            "visitor_type": "child",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          },
+          {
+            "rule_id": "senior_default",
+            "visitor_type": "senior",
+            "amount": null,
+            "applicable_date_ranges": [],
+            "conditions": [],
+            "verification_status": "pending"
+          }
+        ],
+        "reservation": {
+          "required": null,
+          "advance_booking_days": null,
+          "real_name_required": null,
+          "verification_status": "pending"
+        }
+      },
+      "environment": {
+        "type": "indoor",
+        "outdoor_ratio": 0.05,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "suitable",
+          "low_temperature": "suitable"
+        },
+        "weather_notes": {
+          "rain": "主要为室内游览，往返交通仍可能受降雨影响。",
+          "high_temperature": "室内参观受高温影响较小，仍需关注往返交通。",
+          "low_temperature": null
+        }
+      },
+      "suitability": {
+        "general_groups": [
+          "general",
+          "family",
+          "student"
+        ],
+        "elderly": {
+          "level": "suitable",
+          "reason": "总体可游览，仍应结合个人体力和现场无障碍条件安排节奏。"
+        },
+        "children": {
+          "level": "suitable",
+          "reason": "适合亲子文化教育或科普参观。"
+        },
+        "wheelchair": {
+          "level": "conditional",
+          "reason": "无障碍通道、电梯或坡道情况需要在出行前向景区核验。"
+        },
+        "stroller": {
+          "level": "conditional",
+          "reason": "台阶、坡道和拥挤程度可能影响婴儿车使用，需结合现场条件。"
+        }
+      },
+      "transport": {
+        "matrix_node_id": "xa030",
+        "area_id": "xa_z03",
+        "nearest_transport_hubs": [],
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "data_quality": {
+        "required_fields_complete": false,
+        "verification_status": "partially_verified",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_pipeline",
+        "notes": [
+          "票价待核验，null 不代表免费。",
+          "预约和实名要求待核验。",
+          "游玩时长、推荐时段、强度、天气和人群适配为固定实验参数，不等同于景区实时公告。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa030_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E9%99%95%E8%A5%BF%E8%87%AA%E7%84%B6%E5%8D%9A%E7%89%A9%E9%A6%86+%E8%A5%BF%E5%AE%89+%E4%B8%AD%E5%9B%BD&format=jsonv2&limit=3&countrycodes=cn&addressdetails=1&extratags=1&namedetails=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "name",
+            "location.address",
+            "location.coordinate",
+            "opening_hours"
+          ],
+          "verification_status": "verified_snapshot"
+        },
+        {
+          "source_id": "src_xa030_02",
+          "source_type": "public_travel_guide",
+          "source_name": "携程旅行攻略·西安景点页",
+          "url": "https://you.ctrip.com/sight/xian7.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "description",
+            "visit_profile.popularity_level"
+          ],
+          "verification_status": "supporting_reference"
+        }
+      ]
     }
   ]
 }

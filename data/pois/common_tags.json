@@ -1,18 +1,536 @@
 {
-  "categories": [
-    "自然风光",
-    "历史文化",
-    "亲子娱乐",
-    "美食",
-    "夜景",
-    "综合"
+  "metadata": {
+    "file_id": "ctp_poi_common_vocabulary_v1_0",
+    "schema_version": "ctp-poi-vocabulary-v1.0",
+    "dataset_version": "CTP-POI-v1.0",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "language": "zh-CN",
+    "data_mode": "frozen_offline",
+    "applicable_cities": [
+      "beijing",
+      "hangzhou",
+      "xian",
+      "shenzhen",
+      "guilin"
+    ],
+    "source": {
+      "source_type": "dataset_derived",
+      "source_files": [
+        "beijing.json",
+        "hangzhou.json",
+        "xian.json",
+        "shenzhen.json",
+        "guilin.json"
+      ],
+      "record_count": 150,
+      "description": "由五个实验城市的冻结版 POI 数据汇总形成，作为分类、标签和枚举值的唯一受控词表。"
+    },
+    "usage_rules": [
+      "POI 中所有分类、标签和枚举值必须来自本文件。",
+      "英文 id 用于程序和统计，中文 label 仅用于展示。",
+      "unknown 或 pending 只表示尚未核验，不得解释为停业、免费或不适合。",
+      "新增值必须提升 schema_version，并重新执行五城全量数据校验。"
+    ]
+  },
+  "primary_categories": [
+    {
+      "id": "history_culture",
+      "label": "历史文化",
+      "description": "以历史遗存、文化空间和人文体验为主要吸引力。"
+    },
+    {
+      "id": "museum",
+      "label": "博物馆与展馆",
+      "description": "以室内展览、收藏、教育或科普体验为主。"
+    },
+    {
+      "id": "nature",
+      "label": "自然风光",
+      "description": "以山水、生态、地貌或户外自然环境为主。"
+    },
+    {
+      "id": "urban_landmark",
+      "label": "城市地标与街区",
+      "description": "以城市景观、公共空间、商业街区或地标建筑为主。"
+    },
+    {
+      "id": "family_entertainment",
+      "label": "亲子娱乐",
+      "description": "以亲子、互动、游乐或家庭休闲体验为主。"
+    }
+  ],
+  "secondary_categories": [
+    {
+      "id": "history_culture",
+      "label": "历史文化"
+    },
+    {
+      "id": "family_science",
+      "label": "亲子科普"
+    },
+    {
+      "id": "indoor_venue",
+      "label": "室内场馆"
+    },
+    {
+      "id": "local_life",
+      "label": "本地生活"
+    },
+    {
+      "id": "nature_park",
+      "label": "自然与公园"
+    },
+    {
+      "id": "urban_landmark",
+      "label": "城市地标"
+    }
   ],
   "tag_groups": {
-    "scene": ["夜景", "美食", "拍照", "经典景点", "慢游", "文化", "亲子", "互动"],
-    "crowd": ["老人", "儿童", "亲子", "情侣", "家庭", "学生", "摄影"],
-    "risk": ["高步行", "山路", "临水", "夜游"]
+    "history_and_culture": [
+      "碑刻",
+      "兵马俑",
+      "茶文化",
+      "城墙",
+      "非遗",
+      "工艺美术",
+      "宫苑",
+      "古城",
+      "古迹",
+      "古建筑",
+      "古塔",
+      "古镇",
+      "鼓楼",
+      "海防",
+      "纪念馆",
+      "建筑",
+      "教育文化",
+      "近代史",
+      "军事",
+      "考古",
+      "良渚文化",
+      "陵墓",
+      "陵寝",
+      "历史",
+      "民俗",
+      "人文",
+      "石刻",
+      "史前文明",
+      "世界遗产",
+      "书法",
+      "丝绸",
+      "丝绸之路",
+      "寺院",
+      "塔",
+      "王府",
+      "文化",
+      "小雁塔",
+      "遗址",
+      "艺术",
+      "岳飞",
+      "运河",
+      "长城",
+      "钟楼",
+      "珠宝"
+    ],
+    "natural_landscape": [
+      "草地",
+      "丹霞",
+      "地质",
+      "地质景观",
+      "公园",
+      "海岸",
+      "海滨",
+      "海景",
+      "红叶",
+      "湖景",
+      "江景",
+      "漓江",
+      "溶洞",
+      "森林",
+      "沙滩",
+      "山景",
+      "山水",
+      "生态",
+      "湿地",
+      "梯田",
+      "西湖",
+      "西湖景观",
+      "溪流",
+      "乡村",
+      "园林",
+      "植物园",
+      "竹林",
+      "自然",
+      "自然保护"
+    ],
+    "urban_and_local_life": [
+      "本地生活",
+      "边境街区",
+      "步行街",
+      "城市景观",
+      "城市全景",
+      "地标",
+      "度假区",
+      "购物",
+      "广场",
+      "胡同",
+      "街区",
+      "老街",
+      "商业街区",
+      "民宿区",
+      "主题景区"
+    ],
+    "venues_and_education": [
+      "博物馆",
+      "海洋馆",
+      "科技馆",
+      "美术馆",
+      "青少年宫",
+      "天文台",
+      "图书馆",
+      "艺术馆",
+      "影视城",
+      "展览",
+      "自然博物馆"
+    ],
+    "leisure_and_activities": [
+      "登高",
+      "登山",
+      "观鸟",
+      "海岸栈道",
+      "户外",
+      "剧院",
+      "摩天轮",
+      "拍照",
+      "骑行",
+      "轻徒步",
+      "散步",
+      "摄影",
+      "徒步",
+      "休闲",
+      "演出",
+      "游船",
+      "游乐设施",
+      "竹筏",
+      "主题公园"
+    ],
+    "family_and_animals": [
+      "大熊猫",
+      "动物",
+      "亲子"
+    ],
+    "food_and_commerce": [
+      "餐饮",
+      "美食",
+      "小吃",
+      "早餐",
+      "早市",
+      "夜市"
+    ],
+    "time_and_visual_scene": [
+      "灯光",
+      "故宫全景",
+      "日出",
+      "夜景",
+      "夜游",
+      "音乐喷泉"
+    ],
+    "travel_attributes": [
+      "经典景点",
+      "免费",
+      "清凉",
+      "室内",
+      "远郊"
+    ]
   },
-  "intensity_levels": ["low", "medium", "high"],
-  "indoor_outdoor": ["indoor", "outdoor", "mixed"],
-  "best_time_options": ["上午", "中午", "下午", "傍晚", "晚上"]
+  "enums": {
+    "operational_status": [
+      {
+        "id": "active",
+        "label": "正常开放"
+      },
+      {
+        "id": "temporarily_closed",
+        "label": "临时关闭"
+      },
+      {
+        "id": "closed",
+        "label": "已关闭"
+      },
+      {
+        "id": "unknown",
+        "label": "状态待核验"
+      }
+    ],
+    "intensity_level": [
+      {
+        "id": "low",
+        "label": "低强度",
+        "definition": "以短距离、慢节奏活动为主。"
+      },
+      {
+        "id": "medium",
+        "label": "中等强度",
+        "definition": "存在一定连续步行或站立。"
+      },
+      {
+        "id": "high",
+        "label": "高强度",
+        "definition": "存在长时间步行、登高或明显体力消耗。"
+      }
+    ],
+    "walking_level": [
+      {
+        "id": "low",
+        "label": "少量步行"
+      },
+      {
+        "id": "medium",
+        "label": "中等步行"
+      },
+      {
+        "id": "high",
+        "label": "大量步行"
+      }
+    ],
+    "popularity_level": [
+      {
+        "id": "low",
+        "label": "较低"
+      },
+      {
+        "id": "medium",
+        "label": "中等"
+      },
+      {
+        "id": "high",
+        "label": "热门"
+      }
+    ],
+    "environment_type": [
+      {
+        "id": "indoor",
+        "label": "室内"
+      },
+      {
+        "id": "outdoor",
+        "label": "室外"
+      },
+      {
+        "id": "mixed",
+        "label": "室内外混合"
+      }
+    ],
+    "poi_weather_condition": [
+      {
+        "id": "sunny",
+        "label": "晴天"
+      },
+      {
+        "id": "rain",
+        "label": "雨天"
+      },
+      {
+        "id": "high_temperature",
+        "label": "高温"
+      },
+      {
+        "id": "low_temperature",
+        "label": "低温"
+      }
+    ],
+    "experiment_weather_scenario": [
+      {
+        "id": "sunny",
+        "label": "连续晴天"
+      },
+      {
+        "id": "rain",
+        "label": "降雨干扰"
+      },
+      {
+        "id": "high_temperature",
+        "label": "连续高温"
+      },
+      {
+        "id": "low_temperature",
+        "label": "持续低温"
+      },
+      {
+        "id": "continuous_change",
+        "label": "连续天气变化"
+      }
+    ],
+    "suitability_level": [
+      {
+        "id": "suitable",
+        "label": "适合"
+      },
+      {
+        "id": "conditional",
+        "label": "有条件适合"
+      },
+      {
+        "id": "unsuitable",
+        "label": "不适合"
+      },
+      {
+        "id": "unknown",
+        "label": "待核验"
+      }
+    ],
+    "general_group": [
+      {
+        "id": "general",
+        "label": "普通游客"
+      },
+      {
+        "id": "family",
+        "label": "家庭游客"
+      },
+      {
+        "id": "student",
+        "label": "学生"
+      },
+      {
+        "id": "history_lover",
+        "label": "历史文化爱好者"
+      },
+      {
+        "id": "nature_lover",
+        "label": "自然爱好者"
+      },
+      {
+        "id": "city_walk",
+        "label": "城市漫步游客"
+      }
+    ],
+    "evaluated_accessibility_group": [
+      {
+        "id": "elderly",
+        "label": "老年人"
+      },
+      {
+        "id": "children",
+        "label": "儿童"
+      },
+      {
+        "id": "wheelchair",
+        "label": "轮椅使用者"
+      },
+      {
+        "id": "stroller",
+        "label": "婴儿车使用者"
+      }
+    ],
+    "arrival_mode": [
+      {
+        "id": "metro",
+        "label": "地铁"
+      },
+      {
+        "id": "bus",
+        "label": "公交"
+      },
+      {
+        "id": "walk",
+        "label": "步行"
+      },
+      {
+        "id": "taxi",
+        "label": "出租车或网约车"
+      },
+      {
+        "id": "car",
+        "label": "自驾"
+      }
+    ],
+    "visitor_type": [
+      {
+        "id": "adult",
+        "label": "成人"
+      },
+      {
+        "id": "student",
+        "label": "学生"
+      },
+      {
+        "id": "child",
+        "label": "儿童"
+      },
+      {
+        "id": "senior",
+        "label": "老年人"
+      }
+    ],
+    "pricing_mode": [
+      {
+        "id": "rule_based",
+        "label": "按规则计价"
+      }
+    ],
+    "data_verification_status": [
+      {
+        "id": "verified",
+        "label": "已核验"
+      },
+      {
+        "id": "partially_verified",
+        "label": "部分核验"
+      },
+      {
+        "id": "pending",
+        "label": "待核验"
+      }
+    ],
+    "field_verification_status": [
+      {
+        "id": "verified_official",
+        "label": "已由官方来源核验"
+      },
+      {
+        "id": "verified_public_snapshot",
+        "label": "已由公共数据快照核验"
+      },
+      {
+        "id": "verified_snapshot",
+        "label": "已核验快照"
+      },
+      {
+        "id": "official_reference",
+        "label": "官方参考"
+      },
+      {
+        "id": "supporting_reference",
+        "label": "辅助参考"
+      },
+      {
+        "id": "community_snapshot",
+        "label": "社区数据快照"
+      },
+      {
+        "id": "pending",
+        "label": "待核验"
+      }
+    ],
+    "source_type": [
+      {
+        "id": "official_website",
+        "label": "官方网站"
+      },
+      {
+        "id": "public_map_snapshot",
+        "label": "公共地图快照"
+      },
+      {
+        "id": "public_travel_guide",
+        "label": "公开旅游指南"
+      },
+      {
+        "id": "public_reference",
+        "label": "公开参考资料"
+      }
+    ]
+  }
 }

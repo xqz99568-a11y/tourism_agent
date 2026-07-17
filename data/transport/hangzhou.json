@@ -1,0 +1,55 @@
+{
+  "metadata": {
+    "file_id": "ctp_transport_hangzhou_v1_0",
+    "schema_version": "ctp-transport-area-matrix-schema-v1.0",
+    "dataset_version": "CTP-TRANSPORT-v1.0",
+    "city_id": "hangzhou",
+    "city_name": "杭州",
+    "created_at": "2026-07-17",
+    "updated_at": "2026-07-17",
+    "snapshot_date": "2026-07-17",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "data_mode": "frozen_offline",
+    "scenario_nature": "controlled_experiment_matrix",
+    "record_count": 21,
+    "allowed_modes": ["walking", "public_transit", "taxi"],
+    "source": {"source_type": "manual_experiment_design", "description": "Area-level fixed transport matrix for controlled experiments. Real-time map APIs are forbidden during formal experiments.", "verification_status": "pending"}
+  },
+  "area_nodes": [
+    {"area_id": "hz_z01", "label": "west_lake_core"},
+    {"area_id": "hz_z02", "label": "north_canal"},
+    {"area_id": "hz_z03", "label": "qianjiang_new_city"},
+    {"area_id": "hz_z04", "label": "xixi_wetland"},
+    {"area_id": "hz_z05", "label": "xiaoshan_songcheng"},
+    {"area_id": "hz_z06", "label": "linan_outskirts"}
+  ],
+  "mode_rules": {
+    "walking": {"unit": "area_pair", "cost_cny": 0, "long_distance_allowed": false},
+    "public_transit": {"unit": "area_pair", "fare_model": "fixed_matrix"},
+    "taxi": {"unit": "area_pair", "fare_model": "fixed_matrix"}
+  },
+  "links": [
+    {"origin_area_id": "hz_z01", "destination_area_id": "hz_z01", "distance_km": 2.0, "duration_minutes": {"walking": 25, "public_transit": 8, "taxi": 10}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 18}},
+    {"origin_area_id": "hz_z01", "destination_area_id": "hz_z02", "distance_km": 7.0, "duration_minutes": {"walking": 90, "public_transit": 24, "taxi": 28}, "cost_cny": {"walking": 0, "public_transit": 4, "taxi": 40}},
+    {"origin_area_id": "hz_z01", "destination_area_id": "hz_z03", "distance_km": 9.0, "duration_minutes": {"walking": 115, "public_transit": 28, "taxi": 34}, "cost_cny": {"walking": 0, "public_transit": 5, "taxi": 50}},
+    {"origin_area_id": "hz_z01", "destination_area_id": "hz_z04", "distance_km": 11.0, "duration_minutes": {"walking": 140, "public_transit": 34, "taxi": 40}, "cost_cny": {"walking": 0, "public_transit": 5, "taxi": 58}},
+    {"origin_area_id": "hz_z01", "destination_area_id": "hz_z05", "distance_km": 20.0, "duration_minutes": {"walking": 250, "public_transit": 48, "taxi": 55}, "cost_cny": {"walking": 0, "public_transit": 7, "taxi": 95}},
+    {"origin_area_id": "hz_z01", "destination_area_id": "hz_z06", "distance_km": 55.0, "duration_minutes": {"walking": 680, "public_transit": 105, "taxi": 120}, "cost_cny": {"walking": 0, "public_transit": 12, "taxi": 250}},
+    {"origin_area_id": "hz_z02", "destination_area_id": "hz_z02", "distance_km": 2.5, "duration_minutes": {"walking": 30, "public_transit": 8, "taxi": 10}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 18}},
+    {"origin_area_id": "hz_z02", "destination_area_id": "hz_z03", "distance_km": 12.0, "duration_minutes": {"walking": 155, "public_transit": 36, "taxi": 42}, "cost_cny": {"walking": 0, "public_transit": 6, "taxi": 65}},
+    {"origin_area_id": "hz_z02", "destination_area_id": "hz_z04", "distance_km": 14.0, "duration_minutes": {"walking": 180, "public_transit": 40, "taxi": 48}, "cost_cny": {"walking": 0, "public_transit": 6, "taxi": 75}},
+    {"origin_area_id": "hz_z02", "destination_area_id": "hz_z05", "distance_km": 25.0, "duration_minutes": {"walking": 320, "public_transit": 58, "taxi": 70}, "cost_cny": {"walking": 0, "public_transit": 8, "taxi": 120}},
+    {"origin_area_id": "hz_z02", "destination_area_id": "hz_z06", "distance_km": 58.0, "duration_minutes": {"walking": 720, "public_transit": 112, "taxi": 128}, "cost_cny": {"walking": 0, "public_transit": 12, "taxi": 260}},
+    {"origin_area_id": "hz_z03", "destination_area_id": "hz_z03", "distance_km": 3.0, "duration_minutes": {"walking": 35, "public_transit": 8, "taxi": 12}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 20}},
+    {"origin_area_id": "hz_z03", "destination_area_id": "hz_z04", "distance_km": 16.0, "duration_minutes": {"walking": 205, "public_transit": 44, "taxi": 52}, "cost_cny": {"walking": 0, "public_transit": 6, "taxi": 82}},
+    {"origin_area_id": "hz_z03", "destination_area_id": "hz_z05", "distance_km": 17.0, "duration_minutes": {"walking": 215, "public_transit": 42, "taxi": 50}, "cost_cny": {"walking": 0, "public_transit": 6, "taxi": 85}},
+    {"origin_area_id": "hz_z03", "destination_area_id": "hz_z06", "distance_km": 62.0, "duration_minutes": {"walking": 760, "public_transit": 118, "taxi": 135}, "cost_cny": {"walking": 0, "public_transit": 12, "taxi": 280}},
+    {"origin_area_id": "hz_z04", "destination_area_id": "hz_z04", "distance_km": 3.0, "duration_minutes": {"walking": 35, "public_transit": 8, "taxi": 12}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 20}},
+    {"origin_area_id": "hz_z04", "destination_area_id": "hz_z05", "distance_km": 27.0, "duration_minutes": {"walking": 340, "public_transit": 66, "taxi": 76}, "cost_cny": {"walking": 0, "public_transit": 8, "taxi": 130}},
+    {"origin_area_id": "hz_z04", "destination_area_id": "hz_z06", "distance_km": 45.0, "duration_minutes": {"walking": 560, "public_transit": 92, "taxi": 105}, "cost_cny": {"walking": 0, "public_transit": 10, "taxi": 210}},
+    {"origin_area_id": "hz_z05", "destination_area_id": "hz_z05", "distance_km": 4.0, "duration_minutes": {"walking": 50, "public_transit": 10, "taxi": 15}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 24}},
+    {"origin_area_id": "hz_z05", "destination_area_id": "hz_z06", "distance_km": 70.0, "duration_minutes": {"walking": 860, "public_transit": 130, "taxi": 150}, "cost_cny": {"walking": 0, "public_transit": 13, "taxi": 320}},
+    {"origin_area_id": "hz_z06", "destination_area_id": "hz_z06", "distance_km": 5.0, "duration_minutes": {"walking": 60, "public_transit": 12, "taxi": 18}, "cost_cny": {"walking": 0, "public_transit": 3, "taxi": 28}}
+  ]
+}

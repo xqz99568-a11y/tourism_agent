@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "file_id": "ctp_dining_area_beijing_v1_0",
+    "file_id": "ctp_dining_area_xian_v1_0",
     "schema_version": "ctp-dining-area-schema-v1.0",
     "dataset_version": "CTP-DINING-v1.0",
-    "city_id": "beijing",
-    "city_name": "北京",
+    "city_id": "xian",
+    "city_name": "西安",
     "created_at": "2026-07-17",
     "updated_at": "2026-07-17",
     "snapshot_date": "2026-07-17",
@@ -20,76 +20,74 @@
   },
   "dining_areas": [
     {
-      "id": "bj_da001",
-      "name": "前门—大栅栏餐饮区",
+      "id": "xa_da001",
+      "name": "回民街—钟鼓楼餐饮区",
       "aliases": [
-        "前门餐饮区",
-        "大栅栏餐饮区"
+        "回民街餐饮区",
+        "北院门餐饮区"
       ],
       "operational_status": "active",
       "location": {
-        "city_id": "beijing",
-        "city_name": "北京",
+        "city_id": "xian",
+        "city_name": "西安",
         "districts": [
-          "东城区",
-          "西城区"
+          "莲湖区"
         ],
         "area_ids": [
-          "bj_z01"
+          "xa_z01"
         ],
         "center_coordinate": {
-          "latitude": 39.899,
-          "longitude": 116.397,
+          "latitude": 34.2637,
+          "longitude": 108.942,
           "coordinate_system": "WGS84",
           "verification_status": "public_map_reference"
         },
         "nearby_poi_ids": [
-          "bj027",
-          "bj001",
-          "bj004"
+          "xa006",
+          "xa013",
+          "xa014"
         ]
       },
       "classification": {
-        "area_type": "traditional_food_district",
+        "area_type": "traditional_halal_food_district",
         "cuisine_types": [
-          "beijing_cuisine",
-          "local_snack",
-          "roast_duck"
+          "shaanxi_cuisine",
+          "halal_cuisine",
+          "local_snack"
         ],
         "tags": [
+          "清真餐饮",
           "传统小吃",
-          "老字号集中",
           "游客型街区",
-          "适合午餐",
-          "适合晚餐"
+          "夜间消费"
         ]
       },
       "service_profile": {
         "supported_meal_types": [
-          "breakfast",
           "lunch",
-          "dinner"
+          "dinner",
+          "late_night"
         ],
         "service_windows": [
           {
-            "meal_type": "breakfast",
-            "start": "07:00",
-            "end": "10:00"
-          },
-          {
             "meal_type": "lunch",
-            "start": "11:00",
+            "start": "11:30",
             "end": "14:00"
           },
           {
             "meal_type": "dinner",
             "start": "17:00",
-            "end": "21:30"
+            "end": "22:00"
+          },
+          {
+            "meal_type": "late_night",
+            "start": "22:00",
+            "end": "02:00"
           }
         ],
         "average_wait_minutes": {
-          "off_peak": 10,
-          "peak": 35
+          "off_peak": 15,
+          "peak": 50
         },
         "reservation_recommended": false,
         "availability_mode": "assumed_available_for_experiment"
@@ -99,26 +97,26 @@
         "unit": "person_per_meal",
         "tiers": {
           "economy": {
-            "minimum_price_cny": 20,
-            "reference_price_cny": 45,
-            "maximum_price_cny": 65
+            "minimum_price_cny": 15,
+            "reference_price_cny": 35,
+            "maximum_price_cny": 50
           },
           "comfort": {
-            "minimum_price_cny": 70,
-            "reference_price_cny": 110,
-            "maximum_price_cny": 150
+            "minimum_price_cny": 50,
+            "reference_price_cny": 75,
+            "maximum_price_cny": 110
           },
           "premium": {
-            "minimum_price_cny": 180,
-            "reference_price_cny": 260,
-            "maximum_price_cny": 420
+            "minimum_price_cny": 130,
+            "reference_price_cny": 200,
+            "maximum_price_cny": 320
           }
         },
         "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
       },
       "dietary_support": {
         "vegetarian": "conditional",
-        "halal": "conditional",
+        "halal": "suitable",
         "child_friendly": "suitable",
         "allergy_information": "unknown"
       },
@@ -130,7 +128,7 @@
         "wheelchair": "conditional"
       },
       "transport": {
-        "matrix_node_id": "bj_da001",
+        "matrix_node_id": "xa_da001",
         "recommended_arrival_modes": [
           "metro",
           "bus",
@@ -157,10 +155,10 @@
       },
       "sources": [
         {
-          "source_id": "src_bj_da001_01",
+          "source_id": "src_xa_da001_01",
           "source_type": "public_map_snapshot",
           "source_name": "OpenStreetMap Nominatim",
-          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E5%8C%97%E4%BA%AC%20%E5%89%8D%E9%97%A8%E2%80%94%E5%A4%A7%E6%A0%85%E6%A0%8F%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E5%9B%9E%E6%B0%91%E8%A1%97%E2%80%94%E9%92%9F%E9%BC%93%E6%A5%BC%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "location"
@@ -168,10 +166,10 @@
           "verification_status": "supporting_reference"
         },
         {
-          "source_id": "src_bj_da001_02",
+          "source_id": "src_xa_da001_02",
           "source_type": "public_web_reference",
-          "source_name": "北京旅游网",
-          "url": "https://www.visitbeijing.com.cn/article/4HD9DDdEGi3",
+          "source_name": "新浪财经",
+          "url": "https://finance.sina.cn/2025-02-02/detail-inehzvxi8974233.d.html",
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "classification",
@@ -180,10 +178,10 @@
           "verification_status": "retrieved_public_reference"
         },
         {
-          "source_id": "src_bj_da001_03",
+          "source_id": "src_xa_da001_03",
           "source_type": "public_price_reference",
-          "source_name": "北京旅游网（固定实验价格校准）",
-          "url": "https://www.visitbeijing.com.cn/article/4OMP0ZjVUTV",
+          "source_name": "西安旅游网（固定实验价格校准）",
+          "url": "https://www.tang.org.cn/52696.html",
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "budget"
@@ -193,47 +191,375 @@
       ]
     },
     {
-      "id": "bj_da002",
-      "name": "簋街—东直门餐饮区",
+      "id": "xa_da002",
+      "name": "永兴坊—东新街餐饮区",
       "aliases": [
-        "簋街",
-        "东直门美食街"
+        "永兴坊餐饮区",
+        "东新街餐饮区"
       ],
       "operational_status": "active",
       "location": {
-        "city_id": "beijing",
-        "city_name": "北京",
+        "city_id": "xian",
+        "city_name": "西安",
         "districts": [
-          "东城区"
+          "新城区"
         ],
         "area_ids": [
-          "bj_z02"
+          "xa_z01"
         ],
         "center_coordinate": {
-          "latitude": 39.9416,
-          "longitude": 116.424,
+          "latitude": 34.2675,
+          "longitude": 108.9672,
           "coordinate_system": "WGS84",
           "verification_status": "public_map_reference"
         },
         "nearby_poi_ids": [
-          "bj016",
-          "bj017"
+          "xa016",
+          "xa013"
         ]
       },
       "classification": {
-        "area_type": "night_food_street",
+        "area_type": "local_snack_district",
         "cuisine_types": [
-          "beijing_cuisine",
-          "spicy_crayfish",
-          "hotpot",
-          "barbecue"
+          "shaanxi_cuisine",
+          "local_snack",
+          "northwest_cuisine"
         ],
         "tags": [
-          "夜宵",
-          "小龙虾",
-          "火锅",
-          "营业时间较晚",
-          "高峰排队"
+          "非遗小吃",
+          "陕西味道",
+          "夜市",
+          "适合打卡"
+        ]
+      },
+      "service_profile": {
+        "supported_meal_types": [
+          "lunch",
+          "dinner",
+          "late_night"
+        ],
+        "service_windows": [
+          {
+            "meal_type": "lunch",
+            "start": "11:30",
+            "end": "14:00"
+          },
+          {
+            "meal_type": "dinner",
+            "start": "17:00",
+            "end": "22:00"
+          },
+          {
+            "meal_type": "late_night",
+            "start": "22:00",
+            "end": "02:00"
+          }
+        ],
+        "average_wait_minutes": {
+          "off_peak": 10,
+          "peak": 40
+        },
+        "reservation_recommended": false,
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "person_per_meal",
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 15,
+            "reference_price_cny": 30,
+            "maximum_price_cny": 45
+          },
+          "comfort": {
+            "minimum_price_cny": 45,
+            "reference_price_cny": 70,
+            "maximum_price_cny": 100
+          },
+          "premium": {
+            "minimum_price_cny": 120,
+            "reference_price_cny": 180,
+            "maximum_price_cny": 280
+          }
+        },
+        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+      },
+      "dietary_support": {
+        "vegetarian": "conditional",
+        "halal": "conditional",
+        "child_friendly": "suitable",
+        "allergy_information": "unknown"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional"
+      },
+      "transport": {
+        "matrix_node_id": "xa_da002",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "weather_suitability": {
+        "sunny": "suitable",
+        "rain": "conditional",
+        "high_temperature": "conditional",
+        "low_temperature": "conditional"
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
+          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
+          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
+          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa_da002_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E6%B0%B8%E5%85%B4%E5%9D%8A%E2%80%94%E4%B8%9C%E6%96%B0%E8%A1%97%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa_da002_02",
+          "source_type": "public_web_reference",
+          "source_name": "非遗文化公开资料",
+          "url": "https://www.gzfwz.org.cn/xslt/202505/t20250519_87892753.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "service_profile"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_xa_da002_03",
+          "source_type": "public_price_reference",
+          "source_name": "西安旅游网（固定实验价格校准）",
+          "url": "https://www.tang.org.cn/54196.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "xa_da003",
+      "name": "小南门早市—含光门餐饮区",
+      "aliases": [
+        "小南门早市",
+        "含光门早市"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "districts": [
+          "碑林区"
+        ],
+        "area_ids": [
+          "xa_z02"
+        ],
+        "center_coordinate": {
+          "latitude": 34.2494,
+          "longitude": 108.9365,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "xa023",
+          "xa002"
+        ]
+      },
+      "classification": {
+        "area_type": "breakfast_market_district",
+        "cuisine_types": [
+          "shaanxi_breakfast",
+          "local_snack",
+          "budget_meal"
+        ],
+        "tags": [
+          "早餐",
+          "本地生活",
+          "平价小吃",
+          "早间限定"
+        ]
+      },
+      "service_profile": {
+        "supported_meal_types": [
+          "breakfast"
+        ],
+        "service_windows": [
+          {
+            "meal_type": "breakfast",
+            "start": "06:00",
+            "end": "09:30"
+          }
+        ],
+        "average_wait_minutes": {
+          "off_peak": 5,
+          "peak": 25
+        },
+        "reservation_recommended": false,
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "person_per_meal",
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 8,
+            "reference_price_cny": 20,
+            "maximum_price_cny": 30
+          },
+          "comfort": {
+            "minimum_price_cny": 30,
+            "reference_price_cny": 45,
+            "maximum_price_cny": 65
+          },
+          "premium": {
+            "minimum_price_cny": 80,
+            "reference_price_cny": 120,
+            "maximum_price_cny": 180
+          }
+        },
+        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+      },
+      "dietary_support": {
+        "vegetarian": "conditional",
+        "halal": "conditional",
+        "child_friendly": "suitable",
+        "allergy_information": "unknown"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "conditional",
+        "children": "suitable",
+        "wheelchair": "conditional"
+      },
+      "transport": {
+        "matrix_node_id": "xa_da003",
+        "recommended_arrival_modes": [
+          "metro",
+          "bus",
+          "walk"
+        ]
+      },
+      "weather_suitability": {
+        "sunny": "suitable",
+        "rain": "conditional",
+        "high_temperature": "conditional",
+        "low_temperature": "conditional"
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
+          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
+          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
+          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa_da003_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E5%B0%8F%E5%8D%97%E9%97%A8%E6%97%A9%E5%B8%82%E2%80%94%E5%90%AB%E5%85%89%E9%97%A8%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa_da003_02",
+          "source_type": "public_web_reference",
+          "source_name": "新浪财经",
+          "url": "https://finance.sina.cn/2025-02-02/detail-inehzvxi8974233.d.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "service_profile"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_xa_da003_03",
+          "source_type": "public_price_reference",
+          "source_name": "西安旅游网（固定实验价格校准）",
+          "url": "https://www.tang.org.cn/76339.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "xa_da004",
+      "name": "大雁塔—大唐不夜城餐饮区",
+      "aliases": [
+        "大唐不夜城餐饮区",
+        "曲江餐饮区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "districts": [
+          "雁塔区",
+          "曲江新区"
+        ],
+        "area_ids": [
+          "xa_z03"
+        ],
+        "center_coordinate": {
+          "latitude": 34.218,
+          "longitude": 108.9645,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": [
+          "xa004",
+          "xa005",
+          "xa015"
+        ]
+      },
+      "classification": {
+        "area_type": "scenic_night_district",
+        "cuisine_types": [
+          "shaanxi_cuisine",
+          "chinese_regional_cuisine",
+          "theme_dining"
+        ],
+        "tags": [
+          "景区周边",
+          "夜间消费",
+          "唐风体验",
+          "家庭客群"
         ]
       },
       "service_profile": {
@@ -263,7 +589,7 @@
           "off_peak": 15,
           "peak": 50
         },
-        "reservation_recommended": false,
+        "reservation_recommended": true,
         "availability_mode": "assumed_available_for_experiment"
       },
       "budget": {
@@ -271,19 +597,19 @@
         "unit": "person_per_meal",
         "tiers": {
           "economy": {
-            "minimum_price_cny": 35,
-            "reference_price_cny": 70,
-            "maximum_price_cny": 100
+            "minimum_price_cny": 25,
+            "reference_price_cny": 50,
+            "maximum_price_cny": 75
           },
           "comfort": {
-            "minimum_price_cny": 100,
-            "reference_price_cny": 145,
-            "maximum_price_cny": 200
+            "minimum_price_cny": 80,
+            "reference_price_cny": 120,
+            "maximum_price_cny": 170
           },
           "premium": {
-            "minimum_price_cny": 220,
-            "reference_price_cny": 320,
-            "maximum_price_cny": 500
+            "minimum_price_cny": 180,
+            "reference_price_cny": 260,
+            "maximum_price_cny": 400
           }
         },
         "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
@@ -302,7 +628,7 @@
         "wheelchair": "conditional"
       },
       "transport": {
-        "matrix_node_id": "bj_da002",
+        "matrix_node_id": "xa_da004",
         "recommended_arrival_modes": [
           "metro",
           "bus",
@@ -329,10 +655,10 @@
       },
       "sources": [
         {
-          "source_id": "src_bj_da002_01",
+          "source_id": "src_xa_da004_01",
           "source_type": "public_map_snapshot",
           "source_name": "OpenStreetMap Nominatim",
-          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E5%8C%97%E4%BA%AC%20%E7%B0%8B%E8%A1%97%E2%80%94%E4%B8%9C%E7%9B%B4%E9%97%A8%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E5%A4%A7%E9%9B%81%E5%A1%94%E2%80%94%E5%A4%A7%E5%94%90%E4%B8%8D%E5%A4%9C%E5%9F%8E%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "location"
@@ -340,10 +666,10 @@
           "verification_status": "supporting_reference"
         },
         {
-          "source_id": "src_bj_da002_02",
+          "source_id": "src_xa_da004_02",
           "source_type": "public_web_reference",
-          "source_name": "北京旅游网",
-          "url": "https://www.visitbeijing.com.cn/article/4E1Dm7GMkCX",
+          "source_name": "经济参考网",
+          "url": "https://www.jjckb.cn/20250306/19664552b3954e31b2eb602922dd51fc/c.html",
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "classification",
@@ -352,10 +678,10 @@
           "verification_status": "retrieved_public_reference"
         },
         {
-          "source_id": "src_bj_da002_03",
+          "source_id": "src_xa_da004_03",
           "source_type": "public_price_reference",
-          "source_name": "北京旅游网（固定实验价格校准）",
-          "url": "https://www.visitbeijing.com.cn/article/4OMR5BLcz3Y",
+          "source_name": "西安旅游网（固定实验价格校准）",
+          "url": "https://www.tang.org.cn/53481.html",
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "budget"
@@ -365,207 +691,45 @@
       ]
     },
     {
-      "id": "bj_da003",
-      "name": "王府井—金鱼胡同餐饮区",
+      "id": "xa_da005",
+      "name": "永宁门—南门里餐饮区",
       "aliases": [
-        "王府井餐饮区"
+        "南门餐饮区",
+        "永宁门餐饮区"
       ],
       "operational_status": "active",
       "location": {
-        "city_id": "beijing",
-        "city_name": "北京",
+        "city_id": "xian",
+        "city_name": "西安",
         "districts": [
-          "东城区"
+          "碑林区"
         ],
         "area_ids": [
-          "bj_z01"
+          "xa_z02"
         ],
         "center_coordinate": {
-          "latitude": 39.9073,
-          "longitude": 116.4051,
+          "latitude": 34.255,
+          "longitude": 108.9475,
           "coordinate_system": "WGS84",
           "verification_status": "public_map_reference"
         },
         "nearby_poi_ids": [
-          "bj028",
-          "bj004",
-          "bj001"
+          "xa002",
+          "xa008",
+          "xa011"
         ]
       },
       "classification": {
-        "area_type": "commercial_dining_district",
+        "area_type": "old_city_commercial_district",
         "cuisine_types": [
-          "beijing_cuisine",
-          "chinese_regional_cuisine",
-          "international_cuisine"
-        ],
-        "tags": [
-          "核心商圈",
-          "老字号",
-          "商场餐饮",
-          "选择丰富"
-        ]
-      },
-      "service_profile": {
-        "supported_meal_types": [
-          "lunch",
-          "dinner"
-        ],
-        "service_windows": [
-          {
-            "meal_type": "lunch",
-            "start": "11:00",
-            "end": "14:30"
-          },
-          {
-            "meal_type": "dinner",
-            "start": "17:00",
-            "end": "22:00"
-          }
-        ],
-        "average_wait_minutes": {
-          "off_peak": 15,
-          "peak": 45
-        },
-        "reservation_recommended": true,
-        "availability_mode": "assumed_available_for_experiment"
-      },
-      "budget": {
-        "currency": "CNY",
-        "unit": "person_per_meal",
-        "tiers": {
-          "economy": {
-            "minimum_price_cny": 30,
-            "reference_price_cny": 55,
-            "maximum_price_cny": 80
-          },
-          "comfort": {
-            "minimum_price_cny": 90,
-            "reference_price_cny": 140,
-            "maximum_price_cny": 190
-          },
-          "premium": {
-            "minimum_price_cny": 220,
-            "reference_price_cny": 320,
-            "maximum_price_cny": 500
-          }
-        },
-        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
-      },
-      "dietary_support": {
-        "vegetarian": "conditional",
-        "halal": "conditional",
-        "child_friendly": "suitable",
-        "allergy_information": "unknown"
-      },
-      "suitability": {
-        "general": "suitable",
-        "family": "suitable",
-        "elderly": "suitable",
-        "children": "suitable",
-        "wheelchair": "conditional"
-      },
-      "transport": {
-        "matrix_node_id": "bj_da003",
-        "recommended_arrival_modes": [
-          "metro",
-          "bus",
-          "walk"
-        ]
-      },
-      "weather_suitability": {
-        "sunny": "suitable",
-        "rain": "suitable",
-        "high_temperature": "suitable",
-        "low_temperature": "suitable"
-      },
-      "data_quality": {
-        "required_fields_complete": true,
-        "verification_status": "partially_verified_fixed_experiment_data",
-        "verified_at": "2026-07-17",
-        "verified_by": "public_web_snapshot_and_rule_calibration",
-        "notes": [
-          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
-          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
-          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
-          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
-        ]
-      },
-      "sources": [
-        {
-          "source_id": "src_bj_da003_01",
-          "source_type": "public_map_snapshot",
-          "source_name": "OpenStreetMap Nominatim",
-          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E5%8C%97%E4%BA%AC%20%E7%8E%8B%E5%BA%9C%E4%BA%95%E2%80%94%E9%87%91%E9%B1%BC%E8%83%A1%E5%90%8C%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
-          "accessed_at": "2026-07-17",
-          "covered_fields": [
-            "location"
-          ],
-          "verification_status": "supporting_reference"
-        },
-        {
-          "source_id": "src_bj_da003_02",
-          "source_type": "public_web_reference",
-          "source_name": "北京旅游网",
-          "url": "https://www.visitbeijing.com.cn/article/4E1Dm7GMkCX",
-          "accessed_at": "2026-07-17",
-          "covered_fields": [
-            "classification",
-            "service_profile"
-          ],
-          "verification_status": "retrieved_public_reference"
-        },
-        {
-          "source_id": "src_bj_da003_03",
-          "source_type": "public_price_reference",
-          "source_name": "北京旅游网（固定实验价格校准）",
-          "url": "https://www.visitbeijing.com.cn/article/4OMR5BLcz3Y",
-          "accessed_at": "2026-07-17",
-          "covered_fields": [
-            "budget"
-          ],
-          "verification_status": "fixed_experiment_calibration"
-        }
-      ]
-    },
-    {
-      "id": "bj_da004",
-      "name": "三里屯—工体餐饮区",
-      "aliases": [
-        "三里屯餐饮区",
-        "工体餐饮区"
-      ],
-      "operational_status": "active",
-      "location": {
-        "city_id": "beijing",
-        "city_name": "北京",
-        "districts": [
-          "朝阳区"
-        ],
-        "area_ids": [
-          "bj_z04"
-        ],
-        "center_coordinate": {
-          "latitude": 39.9345,
-          "longitude": 116.4552,
-          "coordinate_system": "WGS84",
-          "verification_status": "public_map_reference"
-        },
-        "nearby_poi_ids": []
-      },
-      "classification": {
-        "area_type": "nightlife_commercial_district",
-        "cuisine_types": [
-          "international_cuisine",
-          "bar",
+          "shaanxi_cuisine",
           "cafe",
           "chinese_regional_cuisine"
         ],
         "tags": [
-          "夜生活",
-          "国际餐饮",
-          "酒吧",
-          "高端餐饮",
+          "城墙周边",
+          "老城商圈",
+          "咖啡",
           "适合晚餐"
         ]
       },
@@ -593,180 +757,10 @@
           }
         ],
         "average_wait_minutes": {
-          "off_peak": 15,
-          "peak": 50
+          "off_peak": 10,
+          "peak": 40
         },
         "reservation_recommended": true,
-        "availability_mode": "assumed_available_for_experiment"
-      },
-      "budget": {
-        "currency": "CNY",
-        "unit": "person_per_meal",
-        "tiers": {
-          "economy": {
-            "minimum_price_cny": 40,
-            "reference_price_cny": 75,
-            "maximum_price_cny": 110
-          },
-          "comfort": {
-            "minimum_price_cny": 120,
-            "reference_price_cny": 180,
-            "maximum_price_cny": 260
-          },
-          "premium": {
-            "minimum_price_cny": 300,
-            "reference_price_cny": 450,
-            "maximum_price_cny": 700
-          }
-        },
-        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
-      },
-      "dietary_support": {
-        "vegetarian": "suitable",
-        "halal": "conditional",
-        "child_friendly": "conditional",
-        "allergy_information": "unknown"
-      },
-      "suitability": {
-        "general": "suitable",
-        "family": "suitable",
-        "elderly": "suitable",
-        "children": "suitable",
-        "wheelchair": "conditional"
-      },
-      "transport": {
-        "matrix_node_id": "bj_da004",
-        "recommended_arrival_modes": [
-          "metro",
-          "bus",
-          "walk"
-        ]
-      },
-      "weather_suitability": {
-        "sunny": "suitable",
-        "rain": "suitable",
-        "high_temperature": "suitable",
-        "low_temperature": "suitable"
-      },
-      "data_quality": {
-        "required_fields_complete": true,
-        "verification_status": "partially_verified_fixed_experiment_data",
-        "verified_at": "2026-07-17",
-        "verified_by": "public_web_snapshot_and_rule_calibration",
-        "notes": [
-          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
-          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
-          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
-          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
-        ]
-      },
-      "sources": [
-        {
-          "source_id": "src_bj_da004_01",
-          "source_type": "public_map_snapshot",
-          "source_name": "OpenStreetMap Nominatim",
-          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E5%8C%97%E4%BA%AC%20%E4%B8%89%E9%87%8C%E5%B1%AF%E2%80%94%E5%B7%A5%E4%BD%93%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
-          "accessed_at": "2026-07-17",
-          "covered_fields": [
-            "location"
-          ],
-          "verification_status": "supporting_reference"
-        },
-        {
-          "source_id": "src_bj_da004_02",
-          "source_type": "public_web_reference",
-          "source_name": "北京旅游网",
-          "url": "https://www.visitbeijing.com.cn/article/4P74HFNcwMf",
-          "accessed_at": "2026-07-17",
-          "covered_fields": [
-            "classification",
-            "service_profile"
-          ],
-          "verification_status": "retrieved_public_reference"
-        },
-        {
-          "source_id": "src_bj_da004_03",
-          "source_type": "public_price_reference",
-          "source_name": "北京旅游网（固定实验价格校准）",
-          "url": "https://www.visitbeijing.com.cn/article/4P74HFNcwMf",
-          "accessed_at": "2026-07-17",
-          "covered_fields": [
-            "budget"
-          ],
-          "verification_status": "fixed_experiment_calibration"
-        }
-      ]
-    },
-    {
-      "id": "bj_da005",
-      "name": "五道口—学院路餐饮区",
-      "aliases": [
-        "五道口餐饮区",
-        "学院路餐饮区"
-      ],
-      "operational_status": "active",
-      "location": {
-        "city_id": "beijing",
-        "city_name": "北京",
-        "districts": [
-          "海淀区"
-        ],
-        "area_ids": [
-          "bj_z03"
-        ],
-        "center_coordinate": {
-          "latitude": 39.993,
-          "longitude": 116.3375,
-          "coordinate_system": "WGS84",
-          "verification_status": "public_map_reference"
-        },
-        "nearby_poi_ids": [
-          "bj015",
-          "bj019"
-        ]
-      },
-      "classification": {
-        "area_type": "student_local_district",
-        "cuisine_types": [
-          "budget_meal",
-          "korean_cuisine",
-          "chinese_regional_cuisine"
-        ],
-        "tags": [
-          "高校周边",
-          "学生友好",
-          "平价餐饮",
-          "国际化选择"
-        ]
-      },
-      "service_profile": {
-        "supported_meal_types": [
-          "lunch",
-          "dinner",
-          "late_night"
-        ],
-        "service_windows": [
-          {
-            "meal_type": "lunch",
-            "start": "11:30",
-            "end": "14:00"
-          },
-          {
-            "meal_type": "dinner",
-            "start": "17:00",
-            "end": "22:00"
-          },
-          {
-            "meal_type": "late_night",
-            "start": "22:00",
-            "end": "02:00"
-          }
-        ],
-        "average_wait_minutes": {
-          "off_peak": 10,
-          "peak": 35
-        },
-        "reservation_recommended": false,
         "availability_mode": "assumed_available_for_experiment"
       },
       "budget": {
@@ -779,178 +773,13 @@
             "maximum_price_cny": 60
           },
           "comfort": {
-            "minimum_price_cny": 60,
-            "reference_price_cny": 95,
-            "maximum_price_cny": 140
+            "minimum_price_cny": 65,
+            "reference_price_cny": 100,
+            "maximum_price_cny": 150
           },
           "premium": {
-            "minimum_price_cny": 150,
-            "reference_price_cny": 220,
-            "maximum_price_cny": 350
-          }
-        },
-        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
-      },
-      "dietary_support": {
-        "vegetarian": "conditional",
-        "halal": "conditional",
-        "child_friendly": "suitable",
-        "allergy_information": "unknown"
-      },
-      "suitability": {
-        "general": "suitable",
-        "family": "suitable",
-        "elderly": "suitable",
-        "children": "suitable",
-        "wheelchair": "conditional"
-      },
-      "transport": {
-        "matrix_node_id": "bj_da005",
-        "recommended_arrival_modes": [
-          "metro",
-          "bus",
-          "walk"
-        ]
-      },
-      "weather_suitability": {
-        "sunny": "suitable",
-        "rain": "suitable",
-        "high_temperature": "conditional",
-        "low_temperature": "suitable"
-      },
-      "data_quality": {
-        "required_fields_complete": true,
-        "verification_status": "partially_verified_fixed_experiment_data",
-        "verified_at": "2026-07-17",
-        "verified_by": "public_web_snapshot_and_rule_calibration",
-        "notes": [
-          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
-          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
-          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
-          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
-        ]
-      },
-      "sources": [
-        {
-          "source_id": "src_bj_da005_01",
-          "source_type": "public_map_snapshot",
-          "source_name": "OpenStreetMap Nominatim",
-          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E5%8C%97%E4%BA%AC%20%E4%BA%94%E9%81%93%E5%8F%A3%E2%80%94%E5%AD%A6%E9%99%A2%E8%B7%AF%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
-          "accessed_at": "2026-07-17",
-          "covered_fields": [
-            "location"
-          ],
-          "verification_status": "supporting_reference"
-        },
-        {
-          "source_id": "src_bj_da005_02",
-          "source_type": "public_web_reference",
-          "source_name": "北京旅游网",
-          "url": "https://www.visitbeijing.com.cn/article/47QrQ1Ynj2v",
-          "accessed_at": "2026-07-17",
-          "covered_fields": [
-            "classification",
-            "service_profile"
-          ],
-          "verification_status": "retrieved_public_reference"
-        },
-        {
-          "source_id": "src_bj_da005_03",
-          "source_type": "public_price_reference",
-          "source_name": "北京旅游网（固定实验价格校准）",
-          "url": "https://www.visitbeijing.com.cn/article/4OMR5BLcz3Y",
-          "accessed_at": "2026-07-17",
-          "covered_fields": [
-            "budget"
-          ],
-          "verification_status": "fixed_experiment_calibration"
-        }
-      ]
-    },
-    {
-      "id": "bj_da006",
-      "name": "环球度假区—梨园餐饮区",
-      "aliases": [
-        "北京环球餐饮区",
-        "梨园餐饮区"
-      ],
-      "operational_status": "active",
-      "location": {
-        "city_id": "beijing",
-        "city_name": "北京",
-        "districts": [
-          "通州区"
-        ],
-        "area_ids": [
-          "bj_z05"
-        ],
-        "center_coordinate": {
-          "latitude": 39.8548,
-          "longitude": 116.6778,
-          "coordinate_system": "WGS84",
-          "verification_status": "public_map_reference"
-        },
-        "nearby_poi_ids": [
-          "bj024",
-          "bj009",
-          "bj014"
-        ]
-      },
-      "classification": {
-        "area_type": "theme_park_service_district",
-        "cuisine_types": [
-          "theme_park_quick_service",
-          "chinese_cuisine",
-          "western_fast_food"
-        ],
-        "tags": [
-          "主题乐园",
-          "景区周边",
-          "快餐",
-          "家庭客群"
-        ]
-      },
-      "service_profile": {
-        "supported_meal_types": [
-          "lunch",
-          "dinner"
-        ],
-        "service_windows": [
-          {
-            "meal_type": "lunch",
-            "start": "10:30",
-            "end": "14:30"
-          },
-          {
-            "meal_type": "dinner",
-            "start": "17:00",
-            "end": "20:30"
-          }
-        ],
-        "average_wait_minutes": {
-          "off_peak": 15,
-          "peak": 45
-        },
-        "reservation_recommended": false,
-        "availability_mode": "assumed_available_for_experiment"
-      },
-      "budget": {
-        "currency": "CNY",
-        "unit": "person_per_meal",
-        "tiers": {
-          "economy": {
-            "minimum_price_cny": 50,
-            "reference_price_cny": 80,
-            "maximum_price_cny": 110
-          },
-          "comfort": {
-            "minimum_price_cny": 100,
-            "reference_price_cny": 140,
-            "maximum_price_cny": 180
-          },
-          "premium": {
-            "minimum_price_cny": 200,
-            "reference_price_cny": 300,
+            "minimum_price_cny": 180,
+            "reference_price_cny": 280,
             "maximum_price_cny": 450
           }
         },
@@ -970,7 +799,7 @@
         "wheelchair": "conditional"
       },
       "transport": {
-        "matrix_node_id": "bj_da006",
+        "matrix_node_id": "xa_da005",
         "recommended_arrival_modes": [
           "metro",
           "bus",
@@ -997,10 +826,10 @@
       },
       "sources": [
         {
-          "source_id": "src_bj_da006_01",
+          "source_id": "src_xa_da005_01",
           "source_type": "public_map_snapshot",
           "source_name": "OpenStreetMap Nominatim",
-          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E5%8C%97%E4%BA%AC%20%E7%8E%AF%E7%90%83%E5%BA%A6%E5%81%87%E5%8C%BA%E2%80%94%E6%A2%A8%E5%9B%AD%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E6%B0%B8%E5%AE%81%E9%97%A8%E2%80%94%E5%8D%97%E9%97%A8%E9%87%8C%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "location"
@@ -1008,10 +837,10 @@
           "verification_status": "supporting_reference"
         },
         {
-          "source_id": "src_bj_da006_02",
+          "source_id": "src_xa_da005_02",
           "source_type": "public_web_reference",
-          "source_name": "北京环球度假区官网",
-          "url": "https://www.universalbeijingresort.com/en/",
+          "source_name": "西安市人民政府",
+          "url": "https://www.xa.gov.cn/index/tttp/2001482948069105666.html",
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "classification",
@@ -1020,10 +849,10 @@
           "verification_status": "retrieved_public_reference"
         },
         {
-          "source_id": "src_bj_da006_03",
+          "source_id": "src_xa_da005_03",
           "source_type": "public_price_reference",
-          "source_name": "北京环球度假区周边旅游指南（固定实验价格校准）",
-          "url": "https://www.xiejiahuipeng.com/articles/universal-food-guide.html",
+          "source_name": "西安旅游网（固定实验价格校准）",
+          "url": "https://www.tang.org.cn/54196.html",
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "budget"
@@ -1033,69 +862,67 @@
       ]
     },
     {
-      "id": "bj_da007",
-      "name": "北京南站—马家堡餐饮区",
+      "id": "xa_da006",
+      "name": "临潼兵马俑—华清宫餐饮区",
       "aliases": [
-        "北京南站餐饮区"
+        "临潼景区餐饮区",
+        "兵马俑餐饮区"
       ],
       "operational_status": "active",
       "location": {
-        "city_id": "beijing",
-        "city_name": "北京",
+        "city_id": "xian",
+        "city_name": "西安",
         "districts": [
-          "丰台区"
+          "临潼区"
         ],
         "area_ids": [
-          "bj_z01"
+          "xa_z05"
         ],
         "center_coordinate": {
-          "latitude": 39.8652,
-          "longitude": 116.3787,
+          "latitude": 34.3835,
+          "longitude": 109.2348,
           "coordinate_system": "WGS84",
           "verification_status": "public_map_reference"
         },
-        "nearby_poi_ids": []
+        "nearby_poi_ids": [
+          "xa001",
+          "xa007"
+        ]
       },
       "classification": {
-        "area_type": "transport_hub_district",
+        "area_type": "scenic_service_district",
         "cuisine_types": [
-          "chinese_fast_food",
-          "budget_meal",
-          "local_snack"
+          "shaanxi_cuisine",
+          "local_snack",
+          "tourist_set_meal"
         ],
         "tags": [
-          "交通枢纽",
-          "快速用餐",
-          "早餐",
-          "换乘友好"
+          "景区周边",
+          "团队餐",
+          "陕西小吃",
+          "午餐需求集中"
         ]
       },
       "service_profile": {
         "supported_meal_types": [
-          "breakfast",
           "lunch",
           "dinner"
         ],
         "service_windows": [
           {
-            "meal_type": "breakfast",
-            "start": "06:30",
-            "end": "09:30"
-          },
-          {
             "meal_type": "lunch",
-            "start": "10:30",
-            "end": "14:30"
+            "start": "11:00",
+            "end": "14:00"
           },
           {
             "meal_type": "dinner",
-            "start": "16:30",
+            "start": "17:00",
             "end": "21:30"
           }
         ],
         "average_wait_minutes": {
-          "off_peak": 10,
-          "peak": 30
+          "off_peak": 15,
+          "peak": 45
         },
         "reservation_recommended": false,
         "availability_mode": "assumed_available_for_experiment"
@@ -1105,19 +932,19 @@
         "unit": "person_per_meal",
         "tiers": {
           "economy": {
-            "minimum_price_cny": 20,
-            "reference_price_cny": 40,
-            "maximum_price_cny": 60
+            "minimum_price_cny": 25,
+            "reference_price_cny": 50,
+            "maximum_price_cny": 75
           },
           "comfort": {
-            "minimum_price_cny": 60,
-            "reference_price_cny": 90,
-            "maximum_price_cny": 130
+            "minimum_price_cny": 80,
+            "reference_price_cny": 120,
+            "maximum_price_cny": 170
           },
           "premium": {
-            "minimum_price_cny": 150,
-            "reference_price_cny": 220,
-            "maximum_price_cny": 320
+            "minimum_price_cny": 180,
+            "reference_price_cny": 260,
+            "maximum_price_cny": 400
           }
         },
         "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
@@ -1136,7 +963,170 @@
         "wheelchair": "conditional"
       },
       "transport": {
-        "matrix_node_id": "bj_da007",
+        "matrix_node_id": "xa_da006",
+        "recommended_arrival_modes": [
+          "bus",
+          "taxi",
+          "car",
+          "walk"
+        ]
+      },
+      "weather_suitability": {
+        "sunny": "suitable",
+        "rain": "suitable",
+        "high_temperature": "conditional",
+        "low_temperature": "suitable"
+      },
+      "data_quality": {
+        "required_fields_complete": true,
+        "verification_status": "partially_verified_fixed_experiment_data",
+        "verified_at": "2026-07-17",
+        "verified_by": "public_web_snapshot_and_rule_calibration",
+        "notes": [
+          "reference_price_cny 为 2026-07-17 冻结的实验常量，预算计算必须使用该值。",
+          "价格来自公开页面中的代表性消费信息，经档位离散化，不代表任一具体餐厅的实时价格。",
+          "营业时段、排队时间和可用性是区域级实验假设，不用于现实订座或营业承诺。",
+          "正式实验禁止调用实时餐饮、地图或团购 API 覆盖本文件。"
+        ]
+      },
+      "sources": [
+        {
+          "source_id": "src_xa_da006_01",
+          "source_type": "public_map_snapshot",
+          "source_name": "OpenStreetMap Nominatim",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E4%B8%B4%E6%BD%BC%E5%85%B5%E9%A9%AC%E4%BF%91%E2%80%94%E5%8D%8E%E6%B8%85%E5%AE%AB%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "location"
+          ],
+          "verification_status": "supporting_reference"
+        },
+        {
+          "source_id": "src_xa_da006_02",
+          "source_type": "public_web_reference",
+          "source_name": "秦始皇帝陵博物院官网",
+          "url": "https://www.bmy.com.cn/",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "classification",
+            "service_profile"
+          ],
+          "verification_status": "retrieved_public_reference"
+        },
+        {
+          "source_id": "src_xa_da006_03",
+          "source_type": "public_price_reference",
+          "source_name": "西安旅游网（固定实验价格校准）",
+          "url": "https://www.tang.org.cn/54196.html",
+          "accessed_at": "2026-07-17",
+          "covered_fields": [
+            "budget"
+          ],
+          "verification_status": "fixed_experiment_calibration"
+        }
+      ]
+    },
+    {
+      "id": "xa_da007",
+      "name": "高新—唐延路餐饮区",
+      "aliases": [
+        "西安高新餐饮区",
+        "唐延路餐饮区"
+      ],
+      "operational_status": "active",
+      "location": {
+        "city_id": "xian",
+        "city_name": "西安",
+        "districts": [
+          "雁塔区",
+          "高新区"
+        ],
+        "area_ids": [
+          "xa_z06"
+        ],
+        "center_coordinate": {
+          "latitude": 34.2256,
+          "longitude": 108.887,
+          "coordinate_system": "WGS84",
+          "verification_status": "public_map_reference"
+        },
+        "nearby_poi_ids": []
+      },
+      "classification": {
+        "area_type": "business_dining_district",
+        "cuisine_types": [
+          "shaanxi_cuisine",
+          "international_cuisine",
+          "fine_dining"
+        ],
+        "tags": [
+          "商务区",
+          "商场餐饮",
+          "聚餐",
+          "高端选择"
+        ]
+      },
+      "service_profile": {
+        "supported_meal_types": [
+          "lunch",
+          "dinner"
+        ],
+        "service_windows": [
+          {
+            "meal_type": "lunch",
+            "start": "11:00",
+            "end": "14:30"
+          },
+          {
+            "meal_type": "dinner",
+            "start": "17:00",
+            "end": "22:00"
+          }
+        ],
+        "average_wait_minutes": {
+          "off_peak": 10,
+          "peak": 40
+        },
+        "reservation_recommended": true,
+        "availability_mode": "assumed_available_for_experiment"
+      },
+      "budget": {
+        "currency": "CNY",
+        "unit": "person_per_meal",
+        "tiers": {
+          "economy": {
+            "minimum_price_cny": 25,
+            "reference_price_cny": 50,
+            "maximum_price_cny": 75
+          },
+          "comfort": {
+            "minimum_price_cny": 80,
+            "reference_price_cny": 130,
+            "maximum_price_cny": 190
+          },
+          "premium": {
+            "minimum_price_cny": 240,
+            "reference_price_cny": 360,
+            "maximum_price_cny": 580
+          }
+        },
+        "experiment_calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+      },
+      "dietary_support": {
+        "vegetarian": "conditional",
+        "halal": "conditional",
+        "child_friendly": "suitable",
+        "allergy_information": "unknown"
+      },
+      "suitability": {
+        "general": "suitable",
+        "family": "suitable",
+        "elderly": "suitable",
+        "children": "suitable",
+        "wheelchair": "conditional"
+      },
+      "transport": {
+        "matrix_node_id": "xa_da007",
         "recommended_arrival_modes": [
           "metro",
           "bus",
@@ -1163,10 +1153,10 @@
       },
       "sources": [
         {
-          "source_id": "src_bj_da007_01",
+          "source_id": "src_xa_da007_01",
           "source_type": "public_map_snapshot",
           "source_name": "OpenStreetMap Nominatim",
-          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E5%8C%97%E4%BA%AC%20%E5%8C%97%E4%BA%AC%E5%8D%97%E7%AB%99%E2%80%94%E9%A9%AC%E5%AE%B6%E5%A0%A1%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
+          "url": "https://nominatim.openstreetmap.org/search?q=%E4%B8%AD%E5%9B%BD%20%E8%A5%BF%E5%AE%89%20%E9%AB%98%E6%96%B0%E2%80%94%E5%94%90%E5%BB%B6%E8%B7%AF%E9%A4%90%E9%A5%AE%E5%8C%BA&format=jsonv2&limit=1",
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "location"
@@ -1174,10 +1164,10 @@
           "verification_status": "supporting_reference"
         },
         {
-          "source_id": "src_bj_da007_02",
+          "source_id": "src_xa_da007_02",
           "source_type": "public_web_reference",
           "source_name": "维基百科公开地理资料",
-          "url": "https://zh.wikipedia.org/wiki/%E5%8C%97%E4%BA%AC%E5%8D%97%E7%AB%99",
+          "url": "https://zh.wikipedia.org/wiki/%E8%A5%BF%E5%AE%89%E9%AB%98%E6%96%B0%E6%8A%80%E6%9C%AF%E4%BA%A7%E4%B8%9A%E5%BC%80%E5%8F%91%E5%8C%BA",
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "classification",
@@ -1186,10 +1176,10 @@
           "verification_status": "retrieved_public_reference"
         },
         {
-          "source_id": "src_bj_da007_03",
+          "source_id": "src_xa_da007_03",
           "source_type": "public_price_reference",
-          "source_name": "北京旅游网（固定实验价格校准）",
-          "url": "https://www.visitbeijing.com.cn/article/4OMR5BLcz3Y",
+          "source_name": "西安旅游网（固定实验价格校准）",
+          "url": "https://www.tang.org.cn/54196.html",
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "budget"
