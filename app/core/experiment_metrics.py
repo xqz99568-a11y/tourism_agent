@@ -62,6 +62,13 @@ class ExperimentMetrics:
     constraint_satisfaction_score: float = 0.0
     issue_count: int = 0
     warning_count: int = 0
+
+    # 独立硬约束检查指标
+    hard_constraint_applicable_count: int = 0
+    hard_constraint_passed_count: int = 0
+    hard_constraint_failed_count: int = 0
+    hard_constraints_all_satisfied: Optional[bool] = None
+    hcsr: Optional[float] = None
     
     # 预算可解释性指标
     is_over_budget: Optional[bool] = None
@@ -128,6 +135,25 @@ def build_experiment_metrics(
     _collect_review_metrics(metrics, review_result)
     
     return metrics
+
+
+def constraint_metrics_from_report(constraint_report: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """Build objective hard-constraint metrics from the independent checker."""
+    data = constraint_report or {}
+    if isinstance(data.get("data"), dict):
+        data = data["data"]
+    applicable = _safe_int(data.get("applicable_count"))
+    passed = _safe_int(data.get("passed_count"))
+    failed = _safe_int(data.get("failed_count"))
+    all_passed = data.get("all_passed")
+    return {
+        "constraint_report": constraint_report or {},
+        "hard_constraint_applicable_count": applicable,
+        "hard_constraint_passed_count": passed,
+        "hard_constraint_failed_count": failed,
+        "hard_constraints_all_satisfied": None if applicable == 0 else bool(all_passed),
+        "hcsr": None if applicable == 0 else round(passed / applicable, 4),
+    }
 
 
 def _collect_poi_metrics(metrics: ExperimentMetrics, attraction_result: Optional[Any]) -> None:
@@ -285,6 +311,11 @@ def metrics_to_dict(metrics: ExperimentMetrics) -> Dict[str, Any]:
             "constraint_satisfaction_score": metrics.constraint_satisfaction_score,
             "issue_count": metrics.issue_count,
             "warning_count": metrics.warning_count,
+            "hard_constraint_applicable_count": metrics.hard_constraint_applicable_count,
+            "hard_constraint_passed_count": metrics.hard_constraint_passed_count,
+            "hard_constraint_failed_count": metrics.hard_constraint_failed_count,
+            "hard_constraints_all_satisfied": metrics.hard_constraints_all_satisfied,
+            "hcsr": metrics.hcsr,
             "is_over_budget": metrics.is_over_budget,
             "total_budget": metrics.total_budget,
             "budget_limit": metrics.budget_limit,
@@ -343,3 +374,10 @@ def build_experiment_record(
         record["result_snapshot"] = result_snapshot
     
     return record
+
+
+def _safe_int(value: Any) -> int:
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return 0

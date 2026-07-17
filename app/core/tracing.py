@@ -20,7 +20,7 @@ from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 REDACTED = "[REDACTED]"
-TRACE_SCHEMA_VERSION = "1.5"
+TRACE_SCHEMA_VERSION = "1.6"
 DEFAULT_TRACE_DIR = Path("experiments/results/traces")
 DEFAULT_TRACE_INTENT = "general_chat"
 DEFAULT_TRACE_ROUTE = "GENERAL_CHAT"
@@ -314,6 +314,8 @@ class TraceState:
     model_config_name: Optional[str] = None
     user_message_hash: Optional[str] = None
     user_message: Optional[str] = None
+    result_hash: Optional[str] = None
+    offline_data: Optional[Dict[str, Any]] = None
     started_at_perf: float = field(default_factory=time.perf_counter)
     started_at: str = field(default_factory=_utc_now)
     status: str = "running"
@@ -373,6 +375,11 @@ class TraceState:
         self.user_message_hash = _hash_message(text)
         if _env_bool("TRACE_SAVE_USER_MESSAGE", False):
             self.user_message = sanitize_value(text)
+
+    def set_result_summary(self, result: Any, *, offline_data: Any = None) -> None:
+        self.result_hash = hashlib.sha256(_stable_json(result).encode("utf-8")).hexdigest()
+        if offline_data is not None:
+            self.offline_data = sanitize_value(offline_data)
 
     def set_metadata(self, **metadata: Any) -> None:
         for key, value in metadata.items():
@@ -923,8 +930,11 @@ class TraceState:
             "method": self.method,
             "evaluation_mode": self.evaluation_mode,
             "model_config_name": self.model_config_name,
+            "input_hash": self.user_message_hash,
             "user_message_hash": self.user_message_hash,
             "user_message": self.user_message,
+            "result_hash": self.result_hash,
+            "offline_data": self.offline_data,
             "status": self.status,
             "mode": self.mode,
             "intent": intent,
@@ -1106,6 +1116,12 @@ def set_trace_method(method: Any) -> None:
     trace = get_current_trace()
     if trace is not None and method is not None:
         trace.set_metadata(method=method)
+
+
+def set_trace_result_summary(result: Any, *, offline_data: Any = None) -> None:
+    trace = get_current_trace()
+    if trace is not None:
+        trace.set_result_summary(result, offline_data=offline_data)
 
 
 def set_trace_selected_agents(agents: List[str]) -> None:

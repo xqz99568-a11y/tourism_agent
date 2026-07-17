@@ -2,8 +2,8 @@
 Experiment runner for thesis-style benchmark execution.
 
 The runner keeps the original metric collection helpers, and adds a unified
-entry point for running the same case through three comparable methods:
-llm_direct, single_agent, and full_system.
+entry point for running the same case through four comparable methods:
+llm_direct, single_agent, fixed_multi_agent, and adaptive_multi_agent.
 """
 from __future__ import annotations
 
@@ -29,7 +29,9 @@ from app.core.experiment_metrics import (
     ReviewModeExperiment,
     build_experiment_metrics,
     build_experiment_record,
+    constraint_metrics_from_report,
 )
+from app.core.fixed_data import fixed_data_file_manifest
 from app.core.llm.client import LLMMessage, ToolDefinition, get_llm
 from app.core.tool_executor import ToolExecutor
 from app.core.tracing import (
@@ -39,11 +41,19 @@ from app.core.tracing import (
     is_experiment_cache_disabled,
     is_experiment_strict_mode,
     record_planned_tools,
+    record_tool_call,
     request_trace,
     set_trace_intent_info,
+    set_trace_result_summary,
     set_trace_selected_agents,
     start_agent_run,
     trace_component,
+)
+from app.schemas.experiment import normalize_experiment_output
+from app.tools.research_tools import (
+    GENERATION_TOOL_NAMES,
+    ResearchConstraintCheckerTool,
+    generation_tools,
 )
 
 
@@ -54,7 +64,14 @@ MethodHandler = Callable[[Dict[str, Any]], Awaitable[Any] | Any]
 class ExperimentRunner:
     """Run benchmark cases and export paper-ready trace/CSV records."""
 
-    METHODS = ("llm_direct", "single_agent", "full_system")
+    METHODS = ("llm_direct", "single_agent", "fixed_multi_agent", "adaptive_multi_agent")
+    METHOD_ALIASES = {
+        "full_system": "adaptive_multi_agent",
+        "m0": "llm_direct",
+        "m1": "single_agent",
+        "m2": "fixed_multi_agent",
+        "m3": "adaptive_multi_agent",
+    }
     EVALUATION_MODES = (DEFAULT_EVALUATION_MODE, "oracle_slots")
     SINGLE_AGENT_MAX_TOOL_ROUNDS = 8
 
@@ -121,7 +138,7 @@ class ExperimentRunner:
     def run(
         self,
         case: Dict[str, Any],
-        method: ExperimentMethod = "full_system",
+        method: ExperimentMethod = "adaptive_multi_agent",
         *,
         run_id: Optional[str] = None,
         repeat_index: Optional[int] = None,
@@ -147,7 +164,7 @@ class ExperimentRunner:
     async def arun(
         self,
         case: Dict[str, Any],
-        method: ExperimentMethod = "full_system",
+        method: ExperimentMethod = "adaptive_multi_agent",
         *,
         run_id: Optional[str] = None,
         repeat_index: Optional[int] = None,
@@ -199,7 +216,7 @@ class ExperimentRunner:
 
         latency_ms = round((time.perf_counter() - started) * 1000, 2)
         trace = self._load_trace_by_request_id(request_id)
-        result = self._build_unified_result(
+        result = await self._build_unified_result(
             case=normalized_case,
             method=method,
             output=output,
@@ -362,6 +379,7 @@ class ExperimentRunner:
                 "enabled": True,
                 "env": "TOURISM_FORMAL_EXPERIMENT_OFFLINE",
                 "policy": "formal experiments use frozen local datasets and forbid real-time tourism APIs",
+                "snapshot": self._offline_data_summary(),
             },
             "results": {
                 key: Path(value).as_posix()
@@ -421,6 +439,14 @@ class ExperimentRunner:
             "intent_correct",
             "route_correct",
             "agents_correct",
+            "hard_constraint_applicable_count",
+            "hard_constraint_passed_count",
+            "hard_constraint_failed_count",
+            "hard_constraints_all_satisfied",
+            "hcsr",
+            "input_hash",
+            "result_hash",
+            "offline_data_sha256",
             "trace_file",
             "output_preview",
             "error",
@@ -643,8 +669,10 @@ class ExperimentRunner:
     ) -> Any:
         if method in self.method_handlers:
             return await self._run_custom_handler(case, method, request_id)
-        if method == "full_system":
-            return await self._run_full_system(case, request_id)
+        if method == "adaptive_multi_agent":
+            return await self._run_adaptive_multi_agent(case, request_id)
+        if method == "fixed_multi_agent":
+            return await self._run_fixed_multi_agent(case, request_id)
         if method == "single_agent":
             return await self._run_single_agent(case, request_id)
         if method == "llm_direct":
@@ -668,7 +696,9 @@ class ExperimentRunner:
         ) as trace:
             if trace is not None:
                 self._initialize_trace_for_evaluation(case)
-            return await _maybe_await(self.method_handlers[method](case))
+            result = await _maybe_await(self.method_handlers[method](case))
+            set_trace_result_summary(result, offline_data=self._offline_data_summary(compact=True))
+            return result
 
     async def _run_full_system(self, case: Dict[str, Any], request_id: str) -> str:
         from app.main import TourismSystemApp
@@ -730,8 +760,9 @@ class ExperimentRunner:
                 LLMMessage(
                     role="system",
                     content=(
-                        "你是一个单 Agent 旅游规划助手。你可以根据需要调用 POI、天气、"
-                        "路线和预算工具。请优先使用工具返回的真实数据，不要调度其他 Agent。"
+                        "你是一个单 Agent 旅游规划助手。你只能根据需要调用统一实验工具："
+                        "poi_search、weather_query、budget_calculator。请优先使用工具返回的"
+                        "固定离线数据，不要调度其他 Agent，也不要假装调用未提供的工具。"
                     ),
                 ),
                 LLMMessage(role="user", content=prompt),
@@ -751,6 +782,10 @@ class ExperimentRunner:
                                 status="completed",
                                 tokens=usage.get("total_tokens"),
                                 tool_count=executed_call_count,
+                            )
+                            set_trace_result_summary(
+                                response.content,
+                                offline_data=self._offline_data_summary(compact=True),
                             )
                             return response.content
 
@@ -775,6 +810,16 @@ class ExperimentRunner:
                                     raise ValueError("tool arguments must be a JSON object")
                             except (json.JSONDecodeError, ValueError) as exc:
                                 tool_content = f"Tool arguments error: {exc}"
+                                executed_call_count += 1
+                                record_tool_call(
+                                    tool_call.name,
+                                    params={"raw_arguments": tool_call.arguments},
+                                    duration_ms=0,
+                                    status="failed",
+                                    success=False,
+                                    error=tool_content,
+                                    call_id=tool_call.id,
+                                )
                             else:
                                 call = await executor.execute(
                                     tool_name=tool_call.name,
@@ -810,20 +855,523 @@ class ExperimentRunner:
                 raise
 
     def _build_single_agent_tools(self) -> List[Any]:
-        """Build the repository's shared POI, weather, route, and budget tools."""
-        from app.tools.budget_calc import BudgetCalculatorTool, BudgetOptimizerTool
-        from app.tools.poi_search import POIDetailTool, POISearchTool
-        from app.tools.route_plan import RoutePlanningTool
-        from app.tools.weather import WeatherTool
+        """Build the shared generation tool catalog used by M1/M2/M3."""
+        return generation_tools()
 
+    async def _run_fixed_multi_agent(self, case: Dict[str, Any], request_id: str) -> Dict[str, Any]:
+        agents = ["attraction", "weather", "itinerary", "budget"] if self._is_tourism_case(case) else []
+        tools = list(GENERATION_TOOL_NAMES) if agents else []
+        return await self._run_research_multi_agent(
+            case=case,
+            request_id=request_id,
+            method="fixed_multi_agent",
+            planned_agents=agents,
+            planned_tools=tools,
+        )
+
+    async def _run_adaptive_multi_agent(self, case: Dict[str, Any], request_id: str) -> Dict[str, Any]:
+        plan = self._select_adaptive_research_plan(case)
+        return await self._run_research_multi_agent(
+            case=case,
+            request_id=request_id,
+            method="adaptive_multi_agent",
+            planned_agents=plan["agents"],
+            planned_tools=plan["tools"],
+        )
+
+    async def _run_research_multi_agent(
+        self,
+        *,
+        case: Dict[str, Any],
+        request_id: str,
+        method: ExperimentMethod,
+        planned_agents: List[str],
+        planned_tools: List[str],
+    ) -> Dict[str, Any]:
+        session_id = f"exp-{case['case_id']}-{method}-{uuid.uuid4().hex[:8]}"
+        with request_trace(
+            request_id,
+            session_id,
+            user_message=case["user_input"],
+            experiment_case_id=case["case_id"],
+            method=method,
+            evaluation_mode=case["evaluation_mode"],
+        ) as trace:
+            if trace is not None:
+                self._initialize_trace_for_evaluation(case)
+                set_trace_selected_agents(planned_agents)
+                record_planned_tools(planned_tools)
+
+            tool_results = await self._execute_research_tool_plan(
+                case=case,
+                agents=planned_agents,
+                tools=planned_tools,
+            )
+            result = await self._build_research_method_output(
+                case=case,
+                method=method,
+                planned_agents=planned_agents,
+                planned_tools=planned_tools,
+                tool_results=tool_results,
+            )
+            set_trace_result_summary(result, offline_data=self._offline_data_summary(compact=True))
+            return result
+
+    async def _execute_research_tool_plan(
+        self,
+        *,
+        case: Dict[str, Any],
+        agents: List[str],
+        tools: List[str],
+    ) -> Dict[str, Any]:
+        catalog = {tool.name: tool for tool in generation_tools()}
+        executor = ToolExecutor(tools=catalog)
+        tool_results: Dict[str, Any] = {}
+        planned_tool_set = set(tools)
+
+        for agent_name in agents:
+            agent_tools = [
+                tool_name
+                for tool_name in self._tools_for_research_agent(agent_name)
+                if tool_name in planned_tool_set
+            ]
+            agent_run = start_agent_run(agent_name)
+            try:
+                with trace_component(agent_name, agent_name=agent_name):
+                    for tool_name in agent_tools:
+                        arguments = self._research_tool_arguments(tool_name, case, tool_results)
+                        call = await executor.execute(
+                            tool_name=tool_name,
+                            arguments=arguments,
+                            call_id=f"{agent_name}-{tool_name}-{uuid.uuid4().hex[:6]}",
+                        )
+                        tool_results[tool_name] = call.result
+                finish_agent_run(
+                    agent_run,
+                    agent_name=agent_name,
+                    status="completed",
+                    tool_count=len(agent_tools),
+                )
+            except BaseException as exc:
+                finish_agent_run(
+                    agent_run,
+                    agent_name=agent_name,
+                    status="failed",
+                    tool_count=len(agent_tools),
+                    error=exc,
+                )
+                raise
+        return tool_results
+
+    def _tools_for_research_agent(self, agent_name: str) -> List[str]:
+        mapping = {
+            "attraction": ["poi_search"],
+            "weather": ["weather_query"],
+            "itinerary": [],
+            "budget": ["budget_calculator"],
+        }
+        return mapping.get(agent_name, [])
+
+    def _research_tool_arguments(
+        self,
+        tool_name: str,
+        case: Dict[str, Any],
+        tool_results: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        city = self._case_city(case)
+        duration = self._case_duration(case)
+        if tool_name == "poi_search":
+            return {
+                "city": city,
+                "preferences": self._case_preferences(case),
+                "people": self._case_people(case),
+                "limit": self._case_poi_limit(case),
+            }
+        if tool_name == "weather_query":
+            return {
+                "city": city,
+                "date": self._case_start_date(case),
+                "days": duration,
+                "scenario_type": self._case_weather_scenario(case),
+            }
+        if tool_name == "budget_calculator":
+            return {
+                "city": city,
+                "people_count": self._case_traveler_count(case),
+                "days": duration,
+                "attractions": self._poi_ids_from_result(tool_results.get("poi_search")),
+                "spending_level": self._case_budget_level(case),
+            }
+        return {}
+
+    async def _build_research_method_output(
+        self,
+        *,
+        case: Dict[str, Any],
+        method: ExperimentMethod,
+        planned_agents: List[str],
+        planned_tools: List[str],
+        tool_results: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        attractions = self._attractions_from_tool_result(tool_results.get("poi_search"))
+        weather = self._tool_data(tool_results.get("weather_query"))
+        budget = self._tool_data(tool_results.get("budget_calculator"))
+        trip_days = self._case_duration(case)
+        daily_itinerary = self._build_daily_itinerary(trip_days, attractions)
+        weather_adjustments = self._build_weather_adjustments(weather, attractions)
+        final_answer = await self._compose_research_answer(
+            case=case,
+            method=method,
+            planned_agents=planned_agents,
+            planned_tools=planned_tools,
+            tool_results=tool_results,
+            daily_itinerary=daily_itinerary,
+            budget=budget,
+            weather_adjustments=weather_adjustments,
+        )
+        return {
+            "task_type": self._infer_research_task_type(case),
+            "used_agents": planned_agents,
+            "planned_tools": planned_tools,
+            "trip_days": trip_days,
+            "daily_itinerary": daily_itinerary,
+            "budget": budget or None,
+            "weather": weather or None,
+            "weather_adjustments": weather_adjustments,
+            "execution_status": self._execution_status_from_tool_results(tool_results),
+            "final_answer": final_answer,
+            "tool_results": tool_results,
+        }
+
+    async def _compose_research_answer(
+        self,
+        *,
+        case: Dict[str, Any],
+        method: ExperimentMethod,
+        planned_agents: List[str],
+        planned_tools: List[str],
+        tool_results: Dict[str, Any],
+        daily_itinerary: List[Dict[str, Any]],
+        budget: Dict[str, Any],
+        weather_adjustments: List[Dict[str, Any]],
+    ) -> str:
+        llm = self.llm_factory()
+        context = {
+            "case_id": case["case_id"],
+            "method": method,
+            "planned_agents": planned_agents,
+            "planned_tools": planned_tools,
+            "tool_results": tool_results,
+            "daily_itinerary": daily_itinerary,
+            "budget": budget,
+            "weather_adjustments": weather_adjustments,
+        }
+        response = await llm.chat(
+            [
+                LLMMessage(
+                    role="system",
+                    content=(
+                        "你是旅游实验系统的结果整理器。只能基于给定的固定离线工具结果回答，"
+                        "不要新增没有证据的景点、天气或费用。输出应简洁、结构化。"
+                    ),
+                ),
+                LLMMessage(
+                    role="user",
+                    content=(
+                        f"用户请求：{case['user_input']}\n\n"
+                        f"实验上下文：{json.dumps(context, ensure_ascii=False, default=str)}"
+                    ),
+                ),
+            ]
+        )
+        return response.content
+
+    def _select_adaptive_research_plan(self, case: Dict[str, Any]) -> Dict[str, List[str]]:
+        if not self._is_tourism_case(case):
+            return {"agents": [], "tools": []}
+
+        task_type = self._infer_research_task_type(case)
+        if task_type == "weather_adjustment":
+            return {"agents": ["weather", "itinerary"], "tools": ["weather_query"]}
+        if task_type == "budget_control":
+            return {"agents": ["budget"], "tools": ["budget_calculator"]}
+        if task_type == "attraction_recommendation":
+            return {"agents": ["attraction"], "tools": ["poi_search"]}
+        if task_type == "general_chat":
+            return {"agents": [], "tools": []}
+        return {
+            "agents": ["attraction", "weather", "itinerary", "budget"],
+            "tools": list(GENERATION_TOOL_NAMES),
+        }
+
+    def _infer_research_task_type(self, case: Dict[str, Any]) -> str:
+        text = str(case.get("user_input") or "")
+        slots = case.get("slots") if isinstance(case.get("slots"), dict) else {}
+        constraints = " ".join(str(item) for item in case.get("constraints") or [])
+        combined = f"{text} {constraints}"
+        has_trip_signal = bool(self._case_city(case)) or any(
+            word in combined for word in ("旅游", "行程", "规划", "游", "旅行")
+        )
+        if not has_trip_signal:
+            return "general_chat"
+        if any(word in combined for word in ("天气", "下雨", "雨天", "高温", "低温", "改行程")):
+            return "weather_adjustment"
+        if any(word in combined for word in ("预算", "费用", "花费", "多少钱", "省钱")) or slots.get("budget"):
+            if not any(word in combined for word in ("行程", "规划", "旅游", "游")):
+                return "budget_control"
+        if any(word in combined for word in ("景点", "推荐", "打卡", "去哪")) and not any(
+            word in combined for word in ("行程", "规划")
+        ):
+            return "attraction_recommendation"
+        return "trip_planning"
+
+    def _is_tourism_case(self, case: Dict[str, Any]) -> bool:
+        return self._infer_research_task_type(case) != "general_chat"
+
+    def _case_city(self, case: Dict[str, Any]) -> str:
+        slots = case.get("slots") if isinstance(case.get("slots"), dict) else {}
+        structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
+        return str(
+            slots.get("destination")
+            or slots.get("city")
+            or structured.get("city")
+            or structured.get("destination")
+            or case.get("city")
+            or case.get("destination")
+            or ""
+        ).strip()
+
+    def _case_duration(self, case: Dict[str, Any]) -> int:
+        slots = case.get("slots") if isinstance(case.get("slots"), dict) else {}
+        structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
+        for value in (
+            slots.get("duration"),
+            slots.get("days"),
+            structured.get("days"),
+            structured.get("duration"),
+            case.get("days"),
+            case.get("duration"),
+        ):
+            if value is None or value == "":
+                continue
+            try:
+                return max(1, min(int(value), 5))
+            except (TypeError, ValueError):
+                continue
+        return 3
+
+    def _case_start_date(self, case: Dict[str, Any]) -> Optional[str]:
+        slots = case.get("slots") if isinstance(case.get("slots"), dict) else {}
+        structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
+        value = (
+            slots.get("start_date")
+            or slots.get("date")
+            or structured.get("start_date")
+            or structured.get("date")
+            or case.get("start_date")
+            or case.get("date")
+        )
+        return _optional_text(value)
+
+    def _case_preferences(self, case: Dict[str, Any]) -> List[str]:
+        structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
+        preferences = structured.get("preferences") or case.get("preferences") or []
+        constraints = case.get("constraints") or structured.get("constraints") or []
+        return [*_as_list(preferences), *_as_list(constraints)]
+
+    def _case_people(self, case: Dict[str, Any]) -> str:
+        slots = case.get("slots") if isinstance(case.get("slots"), dict) else {}
+        structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
+        return str(
+            slots.get("traveler_type")
+            or structured.get("traveler_type")
+            or case.get("traveler_type")
+            or "general"
+        )
+
+    def _case_traveler_count(self, case: Dict[str, Any]) -> int:
+        slots = case.get("slots") if isinstance(case.get("slots"), dict) else {}
+        structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
+        for value in (
+            slots.get("num_travelers"),
+            slots.get("people_count"),
+            structured.get("num_travelers"),
+            structured.get("people_count"),
+            case.get("num_travelers"),
+            case.get("people_count"),
+        ):
+            if value is None or value == "":
+                continue
+            try:
+                return max(1, int(value))
+            except (TypeError, ValueError):
+                continue
+        people = self._case_people(case)
+        if people in {"couple", "情侣"}:
+            return 2
+        if people in {"family", "family_kids", "family_senior", "亲子", "家庭"}:
+            return 3
+        return 1
+
+    def _case_budget_level(self, case: Dict[str, Any]) -> str:
+        slots = case.get("slots") if isinstance(case.get("slots"), dict) else {}
+        structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
+        value = (
+            slots.get("budget_level")
+            or structured.get("budget_level")
+            or case.get("budget_level")
+        )
+        if value:
+            return str(value)
+        budget = slots.get("budget") or structured.get("budget") or case.get("budget")
+        try:
+            budget_value = float(budget)
+        except (TypeError, ValueError):
+            return "medium"
+        if budget_value <= 1500:
+            return "economy"
+        if budget_value >= 6000:
+            return "luxury"
+        return "medium"
+
+    def _case_budget_limit(self, case: Dict[str, Any]) -> Optional[float]:
+        slots = case.get("slots") if isinstance(case.get("slots"), dict) else {}
+        structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
+        for value in (
+            slots.get("budget_limit"),
+            slots.get("budget"),
+            structured.get("budget_limit"),
+            structured.get("budget"),
+            case.get("budget_limit"),
+            case.get("budget"),
+        ):
+            if value is None or value == "":
+                continue
+            try:
+                return float(value)
+            except (TypeError, ValueError):
+                continue
+        return None
+
+    def _offline_data_summary(self, *, compact: bool = False) -> Dict[str, Any]:
+        manifest = fixed_data_file_manifest()
+        if not compact:
+            return manifest
+        return {
+            "schema_version": manifest["schema_version"],
+            "city_ids": manifest["city_ids"],
+            "file_count": manifest["file_count"],
+            "combined_sha256": manifest["combined_sha256"],
+        }
+
+    def _case_poi_limit(self, case: Dict[str, Any]) -> int:
+        return max(3, min(self._case_duration(case) * 2, 10))
+
+    def _case_weather_scenario(self, case: Dict[str, Any]) -> str:
+        slots = case.get("slots") if isinstance(case.get("slots"), dict) else {}
+        structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
+        explicit = (
+            slots.get("weather_scenario")
+            or structured.get("weather_scenario")
+            or case.get("weather_scenario")
+            or case.get("scenario_type")
+        )
+        if explicit:
+            return str(explicit)
+        text = " ".join(
+            [
+                str(case.get("user_input") or ""),
+                " ".join(str(item) for item in case.get("constraints") or []),
+            ]
+        )
+        if "高温" in text:
+            return "high_temperature"
+        if "低温" in text or "寒冷" in text:
+            return "low_temperature"
+        if "变化" in text or "忽晴忽雨" in text:
+            return "continuous_change"
+        if "雨" in text or "下雨" in text:
+            return "rain"
+        return "sunny"
+
+    def _poi_ids_from_result(self, result: Any) -> List[str]:
         return [
-            POISearchTool(),
-            POIDetailTool(),
-            WeatherTool(),
-            RoutePlanningTool(),
-            BudgetCalculatorTool(),
-            BudgetOptimizerTool(),
+            str(item.get("poi_id"))
+            for item in self._attractions_from_tool_result(result)
+            if item.get("poi_id")
         ]
+
+    def _attractions_from_tool_result(self, result: Any) -> List[Dict[str, Any]]:
+        data = self._tool_data(result)
+        attractions = data.get("attractions") if isinstance(data, dict) else []
+        return [item for item in attractions if isinstance(item, dict)] if isinstance(attractions, list) else []
+
+    def _tool_data(self, result: Any) -> Dict[str, Any]:
+        if not isinstance(result, dict):
+            return {}
+        data = result.get("data")
+        return data if isinstance(data, dict) else {}
+
+    def _build_daily_itinerary(
+        self,
+        trip_days: int,
+        attractions: List[Dict[str, Any]],
+    ) -> List[Dict[str, Any]]:
+        days: List[Dict[str, Any]] = []
+        if trip_days < 1:
+            return days
+        for day_index in range(1, trip_days + 1):
+            start = (day_index - 1) * 2
+            selected = attractions[start : start + 2]
+            days.append(
+                {
+                    "day": day_index,
+                    "attractions": [
+                        {
+                            "poi_id": item.get("poi_id"),
+                            "name": item.get("name"),
+                            "category": item.get("category"),
+                            "indoor_outdoor": item.get("indoor_outdoor"),
+                        }
+                        for item in selected
+                    ],
+                    "notes": "由固定离线 POI 结果生成的实验行程骨架",
+                }
+            )
+        return days
+
+    def _build_weather_adjustments(
+        self,
+        weather: Dict[str, Any],
+        attractions: List[Dict[str, Any]],
+    ) -> List[Dict[str, Any]]:
+        if not weather:
+            return []
+        scenario = str(weather.get("scenario_type") or "")
+        risky = scenario in {"rain", "high_temperature", "low_temperature", "continuous_change"}
+        if not risky and not weather.get("weather_adjustment_required"):
+            return []
+        indoor_candidates = [
+            item
+            for item in attractions
+            if str(item.get("indoor_outdoor") or "").lower() == "indoor"
+        ]
+        return [
+            {
+                "reason": scenario or "weather_risk",
+                "action": "减少长时间户外活动，优先安排室内或低风险景点",
+                "candidate_indoor_pois": [
+                    {"poi_id": item.get("poi_id"), "name": item.get("name")}
+                    for item in indoor_candidates[:3]
+                ],
+            }
+        ]
+
+    def _execution_status_from_tool_results(self, tool_results: Dict[str, Any]) -> str:
+        for result in tool_results.values():
+            if isinstance(result, dict) and result.get("status") == "failed":
+                return "failed"
+        return "completed"
 
     async def _run_llm_baseline(
         self,
@@ -854,6 +1402,7 @@ class ExperimentRunner:
                     LLMMessage(role="user", content=user_prompt),
                 ]
             )
+            set_trace_result_summary(response.content, offline_data=self._offline_data_summary(compact=True))
             return response.content
 
     def _normalize_case(self, case: Dict[str, Any]) -> Dict[str, Any]:
@@ -924,7 +1473,7 @@ class ExperimentRunner:
             return
         set_trace_intent_info(mode="planning")
 
-    def _build_unified_result(
+    async def _build_unified_result(
         self,
         *,
         case: Dict[str, Any],
@@ -935,8 +1484,34 @@ class ExperimentRunner:
         error: Optional[str],
     ) -> Dict[str, Any]:
         trace_record = trace or {}
-        metrics = self._score_against_expected(case.get("expected") or {}, trace_record)
         ttft_ms = trace_record.get("first_body_token_ms")
+        preliminary_output = normalize_experiment_output(
+            case=case,
+            method=method,
+            raw_output=output,
+            trace=trace_record,
+            error=error,
+        )
+        constraint_report = await self._run_constraint_checker(case, preliminary_output)
+        structured_output = normalize_experiment_output(
+            case=case,
+            method=method,
+            raw_output={
+                **preliminary_output,
+                "constraint_report": constraint_report,
+            },
+            trace=trace_record,
+            error=error,
+            constraint_report=constraint_report,
+        )
+        metrics = self._score_against_expected(case.get("expected") or {}, trace_record)
+        metrics.update(constraint_metrics_from_report(constraint_report))
+        input_hash = _stable_hash({"case_id": case["case_id"], "user_input": case["user_input"], "slots": case.get("slots")})
+        result_hash = _stable_hash(structured_output)
+        offline_data = self._offline_data_summary()
+        trace_record.setdefault("input_hash", trace_record.get("user_message_hash") or input_hash)
+        trace_record["result_hash"] = result_hash
+        trace_record["offline_data"] = offline_data
         return {
             "case_id": case["case_id"],
             "method": method,
@@ -946,16 +1521,90 @@ class ExperimentRunner:
             "system_variant": trace_record.get("system_variant"),
             "model_config_name": trace_record.get("model_config_name"),
             "evaluation_mode": case["evaluation_mode"],
-            "output": output,
+            "input_hash": trace_record.get("input_hash"),
+            "result_hash": result_hash,
+            "offline_data": offline_data,
+            "output": structured_output,
+            "constraint_report": constraint_report,
+            "hard_constraint_applicable_count": structured_output.get("hard_constraint_applicable_count"),
+            "hard_constraint_passed_count": structured_output.get("hard_constraint_passed_count"),
+            "hard_constraint_failed_count": structured_output.get("hard_constraint_failed_count"),
+            "hard_constraints_all_satisfied": structured_output.get("hard_constraints_all_satisfied"),
+            "hcsr": structured_output.get("hcsr"),
+            "raw_output": output,
             "latency": latency_ms,
             "latency_ms": latency_ms,
             "ttft_ms": ttft_ms if isinstance(ttft_ms, (int, float)) else None,
             "trace": trace_record,
             "trace_file": trace_record.get("trace_file"),
-            "status": "failed" if error else trace_record.get("status", "completed"),
+            "status": "failed" if error else structured_output.get("execution_status") or trace_record.get("status", "completed"),
             "metrics": metrics,
             "error": error,
         }
+
+    async def _run_constraint_checker(
+        self,
+        case: Dict[str, Any],
+        structured_output: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        checker = ResearchConstraintCheckerTool()
+        plan = {
+            key: value
+            for key, value in structured_output.items()
+            if key not in {"method", "used_agents", "called_tools", "metadata"}
+        }
+        result = await checker.execute(
+            request=self._constraint_request_payload(case),
+            plan=plan,
+            constraints=self._constraint_payload(case),
+        )
+        if isinstance(result.data, dict):
+            return result.data
+        return {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "constraint_checker",
+            "status": "failed",
+            "success": False,
+            "data": {
+                "all_passed": False,
+                "applicable_count": 0,
+                "passed_count": 0,
+                "failed_count": 0,
+                "checks": [],
+            },
+            "error": {"code": "checker_output_error", "message": result.error or "invalid checker output"},
+            "metadata": {"offline": True, "source_mode": "deterministic_evaluator"},
+        }
+
+    def _constraint_request_payload(self, case: Dict[str, Any]) -> Dict[str, Any]:
+        payload = dict(case.get("slots") or {})
+        payload.update(
+            {
+                "case_id": case.get("case_id"),
+                "user_input": case.get("user_input"),
+                "city": self._case_city(case),
+                "days": self._case_duration(case),
+                "budget": self._case_budget_limit(case),
+            }
+        )
+        return payload
+
+    def _constraint_payload(self, case: Dict[str, Any]) -> Dict[str, Any]:
+        payload: Dict[str, Any] = {}
+        budget = self._case_budget_limit(case)
+        if budget is not None:
+            payload["budget_limit"] = budget
+        payload["days"] = self._case_duration(case)
+        raw_constraints = case.get("constraints") or []
+        if raw_constraints:
+            payload["raw_constraints"] = raw_constraints
+        text = " ".join([str(case.get("user_input") or ""), *[str(item) for item in raw_constraints]])
+        if any(word in text for word in ("雨", "下雨", "天气", "高温", "低温", "室内")):
+            payload["weather_adjustment_required"] = True
+        expected = case.get("expected") or {}
+        if isinstance(expected.get("hard_constraints"), dict):
+            payload.update(expected["hard_constraints"])
+        return payload
 
     def _score_against_expected(self, expected: Dict[str, Any], trace: Dict[str, Any]) -> Dict[str, Any]:
         expected_tools = _as_list(expected.get("selected_tools") or expected.get("tools"))
@@ -1012,6 +1661,14 @@ class ExperimentRunner:
             "intent_correct": metrics.get("intent_correct"),
             "route_correct": metrics.get("route_correct"),
             "agents_correct": metrics.get("agents_correct"),
+            "hard_constraint_applicable_count": metrics.get("hard_constraint_applicable_count"),
+            "hard_constraint_passed_count": metrics.get("hard_constraint_passed_count"),
+            "hard_constraint_failed_count": metrics.get("hard_constraint_failed_count"),
+            "hard_constraints_all_satisfied": metrics.get("hard_constraints_all_satisfied"),
+            "hcsr": metrics.get("hcsr"),
+            "input_hash": result.get("input_hash"),
+            "result_hash": result.get("result_hash"),
+            "offline_data_sha256": (result.get("offline_data") or {}).get("combined_sha256"),
             "trace_file": result.get("trace_file"),
             "output_preview": output_text[:500],
             "error": result.get("error") or "",
@@ -1019,6 +1676,7 @@ class ExperimentRunner:
 
     def _normalize_method(self, method: ExperimentMethod) -> ExperimentMethod:
         normalized = str(method or "").strip().lower()
+        normalized = self.METHOD_ALIASES.get(normalized, normalized)
         if normalized not in self.METHODS:
             raise ValueError(f"method must be one of {', '.join(self.METHODS)}")
         return normalized
@@ -1097,6 +1755,11 @@ def _json_tool_result(value: Any) -> str:
     if is_dataclass(value) and not isinstance(value, type):
         value = asdict(value)
     return json.dumps(value, ensure_ascii=False, default=str)
+
+
+def _stable_hash(value: Any) -> str:
+    payload = json.dumps(value, ensure_ascii=False, sort_keys=True, default=str)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def _optional_text(value: Any) -> Optional[str]:
