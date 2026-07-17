@@ -86,3 +86,11 @@ python experiments/run_phase1_offline_acceptance.py
 - `agent_calls` 中每个 Agent 的调用次数和耗时分布。
 - `llm_call_count`、`tool_call_count`、`api_call_count`、`mock_count`、`fallback_count`、`cache_hit_count`。
 - `slowest_stage_by_mean_ms` 和 `slowest_agent_by_mean_ms`，用于快速定位平均耗时最高的阶段或 Agent。
+
+## Formal acceptance locking rules
+
+- `experiment_manifest.json` must include `method_order_seed`; benchmark methods are shuffled by this fixed seed before execution.
+- Formal acceptance output must be stored in an independent `run_id` directory such as `experiments/results/phase1_acceptance_runs/<run_id>/`.
+- The run directory must contain `benchmark_results.csv`, `benchmark_results.json`, `experiment_manifest.json`, and `traces/`.
+- Existing acceptance result directories are historical evidence and must not be overwritten.
+- The manifest fixed-data snapshot must report exactly 25 files and the combined SHA-256 `90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3`.

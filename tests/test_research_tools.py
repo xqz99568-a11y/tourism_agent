@@ -170,6 +170,24 @@ def test_research_tool_failures_have_standard_error_payload() -> None:
     assert result.data["error"]["retryable"] is False
 
 
+def test_invalid_numeric_tool_arguments_fail_instead_of_being_corrected() -> None:
+    cases = [
+        (ResearchPOISearchTool(), {"city": "Hangzhou", "limit": 999}),
+        (ResearchPOISearchTool(), {"city": "Hangzhou", "limit": "abc"}),
+        (ResearchWeatherTool(), {"city": "Hangzhou", "days": "abc"}),
+        (ResearchWeatherTool(), {"city": "Hangzhou", "days": -3}),
+        (ResearchBudgetCalculatorTool(), {"city": "Hangzhou", "days": "abc"}),
+        (ResearchBudgetCalculatorTool(), {"city": "Hangzhou", "days": -3}),
+        (ResearchBudgetCalculatorTool(), {"city": "Hangzhou", "days": 2, "people_count": "abc"}),
+    ]
+
+    for tool, arguments in cases:
+        result = asyncio.run(tool.execute(**arguments))
+        assert result.success is False
+        assert result.data["status"] == "failed"
+        assert result.data["error"]["code"] == "invalid_arguments"
+
+
 def test_tool_executor_invalid_arguments_return_standard_error_payload() -> None:
     executor = ToolExecutor(tools={"budget_calculator": ResearchBudgetCalculatorTool()})
 

@@ -12,6 +12,7 @@ import csv
 import hashlib
 import json
 import os
+import random
 import subprocess
 import time
 import uuid
@@ -31,7 +32,7 @@ from app.core.experiment_metrics import (
     build_experiment_record,
     constraint_metrics_from_report,
 )
-from app.core.fixed_data import fixed_data_file_manifest
+from app.core.fixed_data import validate_fixed_data_snapshot
 from app.core.llm.client import LLMMessage, ToolDefinition, get_llm
 from app.core.tool_executor import ToolExecutor
 from app.core.tracing import (
@@ -119,6 +120,7 @@ class ExperimentRunner:
         repeat_index: int = 0,
         system_variant: Optional[str] = None,
         model_config_name: Optional[str] = None,
+        method_order_seed: Optional[int] = None,
     ) -> None:
         self.trace_dir = Path(trace_dir)
         self.output_dir = Path(output_dir)
@@ -130,6 +132,12 @@ class ExperimentRunner:
         self.repeat_index = _validate_repeat_index(repeat_index)
         self.system_variant = _optional_text(system_variant)
         self.model_config_name = _optional_text(model_config_name) or "default"
+        self.method_order_seed = (
+            method_order_seed
+            if method_order_seed is not None
+            else _environment_int("EXPERIMENT_METHOD_ORDER_SEED", 20260718)
+        )
+        self.fixed_data_manifest = validate_fixed_data_snapshot()
         self.experiment_records: List[Dict[str, Any]] = []
         self.current_context: Optional[ExperimentContext] = None
 
@@ -271,7 +279,9 @@ class ExperimentRunner:
     ) -> List[Dict[str, Any]]:
         benchmark_file = Path(benchmark_path)
         cases = self.load_benchmark(benchmark_file)
-        selected_methods = [self._normalize_method(method) for method in (methods or self.METHODS)]
+        selected_methods = self._ordered_methods_for_benchmark(
+            [self._normalize_method(method) for method in (methods or self.METHODS)]
+        )
         effective_repeats = self.repeats if repeats is None else _validate_repeats(repeats)
         effective_run_id = str(run_id or self.run_id)
 
@@ -291,12 +301,13 @@ class ExperimentRunner:
                         )
                     )
 
+        benchmark_output_dir = self._benchmark_output_dir(effective_run_id)
         if csv_path is None:
-            csv_path = self.output_dir / "benchmark_results.csv"
+            csv_path = benchmark_output_dir / "benchmark_results.csv"
         if json_path is None:
-            json_path = self.output_dir / "benchmark_results.json"
+            json_path = benchmark_output_dir / "benchmark_results.json"
         if manifest_path is None:
-            manifest_path = self.output_dir / "experiment_manifest.json"
+            manifest_path = benchmark_output_dir / "experiment_manifest.json"
         self.export_csv(results, csv_path)
         self.export_json(results, json_path)
         self.write_experiment_manifest(
@@ -305,6 +316,7 @@ class ExperimentRunner:
             run_id=effective_run_id,
             repeats=effective_repeats,
             methods=selected_methods,
+            method_order_seed=self.method_order_seed,
             system_variant=system_variant,
             model_config_name=model_config_name,
             result_paths={"csv": csv_path, "json": json_path},
@@ -319,6 +331,7 @@ class ExperimentRunner:
         run_id: Optional[str] = None,
         repeats: Optional[int] = None,
         methods: Optional[Iterable[ExperimentMethod]] = None,
+        method_order_seed: Optional[int] = None,
         system_variant: Optional[str] = None,
         model_config_name: Optional[str] = None,
         result_paths: Optional[Dict[str, str | Path]] = None,
@@ -361,6 +374,7 @@ class ExperimentRunner:
             "git_commit": commit,
             "git": {"commit": commit},
             "methods": list(methods or self.METHODS),
+            "method_order_seed": self.method_order_seed if method_order_seed is None else method_order_seed,
             "repeats": self.repeats if repeats is None else _validate_repeats(repeats),
             "repeat_index_start": self.repeat_index,
             "system_variant": resolved_system_variant or "per_method",
@@ -391,6 +405,16 @@ class ExperimentRunner:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
         return manifest
+
+    def _ordered_methods_for_benchmark(self, methods: List[ExperimentMethod]) -> List[ExperimentMethod]:
+        ordered = list(methods)
+        random.Random(self.method_order_seed).shuffle(ordered)
+        return ordered
+
+    def _benchmark_output_dir(self, run_id: str) -> Path:
+        if self.output_dir.name == run_id:
+            return self.output_dir
+        return self.output_dir / run_id
 
     def load_benchmark(self, benchmark_path: str | Path) -> List[Dict[str, Any]]:
         """Load benchmark.json or the existing data/cases thesis index."""
@@ -1262,7 +1286,7 @@ class ExperimentRunner:
         return None
 
     def _offline_data_summary(self, *, compact: bool = False) -> Dict[str, Any]:
-        manifest = fixed_data_file_manifest()
+        manifest = validate_fixed_data_snapshot()
         if not compact:
             return manifest
         return {
@@ -1809,6 +1833,16 @@ def _environment_float(name: str, default: float) -> float:
         return float(raw)
     except ValueError:
         return float(default)
+
+
+def _environment_int(name: str, default: int) -> int:
+    raw = os.getenv(name)
+    if raw is None:
+        return int(default)
+    try:
+        return int(raw)
+    except ValueError:
+        return int(default)
 
 
 def _git_commit() -> str:

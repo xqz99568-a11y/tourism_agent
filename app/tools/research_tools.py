@@ -73,7 +73,11 @@ class ResearchPOISearchTool(BaseTool):
     }
 
     def validate_params(self, params: Dict[str, Any]) -> bool:
-        return bool(params.get("city") or params.get("destination"))
+        return bool(params.get("city") or params.get("destination")) and _is_valid_optional_int(
+            params.get("limit"),
+            minimum=1,
+            maximum=20,
+        )
 
     async def execute(
         self,
@@ -93,9 +97,18 @@ class ResearchPOISearchTool(BaseTool):
         }
         if not city_value:
             return _failed_tool_result(self.name, input_payload, "invalid_arguments", "city is required")
+        bounded_limit, limit_error = _parse_int_argument(
+            limit,
+            name="limit",
+            default=6,
+            minimum=1,
+            maximum=20,
+            required=False,
+        )
+        if limit_error:
+            return _failed_tool_result(self.name, input_payload, "invalid_arguments", limit_error)
 
         try:
-            bounded_limit = _bounded_int(limit, default=6, minimum=1, maximum=20)
             keywords = _keyword_from_preferences(preferences, people)
             raw_results = get_fixed_tourism_data().search_pois(
                 city=city_value,
@@ -162,7 +175,12 @@ class ResearchWeatherTool(BaseTool):
     }
 
     def validate_params(self, params: Dict[str, Any]) -> bool:
-        return bool(params.get("city") or params.get("destination"))
+        days_value = params.get("days") if "days" in params else params.get("duration")
+        return bool(params.get("city") or params.get("destination")) and _is_valid_optional_int(
+            days_value,
+            minimum=1,
+            maximum=5,
+        )
 
     async def execute(
         self,
@@ -178,7 +196,15 @@ class ResearchWeatherTool(BaseTool):
     ) -> ToolResult:
         city_value = city or destination
         start_date_value = start_date or date
-        requested_days = _bounded_int(days or duration or 3, default=3, minimum=1, maximum=5)
+        raw_days = days if days is not None else duration
+        requested_days, days_error = _parse_int_argument(
+            raw_days,
+            name="days",
+            default=3,
+            minimum=1,
+            maximum=5,
+            required=False,
+        )
         requested_scenario = weather_scenario or scenario_type or "sunny"
         scenario = _fixed_weather_scenario_for_date(
             city_value,
@@ -193,6 +219,8 @@ class ResearchWeatherTool(BaseTool):
         }
         if not city_value:
             return _failed_tool_result(self.name, input_payload, "invalid_arguments", "city is required")
+        if days_error:
+            return _failed_tool_result(self.name, input_payload, "invalid_arguments", days_error)
         if start_date_value and _parse_date(start_date_value) is None:
             return _failed_tool_result(
                 self.name,
@@ -279,8 +307,17 @@ class ResearchBudgetCalculatorTool(BaseTool):
 
     def validate_params(self, params: Dict[str, Any]) -> bool:
         has_city = bool(params.get("city") or params.get("destination"))
-        has_days = bool(params.get("days") or params.get("duration"))
-        return has_city and has_days
+        days_value = params.get("days") if "days" in params else params.get("duration")
+        travelers_value = (
+            params.get("people_count")
+            if "people_count" in params
+            else params.get("num_travelers")
+        )
+        return (
+            has_city
+            and _is_valid_required_int(days_value, minimum=1, maximum=5)
+            and _is_valid_optional_int(travelers_value, minimum=1, maximum=50)
+        )
 
     async def execute(
         self,
@@ -297,19 +334,41 @@ class ResearchBudgetCalculatorTool(BaseTool):
         **_: Any,
     ) -> ToolResult:
         city_value = city or destination
-        trip_days = _bounded_int(days or duration or 1, default=1, minimum=1, maximum=5)
-        travelers = _bounded_int(people_count or num_travelers or 1, default=1, minimum=1, maximum=50)
+        raw_days = days if days is not None else duration
+        raw_travelers = people_count if people_count is not None else num_travelers
+        trip_days, days_error = _parse_int_argument(
+            raw_days,
+            name="days",
+            default=None,
+            minimum=1,
+            maximum=5,
+            required=True,
+        )
+        travelers, travelers_error = _parse_int_argument(
+            raw_travelers,
+            name="people_count",
+            default=1,
+            minimum=1,
+            maximum=50,
+            required=False,
+        )
         selected_pois = _as_text_list(poi_ids if poi_ids is not None else attractions)
         level = spending_level or budget_level or "medium"
         input_payload = {
             "city": city_value,
-            "people_count": travelers,
-            "days": trip_days,
+            "people_count": raw_travelers,
+            "days": raw_days,
             "attractions": selected_pois,
             "spending_level": level,
         }
         if not city_value:
             return _failed_tool_result(self.name, input_payload, "invalid_arguments", "city is required")
+        if days_error:
+            return _failed_tool_result(self.name, input_payload, "invalid_arguments", days_error)
+        if travelers_error:
+            return _failed_tool_result(self.name, input_payload, "invalid_arguments", travelers_error)
+        input_payload["people_count"] = travelers
+        input_payload["days"] = trip_days
 
         try:
             raw = get_fixed_tourism_data().calculate_budget(
@@ -695,12 +754,65 @@ def _optional_text(value: Any) -> Optional[str]:
     return text or None
 
 
-def _bounded_int(value: Any, *, default: int, minimum: int, maximum: int) -> int:
+def _is_valid_optional_int(value: Any, *, minimum: int, maximum: int) -> bool:
+    _, error = _parse_int_argument(
+        value,
+        name="value",
+        default=None,
+        minimum=minimum,
+        maximum=maximum,
+        required=False,
+    )
+    return error is None
+
+
+def _is_valid_required_int(value: Any, *, minimum: int, maximum: int) -> bool:
+    _, error = _parse_int_argument(
+        value,
+        name="value",
+        default=None,
+        minimum=minimum,
+        maximum=maximum,
+        required=True,
+    )
+    return error is None
+
+
+def _parse_int_argument(
+    value: Any,
+    *,
+    name: str,
+    default: Optional[int],
+    minimum: int,
+    maximum: int,
+    required: bool,
+) -> tuple[Optional[int], Optional[str]]:
+    if value is None or value == "":
+        if required:
+            return None, f"{name} is required"
+        return default, None
+    if isinstance(value, bool):
+        return None, f"{name} must be an integer between {minimum} and {maximum}"
     try:
-        parsed = int(value)
+        if isinstance(value, float):
+            if not value.is_integer():
+                raise ValueError
+            parsed = int(value)
+        elif isinstance(value, int):
+            parsed = value
+        elif isinstance(value, str):
+            stripped = value.strip()
+            digits = stripped[1:] if stripped[:1] in {"+", "-"} else stripped
+            if not digits.isdigit():
+                raise ValueError
+            parsed = int(stripped)
+        else:
+            raise ValueError
     except (TypeError, ValueError):
-        parsed = default
-    return max(minimum, min(parsed, maximum))
+        return None, f"{name} must be an integer between {minimum} and {maximum}"
+    if parsed < minimum or parsed > maximum:
+        return None, f"{name} must be between {minimum} and {maximum}"
+    return parsed, None
 
 
 def _safe_int(value: Any) -> int:

@@ -171,3 +171,11 @@ runner 对四种方法输出统一封装为 `ctp-experiment-output-v1`：
 - 未知成人门票价格不得按 0 元处理；统一使用 `experiment_ticket_estimate_v1` 的实验估算值，并在预算明细中显式标记。
 - 住宿、餐饮、交通和天气均为固定实验快照；实验过程中禁止调用实时酒店、天气、地图或订票 API 覆盖这些数据。
 - 论文表述应使用“固定受控离线数据”或“实验快照数据”，不得表述为“完整实时旅游数据”。
+
+## 九、验收锁定规则
+
+- 固定离线数据锁定为 25 个正式文件，综合哈希为 `90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3`。
+- 实验启动前必须校验 25 个文件的文件级 SHA-256 和综合 SHA-256；缺文件或哈希变化时立即终止。
+- `limit`、`days`、`people_count` 等数字参数不得自动纠错；非法值必须返回 `status=failed` 和 `error.code=invalid_arguments`。
+- benchmark 运行顺序使用固定随机种子打乱，种子写入 manifest。
+- CSV、JSON、Trace 和 manifest 必须保存在独立 `run_id` 目录，旧验收证据只读保留，不覆盖。

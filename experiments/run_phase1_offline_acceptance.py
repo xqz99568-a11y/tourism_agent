@@ -5,6 +5,7 @@ import argparse
 import json
 import os
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict
 
@@ -29,9 +30,20 @@ def main() -> int:
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("experiments/results/phase1_offline_acceptance"),
+        default=Path("experiments/results/phase1_acceptance_runs"),
+        help="Root directory. The script creates a run_id subdirectory under this root.",
+    )
+    parser.add_argument(
+        "--run-id",
+        type=str,
+        default=None,
+        help="Optional stable run id. Defaults to phase1_acceptance_<UTC timestamp>.",
     )
     args = parser.parse_args()
+    run_id = args.run_id or f"phase1_acceptance_{datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')}"
+    run_output_dir = args.output_dir if args.output_dir.name == run_id else args.output_dir / run_id
+    if run_output_dir.exists() and any(run_output_dir.iterdir()):
+        raise RuntimeError(f"acceptance output directory already exists and is not empty: {run_output_dir}")
 
     os.environ["EXPERIMENT_STRICT_MODE"] = "true"
     os.environ["EXPERIMENT_DISABLE_CACHE"] = "true"
@@ -40,10 +52,11 @@ def main() -> int:
 
     handlers = {method: _offline_handler for method in ExperimentRunner.METHODS}
     runner = ExperimentRunner(
-        trace_dir=args.output_dir / "traces",
-        output_dir=args.output_dir,
+        trace_dir=run_output_dir / "traces",
+        output_dir=run_output_dir,
         method_handlers=handlers,
         repeats=2,
+        run_id=run_id,
         model_config_name="offline-static",
     )
     benchmark_path = Path("experiments/phase1_offline_cases.json")
@@ -65,10 +78,11 @@ def main() -> int:
             {
                 "status": "passed",
                 "run_id": runner.run_id,
+                "output_dir": str(run_output_dir),
                 "result_count": len(results),
                 "expected_count": expected_count,
-                "trace_count": len(list((args.output_dir / "traces").glob("*.jsonl"))),
-                "manifest": str(args.output_dir / "experiment_manifest.json"),
+                "trace_count": len(list((run_output_dir / "traces").glob("*.jsonl"))),
+                "manifest": str(run_output_dir / "experiment_manifest.json"),
             },
             ensure_ascii=False,
             indent=2,
