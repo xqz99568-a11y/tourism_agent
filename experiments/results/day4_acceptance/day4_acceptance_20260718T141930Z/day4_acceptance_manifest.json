@@ -1,0 +1,128 @@
+{
+  "schema_version": "day4-acceptance-manifest-v1",
+  "run_id": "day4_acceptance_20260718T141930Z",
+  "created_at": "2026-07-18T14:19:45.231783+00:00",
+  "passed": true,
+  "output_dir": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z",
+  "git": {
+    "commit": "9f46950ffc503dbc1b705ab1258935e6e7dfd815",
+    "working_tree_clean": true,
+    "status_short": []
+  },
+  "scope": {
+    "scheduler": "app/core/goal_state_scheduler.py",
+    "runner": "app/core/experiment_runner.py",
+    "trace": "app/core/tracing.py",
+    "acceptance_cases": "experiments/day4_scheduler_acceptance_cases.json",
+    "tests": [
+      "tests/test_goal_state_scheduler.py",
+      "tests/test_research_tools.py"
+    ]
+  },
+  "checked_requirements": [
+    "wrong previous-result city fingerprint must not be reused",
+    "failed previous tool result must not be counted as reused",
+    "multiple changed slots must be combined before scheduling",
+    "goal shift without slot change must not become identical reuse",
+    "M2 and M3 follow-up runs must receive comparable previous slots",
+    "M3 savings metrics must use task-aware M2 reference counts",
+    "scheduler ticket, decision, reuse validation, and hit rate must persist in trace",
+    "single-capability tasks must not create fake itinerary fingerprints",
+    "reused, invalidated, and replanned agent sets must be mutually consistent",
+    "budget estimation must schedule missing attraction evidence before budget",
+    "reused itinerary must copy the previous itinerary artifact instead of rebuilding it",
+    "clarification tasks must stop with clarification status and explicit missing fields",
+    "fixed M2 must recover slots from its own previous turn output",
+    "available result markers without concrete artifacts must not count as reuse",
+    "upstream tool failure must stop downstream dependent agents",
+    "expired previous results must not be reusable",
+    "empty preferences and null budget must be preserved as cancellation deltas",
+    "regenerate requests must override identical-request reuse",
+    "different repeat_index values must use isolated experiment session ids",
+    "M3 scheduler metrics must be recoverable from trace after output exceptions",
+    "acceptance manifest must freeze git state, SHA-256 inputs, outputs, and representative trace"
+  ],
+  "input_sha256": {
+    "source": {
+      "app/core/goal_state_scheduler.py": "1ede1a5a28b1008bd5becb7893816a16a7cc7f2aec31883dc113c75a87c659bb",
+      "app/core/experiment_runner.py": "026656c1208e455784e266cad30fb71db5f128a5f33e5f13f857f5486db3249c",
+      "app/core/tracing.py": "4dfe3afab8eaf0e0b7c583e58b00d184651a632feeec2e1bac81e7c797469297",
+      "app/schemas/experiment.py": "9eae833bf313bf3e76e03da4a8a670c5599cbecf4a69fca8fac1092c84333e6a",
+      "experiments/run_day4_acceptance.py": "f51e6777481de9ab618217ea584e0570ee6f7f86052945f8f093c3c910d1f5d6",
+      "docs/Day4_acceptance_report.md": "7c0e1da35821b998adea3fa5773c1edbe48b551176fac08a898da9ae57aa47c1",
+      "docs/Day4_goal_state_scheduler_rules.md": "c5bf4c47cb51efd31174aa7ac1ffaccf3cb7691b65a686782094f73e80b97037",
+      "docs/TRACE_FIELDS.md": "1e3f4fe3f7adba1e4f926734050d3c7f012788764de009db4ec46f06e0ebb8b9"
+    },
+    "tests": {
+      "tests/test_goal_state_scheduler.py": "1b61d37fa20decba8f046e5f782195a4e1f12d6b1ad0d11b7fbdd987b630874c",
+      "tests/test_research_tools.py": "5e5290ef978a1c95978d5cf9dd18232eceed26a3cb5b77734a397f1f2231f464",
+      "tests/test_tracing.py": "0ee33253ae005e2c352a4d55a574cfac3d880360c9380a1d685223ff8cd9f1d9"
+    },
+    "cases": {
+      "experiments/day4_scheduler_acceptance_cases.json": "552754bd70749faaa2baaba832c9dd80347a8127949481c578d276fd554bf137"
+    }
+  },
+  "commands": [
+    {
+      "name": "compile_day4_modules",
+      "args": [
+        "E:\\APP\\python311\\python.exe",
+        "-m",
+        "compileall",
+        "-q",
+        "app/core/goal_state_scheduler.py",
+        "app/core/experiment_runner.py",
+        "app/core/tracing.py",
+        "app/schemas/experiment.py",
+        "experiments/run_day4_acceptance.py",
+        "tests/test_goal_state_scheduler.py",
+        "tests/test_research_tools.py"
+      ],
+      "started_at": "2026-07-18T14:19:30.754281+00:00",
+      "completed_at": "2026-07-18T14:19:31.005429+00:00",
+      "returncode": 0,
+      "stdout_path": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z\\compile_day4_modules.stdout.txt",
+      "stderr_path": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z\\compile_day4_modules.stderr.txt"
+    },
+    {
+      "name": "pytest_day4_scheduler_and_runner",
+      "args": [
+        "E:\\APP\\python311\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "tests/test_goal_state_scheduler.py",
+        "tests/test_research_tools.py"
+      ],
+      "started_at": "2026-07-18T14:19:31.005429+00:00",
+      "completed_at": "2026-07-18T14:19:41.713545+00:00",
+      "returncode": 0,
+      "stdout_path": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z\\pytest_day4_scheduler_and_runner.stdout.txt",
+      "stderr_path": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z\\pytest_day4_scheduler_and_runner.stderr.txt"
+    }
+  ],
+  "representative_run": {
+    "result_path": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z\\representative_results.json",
+    "result_sha256": "1f020465ce1f915eab378fe4c5da81b7be229be67db13f5819a59dd711758c75",
+    "trace_dir": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z\\traces",
+    "trace_files": [
+      {
+        "path": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z\\traces\\20260718T141945061813Z_day4_trace_turn1_adaptive_multi_agent_c54733d4_b9e53a0f.jsonl",
+        "sha256": "9ef04a164405cd64fa3cb565466e126da98ca3ee5f01b59eec85337b2804824f"
+      },
+      {
+        "path": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z\\traces\\20260718T141945154789Z_day4_trace_turn2_adaptive_multi_agent_e869b4c1_7524a875.jsonl",
+        "sha256": "8d6913244ade96c238068b0284bb56715a735f526a9b5291e72b8e9a41cb101c"
+      }
+    ]
+  },
+  "output_sha256": {
+    "compile_day4_modules.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "compile_day4_modules.stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pytest_day4_scheduler_and_runner.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pytest_day4_scheduler_and_runner.stdout.txt": "a36e44caa66c8b45f33dc33914f349484582520a89d7ab33ee3b54104eb9bc15",
+    "representative_results.json": "1f020465ce1f915eab378fe4c5da81b7be229be67db13f5819a59dd711758c75",
+    "traces\\20260718T141945061813Z_day4_trace_turn1_adaptive_multi_agent_c54733d4_b9e53a0f.jsonl": "9ef04a164405cd64fa3cb565466e126da98ca3ee5f01b59eec85337b2804824f",
+    "traces\\20260718T141945154789Z_day4_trace_turn2_adaptive_multi_agent_e869b4c1_7524a875.jsonl": "8d6913244ade96c238068b0284bb56715a735f526a9b5291e72b8e9a41cb101c"
+  }
+}

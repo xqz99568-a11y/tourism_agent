@@ -1,0 +1,5728 @@
+[
+  {
+    "case_id": "day4_trace_turn1",
+    "method": "adaptive_multi_agent",
+    "request_id": "day4_trace_turn1_adaptive_multi_agent_c54733d4",
+    "run_id": "day4_acceptance_20260718T141930Z",
+    "repeat_index": 0,
+    "system_variant": "adaptive_multi_agent",
+    "model_config_name": "day4-acceptance-offline",
+    "evaluation_mode": "end_to_end",
+    "input_hash": "fdb68a65443477490d27eb6dc1d3c60cf07824d1be2abc643d2273fe3fabbf50",
+    "result_hash": "00e1a2ec82a1978dcb7d4f467d99395f7b40ab31af05c863b78773f3162832a5",
+    "offline_data": {
+      "schema_version": "fixed_data_manifest_v1",
+      "city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "snapshot_dirs": [
+        "pois",
+        "weather",
+        "restaurants",
+        "accommodation",
+        "transport"
+      ],
+      "file_count": 25,
+      "expected_file_count": 25,
+      "combined_sha256": "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3",
+      "expected_combined_sha256": "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3",
+      "missing_files": [],
+      "files": [
+        {
+          "kind": "accommodation",
+          "city_id": "beijing",
+          "path": "data/accommodation/beijing.json",
+          "sha256": "91ebdadc86245922c61901a2ecfa437f1c754ed2c3975d68c642f7f8c5c93f05"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "guilin",
+          "path": "data/accommodation/guilin.json",
+          "sha256": "e8bbd330fa10ea575da49201bb69b30edc89874b64175a0c8f2593b09113f75d"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "hangzhou",
+          "path": "data/accommodation/hangzhou.json",
+          "sha256": "b146fa73d48688d36e035179e59f08d12a5a283d1bbe5e45ab1fbce27385bfee"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "shenzhen",
+          "path": "data/accommodation/shenzhen.json",
+          "sha256": "6ed2f5ef6078e7651c1f0106568136656dfab92cfe4cfe6866e4edbc185784e4"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "xian",
+          "path": "data/accommodation/xian.json",
+          "sha256": "6a82d4ba2e8659bd414a048371690525f15b26491e2a2934d4c0d380c95e3aca"
+        },
+        {
+          "kind": "pois",
+          "city_id": "beijing",
+          "path": "data/pois/beijing.json",
+          "sha256": "4bd2fb952e1a9b2fb6670793d007d5ebd2cfc897f67829c4d36538410ac4977e"
+        },
+        {
+          "kind": "pois",
+          "city_id": "guilin",
+          "path": "data/pois/guilin.json",
+          "sha256": "1a6d802bb7295998f5d3d965aff1cb5b59998411645922211b319a5c0bfb09cb"
+        },
+        {
+          "kind": "pois",
+          "city_id": "hangzhou",
+          "path": "data/pois/hangzhou.json",
+          "sha256": "7abd466ba674fa160978d6037c95c0bd64a78deed6b5c454bacad8ba055f8aea"
+        },
+        {
+          "kind": "pois",
+          "city_id": "shenzhen",
+          "path": "data/pois/shenzhen.json",
+          "sha256": "199977c5ef39cef67d52af432922de53f57c4862e27e2fb1b34cff7bbbe17582"
+        },
+        {
+          "kind": "pois",
+          "city_id": "xian",
+          "path": "data/pois/xian.json",
+          "sha256": "7f203268990980552debdc8425b77122c7ba7eb218d349f5723e77eada0e6e99"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "beijing",
+          "path": "data/restaurants/beijing.json",
+          "sha256": "378efb83ef2ba54ff563fd1d09e91403df354c942d31693d3a8725fcf9a11b33"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "guilin",
+          "path": "data/restaurants/guilin.json",
+          "sha256": "0b6c68e469096b53779ede207450df55db9040234e89d7cdb3e0bd907bf1a5fc"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "hangzhou",
+          "path": "data/restaurants/hangzhou.json",
+          "sha256": "214312ef2d5878038b74b9467210851184fbcad32edebe556bfee77a9cb881a0"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "shenzhen",
+          "path": "data/restaurants/shenzhen.json",
+          "sha256": "2d8572cfc4f87380b44e1026b39c228617b2e3989cac82baebc61d58109972ec"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "xian",
+          "path": "data/restaurants/xian.json",
+          "sha256": "b4eb9c0f3503e63a988441cf4a8fc942c9c69edb1c797ef745b7ec446986a2f5"
+        },
+        {
+          "kind": "transport",
+          "city_id": "beijing",
+          "path": "data/transport/beijing.json",
+          "sha256": "758967b5cc01305b5c228d728a43bd91dc6a5f25e8366185bb459b7aa789929b"
+        },
+        {
+          "kind": "transport",
+          "city_id": "guilin",
+          "path": "data/transport/guilin.json",
+          "sha256": "475c97fb492d2386c82bb29863cde96d7ab8e78e9f14d2dd399f9b05102765c7"
+        },
+        {
+          "kind": "transport",
+          "city_id": "hangzhou",
+          "path": "data/transport/hangzhou.json",
+          "sha256": "3aa7ab8650eeeb605f95ca8779fa20aca4274b4b4134ac81e3d7911119f2134f"
+        },
+        {
+          "kind": "transport",
+          "city_id": "shenzhen",
+          "path": "data/transport/shenzhen.json",
+          "sha256": "ed0adb7927e11b66e8f2b8ed6dbfa397f84ec363edeee20aac0a21a92c246923"
+        },
+        {
+          "kind": "transport",
+          "city_id": "xian",
+          "path": "data/transport/xian.json",
+          "sha256": "78977ab060a1c71fe87382ffc88a57644c721ea1270afc9520a3ae3b829472c0"
+        },
+        {
+          "kind": "weather",
+          "city_id": "beijing",
+          "path": "data/weather/beijing.json",
+          "sha256": "909fd6078a489aa09765a187411e4afa26c30ee8d3fd540734ed67eb3b62a348"
+        },
+        {
+          "kind": "weather",
+          "city_id": "guilin",
+          "path": "data/weather/guilin.json",
+          "sha256": "40cbe4ee2ce08189922d4639de5d59155050f6e4412fb4cb1a3f7c62d8574740"
+        },
+        {
+          "kind": "weather",
+          "city_id": "hangzhou",
+          "path": "data/weather/hangzhou.json",
+          "sha256": "d29568c5ab66f71261304511e7687b721e426176aff0da2152ed1bbee5c3e10a"
+        },
+        {
+          "kind": "weather",
+          "city_id": "shenzhen",
+          "path": "data/weather/shenzhen.json",
+          "sha256": "630a643c25608a9eef54e934ae7fe8a2eed59f7cb61f39f10484c08d90aba82e"
+        },
+        {
+          "kind": "weather",
+          "city_id": "xian",
+          "path": "data/weather/xian.json",
+          "sha256": "26734c7f640ddabcddbca955672a4aa75927946a174df2a9dca2a43a5100b607"
+        }
+      ]
+    },
+    "output": {
+      "schema_version": "ctp-experiment-output-v1",
+      "case_id": "day4_trace_turn1",
+      "method": "adaptive_multi_agent",
+      "task_type": "trip_planning",
+      "used_agents": [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ],
+      "called_tools": [
+        {
+          "tool_name": "poi_search",
+          "status": "completed",
+          "success": true,
+          "arguments": {
+            "city": "hangzhou",
+            "preferences": [],
+            "people": "general",
+            "limit": 4
+          },
+          "duration_ms": 11.99,
+          "error": null
+        },
+        {
+          "tool_name": "weather_query",
+          "status": "completed",
+          "success": true,
+          "arguments": {
+            "city": "hangzhou",
+            "date": "2026-08-01",
+            "days": 2,
+            "scenario_type": "sunny"
+          },
+          "duration_ms": 5.0,
+          "error": null
+        },
+        {
+          "tool_name": "budget_calculator",
+          "status": "completed",
+          "success": true,
+          "arguments": {
+            "city": "hangzhou",
+            "people_count": 2,
+            "days": 2,
+            "attractions": [
+              "hz001",
+              "hz002",
+              "hz003",
+              "hz004"
+            ],
+            "spending_level": "medium"
+          },
+          "duration_ms": 1.0,
+          "error": null
+        }
+      ],
+      "trip_days": 2,
+      "daily_itinerary": [
+        {
+          "day": 1,
+          "attractions": [
+            {
+              "poi_id": "hz001",
+              "name": "西湖风景名胜区",
+              "category": "nature",
+              "indoor_outdoor": "outdoor"
+            },
+            {
+              "poi_id": "hz002",
+              "name": "灵隐飞来峰景区",
+              "category": "history_culture",
+              "indoor_outdoor": "mixed"
+            }
+          ],
+          "notes": "由固定离线 POI 结果生成的实验行程骨架"
+        },
+        {
+          "day": 2,
+          "attractions": [
+            {
+              "poi_id": "hz003",
+              "name": "西溪国家湿地公园",
+              "category": "nature",
+              "indoor_outdoor": "outdoor"
+            },
+            {
+              "poi_id": "hz004",
+              "name": "清河坊历史文化街区",
+              "category": "urban_landmark",
+              "indoor_outdoor": "mixed"
+            }
+          ],
+          "notes": "由固定离线 POI 结果生成的实验行程骨架"
+        }
+      ],
+      "budget": {
+        "city": "hangzhou",
+        "people_count": 2,
+        "days": 2,
+        "spending_level": "medium",
+        "currency": "CNY",
+        "total": 3058.28,
+        "per_person": 1529.14,
+        "daily_average": 1529.14,
+        "breakdown": {
+          "transport": {
+            "recommended": 96.0,
+            "mode": "public_transit",
+            "calculation_rule": "fixed matrix average cost * fixed trip count"
+          },
+          "accommodation": {
+            "recommended": 648.57,
+            "reference_price_cny": 648.57,
+            "room_count": 1,
+            "night_count": 1,
+            "calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+          },
+          "food": {
+            "recommended": 1525.68,
+            "reference_price_cny": 127.14,
+            "meal_count": 6,
+            "calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+          },
+          "tickets": {
+            "recommended": 270.0,
+            "calculation_rule": "sum known fixed adult ticket prices for selected experiment POIs; pending prices are not guessed"
+          },
+          "other": {
+            "recommended": 240,
+            "calculation_rule": "fixed per-person daily allowance"
+          },
+          "buffer": {
+            "recommended": 278.03,
+            "calculation_rule": "10 percent fixed buffer"
+          }
+        },
+        "items": [
+          {
+            "category": "transport",
+            "item": "fixed city transport",
+            "estimated_cost": 96.0,
+            "is_essential": true
+          },
+          {
+            "category": "accommodation",
+            "item": "fixed accommodation area",
+            "estimated_cost": 648.57,
+            "is_essential": true
+          },
+          {
+            "category": "food",
+            "item": "fixed dining area meals",
+            "estimated_cost": 1525.68,
+            "is_essential": true
+          },
+          {
+            "category": "tickets",
+            "item": "fixed POI tickets",
+            "estimated_cost": 270.0,
+            "is_essential": true
+          },
+          {
+            "category": "other",
+            "item": "fixed miscellaneous allowance",
+            "estimated_cost": 240,
+            "is_essential": false
+          }
+        ],
+        "ticket_breakdown": {
+          "ticket_cost": 270.0,
+          "ticket_cost_per_person": 135.0,
+          "details": [
+            {
+              "name": "西湖风景名胜区",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 0.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.free_tag",
+              "estimation_basis": "POI tag indicates free entry"
+            },
+            {
+              "name": "灵隐飞来峰景区",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 60.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+              "estimation_basis": "primary_category=history_culture"
+            },
+            {
+              "name": "西溪国家湿地公园",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 35.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+              "estimation_basis": "primary_category=nature"
+            },
+            {
+              "name": "清河坊历史文化街区",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 40.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+              "estimation_basis": "primary_category=urban_landmark"
+            }
+          ],
+          "summary": {
+            "poi_source_field": "fixed_poi_dataset",
+            "source": "fixed_poi_ticketing",
+            "known_ticket_count": 0,
+            "free_ticket_count": 0,
+            "estimated_ticket_count": 4,
+            "estimated_ticket_total_per_person": 135.0,
+            "pending_confirmation_count": 4,
+            "pending_confirmation_pois": [
+              "西湖风景名胜区",
+              "灵隐飞来峰景区",
+              "西溪国家湿地公园",
+              "清河坊历史文化街区"
+            ],
+            "ignored_non_ticket_count": 0,
+            "fallback_applied": true,
+            "experiment_estimate_rule": "unknown adult ticket prices are counted with explicit fixed category estimates, not treated as zero"
+          }
+        }
+      },
+      "weather": {
+        "city": "杭州",
+        "city_id": "hangzhou",
+        "date": "2026-08-01",
+        "scenario_type": "continuous_change",
+        "requested_scenario_type": "sunny",
+        "scenario_selection": "city_date_hash",
+        "risk_level": "high",
+        "daily_weather": [
+          {
+            "day_index": 1,
+            "date": "2026-08-01",
+            "state": "sunny",
+            "weather": "晴天",
+            "temperature_min_c": 20,
+            "temperature_max_c": 29,
+            "precipitation_mm": 0.0,
+            "risk_level": "low",
+            "risk_tags": [],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          },
+          {
+            "day_index": 2,
+            "date": "2026-08-02",
+            "state": "rain",
+            "weather": "雨天",
+            "temperature_min_c": 17,
+            "temperature_max_c": 23,
+            "precipitation_mm": 26.0,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain"
+            ],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          }
+        ],
+        "planning_constraints": {
+          "dynamic_adjustment_required": true,
+          "indoor_preference": false,
+          "minimum_indoor_activity_ratio": null,
+          "avoid_time_windows": [],
+          "maximum_continuous_outdoor_hours": null,
+          "mandatory_actions": [
+            "必须按天读取天气条件",
+            "不得将同一规划策略直接复制到全部日期",
+            "至少提供一个天气变化后的行程调整"
+          ]
+        },
+        "weather_adjustment_required": true
+      },
+      "weather_adjustments": [
+        {
+          "reason": "continuous_change",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        }
+      ],
+      "constraint_report": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "constraint_checker",
+        "status": "success",
+        "success": true,
+        "input": {
+          "request": {
+            "destination": "hangzhou",
+            "duration": 2,
+            "people_count": 2,
+            "start_date": "2026-08-01",
+            "case_id": "day4_trace_turn1",
+            "user_input": "plan a two day Hangzhou trip",
+            "city": "hangzhou",
+            "days": 2,
+            "budget": null
+          },
+          "constraints": {
+            "days": 2
+          }
+        },
+        "data": {
+          "all_passed": true,
+          "applicable_count": 2,
+          "passed_count": 2,
+          "failed_count": 0,
+          "checks": [
+            {
+              "name": "trip_days",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "expected": 2,
+                "actual": 2
+              }
+            },
+            {
+              "name": "budget_limit",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "limit": null,
+                "actual": 3058.28
+              }
+            },
+            {
+              "name": "weather_adjustment",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "required": true,
+                "adjustment_count": 1
+              }
+            },
+            {
+              "name": "min_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "minimum": null,
+                "actual": 4
+              }
+            },
+            {
+              "name": "max_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "maximum": null,
+                "actual": 4
+              }
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "deterministic_evaluator",
+          "real_time_api_allowed": false,
+          "contract": "ctp-research-tools-v1.0"
+        }
+      },
+      "hard_constraint_passed_count": 2,
+      "hard_constraint_failed_count": 0,
+      "hard_constraint_applicable_count": 2,
+      "hard_constraints_all_satisfied": true,
+      "hcsr": 1.0,
+      "execution_status": "completed",
+      "final_answer": "offline acceptance answer",
+      "raw_output": {
+        "task_type": "trip_planning",
+        "used_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "planned_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "trip_days": 2,
+        "daily_itinerary": [
+          {
+            "day": 1,
+            "attractions": [
+              {
+                "poi_id": "hz001",
+                "name": "西湖风景名胜区",
+                "category": "nature",
+                "indoor_outdoor": "outdoor"
+              },
+              {
+                "poi_id": "hz002",
+                "name": "灵隐飞来峰景区",
+                "category": "history_culture",
+                "indoor_outdoor": "mixed"
+              }
+            ],
+            "notes": "由固定离线 POI 结果生成的实验行程骨架"
+          },
+          {
+            "day": 2,
+            "attractions": [
+              {
+                "poi_id": "hz003",
+                "name": "西溪国家湿地公园",
+                "category": "nature",
+                "indoor_outdoor": "outdoor"
+              },
+              {
+                "poi_id": "hz004",
+                "name": "清河坊历史文化街区",
+                "category": "urban_landmark",
+                "indoor_outdoor": "mixed"
+              }
+            ],
+            "notes": "由固定离线 POI 结果生成的实验行程骨架"
+          }
+        ],
+        "budget": {
+          "city": "hangzhou",
+          "people_count": 2,
+          "days": 2,
+          "spending_level": "medium",
+          "currency": "CNY",
+          "total": 3058.28,
+          "per_person": 1529.14,
+          "daily_average": 1529.14,
+          "breakdown": {
+            "transport": {
+              "recommended": 96.0,
+              "mode": "public_transit",
+              "calculation_rule": "fixed matrix average cost * fixed trip count"
+            },
+            "accommodation": {
+              "recommended": 648.57,
+              "reference_price_cny": 648.57,
+              "room_count": 1,
+              "night_count": 1,
+              "calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+            },
+            "food": {
+              "recommended": 1525.68,
+              "reference_price_cny": 127.14,
+              "meal_count": 6,
+              "calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+            },
+            "tickets": {
+              "recommended": 270.0,
+              "calculation_rule": "sum known fixed adult ticket prices for selected experiment POIs; pending prices are not guessed"
+            },
+            "other": {
+              "recommended": 240,
+              "calculation_rule": "fixed per-person daily allowance"
+            },
+            "buffer": {
+              "recommended": 278.03,
+              "calculation_rule": "10 percent fixed buffer"
+            }
+          },
+          "items": [
+            {
+              "category": "transport",
+              "item": "fixed city transport",
+              "estimated_cost": 96.0,
+              "is_essential": true
+            },
+            {
+              "category": "accommodation",
+              "item": "fixed accommodation area",
+              "estimated_cost": 648.57,
+              "is_essential": true
+            },
+            {
+              "category": "food",
+              "item": "fixed dining area meals",
+              "estimated_cost": 1525.68,
+              "is_essential": true
+            },
+            {
+              "category": "tickets",
+              "item": "fixed POI tickets",
+              "estimated_cost": 270.0,
+              "is_essential": true
+            },
+            {
+              "category": "other",
+              "item": "fixed miscellaneous allowance",
+              "estimated_cost": 240,
+              "is_essential": false
+            }
+          ],
+          "ticket_breakdown": {
+            "ticket_cost": 270.0,
+            "ticket_cost_per_person": 135.0,
+            "details": [
+              {
+                "name": "西湖风景名胜区",
+                "status": "estimated",
+                "parsed_ticket_yuan": null,
+                "counted_amount_yuan": 0.0,
+                "estimation_rule": "experiment_ticket_estimate_v1.free_tag",
+                "estimation_basis": "POI tag indicates free entry"
+              },
+              {
+                "name": "灵隐飞来峰景区",
+                "status": "estimated",
+                "parsed_ticket_yuan": null,
+                "counted_amount_yuan": 60.0,
+                "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                "estimation_basis": "primary_category=history_culture"
+              },
+              {
+                "name": "西溪国家湿地公园",
+                "status": "estimated",
+                "parsed_ticket_yuan": null,
+                "counted_amount_yuan": 35.0,
+                "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                "estimation_basis": "primary_category=nature"
+              },
+              {
+                "name": "清河坊历史文化街区",
+                "status": "estimated",
+                "parsed_ticket_yuan": null,
+                "counted_amount_yuan": 40.0,
+                "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                "estimation_basis": "primary_category=urban_landmark"
+              }
+            ],
+            "summary": {
+              "poi_source_field": "fixed_poi_dataset",
+              "source": "fixed_poi_ticketing",
+              "known_ticket_count": 0,
+              "free_ticket_count": 0,
+              "estimated_ticket_count": 4,
+              "estimated_ticket_total_per_person": 135.0,
+              "pending_confirmation_count": 4,
+              "pending_confirmation_pois": [
+                "西湖风景名胜区",
+                "灵隐飞来峰景区",
+                "西溪国家湿地公园",
+                "清河坊历史文化街区"
+              ],
+              "ignored_non_ticket_count": 0,
+              "fallback_applied": true,
+              "experiment_estimate_rule": "unknown adult ticket prices are counted with explicit fixed category estimates, not treated as zero"
+            }
+          }
+        },
+        "weather": {
+          "city": "杭州",
+          "city_id": "hangzhou",
+          "date": "2026-08-01",
+          "scenario_type": "continuous_change",
+          "requested_scenario_type": "sunny",
+          "scenario_selection": "city_date_hash",
+          "risk_level": "high",
+          "daily_weather": [
+            {
+              "day_index": 1,
+              "date": "2026-08-01",
+              "state": "sunny",
+              "weather": "晴天",
+              "temperature_min_c": 20,
+              "temperature_max_c": 29,
+              "precipitation_mm": 0.0,
+              "risk_level": "low",
+              "risk_tags": [],
+              "suitable_periods": [
+                "morning",
+                "afternoon"
+              ],
+              "avoid_periods": []
+            },
+            {
+              "day_index": 2,
+              "date": "2026-08-02",
+              "state": "rain",
+              "weather": "雨天",
+              "temperature_min_c": 17,
+              "temperature_max_c": 23,
+              "precipitation_mm": 26.0,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain"
+              ],
+              "suitable_periods": [
+                "morning",
+                "afternoon"
+              ],
+              "avoid_periods": []
+            }
+          ],
+          "planning_constraints": {
+            "dynamic_adjustment_required": true,
+            "indoor_preference": false,
+            "minimum_indoor_activity_ratio": null,
+            "avoid_time_windows": [],
+            "maximum_continuous_outdoor_hours": null,
+            "mandatory_actions": [
+              "必须按天读取天气条件",
+              "不得将同一规划策略直接复制到全部日期",
+              "至少提供一个天气变化后的行程调整"
+            ]
+          },
+          "weather_adjustment_required": true
+        },
+        "weather_adjustments": [
+          {
+            "reason": "continuous_change",
+            "action": "减少长时间户外活动，优先安排室内或低风险景点",
+            "candidate_indoor_pois": []
+          }
+        ],
+        "execution_status": "completed",
+        "final_answer": "offline acceptance answer",
+        "tool_results": {
+          "poi_search": {
+            "schema_version": "research_tool_result_v1",
+            "tool_contract_version": "ctp-research-tools-v1.0",
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "preferences": [],
+              "people": "general",
+              "limit": 4
+            },
+            "data": {
+              "city": "hangzhou",
+              "preferences": [],
+              "people": "general",
+              "attractions": [
+                {
+                  "poi_id": "hz001",
+                  "name": "西湖风景名胜区",
+                  "city": "杭州",
+                  "city_id": "hangzhou",
+                  "category": "nature",
+                  "tags": [
+                    "湖景",
+                    "世界遗产",
+                    "免费"
+                  ],
+                  "indoor_outdoor": "outdoor",
+                  "recommended_duration_hours": 4.0,
+                  "ticket_price_cny": null,
+                  "ticket_price_known": false,
+                  "address": "西湖, 西湖区, 杭州市, 浙江省, 中国",
+                  "transport_node_id": "hz001",
+                  "evidence": {
+                    "dataset_version": "CTP-POI-v1.0",
+                    "source_file_id": "ctp_poi_hangzhou_v1_0",
+                    "snapshot_date": "2026-07-17",
+                    "offline": true
+                  }
+                },
+                {
+                  "poi_id": "hz002",
+                  "name": "灵隐飞来峰景区",
+                  "city": "杭州",
+                  "city_id": "hangzhou",
+                  "category": "history_culture",
+                  "tags": [
+                    "寺院",
+                    "石刻",
+                    "人文"
+                  ],
+                  "indoor_outdoor": "mixed",
+                  "recommended_duration_hours": 3.0,
+                  "ticket_price_cny": null,
+                  "ticket_price_known": false,
+                  "address": "飞来峰, 杭州市, 浙江省, 310013, 中国",
+                  "transport_node_id": "hz002",
+                  "evidence": {
+                    "dataset_version": "CTP-POI-v1.0",
+                    "source_file_id": "ctp_poi_hangzhou_v1_0",
+                    "snapshot_date": "2026-07-17",
+                    "offline": true
+                  }
+                },
+                {
+                  "poi_id": "hz003",
+                  "name": "西溪国家湿地公园",
+                  "city": "杭州",
+                  "city_id": "hangzhou",
+                  "category": "nature",
+                  "tags": [
+                    "湿地",
+                    "生态",
+                    "游船"
+                  ],
+                  "indoor_outdoor": "outdoor",
+                  "recommended_duration_hours": 4.0,
+                  "ticket_price_cny": null,
+                  "ticket_price_known": false,
+                  "address": "西溪国家湿地公园, 西湖区, 杭州市, 浙江省, 中国",
+                  "transport_node_id": "hz003",
+                  "evidence": {
+                    "dataset_version": "CTP-POI-v1.0",
+                    "source_file_id": "ctp_poi_hangzhou_v1_0",
+                    "snapshot_date": "2026-07-17",
+                    "offline": true
+                  }
+                },
+                {
+                  "poi_id": "hz004",
+                  "name": "清河坊历史文化街区",
+                  "city": "杭州",
+                  "city_id": "hangzhou",
+                  "category": "urban_landmark",
+                  "tags": [
+                    "老街",
+                    "小吃",
+                    "购物"
+                  ],
+                  "indoor_outdoor": "mixed",
+                  "recommended_duration_hours": 2.0,
+                  "ticket_price_cny": null,
+                  "ticket_price_known": false,
+                  "address": "清河坊历史文化街区, 清河坊社区, 清波街道, 上城区, 杭州市, 浙江省, 310009, 中国",
+                  "transport_node_id": "hz004",
+                  "evidence": {
+                    "dataset_version": "CTP-POI-v1.0",
+                    "source_file_id": "ctp_poi_hangzhou_v1_0",
+                    "snapshot_date": "2026-07-17",
+                    "offline": true
+                  }
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "frozen_offline",
+              "real_time_api_allowed": false,
+              "poi_dataset_versions": [
+                "CTP-POI-v1.0"
+              ],
+              "source_file_ids": [
+                "ctp_poi_hangzhou_v1_0"
+              ],
+              "record_count": 4
+            }
+          },
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_contract_version": "ctp-research-tools-v1.0",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "date": "2026-08-01",
+              "days": 2,
+              "scenario_type": "sunny"
+            },
+            "data": {
+              "city": "杭州",
+              "city_id": "hangzhou",
+              "date": "2026-08-01",
+              "scenario_type": "continuous_change",
+              "requested_scenario_type": "sunny",
+              "scenario_selection": "city_date_hash",
+              "risk_level": "high",
+              "daily_weather": [
+                {
+                  "day_index": 1,
+                  "date": "2026-08-01",
+                  "state": "sunny",
+                  "weather": "晴天",
+                  "temperature_min_c": 20,
+                  "temperature_max_c": 29,
+                  "precipitation_mm": 0.0,
+                  "risk_level": "low",
+                  "risk_tags": [],
+                  "suitable_periods": [
+                    "morning",
+                    "afternoon"
+                  ],
+                  "avoid_periods": []
+                },
+                {
+                  "day_index": 2,
+                  "date": "2026-08-02",
+                  "state": "rain",
+                  "weather": "雨天",
+                  "temperature_min_c": 17,
+                  "temperature_max_c": 23,
+                  "precipitation_mm": 26.0,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "afternoon"
+                  ],
+                  "avoid_periods": []
+                }
+              ],
+              "planning_constraints": {
+                "dynamic_adjustment_required": true,
+                "indoor_preference": false,
+                "minimum_indoor_activity_ratio": null,
+                "avoid_time_windows": [],
+                "maximum_continuous_outdoor_hours": null,
+                "mandatory_actions": [
+                  "必须按天读取天气条件",
+                  "不得将同一规划策略直接复制到全部日期",
+                  "至少提供一个天气变化后的行程调整"
+                ]
+              },
+              "weather_adjustment_required": true
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "frozen_offline",
+              "real_time_api_allowed": false,
+              "dataset_version": "CTP-WEATHER-v1.0",
+              "source_file_id": "ctp_weather_hangzhou_v1_0",
+              "record_count": 2,
+              "canonical_city_id": "hangzhou",
+              "weather_date_mapping_rule": "sha256(canonical_city_id + date) selects one fixed scenario when date is provided"
+            }
+          },
+          "budget_calculator": {
+            "schema_version": "research_tool_result_v1",
+            "tool_contract_version": "ctp-research-tools-v1.0",
+            "tool_name": "budget_calculator",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "people_count": 2,
+              "days": 2,
+              "attractions": [
+                "hz001",
+                "hz002",
+                "hz003",
+                "hz004"
+              ],
+              "spending_level": "medium"
+            },
+            "data": {
+              "city": "hangzhou",
+              "people_count": 2,
+              "days": 2,
+              "spending_level": "medium",
+              "currency": "CNY",
+              "total": 3058.28,
+              "per_person": 1529.14,
+              "daily_average": 1529.14,
+              "breakdown": {
+                "transport": {
+                  "recommended": 96.0,
+                  "mode": "public_transit",
+                  "calculation_rule": "fixed matrix average cost * fixed trip count"
+                },
+                "accommodation": {
+                  "recommended": 648.57,
+                  "reference_price_cny": 648.57,
+                  "room_count": 1,
+                  "night_count": 1,
+                  "calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+                },
+                "food": {
+                  "recommended": 1525.68,
+                  "reference_price_cny": 127.14,
+                  "meal_count": 6,
+                  "calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+                },
+                "tickets": {
+                  "recommended": 270.0,
+                  "calculation_rule": "sum known fixed adult ticket prices for selected experiment POIs; pending prices are not guessed"
+                },
+                "other": {
+                  "recommended": 240,
+                  "calculation_rule": "fixed per-person daily allowance"
+                },
+                "buffer": {
+                  "recommended": 278.03,
+                  "calculation_rule": "10 percent fixed buffer"
+                }
+              },
+              "items": [
+                {
+                  "category": "transport",
+                  "item": "fixed city transport",
+                  "estimated_cost": 96.0,
+                  "is_essential": true
+                },
+                {
+                  "category": "accommodation",
+                  "item": "fixed accommodation area",
+                  "estimated_cost": 648.57,
+                  "is_essential": true
+                },
+                {
+                  "category": "food",
+                  "item": "fixed dining area meals",
+                  "estimated_cost": 1525.68,
+                  "is_essential": true
+                },
+                {
+                  "category": "tickets",
+                  "item": "fixed POI tickets",
+                  "estimated_cost": 270.0,
+                  "is_essential": true
+                },
+                {
+                  "category": "other",
+                  "item": "fixed miscellaneous allowance",
+                  "estimated_cost": 240,
+                  "is_essential": false
+                }
+              ],
+              "ticket_breakdown": {
+                "ticket_cost": 270.0,
+                "ticket_cost_per_person": 135.0,
+                "details": [
+                  {
+                    "name": "西湖风景名胜区",
+                    "status": "estimated",
+                    "parsed_ticket_yuan": null,
+                    "counted_amount_yuan": 0.0,
+                    "estimation_rule": "experiment_ticket_estimate_v1.free_tag",
+                    "estimation_basis": "POI tag indicates free entry"
+                  },
+                  {
+                    "name": "灵隐飞来峰景区",
+                    "status": "estimated",
+                    "parsed_ticket_yuan": null,
+                    "counted_amount_yuan": 60.0,
+                    "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                    "estimation_basis": "primary_category=history_culture"
+                  },
+                  {
+                    "name": "西溪国家湿地公园",
+                    "status": "estimated",
+                    "parsed_ticket_yuan": null,
+                    "counted_amount_yuan": 35.0,
+                    "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                    "estimation_basis": "primary_category=nature"
+                  },
+                  {
+                    "name": "清河坊历史文化街区",
+                    "status": "estimated",
+                    "parsed_ticket_yuan": null,
+                    "counted_amount_yuan": 40.0,
+                    "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                    "estimation_basis": "primary_category=urban_landmark"
+                  }
+                ],
+                "summary": {
+                  "poi_source_field": "fixed_poi_dataset",
+                  "source": "fixed_poi_ticketing",
+                  "known_ticket_count": 0,
+                  "free_ticket_count": 0,
+                  "estimated_ticket_count": 4,
+                  "estimated_ticket_total_per_person": 135.0,
+                  "pending_confirmation_count": 4,
+                  "pending_confirmation_pois": [
+                    "西湖风景名胜区",
+                    "灵隐飞来峰景区",
+                    "西溪国家湿地公园",
+                    "清河坊历史文化街区"
+                  ],
+                  "ignored_non_ticket_count": 0,
+                  "fallback_applied": true,
+                  "experiment_estimate_rule": "unknown adult ticket prices are counted with explicit fixed category estimates, not treated as zero"
+                }
+              }
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "frozen_offline",
+              "real_time_api_allowed": false,
+              "dataset_versions": {
+                "poi": "CTP-POI-v1.0",
+                "dining": "CTP-DINING-v1.0",
+                "accommodation": "CTP-ACCOMMODATION-v1.0",
+                "transport": "CTP-TRANSPORT-v1.0"
+              },
+              "source_file_ids": {
+                "poi": "ctp_poi_hangzhou_v1_0",
+                "dining": "ctp_dining_area_hangzhou_v1_0",
+                "accommodation": "ctp_accommodation_area_hangzhou_v1_0",
+                "transport": "ctp_transport_hangzhou_v1_0"
+              },
+              "record_count": 5,
+              "calculation_source": "fixed_offline_dataset"
+            }
+          }
+        },
+        "metadata": {
+          "research_method": "adaptive_multi_agent",
+          "generation_tool_contract": "ctp-research-tools-v1.0",
+          "goal_state_slots": {
+            "destination": "hangzhou",
+            "duration": 2,
+            "people_count": 2,
+            "start_date": "2026-08-01",
+            "duration_days": 2
+          },
+          "result_agents": [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ],
+          "adaptive_scheduler": {
+            "name": "goal_state_scheduler",
+            "ticket": {
+              "schema_version": "ctp-goal-state-ticket-v1",
+              "task_type": "trip_planning",
+              "current_slots": {
+                "destination": "hangzhou",
+                "start_date": "2026-08-01",
+                "duration_days": 2,
+                "people_count": 2
+              },
+              "previous_slots": {},
+              "changed_slots": [
+                "destination",
+                "start_date",
+                "duration_days",
+                "people_count"
+              ],
+              "preserved_slots": [],
+              "missing_slots": [],
+              "required_capabilities": [
+                "poi_evidence",
+                "weather_evidence",
+                "itinerary_generation",
+                "budget_estimation"
+              ],
+              "clarification_required": false,
+              "clarification_fields": [],
+              "goal_change_type": "new_request"
+            },
+            "decision": {
+              "schema_version": "ctp-scheduler-decision-v1",
+              "planned_agents": [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ],
+              "planned_tools": [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ],
+              "reused_agents": [],
+              "invalidated_agents": [],
+              "clarification_required": false,
+              "clarification_fields": [],
+              "decision_reasons": [
+                "new_full_plan"
+              ],
+              "reuse_validation": {}
+            },
+            "reuse_execution": {
+              "previous_state_provided": false,
+              "expected_reused_agents": [],
+              "reused_agent_results": [],
+              "missing_reused_agent_results": [],
+              "expected_reused_agent_count": 0,
+              "reused_agent_result_count": 0,
+              "missing_reused_agent_result_count": 0,
+              "expected_reused_tools": [],
+              "reused_tool_results": [],
+              "missing_reused_tool_results": [],
+              "expected_reused_tool_count": 0,
+              "reused_tool_result_count": 0,
+              "missing_reused_tool_result_count": 0,
+              "reuse_hit_rate": null,
+              "agent_reuse_hit_rate": null
+            },
+            "result_fingerprints": {
+              "attraction": {
+                "destination": "hangzhou"
+              },
+              "weather": {
+                "destination": "hangzhou",
+                "start_date": "2026-08-01",
+                "duration_days": 2
+              },
+              "itinerary": {
+                "destination": "hangzhou",
+                "start_date": "2026-08-01",
+                "duration_days": 2
+              },
+              "budget": {
+                "destination": "hangzhou",
+                "duration_days": 2,
+                "people_count": 2
+              }
+            }
+          }
+        }
+      },
+      "metadata": {
+        "output_contract": "ctp-experiment-output-v1",
+        "trace_schema_version": "1.7",
+        "tool_call_count": 3,
+        "research_method": "adaptive_multi_agent",
+        "generation_tool_contract": "ctp-research-tools-v1.0",
+        "goal_state_slots": {
+          "destination": "hangzhou",
+          "duration": 2,
+          "people_count": 2,
+          "start_date": "2026-08-01",
+          "duration_days": 2
+        },
+        "result_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "adaptive_scheduler": {
+          "name": "goal_state_scheduler",
+          "ticket": {
+            "schema_version": "ctp-goal-state-ticket-v1",
+            "task_type": "trip_planning",
+            "current_slots": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2,
+              "people_count": 2
+            },
+            "previous_slots": {},
+            "changed_slots": [
+              "destination",
+              "start_date",
+              "duration_days",
+              "people_count"
+            ],
+            "preserved_slots": [],
+            "missing_slots": [],
+            "required_capabilities": [
+              "poi_evidence",
+              "weather_evidence",
+              "itinerary_generation",
+              "budget_estimation"
+            ],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "goal_change_type": "new_request"
+          },
+          "decision": {
+            "schema_version": "ctp-scheduler-decision-v1",
+            "planned_agents": [
+              "attraction",
+              "weather",
+              "itinerary",
+              "budget"
+            ],
+            "planned_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "reused_agents": [],
+            "invalidated_agents": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "decision_reasons": [
+              "new_full_plan"
+            ],
+            "reuse_validation": {}
+          },
+          "reuse_execution": {
+            "previous_state_provided": false,
+            "expected_reused_agents": [],
+            "reused_agent_results": [],
+            "missing_reused_agent_results": [],
+            "expected_reused_agent_count": 0,
+            "reused_agent_result_count": 0,
+            "missing_reused_agent_result_count": 0,
+            "expected_reused_tools": [],
+            "reused_tool_results": [],
+            "missing_reused_tool_results": [],
+            "expected_reused_tool_count": 0,
+            "reused_tool_result_count": 0,
+            "missing_reused_tool_result_count": 0,
+            "reuse_hit_rate": null,
+            "agent_reuse_hit_rate": null
+          },
+          "result_fingerprints": {
+            "attraction": {
+              "destination": "hangzhou"
+            },
+            "weather": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2
+            },
+            "itinerary": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2
+            },
+            "budget": {
+              "destination": "hangzhou",
+              "duration_days": 2,
+              "people_count": 2
+            }
+          }
+        },
+        "adaptive_scheduler_metrics": {
+          "m3_scheduler_name": "goal_state_scheduler",
+          "m3_task_type": "trip_planning",
+          "m3_clarification_required": false,
+          "m3_clarification_fields": [],
+          "m3_clarification_field_count": 0,
+          "m3_decision_reasons": [
+            "new_full_plan"
+          ],
+          "m3_planned_agents": [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ],
+          "m3_reused_agents": [],
+          "m3_invalidated_agents": [],
+          "m3_planned_tools": [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ],
+          "m3_expected_reused_tools": [],
+          "m3_reused_tool_results": [],
+          "m3_missing_reused_tool_results": [],
+          "m3_previous_state_provided": false,
+          "m3_m2_reference_agent_count": 4,
+          "m3_m2_reference_tool_count": 3,
+          "m3_planned_agent_count": 4,
+          "m3_executed_agent_count": 4,
+          "m3_reused_agent_count": 0,
+          "m3_invalidated_agent_count": 0,
+          "m3_planned_tool_count": 3,
+          "m3_executed_tool_count": 3,
+          "m3_expected_reused_tool_count": 0,
+          "m3_reused_tool_result_count": 0,
+          "m3_missing_reused_tool_result_count": 0,
+          "m3_agent_reuse_rate": 0.0,
+          "m3_tool_reuse_rate": 0.0,
+          "m3_reuse_hit_rate": null,
+          "m3_agent_call_savings_vs_m2": 0,
+          "m3_tool_call_savings_vs_m2": 0,
+          "m3_agent_call_reduction_rate_vs_m2": 0.0,
+          "m3_tool_call_reduction_rate_vs_m2": 0.0
+        }
+      }
+    },
+    "constraint_report": {
+      "schema_version": "research_tool_result_v1",
+      "tool_contract_version": "ctp-research-tools-v1.0",
+      "tool_name": "constraint_checker",
+      "status": "success",
+      "success": true,
+      "input": {
+        "request": {
+          "destination": "hangzhou",
+          "duration": 2,
+          "people_count": 2,
+          "start_date": "2026-08-01",
+          "case_id": "day4_trace_turn1",
+          "user_input": "plan a two day Hangzhou trip",
+          "city": "hangzhou",
+          "days": 2,
+          "budget": null
+        },
+        "constraints": {
+          "days": 2
+        }
+      },
+      "data": {
+        "all_passed": true,
+        "applicable_count": 2,
+        "passed_count": 2,
+        "failed_count": 0,
+        "checks": [
+          {
+            "name": "trip_days",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "expected": 2,
+              "actual": 2
+            }
+          },
+          {
+            "name": "budget_limit",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "limit": null,
+              "actual": 3058.28
+            }
+          },
+          {
+            "name": "weather_adjustment",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "required": true,
+              "adjustment_count": 1
+            }
+          },
+          {
+            "name": "min_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "minimum": null,
+              "actual": 4
+            }
+          },
+          {
+            "name": "max_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "maximum": null,
+              "actual": 4
+            }
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "offline": true,
+        "source_mode": "deterministic_evaluator",
+        "real_time_api_allowed": false,
+        "contract": "ctp-research-tools-v1.0"
+      }
+    },
+    "hard_constraint_applicable_count": 2,
+    "hard_constraint_passed_count": 2,
+    "hard_constraint_failed_count": 0,
+    "hard_constraints_all_satisfied": true,
+    "hcsr": 1.0,
+    "raw_output": {
+      "task_type": "trip_planning",
+      "used_agents": [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ],
+      "planned_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "trip_days": 2,
+      "daily_itinerary": [
+        {
+          "day": 1,
+          "attractions": [
+            {
+              "poi_id": "hz001",
+              "name": "西湖风景名胜区",
+              "category": "nature",
+              "indoor_outdoor": "outdoor"
+            },
+            {
+              "poi_id": "hz002",
+              "name": "灵隐飞来峰景区",
+              "category": "history_culture",
+              "indoor_outdoor": "mixed"
+            }
+          ],
+          "notes": "由固定离线 POI 结果生成的实验行程骨架"
+        },
+        {
+          "day": 2,
+          "attractions": [
+            {
+              "poi_id": "hz003",
+              "name": "西溪国家湿地公园",
+              "category": "nature",
+              "indoor_outdoor": "outdoor"
+            },
+            {
+              "poi_id": "hz004",
+              "name": "清河坊历史文化街区",
+              "category": "urban_landmark",
+              "indoor_outdoor": "mixed"
+            }
+          ],
+          "notes": "由固定离线 POI 结果生成的实验行程骨架"
+        }
+      ],
+      "budget": {
+        "city": "hangzhou",
+        "people_count": 2,
+        "days": 2,
+        "spending_level": "medium",
+        "currency": "CNY",
+        "total": 3058.28,
+        "per_person": 1529.14,
+        "daily_average": 1529.14,
+        "breakdown": {
+          "transport": {
+            "recommended": 96.0,
+            "mode": "public_transit",
+            "calculation_rule": "fixed matrix average cost * fixed trip count"
+          },
+          "accommodation": {
+            "recommended": 648.57,
+            "reference_price_cny": 648.57,
+            "room_count": 1,
+            "night_count": 1,
+            "calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+          },
+          "food": {
+            "recommended": 1525.68,
+            "reference_price_cny": 127.14,
+            "meal_count": 6,
+            "calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+          },
+          "tickets": {
+            "recommended": 270.0,
+            "calculation_rule": "sum known fixed adult ticket prices for selected experiment POIs; pending prices are not guessed"
+          },
+          "other": {
+            "recommended": 240,
+            "calculation_rule": "fixed per-person daily allowance"
+          },
+          "buffer": {
+            "recommended": 278.03,
+            "calculation_rule": "10 percent fixed buffer"
+          }
+        },
+        "items": [
+          {
+            "category": "transport",
+            "item": "fixed city transport",
+            "estimated_cost": 96.0,
+            "is_essential": true
+          },
+          {
+            "category": "accommodation",
+            "item": "fixed accommodation area",
+            "estimated_cost": 648.57,
+            "is_essential": true
+          },
+          {
+            "category": "food",
+            "item": "fixed dining area meals",
+            "estimated_cost": 1525.68,
+            "is_essential": true
+          },
+          {
+            "category": "tickets",
+            "item": "fixed POI tickets",
+            "estimated_cost": 270.0,
+            "is_essential": true
+          },
+          {
+            "category": "other",
+            "item": "fixed miscellaneous allowance",
+            "estimated_cost": 240,
+            "is_essential": false
+          }
+        ],
+        "ticket_breakdown": {
+          "ticket_cost": 270.0,
+          "ticket_cost_per_person": 135.0,
+          "details": [
+            {
+              "name": "西湖风景名胜区",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 0.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.free_tag",
+              "estimation_basis": "POI tag indicates free entry"
+            },
+            {
+              "name": "灵隐飞来峰景区",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 60.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+              "estimation_basis": "primary_category=history_culture"
+            },
+            {
+              "name": "西溪国家湿地公园",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 35.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+              "estimation_basis": "primary_category=nature"
+            },
+            {
+              "name": "清河坊历史文化街区",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 40.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+              "estimation_basis": "primary_category=urban_landmark"
+            }
+          ],
+          "summary": {
+            "poi_source_field": "fixed_poi_dataset",
+            "source": "fixed_poi_ticketing",
+            "known_ticket_count": 0,
+            "free_ticket_count": 0,
+            "estimated_ticket_count": 4,
+            "estimated_ticket_total_per_person": 135.0,
+            "pending_confirmation_count": 4,
+            "pending_confirmation_pois": [
+              "西湖风景名胜区",
+              "灵隐飞来峰景区",
+              "西溪国家湿地公园",
+              "清河坊历史文化街区"
+            ],
+            "ignored_non_ticket_count": 0,
+            "fallback_applied": true,
+            "experiment_estimate_rule": "unknown adult ticket prices are counted with explicit fixed category estimates, not treated as zero"
+          }
+        }
+      },
+      "weather": {
+        "city": "杭州",
+        "city_id": "hangzhou",
+        "date": "2026-08-01",
+        "scenario_type": "continuous_change",
+        "requested_scenario_type": "sunny",
+        "scenario_selection": "city_date_hash",
+        "risk_level": "high",
+        "daily_weather": [
+          {
+            "day_index": 1,
+            "date": "2026-08-01",
+            "state": "sunny",
+            "weather": "晴天",
+            "temperature_min_c": 20,
+            "temperature_max_c": 29,
+            "precipitation_mm": 0.0,
+            "risk_level": "low",
+            "risk_tags": [],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          },
+          {
+            "day_index": 2,
+            "date": "2026-08-02",
+            "state": "rain",
+            "weather": "雨天",
+            "temperature_min_c": 17,
+            "temperature_max_c": 23,
+            "precipitation_mm": 26.0,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain"
+            ],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          }
+        ],
+        "planning_constraints": {
+          "dynamic_adjustment_required": true,
+          "indoor_preference": false,
+          "minimum_indoor_activity_ratio": null,
+          "avoid_time_windows": [],
+          "maximum_continuous_outdoor_hours": null,
+          "mandatory_actions": [
+            "必须按天读取天气条件",
+            "不得将同一规划策略直接复制到全部日期",
+            "至少提供一个天气变化后的行程调整"
+          ]
+        },
+        "weather_adjustment_required": true
+      },
+      "weather_adjustments": [
+        {
+          "reason": "continuous_change",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        }
+      ],
+      "execution_status": "completed",
+      "final_answer": "offline acceptance answer",
+      "tool_results": {
+        "poi_search": {
+          "schema_version": "research_tool_result_v1",
+          "tool_contract_version": "ctp-research-tools-v1.0",
+          "tool_name": "poi_search",
+          "status": "success",
+          "success": true,
+          "input": {
+            "city": "hangzhou",
+            "preferences": [],
+            "people": "general",
+            "limit": 4
+          },
+          "data": {
+            "city": "hangzhou",
+            "preferences": [],
+            "people": "general",
+            "attractions": [
+              {
+                "poi_id": "hz001",
+                "name": "西湖风景名胜区",
+                "city": "杭州",
+                "city_id": "hangzhou",
+                "category": "nature",
+                "tags": [
+                  "湖景",
+                  "世界遗产",
+                  "免费"
+                ],
+                "indoor_outdoor": "outdoor",
+                "recommended_duration_hours": 4.0,
+                "ticket_price_cny": null,
+                "ticket_price_known": false,
+                "address": "西湖, 西湖区, 杭州市, 浙江省, 中国",
+                "transport_node_id": "hz001",
+                "evidence": {
+                  "dataset_version": "CTP-POI-v1.0",
+                  "source_file_id": "ctp_poi_hangzhou_v1_0",
+                  "snapshot_date": "2026-07-17",
+                  "offline": true
+                }
+              },
+              {
+                "poi_id": "hz002",
+                "name": "灵隐飞来峰景区",
+                "city": "杭州",
+                "city_id": "hangzhou",
+                "category": "history_culture",
+                "tags": [
+                  "寺院",
+                  "石刻",
+                  "人文"
+                ],
+                "indoor_outdoor": "mixed",
+                "recommended_duration_hours": 3.0,
+                "ticket_price_cny": null,
+                "ticket_price_known": false,
+                "address": "飞来峰, 杭州市, 浙江省, 310013, 中国",
+                "transport_node_id": "hz002",
+                "evidence": {
+                  "dataset_version": "CTP-POI-v1.0",
+                  "source_file_id": "ctp_poi_hangzhou_v1_0",
+                  "snapshot_date": "2026-07-17",
+                  "offline": true
+                }
+              },
+              {
+                "poi_id": "hz003",
+                "name": "西溪国家湿地公园",
+                "city": "杭州",
+                "city_id": "hangzhou",
+                "category": "nature",
+                "tags": [
+                  "湿地",
+                  "生态",
+                  "游船"
+                ],
+                "indoor_outdoor": "outdoor",
+                "recommended_duration_hours": 4.0,
+                "ticket_price_cny": null,
+                "ticket_price_known": false,
+                "address": "西溪国家湿地公园, 西湖区, 杭州市, 浙江省, 中国",
+                "transport_node_id": "hz003",
+                "evidence": {
+                  "dataset_version": "CTP-POI-v1.0",
+                  "source_file_id": "ctp_poi_hangzhou_v1_0",
+                  "snapshot_date": "2026-07-17",
+                  "offline": true
+                }
+              },
+              {
+                "poi_id": "hz004",
+                "name": "清河坊历史文化街区",
+                "city": "杭州",
+                "city_id": "hangzhou",
+                "category": "urban_landmark",
+                "tags": [
+                  "老街",
+                  "小吃",
+                  "购物"
+                ],
+                "indoor_outdoor": "mixed",
+                "recommended_duration_hours": 2.0,
+                "ticket_price_cny": null,
+                "ticket_price_known": false,
+                "address": "清河坊历史文化街区, 清河坊社区, 清波街道, 上城区, 杭州市, 浙江省, 310009, 中国",
+                "transport_node_id": "hz004",
+                "evidence": {
+                  "dataset_version": "CTP-POI-v1.0",
+                  "source_file_id": "ctp_poi_hangzhou_v1_0",
+                  "snapshot_date": "2026-07-17",
+                  "offline": true
+                }
+              }
+            ]
+          },
+          "error": null,
+          "metadata": {
+            "offline": true,
+            "source_mode": "frozen_offline",
+            "real_time_api_allowed": false,
+            "poi_dataset_versions": [
+              "CTP-POI-v1.0"
+            ],
+            "source_file_ids": [
+              "ctp_poi_hangzhou_v1_0"
+            ],
+            "record_count": 4
+          }
+        },
+        "weather_query": {
+          "schema_version": "research_tool_result_v1",
+          "tool_contract_version": "ctp-research-tools-v1.0",
+          "tool_name": "weather_query",
+          "status": "success",
+          "success": true,
+          "input": {
+            "city": "hangzhou",
+            "date": "2026-08-01",
+            "days": 2,
+            "scenario_type": "sunny"
+          },
+          "data": {
+            "city": "杭州",
+            "city_id": "hangzhou",
+            "date": "2026-08-01",
+            "scenario_type": "continuous_change",
+            "requested_scenario_type": "sunny",
+            "scenario_selection": "city_date_hash",
+            "risk_level": "high",
+            "daily_weather": [
+              {
+                "day_index": 1,
+                "date": "2026-08-01",
+                "state": "sunny",
+                "weather": "晴天",
+                "temperature_min_c": 20,
+                "temperature_max_c": 29,
+                "precipitation_mm": 0.0,
+                "risk_level": "low",
+                "risk_tags": [],
+                "suitable_periods": [
+                  "morning",
+                  "afternoon"
+                ],
+                "avoid_periods": []
+              },
+              {
+                "day_index": 2,
+                "date": "2026-08-02",
+                "state": "rain",
+                "weather": "雨天",
+                "temperature_min_c": 17,
+                "temperature_max_c": 23,
+                "precipitation_mm": 26.0,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "afternoon"
+                ],
+                "avoid_periods": []
+              }
+            ],
+            "planning_constraints": {
+              "dynamic_adjustment_required": true,
+              "indoor_preference": false,
+              "minimum_indoor_activity_ratio": null,
+              "avoid_time_windows": [],
+              "maximum_continuous_outdoor_hours": null,
+              "mandatory_actions": [
+                "必须按天读取天气条件",
+                "不得将同一规划策略直接复制到全部日期",
+                "至少提供一个天气变化后的行程调整"
+              ]
+            },
+            "weather_adjustment_required": true
+          },
+          "error": null,
+          "metadata": {
+            "offline": true,
+            "source_mode": "frozen_offline",
+            "real_time_api_allowed": false,
+            "dataset_version": "CTP-WEATHER-v1.0",
+            "source_file_id": "ctp_weather_hangzhou_v1_0",
+            "record_count": 2,
+            "canonical_city_id": "hangzhou",
+            "weather_date_mapping_rule": "sha256(canonical_city_id + date) selects one fixed scenario when date is provided"
+          }
+        },
+        "budget_calculator": {
+          "schema_version": "research_tool_result_v1",
+          "tool_contract_version": "ctp-research-tools-v1.0",
+          "tool_name": "budget_calculator",
+          "status": "success",
+          "success": true,
+          "input": {
+            "city": "hangzhou",
+            "people_count": 2,
+            "days": 2,
+            "attractions": [
+              "hz001",
+              "hz002",
+              "hz003",
+              "hz004"
+            ],
+            "spending_level": "medium"
+          },
+          "data": {
+            "city": "hangzhou",
+            "people_count": 2,
+            "days": 2,
+            "spending_level": "medium",
+            "currency": "CNY",
+            "total": 3058.28,
+            "per_person": 1529.14,
+            "daily_average": 1529.14,
+            "breakdown": {
+              "transport": {
+                "recommended": 96.0,
+                "mode": "public_transit",
+                "calculation_rule": "fixed matrix average cost * fixed trip count"
+              },
+              "accommodation": {
+                "recommended": 648.57,
+                "reference_price_cny": 648.57,
+                "room_count": 1,
+                "night_count": 1,
+                "calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+              },
+              "food": {
+                "recommended": 1525.68,
+                "reference_price_cny": 127.14,
+                "meal_count": 6,
+                "calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+              },
+              "tickets": {
+                "recommended": 270.0,
+                "calculation_rule": "sum known fixed adult ticket prices for selected experiment POIs; pending prices are not guessed"
+              },
+              "other": {
+                "recommended": 240,
+                "calculation_rule": "fixed per-person daily allowance"
+              },
+              "buffer": {
+                "recommended": 278.03,
+                "calculation_rule": "10 percent fixed buffer"
+              }
+            },
+            "items": [
+              {
+                "category": "transport",
+                "item": "fixed city transport",
+                "estimated_cost": 96.0,
+                "is_essential": true
+              },
+              {
+                "category": "accommodation",
+                "item": "fixed accommodation area",
+                "estimated_cost": 648.57,
+                "is_essential": true
+              },
+              {
+                "category": "food",
+                "item": "fixed dining area meals",
+                "estimated_cost": 1525.68,
+                "is_essential": true
+              },
+              {
+                "category": "tickets",
+                "item": "fixed POI tickets",
+                "estimated_cost": 270.0,
+                "is_essential": true
+              },
+              {
+                "category": "other",
+                "item": "fixed miscellaneous allowance",
+                "estimated_cost": 240,
+                "is_essential": false
+              }
+            ],
+            "ticket_breakdown": {
+              "ticket_cost": 270.0,
+              "ticket_cost_per_person": 135.0,
+              "details": [
+                {
+                  "name": "西湖风景名胜区",
+                  "status": "estimated",
+                  "parsed_ticket_yuan": null,
+                  "counted_amount_yuan": 0.0,
+                  "estimation_rule": "experiment_ticket_estimate_v1.free_tag",
+                  "estimation_basis": "POI tag indicates free entry"
+                },
+                {
+                  "name": "灵隐飞来峰景区",
+                  "status": "estimated",
+                  "parsed_ticket_yuan": null,
+                  "counted_amount_yuan": 60.0,
+                  "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                  "estimation_basis": "primary_category=history_culture"
+                },
+                {
+                  "name": "西溪国家湿地公园",
+                  "status": "estimated",
+                  "parsed_ticket_yuan": null,
+                  "counted_amount_yuan": 35.0,
+                  "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                  "estimation_basis": "primary_category=nature"
+                },
+                {
+                  "name": "清河坊历史文化街区",
+                  "status": "estimated",
+                  "parsed_ticket_yuan": null,
+                  "counted_amount_yuan": 40.0,
+                  "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                  "estimation_basis": "primary_category=urban_landmark"
+                }
+              ],
+              "summary": {
+                "poi_source_field": "fixed_poi_dataset",
+                "source": "fixed_poi_ticketing",
+                "known_ticket_count": 0,
+                "free_ticket_count": 0,
+                "estimated_ticket_count": 4,
+                "estimated_ticket_total_per_person": 135.0,
+                "pending_confirmation_count": 4,
+                "pending_confirmation_pois": [
+                  "西湖风景名胜区",
+                  "灵隐飞来峰景区",
+                  "西溪国家湿地公园",
+                  "清河坊历史文化街区"
+                ],
+                "ignored_non_ticket_count": 0,
+                "fallback_applied": true,
+                "experiment_estimate_rule": "unknown adult ticket prices are counted with explicit fixed category estimates, not treated as zero"
+              }
+            }
+          },
+          "error": null,
+          "metadata": {
+            "offline": true,
+            "source_mode": "frozen_offline",
+            "real_time_api_allowed": false,
+            "dataset_versions": {
+              "poi": "CTP-POI-v1.0",
+              "dining": "CTP-DINING-v1.0",
+              "accommodation": "CTP-ACCOMMODATION-v1.0",
+              "transport": "CTP-TRANSPORT-v1.0"
+            },
+            "source_file_ids": {
+              "poi": "ctp_poi_hangzhou_v1_0",
+              "dining": "ctp_dining_area_hangzhou_v1_0",
+              "accommodation": "ctp_accommodation_area_hangzhou_v1_0",
+              "transport": "ctp_transport_hangzhou_v1_0"
+            },
+            "record_count": 5,
+            "calculation_source": "fixed_offline_dataset"
+          }
+        }
+      },
+      "metadata": {
+        "research_method": "adaptive_multi_agent",
+        "generation_tool_contract": "ctp-research-tools-v1.0",
+        "goal_state_slots": {
+          "destination": "hangzhou",
+          "duration": 2,
+          "people_count": 2,
+          "start_date": "2026-08-01",
+          "duration_days": 2
+        },
+        "result_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "adaptive_scheduler": {
+          "name": "goal_state_scheduler",
+          "ticket": {
+            "schema_version": "ctp-goal-state-ticket-v1",
+            "task_type": "trip_planning",
+            "current_slots": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2,
+              "people_count": 2
+            },
+            "previous_slots": {},
+            "changed_slots": [
+              "destination",
+              "start_date",
+              "duration_days",
+              "people_count"
+            ],
+            "preserved_slots": [],
+            "missing_slots": [],
+            "required_capabilities": [
+              "poi_evidence",
+              "weather_evidence",
+              "itinerary_generation",
+              "budget_estimation"
+            ],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "goal_change_type": "new_request"
+          },
+          "decision": {
+            "schema_version": "ctp-scheduler-decision-v1",
+            "planned_agents": [
+              "attraction",
+              "weather",
+              "itinerary",
+              "budget"
+            ],
+            "planned_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "reused_agents": [],
+            "invalidated_agents": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "decision_reasons": [
+              "new_full_plan"
+            ],
+            "reuse_validation": {}
+          },
+          "reuse_execution": {
+            "previous_state_provided": false,
+            "expected_reused_agents": [],
+            "reused_agent_results": [],
+            "missing_reused_agent_results": [],
+            "expected_reused_agent_count": 0,
+            "reused_agent_result_count": 0,
+            "missing_reused_agent_result_count": 0,
+            "expected_reused_tools": [],
+            "reused_tool_results": [],
+            "missing_reused_tool_results": [],
+            "expected_reused_tool_count": 0,
+            "reused_tool_result_count": 0,
+            "missing_reused_tool_result_count": 0,
+            "reuse_hit_rate": null,
+            "agent_reuse_hit_rate": null
+          },
+          "result_fingerprints": {
+            "attraction": {
+              "destination": "hangzhou"
+            },
+            "weather": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2
+            },
+            "itinerary": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2
+            },
+            "budget": {
+              "destination": "hangzhou",
+              "duration_days": 2,
+              "people_count": 2
+            }
+          }
+        }
+      }
+    },
+    "latency": 54.76,
+    "latency_ms": 54.76,
+    "ttft_ms": null,
+    "trace": {
+      "schema_version": "1.7",
+      "created_at": "2026-07-18T14:19:45.013781+00:00",
+      "request_id": "day4_trace_turn1_adaptive_multi_agent_c54733d4",
+      "session_id": "exp-day4_trace_turn1-adaptive_multi_agent-r0",
+      "case_id": "day4_trace_turn1",
+      "run_id": "day4_acceptance_20260718T141930Z",
+      "experiment_case_id": "day4_trace_turn1",
+      "experiment_group": null,
+      "repeat_index": 0,
+      "system_variant": "adaptive_multi_agent",
+      "method": "adaptive_multi_agent",
+      "evaluation_mode": "end_to_end",
+      "model_config_name": "day4-acceptance-offline",
+      "input_hash": "fdb68a65443477490d27eb6dc1d3c60cf07824d1be2abc643d2273fe3fabbf50",
+      "user_message_hash": "fdb68a65443477490d27eb6dc1d3c60cf07824d1be2abc643d2273fe3fabbf50",
+      "user_message": null,
+      "result_hash": "00e1a2ec82a1978dcb7d4f467d99395f7b40ab31af05c863b78773f3162832a5",
+      "offline_data": {
+        "schema_version": "fixed_data_manifest_v1",
+        "city_ids": [
+          "beijing",
+          "hangzhou",
+          "xian",
+          "shenzhen",
+          "guilin"
+        ],
+        "snapshot_dirs": [
+          "pois",
+          "weather",
+          "restaurants",
+          "accommodation",
+          "transport"
+        ],
+        "file_count": 25,
+        "expected_file_count": 25,
+        "combined_sha256": "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3",
+        "expected_combined_sha256": "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3",
+        "missing_files": [],
+        "files": [
+          {
+            "kind": "accommodation",
+            "city_id": "beijing",
+            "path": "data/accommodation/beijing.json",
+            "sha256": "91ebdadc86245922c61901a2ecfa437f1c754ed2c3975d68c642f7f8c5c93f05"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "guilin",
+            "path": "data/accommodation/guilin.json",
+            "sha256": "e8bbd330fa10ea575da49201bb69b30edc89874b64175a0c8f2593b09113f75d"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "hangzhou",
+            "path": "data/accommodation/hangzhou.json",
+            "sha256": "b146fa73d48688d36e035179e59f08d12a5a283d1bbe5e45ab1fbce27385bfee"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "shenzhen",
+            "path": "data/accommodation/shenzhen.json",
+            "sha256": "6ed2f5ef6078e7651c1f0106568136656dfab92cfe4cfe6866e4edbc185784e4"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "xian",
+            "path": "data/accommodation/xian.json",
+            "sha256": "6a82d4ba2e8659bd414a048371690525f15b26491e2a2934d4c0d380c95e3aca"
+          },
+          {
+            "kind": "pois",
+            "city_id": "beijing",
+            "path": "data/pois/beijing.json",
+            "sha256": "4bd2fb952e1a9b2fb6670793d007d5ebd2cfc897f67829c4d36538410ac4977e"
+          },
+          {
+            "kind": "pois",
+            "city_id": "guilin",
+            "path": "data/pois/guilin.json",
+            "sha256": "1a6d802bb7295998f5d3d965aff1cb5b59998411645922211b319a5c0bfb09cb"
+          },
+          {
+            "kind": "pois",
+            "city_id": "hangzhou",
+            "path": "data/pois/hangzhou.json",
+            "sha256": "7abd466ba674fa160978d6037c95c0bd64a78deed6b5c454bacad8ba055f8aea"
+          },
+          {
+            "kind": "pois",
+            "city_id": "shenzhen",
+            "path": "data/pois/shenzhen.json",
+            "sha256": "199977c5ef39cef67d52af432922de53f57c4862e27e2fb1b34cff7bbbe17582"
+          },
+          {
+            "kind": "pois",
+            "city_id": "xian",
+            "path": "data/pois/xian.json",
+            "sha256": "7f203268990980552debdc8425b77122c7ba7eb218d349f5723e77eada0e6e99"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "beijing",
+            "path": "data/restaurants/beijing.json",
+            "sha256": "378efb83ef2ba54ff563fd1d09e91403df354c942d31693d3a8725fcf9a11b33"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "guilin",
+            "path": "data/restaurants/guilin.json",
+            "sha256": "0b6c68e469096b53779ede207450df55db9040234e89d7cdb3e0bd907bf1a5fc"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "hangzhou",
+            "path": "data/restaurants/hangzhou.json",
+            "sha256": "214312ef2d5878038b74b9467210851184fbcad32edebe556bfee77a9cb881a0"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "shenzhen",
+            "path": "data/restaurants/shenzhen.json",
+            "sha256": "2d8572cfc4f87380b44e1026b39c228617b2e3989cac82baebc61d58109972ec"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "xian",
+            "path": "data/restaurants/xian.json",
+            "sha256": "b4eb9c0f3503e63a988441cf4a8fc942c9c69edb1c797ef745b7ec446986a2f5"
+          },
+          {
+            "kind": "transport",
+            "city_id": "beijing",
+            "path": "data/transport/beijing.json",
+            "sha256": "758967b5cc01305b5c228d728a43bd91dc6a5f25e8366185bb459b7aa789929b"
+          },
+          {
+            "kind": "transport",
+            "city_id": "guilin",
+            "path": "data/transport/guilin.json",
+            "sha256": "475c97fb492d2386c82bb29863cde96d7ab8e78e9f14d2dd399f9b05102765c7"
+          },
+          {
+            "kind": "transport",
+            "city_id": "hangzhou",
+            "path": "data/transport/hangzhou.json",
+            "sha256": "3aa7ab8650eeeb605f95ca8779fa20aca4274b4b4134ac81e3d7911119f2134f"
+          },
+          {
+            "kind": "transport",
+            "city_id": "shenzhen",
+            "path": "data/transport/shenzhen.json",
+            "sha256": "ed0adb7927e11b66e8f2b8ed6dbfa397f84ec363edeee20aac0a21a92c246923"
+          },
+          {
+            "kind": "transport",
+            "city_id": "xian",
+            "path": "data/transport/xian.json",
+            "sha256": "78977ab060a1c71fe87382ffc88a57644c721ea1270afc9520a3ae3b829472c0"
+          },
+          {
+            "kind": "weather",
+            "city_id": "beijing",
+            "path": "data/weather/beijing.json",
+            "sha256": "909fd6078a489aa09765a187411e4afa26c30ee8d3fd540734ed67eb3b62a348"
+          },
+          {
+            "kind": "weather",
+            "city_id": "guilin",
+            "path": "data/weather/guilin.json",
+            "sha256": "40cbe4ee2ce08189922d4639de5d59155050f6e4412fb4cb1a3f7c62d8574740"
+          },
+          {
+            "kind": "weather",
+            "city_id": "hangzhou",
+            "path": "data/weather/hangzhou.json",
+            "sha256": "d29568c5ab66f71261304511e7687b721e426176aff0da2152ed1bbee5c3e10a"
+          },
+          {
+            "kind": "weather",
+            "city_id": "shenzhen",
+            "path": "data/weather/shenzhen.json",
+            "sha256": "630a643c25608a9eef54e934ae7fe8a2eed59f7cb61f39f10484c08d90aba82e"
+          },
+          {
+            "kind": "weather",
+            "city_id": "xian",
+            "path": "data/weather/xian.json",
+            "sha256": "26734c7f640ddabcddbca955672a4aa75927946a174df2a9dca2a43a5100b607"
+          }
+        ]
+      },
+      "status": "completed",
+      "mode": "planning",
+      "intent": "general_chat",
+      "route": "GENERAL_CHAT",
+      "extracted_info": {},
+      "constraints": [],
+      "missing_fields": [],
+      "planned_agents": [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ],
+      "executed_agents": [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ],
+      "planned_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "executed_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "selected_agents": [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ],
+      "selected_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "goal": {
+        "intent": "general_chat",
+        "route": "GENERAL_CHAT",
+        "slots": {},
+        "constraints": [],
+        "planned_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "selected_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ]
+      },
+      "stage_timings": {},
+      "agent_timings": {},
+      "agent_runs": [
+        {
+          "agent_run_id": "b180ce27cd19407fae50555b62165534",
+          "agent_name": "attraction",
+          "started_at": "2026-07-18T14:19:45.014788+00:00",
+          "completed_at": "2026-07-18T14:19:45.026782+00:00",
+          "duration_ms": 12.05,
+          "status": "completed",
+          "tokens": null,
+          "tool_count": 1,
+          "error": null
+        },
+        {
+          "agent_run_id": "6d58f289b6924300a3a5e98dd5962291",
+          "agent_name": "weather",
+          "started_at": "2026-07-18T14:19:45.026782+00:00",
+          "completed_at": "2026-07-18T14:19:45.031783+00:00",
+          "duration_ms": 5.06,
+          "status": "completed",
+          "tokens": null,
+          "tool_count": 1,
+          "error": null
+        },
+        {
+          "agent_run_id": "a55a6b1394774f43b8d85fb3180d8fe1",
+          "agent_name": "itinerary",
+          "started_at": "2026-07-18T14:19:45.031783+00:00",
+          "completed_at": "2026-07-18T14:19:45.031783+00:00",
+          "duration_ms": 0.02,
+          "status": "completed",
+          "tokens": null,
+          "tool_count": 0,
+          "error": null
+        },
+        {
+          "agent_run_id": "9ec284f94c324badae8f6dd3b9457ed5",
+          "agent_name": "budget",
+          "started_at": "2026-07-18T14:19:45.031783+00:00",
+          "completed_at": "2026-07-18T14:19:45.032781+00:00",
+          "duration_ms": 0.56,
+          "status": "completed",
+          "tokens": null,
+          "tool_count": 1,
+          "error": null
+        }
+      ],
+      "llm_calls": [],
+      "tool_calls": [
+        {
+          "call_id": "attraction-poi_search-288057",
+          "name": "poi_search",
+          "tool_name": "poi_search",
+          "agent_name": "attraction",
+          "agent": "attraction",
+          "component": "attraction",
+          "params": {
+            "city": "hangzhou",
+            "preferences": [],
+            "people": "general",
+            "limit": 4
+          },
+          "duration": 11.99,
+          "duration_ms": 11.99,
+          "status": "completed",
+          "success": true,
+          "error": null,
+          "cache_hit": null,
+          "fallback_used": null
+        },
+        {
+          "call_id": "weather-weather_query-be31e8",
+          "name": "weather_query",
+          "tool_name": "weather_query",
+          "agent_name": "weather",
+          "agent": "weather",
+          "component": "weather",
+          "params": {
+            "city": "hangzhou",
+            "date": "2026-08-01",
+            "days": 2,
+            "scenario_type": "sunny"
+          },
+          "duration": 5.0,
+          "duration_ms": 5.0,
+          "status": "completed",
+          "success": true,
+          "error": null,
+          "cache_hit": null,
+          "fallback_used": null
+        },
+        {
+          "call_id": "budget-budget_calculator-97f19e",
+          "name": "budget_calculator",
+          "tool_name": "budget_calculator",
+          "agent_name": "budget",
+          "agent": "budget",
+          "component": "budget",
+          "params": {
+            "city": "hangzhou",
+            "people_count": 2,
+            "days": 2,
+            "attractions": [
+              "hz001",
+              "hz002",
+              "hz003",
+              "hz004"
+            ],
+            "spending_level": "medium"
+          },
+          "duration": 1.0,
+          "duration_ms": 1.0,
+          "status": "completed",
+          "success": true,
+          "error": null,
+          "cache_hit": null,
+          "fallback_used": null
+        }
+      ],
+      "api_calls": [],
+      "adaptive_scheduler": {
+        "name": "goal_state_scheduler",
+        "ticket": {
+          "schema_version": "ctp-goal-state-ticket-v1",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-01",
+            "duration_days": 2,
+            "people_count": 2
+          },
+          "previous_slots": {},
+          "changed_slots": [
+            "destination",
+            "start_date",
+            "duration_days",
+            "people_count"
+          ],
+          "preserved_slots": [],
+          "missing_slots": [],
+          "required_capabilities": [
+            "poi_evidence",
+            "weather_evidence",
+            "itinerary_generation",
+            "budget_estimation"
+          ],
+          "clarification_required": false,
+          "clarification_fields": [],
+          "goal_change_type": "new_request"
+        },
+        "decision": {
+          "schema_version": "ctp-scheduler-decision-v1",
+          "planned_agents": [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ],
+          "planned_tools": [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ],
+          "reused_agents": [],
+          "invalidated_agents": [],
+          "clarification_required": false,
+          "clarification_fields": [],
+          "decision_reasons": [
+            "new_full_plan"
+          ],
+          "reuse_validation": {}
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        },
+        "result_fingerprints": {
+          "attraction": {
+            "destination": "hangzhou"
+          },
+          "weather": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-01",
+            "duration_days": 2
+          },
+          "itinerary": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-01",
+            "duration_days": 2
+          },
+          "budget": {
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2
+          }
+        }
+      },
+      "total_duration_ms": 45.18,
+      "first_body_token_ms": null,
+      "first_token_ms": null,
+      "error": null,
+      "llm_call_count": 0,
+      "tool_call_count": 3,
+      "successful_tool_call_count": 3,
+      "failed_tool_call_count": 0,
+      "tool_call_success_rate": 1.0,
+      "planned_tool_count": 3,
+      "executed_tool_count": 3,
+      "selected_tool_count": 3,
+      "api_call_count": 0,
+      "agent_call_count": 4,
+      "failed_agent_count": 0,
+      "cache_hit_count": 0,
+      "fallback_count": 0,
+      "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z\\traces\\20260718T141945061813Z_day4_trace_turn1_adaptive_multi_agent_c54733d4_b9e53a0f.jsonl"
+    },
+    "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z\\traces\\20260718T141945061813Z_day4_trace_turn1_adaptive_multi_agent_c54733d4_b9e53a0f.jsonl",
+    "status": "completed",
+    "metrics": {
+      "expected_tools": [],
+      "selected_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "expected_tool_count": 0,
+      "correct_tool_count": null,
+      "tool_selection_accuracy": null,
+      "intent_correct": null,
+      "route_correct": null,
+      "agents_correct": null,
+      "constraint_report": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "constraint_checker",
+        "status": "success",
+        "success": true,
+        "input": {
+          "request": {
+            "destination": "hangzhou",
+            "duration": 2,
+            "people_count": 2,
+            "start_date": "2026-08-01",
+            "case_id": "day4_trace_turn1",
+            "user_input": "plan a two day Hangzhou trip",
+            "city": "hangzhou",
+            "days": 2,
+            "budget": null
+          },
+          "constraints": {
+            "days": 2
+          }
+        },
+        "data": {
+          "all_passed": true,
+          "applicable_count": 2,
+          "passed_count": 2,
+          "failed_count": 0,
+          "checks": [
+            {
+              "name": "trip_days",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "expected": 2,
+                "actual": 2
+              }
+            },
+            {
+              "name": "budget_limit",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "limit": null,
+                "actual": 3058.28
+              }
+            },
+            {
+              "name": "weather_adjustment",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "required": true,
+                "adjustment_count": 1
+              }
+            },
+            {
+              "name": "min_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "minimum": null,
+                "actual": 4
+              }
+            },
+            {
+              "name": "max_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "maximum": null,
+                "actual": 4
+              }
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "deterministic_evaluator",
+          "real_time_api_allowed": false,
+          "contract": "ctp-research-tools-v1.0"
+        }
+      },
+      "hard_constraint_applicable_count": 2,
+      "hard_constraint_passed_count": 2,
+      "hard_constraint_failed_count": 0,
+      "hard_constraints_all_satisfied": true,
+      "hcsr": 1.0,
+      "m3_scheduler_name": "goal_state_scheduler",
+      "m3_task_type": "trip_planning",
+      "m3_clarification_required": false,
+      "m3_clarification_fields": [],
+      "m3_clarification_field_count": 0,
+      "m3_decision_reasons": [
+        "new_full_plan"
+      ],
+      "m3_planned_agents": [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ],
+      "m3_reused_agents": [],
+      "m3_invalidated_agents": [],
+      "m3_planned_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "m3_expected_reused_tools": [],
+      "m3_reused_tool_results": [],
+      "m3_missing_reused_tool_results": [],
+      "m3_previous_state_provided": false,
+      "m3_m2_reference_agent_count": 4,
+      "m3_m2_reference_tool_count": 3,
+      "m3_planned_agent_count": 4,
+      "m3_executed_agent_count": 4,
+      "m3_reused_agent_count": 0,
+      "m3_invalidated_agent_count": 0,
+      "m3_planned_tool_count": 3,
+      "m3_executed_tool_count": 3,
+      "m3_expected_reused_tool_count": 0,
+      "m3_reused_tool_result_count": 0,
+      "m3_missing_reused_tool_result_count": 0,
+      "m3_agent_reuse_rate": 0.0,
+      "m3_tool_reuse_rate": 0.0,
+      "m3_reuse_hit_rate": null,
+      "m3_agent_call_savings_vs_m2": 0,
+      "m3_tool_call_savings_vs_m2": 0,
+      "m3_agent_call_reduction_rate_vs_m2": 0.0,
+      "m3_tool_call_reduction_rate_vs_m2": 0.0
+    },
+    "error": null
+  },
+  {
+    "case_id": "day4_trace_turn2",
+    "method": "adaptive_multi_agent",
+    "request_id": "day4_trace_turn2_adaptive_multi_agent_e869b4c1",
+    "run_id": "day4_acceptance_20260718T141930Z",
+    "repeat_index": 0,
+    "system_variant": "adaptive_multi_agent",
+    "model_config_name": "day4-acceptance-offline",
+    "evaluation_mode": "end_to_end",
+    "input_hash": "dd187d78a56128d087dca64ad4742fcded949260fdaa20ce499d45d4a85b268f",
+    "result_hash": "ec3dfdb3e00d254e902a4be9a6a4160c417c5f6df99e925465aae930af74d036",
+    "offline_data": {
+      "schema_version": "fixed_data_manifest_v1",
+      "city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "snapshot_dirs": [
+        "pois",
+        "weather",
+        "restaurants",
+        "accommodation",
+        "transport"
+      ],
+      "file_count": 25,
+      "expected_file_count": 25,
+      "combined_sha256": "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3",
+      "expected_combined_sha256": "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3",
+      "missing_files": [],
+      "files": [
+        {
+          "kind": "accommodation",
+          "city_id": "beijing",
+          "path": "data/accommodation/beijing.json",
+          "sha256": "91ebdadc86245922c61901a2ecfa437f1c754ed2c3975d68c642f7f8c5c93f05"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "guilin",
+          "path": "data/accommodation/guilin.json",
+          "sha256": "e8bbd330fa10ea575da49201bb69b30edc89874b64175a0c8f2593b09113f75d"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "hangzhou",
+          "path": "data/accommodation/hangzhou.json",
+          "sha256": "b146fa73d48688d36e035179e59f08d12a5a283d1bbe5e45ab1fbce27385bfee"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "shenzhen",
+          "path": "data/accommodation/shenzhen.json",
+          "sha256": "6ed2f5ef6078e7651c1f0106568136656dfab92cfe4cfe6866e4edbc185784e4"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "xian",
+          "path": "data/accommodation/xian.json",
+          "sha256": "6a82d4ba2e8659bd414a048371690525f15b26491e2a2934d4c0d380c95e3aca"
+        },
+        {
+          "kind": "pois",
+          "city_id": "beijing",
+          "path": "data/pois/beijing.json",
+          "sha256": "4bd2fb952e1a9b2fb6670793d007d5ebd2cfc897f67829c4d36538410ac4977e"
+        },
+        {
+          "kind": "pois",
+          "city_id": "guilin",
+          "path": "data/pois/guilin.json",
+          "sha256": "1a6d802bb7295998f5d3d965aff1cb5b59998411645922211b319a5c0bfb09cb"
+        },
+        {
+          "kind": "pois",
+          "city_id": "hangzhou",
+          "path": "data/pois/hangzhou.json",
+          "sha256": "7abd466ba674fa160978d6037c95c0bd64a78deed6b5c454bacad8ba055f8aea"
+        },
+        {
+          "kind": "pois",
+          "city_id": "shenzhen",
+          "path": "data/pois/shenzhen.json",
+          "sha256": "199977c5ef39cef67d52af432922de53f57c4862e27e2fb1b34cff7bbbe17582"
+        },
+        {
+          "kind": "pois",
+          "city_id": "xian",
+          "path": "data/pois/xian.json",
+          "sha256": "7f203268990980552debdc8425b77122c7ba7eb218d349f5723e77eada0e6e99"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "beijing",
+          "path": "data/restaurants/beijing.json",
+          "sha256": "378efb83ef2ba54ff563fd1d09e91403df354c942d31693d3a8725fcf9a11b33"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "guilin",
+          "path": "data/restaurants/guilin.json",
+          "sha256": "0b6c68e469096b53779ede207450df55db9040234e89d7cdb3e0bd907bf1a5fc"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "hangzhou",
+          "path": "data/restaurants/hangzhou.json",
+          "sha256": "214312ef2d5878038b74b9467210851184fbcad32edebe556bfee77a9cb881a0"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "shenzhen",
+          "path": "data/restaurants/shenzhen.json",
+          "sha256": "2d8572cfc4f87380b44e1026b39c228617b2e3989cac82baebc61d58109972ec"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "xian",
+          "path": "data/restaurants/xian.json",
+          "sha256": "b4eb9c0f3503e63a988441cf4a8fc942c9c69edb1c797ef745b7ec446986a2f5"
+        },
+        {
+          "kind": "transport",
+          "city_id": "beijing",
+          "path": "data/transport/beijing.json",
+          "sha256": "758967b5cc01305b5c228d728a43bd91dc6a5f25e8366185bb459b7aa789929b"
+        },
+        {
+          "kind": "transport",
+          "city_id": "guilin",
+          "path": "data/transport/guilin.json",
+          "sha256": "475c97fb492d2386c82bb29863cde96d7ab8e78e9f14d2dd399f9b05102765c7"
+        },
+        {
+          "kind": "transport",
+          "city_id": "hangzhou",
+          "path": "data/transport/hangzhou.json",
+          "sha256": "3aa7ab8650eeeb605f95ca8779fa20aca4274b4b4134ac81e3d7911119f2134f"
+        },
+        {
+          "kind": "transport",
+          "city_id": "shenzhen",
+          "path": "data/transport/shenzhen.json",
+          "sha256": "ed0adb7927e11b66e8f2b8ed6dbfa397f84ec363edeee20aac0a21a92c246923"
+        },
+        {
+          "kind": "transport",
+          "city_id": "xian",
+          "path": "data/transport/xian.json",
+          "sha256": "78977ab060a1c71fe87382ffc88a57644c721ea1270afc9520a3ae3b829472c0"
+        },
+        {
+          "kind": "weather",
+          "city_id": "beijing",
+          "path": "data/weather/beijing.json",
+          "sha256": "909fd6078a489aa09765a187411e4afa26c30ee8d3fd540734ed67eb3b62a348"
+        },
+        {
+          "kind": "weather",
+          "city_id": "guilin",
+          "path": "data/weather/guilin.json",
+          "sha256": "40cbe4ee2ce08189922d4639de5d59155050f6e4412fb4cb1a3f7c62d8574740"
+        },
+        {
+          "kind": "weather",
+          "city_id": "hangzhou",
+          "path": "data/weather/hangzhou.json",
+          "sha256": "d29568c5ab66f71261304511e7687b721e426176aff0da2152ed1bbee5c3e10a"
+        },
+        {
+          "kind": "weather",
+          "city_id": "shenzhen",
+          "path": "data/weather/shenzhen.json",
+          "sha256": "630a643c25608a9eef54e934ae7fe8a2eed59f7cb61f39f10484c08d90aba82e"
+        },
+        {
+          "kind": "weather",
+          "city_id": "xian",
+          "path": "data/weather/xian.json",
+          "sha256": "26734c7f640ddabcddbca955672a4aa75927946a174df2a9dca2a43a5100b607"
+        }
+      ]
+    },
+    "output": {
+      "schema_version": "ctp-experiment-output-v1",
+      "case_id": "day4_trace_turn2",
+      "method": "adaptive_multi_agent",
+      "task_type": "partial_replan",
+      "used_agents": [],
+      "called_tools": [],
+      "trip_days": 2,
+      "daily_itinerary": [
+        {
+          "day": 1,
+          "attractions": [
+            {
+              "poi_id": "hz001",
+              "name": "西湖风景名胜区",
+              "category": "nature",
+              "indoor_outdoor": "outdoor"
+            },
+            {
+              "poi_id": "hz002",
+              "name": "灵隐飞来峰景区",
+              "category": "history_culture",
+              "indoor_outdoor": "mixed"
+            }
+          ],
+          "notes": "由固定离线 POI 结果生成的实验行程骨架"
+        },
+        {
+          "day": 2,
+          "attractions": [
+            {
+              "poi_id": "hz003",
+              "name": "西溪国家湿地公园",
+              "category": "nature",
+              "indoor_outdoor": "outdoor"
+            },
+            {
+              "poi_id": "hz004",
+              "name": "清河坊历史文化街区",
+              "category": "urban_landmark",
+              "indoor_outdoor": "mixed"
+            }
+          ],
+          "notes": "由固定离线 POI 结果生成的实验行程骨架"
+        }
+      ],
+      "budget": {
+        "city": "hangzhou",
+        "people_count": 2,
+        "days": 2,
+        "spending_level": "medium",
+        "currency": "CNY",
+        "total": 3058.28,
+        "per_person": 1529.14,
+        "daily_average": 1529.14,
+        "breakdown": {
+          "transport": {
+            "recommended": 96.0,
+            "mode": "public_transit",
+            "calculation_rule": "fixed matrix average cost * fixed trip count"
+          },
+          "accommodation": {
+            "recommended": 648.57,
+            "reference_price_cny": 648.57,
+            "room_count": 1,
+            "night_count": 1,
+            "calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+          },
+          "food": {
+            "recommended": 1525.68,
+            "reference_price_cny": 127.14,
+            "meal_count": 6,
+            "calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+          },
+          "tickets": {
+            "recommended": 270.0,
+            "calculation_rule": "sum known fixed adult ticket prices for selected experiment POIs; pending prices are not guessed"
+          },
+          "other": {
+            "recommended": 240,
+            "calculation_rule": "fixed per-person daily allowance"
+          },
+          "buffer": {
+            "recommended": 278.03,
+            "calculation_rule": "10 percent fixed buffer"
+          }
+        },
+        "items": [
+          {
+            "category": "transport",
+            "item": "fixed city transport",
+            "estimated_cost": 96.0,
+            "is_essential": true
+          },
+          {
+            "category": "accommodation",
+            "item": "fixed accommodation area",
+            "estimated_cost": 648.57,
+            "is_essential": true
+          },
+          {
+            "category": "food",
+            "item": "fixed dining area meals",
+            "estimated_cost": 1525.68,
+            "is_essential": true
+          },
+          {
+            "category": "tickets",
+            "item": "fixed POI tickets",
+            "estimated_cost": 270.0,
+            "is_essential": true
+          },
+          {
+            "category": "other",
+            "item": "fixed miscellaneous allowance",
+            "estimated_cost": 240,
+            "is_essential": false
+          }
+        ],
+        "ticket_breakdown": {
+          "ticket_cost": 270.0,
+          "ticket_cost_per_person": 135.0,
+          "details": [
+            {
+              "name": "西湖风景名胜区",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 0.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.free_tag",
+              "estimation_basis": "POI tag indicates free entry"
+            },
+            {
+              "name": "灵隐飞来峰景区",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 60.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+              "estimation_basis": "primary_category=history_culture"
+            },
+            {
+              "name": "西溪国家湿地公园",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 35.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+              "estimation_basis": "primary_category=nature"
+            },
+            {
+              "name": "清河坊历史文化街区",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 40.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+              "estimation_basis": "primary_category=urban_landmark"
+            }
+          ],
+          "summary": {
+            "poi_source_field": "fixed_poi_dataset",
+            "source": "fixed_poi_ticketing",
+            "known_ticket_count": 0,
+            "free_ticket_count": 0,
+            "estimated_ticket_count": 4,
+            "estimated_ticket_total_per_person": 135.0,
+            "pending_confirmation_count": 4,
+            "pending_confirmation_pois": [
+              "西湖风景名胜区",
+              "灵隐飞来峰景区",
+              "西溪国家湿地公园",
+              "清河坊历史文化街区"
+            ],
+            "ignored_non_ticket_count": 0,
+            "fallback_applied": true,
+            "experiment_estimate_rule": "unknown adult ticket prices are counted with explicit fixed category estimates, not treated as zero"
+          }
+        }
+      },
+      "weather": {
+        "city": "杭州",
+        "city_id": "hangzhou",
+        "date": "2026-08-01",
+        "scenario_type": "continuous_change",
+        "requested_scenario_type": "sunny",
+        "scenario_selection": "city_date_hash",
+        "risk_level": "high",
+        "daily_weather": [
+          {
+            "day_index": 1,
+            "date": "2026-08-01",
+            "state": "sunny",
+            "weather": "晴天",
+            "temperature_min_c": 20,
+            "temperature_max_c": 29,
+            "precipitation_mm": 0.0,
+            "risk_level": "low",
+            "risk_tags": [],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          },
+          {
+            "day_index": 2,
+            "date": "2026-08-02",
+            "state": "rain",
+            "weather": "雨天",
+            "temperature_min_c": 17,
+            "temperature_max_c": 23,
+            "precipitation_mm": 26.0,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain"
+            ],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          }
+        ],
+        "planning_constraints": {
+          "dynamic_adjustment_required": true,
+          "indoor_preference": false,
+          "minimum_indoor_activity_ratio": null,
+          "avoid_time_windows": [],
+          "maximum_continuous_outdoor_hours": null,
+          "mandatory_actions": [
+            "必须按天读取天气条件",
+            "不得将同一规划策略直接复制到全部日期",
+            "至少提供一个天气变化后的行程调整"
+          ]
+        },
+        "weather_adjustment_required": true
+      },
+      "weather_adjustments": [
+        {
+          "reason": "continuous_change",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        }
+      ],
+      "constraint_report": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "constraint_checker",
+        "status": "success",
+        "success": true,
+        "input": {
+          "request": {
+            "case_id": "day4_trace_turn2",
+            "user_input": "same plan again",
+            "city": "",
+            "days": 3,
+            "budget": null
+          },
+          "constraints": {
+            "days": 3
+          }
+        },
+        "data": {
+          "all_passed": false,
+          "applicable_count": 2,
+          "passed_count": 1,
+          "failed_count": 1,
+          "checks": [
+            {
+              "name": "trip_days",
+              "status": "failed",
+              "passed": false,
+              "details": {
+                "expected": 3,
+                "actual": 2
+              }
+            },
+            {
+              "name": "budget_limit",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "limit": null,
+                "actual": 3058.28
+              }
+            },
+            {
+              "name": "weather_adjustment",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "required": true,
+                "adjustment_count": 1
+              }
+            },
+            {
+              "name": "min_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "minimum": null,
+                "actual": 4
+              }
+            },
+            {
+              "name": "max_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "maximum": null,
+                "actual": 4
+              }
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "deterministic_evaluator",
+          "real_time_api_allowed": false,
+          "contract": "ctp-research-tools-v1.0"
+        }
+      },
+      "hard_constraint_passed_count": 1,
+      "hard_constraint_failed_count": 1,
+      "hard_constraint_applicable_count": 2,
+      "hard_constraints_all_satisfied": false,
+      "hcsr": 0.5,
+      "execution_status": "completed",
+      "final_answer": "offline acceptance answer",
+      "raw_output": {
+        "task_type": "partial_replan",
+        "used_agents": [],
+        "planned_tools": [],
+        "trip_days": 2,
+        "daily_itinerary": [
+          {
+            "day": 1,
+            "attractions": [
+              {
+                "poi_id": "hz001",
+                "name": "西湖风景名胜区",
+                "category": "nature",
+                "indoor_outdoor": "outdoor"
+              },
+              {
+                "poi_id": "hz002",
+                "name": "灵隐飞来峰景区",
+                "category": "history_culture",
+                "indoor_outdoor": "mixed"
+              }
+            ],
+            "notes": "由固定离线 POI 结果生成的实验行程骨架"
+          },
+          {
+            "day": 2,
+            "attractions": [
+              {
+                "poi_id": "hz003",
+                "name": "西溪国家湿地公园",
+                "category": "nature",
+                "indoor_outdoor": "outdoor"
+              },
+              {
+                "poi_id": "hz004",
+                "name": "清河坊历史文化街区",
+                "category": "urban_landmark",
+                "indoor_outdoor": "mixed"
+              }
+            ],
+            "notes": "由固定离线 POI 结果生成的实验行程骨架"
+          }
+        ],
+        "budget": {
+          "city": "hangzhou",
+          "people_count": 2,
+          "days": 2,
+          "spending_level": "medium",
+          "currency": "CNY",
+          "total": 3058.28,
+          "per_person": 1529.14,
+          "daily_average": 1529.14,
+          "breakdown": {
+            "transport": {
+              "recommended": 96.0,
+              "mode": "public_transit",
+              "calculation_rule": "fixed matrix average cost * fixed trip count"
+            },
+            "accommodation": {
+              "recommended": 648.57,
+              "reference_price_cny": 648.57,
+              "room_count": 1,
+              "night_count": 1,
+              "calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+            },
+            "food": {
+              "recommended": 1525.68,
+              "reference_price_cny": 127.14,
+              "meal_count": 6,
+              "calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+            },
+            "tickets": {
+              "recommended": 270.0,
+              "calculation_rule": "sum known fixed adult ticket prices for selected experiment POIs; pending prices are not guessed"
+            },
+            "other": {
+              "recommended": 240,
+              "calculation_rule": "fixed per-person daily allowance"
+            },
+            "buffer": {
+              "recommended": 278.03,
+              "calculation_rule": "10 percent fixed buffer"
+            }
+          },
+          "items": [
+            {
+              "category": "transport",
+              "item": "fixed city transport",
+              "estimated_cost": 96.0,
+              "is_essential": true
+            },
+            {
+              "category": "accommodation",
+              "item": "fixed accommodation area",
+              "estimated_cost": 648.57,
+              "is_essential": true
+            },
+            {
+              "category": "food",
+              "item": "fixed dining area meals",
+              "estimated_cost": 1525.68,
+              "is_essential": true
+            },
+            {
+              "category": "tickets",
+              "item": "fixed POI tickets",
+              "estimated_cost": 270.0,
+              "is_essential": true
+            },
+            {
+              "category": "other",
+              "item": "fixed miscellaneous allowance",
+              "estimated_cost": 240,
+              "is_essential": false
+            }
+          ],
+          "ticket_breakdown": {
+            "ticket_cost": 270.0,
+            "ticket_cost_per_person": 135.0,
+            "details": [
+              {
+                "name": "西湖风景名胜区",
+                "status": "estimated",
+                "parsed_ticket_yuan": null,
+                "counted_amount_yuan": 0.0,
+                "estimation_rule": "experiment_ticket_estimate_v1.free_tag",
+                "estimation_basis": "POI tag indicates free entry"
+              },
+              {
+                "name": "灵隐飞来峰景区",
+                "status": "estimated",
+                "parsed_ticket_yuan": null,
+                "counted_amount_yuan": 60.0,
+                "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                "estimation_basis": "primary_category=history_culture"
+              },
+              {
+                "name": "西溪国家湿地公园",
+                "status": "estimated",
+                "parsed_ticket_yuan": null,
+                "counted_amount_yuan": 35.0,
+                "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                "estimation_basis": "primary_category=nature"
+              },
+              {
+                "name": "清河坊历史文化街区",
+                "status": "estimated",
+                "parsed_ticket_yuan": null,
+                "counted_amount_yuan": 40.0,
+                "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                "estimation_basis": "primary_category=urban_landmark"
+              }
+            ],
+            "summary": {
+              "poi_source_field": "fixed_poi_dataset",
+              "source": "fixed_poi_ticketing",
+              "known_ticket_count": 0,
+              "free_ticket_count": 0,
+              "estimated_ticket_count": 4,
+              "estimated_ticket_total_per_person": 135.0,
+              "pending_confirmation_count": 4,
+              "pending_confirmation_pois": [
+                "西湖风景名胜区",
+                "灵隐飞来峰景区",
+                "西溪国家湿地公园",
+                "清河坊历史文化街区"
+              ],
+              "ignored_non_ticket_count": 0,
+              "fallback_applied": true,
+              "experiment_estimate_rule": "unknown adult ticket prices are counted with explicit fixed category estimates, not treated as zero"
+            }
+          }
+        },
+        "weather": {
+          "city": "杭州",
+          "city_id": "hangzhou",
+          "date": "2026-08-01",
+          "scenario_type": "continuous_change",
+          "requested_scenario_type": "sunny",
+          "scenario_selection": "city_date_hash",
+          "risk_level": "high",
+          "daily_weather": [
+            {
+              "day_index": 1,
+              "date": "2026-08-01",
+              "state": "sunny",
+              "weather": "晴天",
+              "temperature_min_c": 20,
+              "temperature_max_c": 29,
+              "precipitation_mm": 0.0,
+              "risk_level": "low",
+              "risk_tags": [],
+              "suitable_periods": [
+                "morning",
+                "afternoon"
+              ],
+              "avoid_periods": []
+            },
+            {
+              "day_index": 2,
+              "date": "2026-08-02",
+              "state": "rain",
+              "weather": "雨天",
+              "temperature_min_c": 17,
+              "temperature_max_c": 23,
+              "precipitation_mm": 26.0,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain"
+              ],
+              "suitable_periods": [
+                "morning",
+                "afternoon"
+              ],
+              "avoid_periods": []
+            }
+          ],
+          "planning_constraints": {
+            "dynamic_adjustment_required": true,
+            "indoor_preference": false,
+            "minimum_indoor_activity_ratio": null,
+            "avoid_time_windows": [],
+            "maximum_continuous_outdoor_hours": null,
+            "mandatory_actions": [
+              "必须按天读取天气条件",
+              "不得将同一规划策略直接复制到全部日期",
+              "至少提供一个天气变化后的行程调整"
+            ]
+          },
+          "weather_adjustment_required": true
+        },
+        "weather_adjustments": [
+          {
+            "reason": "continuous_change",
+            "action": "减少长时间户外活动，优先安排室内或低风险景点",
+            "candidate_indoor_pois": []
+          }
+        ],
+        "execution_status": "completed",
+        "final_answer": "offline acceptance answer",
+        "tool_results": {
+          "poi_search": {
+            "schema_version": "research_tool_result_v1",
+            "tool_contract_version": "ctp-research-tools-v1.0",
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "preferences": [],
+              "people": "general",
+              "limit": 4
+            },
+            "data": {
+              "city": "hangzhou",
+              "preferences": [],
+              "people": "general",
+              "attractions": [
+                {
+                  "poi_id": "hz001",
+                  "name": "西湖风景名胜区",
+                  "city": "杭州",
+                  "city_id": "hangzhou",
+                  "category": "nature",
+                  "tags": [
+                    "湖景",
+                    "世界遗产",
+                    "免费"
+                  ],
+                  "indoor_outdoor": "outdoor",
+                  "recommended_duration_hours": 4.0,
+                  "ticket_price_cny": null,
+                  "ticket_price_known": false,
+                  "address": "西湖, 西湖区, 杭州市, 浙江省, 中国",
+                  "transport_node_id": "hz001",
+                  "evidence": {
+                    "dataset_version": "CTP-POI-v1.0",
+                    "source_file_id": "ctp_poi_hangzhou_v1_0",
+                    "snapshot_date": "2026-07-17",
+                    "offline": true
+                  }
+                },
+                {
+                  "poi_id": "hz002",
+                  "name": "灵隐飞来峰景区",
+                  "city": "杭州",
+                  "city_id": "hangzhou",
+                  "category": "history_culture",
+                  "tags": [
+                    "寺院",
+                    "石刻",
+                    "人文"
+                  ],
+                  "indoor_outdoor": "mixed",
+                  "recommended_duration_hours": 3.0,
+                  "ticket_price_cny": null,
+                  "ticket_price_known": false,
+                  "address": "飞来峰, 杭州市, 浙江省, 310013, 中国",
+                  "transport_node_id": "hz002",
+                  "evidence": {
+                    "dataset_version": "CTP-POI-v1.0",
+                    "source_file_id": "ctp_poi_hangzhou_v1_0",
+                    "snapshot_date": "2026-07-17",
+                    "offline": true
+                  }
+                },
+                {
+                  "poi_id": "hz003",
+                  "name": "西溪国家湿地公园",
+                  "city": "杭州",
+                  "city_id": "hangzhou",
+                  "category": "nature",
+                  "tags": [
+                    "湿地",
+                    "生态",
+                    "游船"
+                  ],
+                  "indoor_outdoor": "outdoor",
+                  "recommended_duration_hours": 4.0,
+                  "ticket_price_cny": null,
+                  "ticket_price_known": false,
+                  "address": "西溪国家湿地公园, 西湖区, 杭州市, 浙江省, 中国",
+                  "transport_node_id": "hz003",
+                  "evidence": {
+                    "dataset_version": "CTP-POI-v1.0",
+                    "source_file_id": "ctp_poi_hangzhou_v1_0",
+                    "snapshot_date": "2026-07-17",
+                    "offline": true
+                  }
+                },
+                {
+                  "poi_id": "hz004",
+                  "name": "清河坊历史文化街区",
+                  "city": "杭州",
+                  "city_id": "hangzhou",
+                  "category": "urban_landmark",
+                  "tags": [
+                    "老街",
+                    "小吃",
+                    "购物"
+                  ],
+                  "indoor_outdoor": "mixed",
+                  "recommended_duration_hours": 2.0,
+                  "ticket_price_cny": null,
+                  "ticket_price_known": false,
+                  "address": "清河坊历史文化街区, 清河坊社区, 清波街道, 上城区, 杭州市, 浙江省, 310009, 中国",
+                  "transport_node_id": "hz004",
+                  "evidence": {
+                    "dataset_version": "CTP-POI-v1.0",
+                    "source_file_id": "ctp_poi_hangzhou_v1_0",
+                    "snapshot_date": "2026-07-17",
+                    "offline": true
+                  }
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "frozen_offline",
+              "real_time_api_allowed": false,
+              "poi_dataset_versions": [
+                "CTP-POI-v1.0"
+              ],
+              "source_file_ids": [
+                "ctp_poi_hangzhou_v1_0"
+              ],
+              "record_count": 4
+            }
+          },
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_contract_version": "ctp-research-tools-v1.0",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "date": "2026-08-01",
+              "days": 2,
+              "scenario_type": "sunny"
+            },
+            "data": {
+              "city": "杭州",
+              "city_id": "hangzhou",
+              "date": "2026-08-01",
+              "scenario_type": "continuous_change",
+              "requested_scenario_type": "sunny",
+              "scenario_selection": "city_date_hash",
+              "risk_level": "high",
+              "daily_weather": [
+                {
+                  "day_index": 1,
+                  "date": "2026-08-01",
+                  "state": "sunny",
+                  "weather": "晴天",
+                  "temperature_min_c": 20,
+                  "temperature_max_c": 29,
+                  "precipitation_mm": 0.0,
+                  "risk_level": "low",
+                  "risk_tags": [],
+                  "suitable_periods": [
+                    "morning",
+                    "afternoon"
+                  ],
+                  "avoid_periods": []
+                },
+                {
+                  "day_index": 2,
+                  "date": "2026-08-02",
+                  "state": "rain",
+                  "weather": "雨天",
+                  "temperature_min_c": 17,
+                  "temperature_max_c": 23,
+                  "precipitation_mm": 26.0,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "afternoon"
+                  ],
+                  "avoid_periods": []
+                }
+              ],
+              "planning_constraints": {
+                "dynamic_adjustment_required": true,
+                "indoor_preference": false,
+                "minimum_indoor_activity_ratio": null,
+                "avoid_time_windows": [],
+                "maximum_continuous_outdoor_hours": null,
+                "mandatory_actions": [
+                  "必须按天读取天气条件",
+                  "不得将同一规划策略直接复制到全部日期",
+                  "至少提供一个天气变化后的行程调整"
+                ]
+              },
+              "weather_adjustment_required": true
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "frozen_offline",
+              "real_time_api_allowed": false,
+              "dataset_version": "CTP-WEATHER-v1.0",
+              "source_file_id": "ctp_weather_hangzhou_v1_0",
+              "record_count": 2,
+              "canonical_city_id": "hangzhou",
+              "weather_date_mapping_rule": "sha256(canonical_city_id + date) selects one fixed scenario when date is provided"
+            }
+          },
+          "budget_calculator": {
+            "schema_version": "research_tool_result_v1",
+            "tool_contract_version": "ctp-research-tools-v1.0",
+            "tool_name": "budget_calculator",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "people_count": 2,
+              "days": 2,
+              "attractions": [
+                "hz001",
+                "hz002",
+                "hz003",
+                "hz004"
+              ],
+              "spending_level": "medium"
+            },
+            "data": {
+              "city": "hangzhou",
+              "people_count": 2,
+              "days": 2,
+              "spending_level": "medium",
+              "currency": "CNY",
+              "total": 3058.28,
+              "per_person": 1529.14,
+              "daily_average": 1529.14,
+              "breakdown": {
+                "transport": {
+                  "recommended": 96.0,
+                  "mode": "public_transit",
+                  "calculation_rule": "fixed matrix average cost * fixed trip count"
+                },
+                "accommodation": {
+                  "recommended": 648.57,
+                  "reference_price_cny": 648.57,
+                  "room_count": 1,
+                  "night_count": 1,
+                  "calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+                },
+                "food": {
+                  "recommended": 1525.68,
+                  "reference_price_cny": 127.14,
+                  "meal_count": 6,
+                  "calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+                },
+                "tickets": {
+                  "recommended": 270.0,
+                  "calculation_rule": "sum known fixed adult ticket prices for selected experiment POIs; pending prices are not guessed"
+                },
+                "other": {
+                  "recommended": 240,
+                  "calculation_rule": "fixed per-person daily allowance"
+                },
+                "buffer": {
+                  "recommended": 278.03,
+                  "calculation_rule": "10 percent fixed buffer"
+                }
+              },
+              "items": [
+                {
+                  "category": "transport",
+                  "item": "fixed city transport",
+                  "estimated_cost": 96.0,
+                  "is_essential": true
+                },
+                {
+                  "category": "accommodation",
+                  "item": "fixed accommodation area",
+                  "estimated_cost": 648.57,
+                  "is_essential": true
+                },
+                {
+                  "category": "food",
+                  "item": "fixed dining area meals",
+                  "estimated_cost": 1525.68,
+                  "is_essential": true
+                },
+                {
+                  "category": "tickets",
+                  "item": "fixed POI tickets",
+                  "estimated_cost": 270.0,
+                  "is_essential": true
+                },
+                {
+                  "category": "other",
+                  "item": "fixed miscellaneous allowance",
+                  "estimated_cost": 240,
+                  "is_essential": false
+                }
+              ],
+              "ticket_breakdown": {
+                "ticket_cost": 270.0,
+                "ticket_cost_per_person": 135.0,
+                "details": [
+                  {
+                    "name": "西湖风景名胜区",
+                    "status": "estimated",
+                    "parsed_ticket_yuan": null,
+                    "counted_amount_yuan": 0.0,
+                    "estimation_rule": "experiment_ticket_estimate_v1.free_tag",
+                    "estimation_basis": "POI tag indicates free entry"
+                  },
+                  {
+                    "name": "灵隐飞来峰景区",
+                    "status": "estimated",
+                    "parsed_ticket_yuan": null,
+                    "counted_amount_yuan": 60.0,
+                    "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                    "estimation_basis": "primary_category=history_culture"
+                  },
+                  {
+                    "name": "西溪国家湿地公园",
+                    "status": "estimated",
+                    "parsed_ticket_yuan": null,
+                    "counted_amount_yuan": 35.0,
+                    "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                    "estimation_basis": "primary_category=nature"
+                  },
+                  {
+                    "name": "清河坊历史文化街区",
+                    "status": "estimated",
+                    "parsed_ticket_yuan": null,
+                    "counted_amount_yuan": 40.0,
+                    "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                    "estimation_basis": "primary_category=urban_landmark"
+                  }
+                ],
+                "summary": {
+                  "poi_source_field": "fixed_poi_dataset",
+                  "source": "fixed_poi_ticketing",
+                  "known_ticket_count": 0,
+                  "free_ticket_count": 0,
+                  "estimated_ticket_count": 4,
+                  "estimated_ticket_total_per_person": 135.0,
+                  "pending_confirmation_count": 4,
+                  "pending_confirmation_pois": [
+                    "西湖风景名胜区",
+                    "灵隐飞来峰景区",
+                    "西溪国家湿地公园",
+                    "清河坊历史文化街区"
+                  ],
+                  "ignored_non_ticket_count": 0,
+                  "fallback_applied": true,
+                  "experiment_estimate_rule": "unknown adult ticket prices are counted with explicit fixed category estimates, not treated as zero"
+                }
+              }
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "frozen_offline",
+              "real_time_api_allowed": false,
+              "dataset_versions": {
+                "poi": "CTP-POI-v1.0",
+                "dining": "CTP-DINING-v1.0",
+                "accommodation": "CTP-ACCOMMODATION-v1.0",
+                "transport": "CTP-TRANSPORT-v1.0"
+              },
+              "source_file_ids": {
+                "poi": "ctp_poi_hangzhou_v1_0",
+                "dining": "ctp_dining_area_hangzhou_v1_0",
+                "accommodation": "ctp_accommodation_area_hangzhou_v1_0",
+                "transport": "ctp_transport_hangzhou_v1_0"
+              },
+              "record_count": 5,
+              "calculation_source": "fixed_offline_dataset"
+            }
+          }
+        },
+        "metadata": {
+          "research_method": "adaptive_multi_agent",
+          "generation_tool_contract": "ctp-research-tools-v1.0",
+          "goal_state_slots": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-01",
+            "duration_days": 2,
+            "people_count": 2
+          },
+          "result_agents": [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ],
+          "adaptive_scheduler": {
+            "name": "goal_state_scheduler",
+            "ticket": {
+              "schema_version": "ctp-goal-state-ticket-v1",
+              "task_type": "partial_replan",
+              "current_slots": {
+                "destination": "hangzhou",
+                "start_date": "2026-08-01",
+                "duration_days": 2,
+                "people_count": 2
+              },
+              "previous_slots": {
+                "destination": "hangzhou",
+                "start_date": "2026-08-01",
+                "duration_days": 2,
+                "people_count": 2
+              },
+              "changed_slots": [],
+              "preserved_slots": [
+                "destination",
+                "start_date",
+                "duration_days",
+                "people_count"
+              ],
+              "missing_slots": [],
+              "required_capabilities": [],
+              "clarification_required": false,
+              "clarification_fields": [],
+              "goal_change_type": "identical_request"
+            },
+            "decision": {
+              "schema_version": "ctp-scheduler-decision-v1",
+              "planned_agents": [],
+              "planned_tools": [],
+              "reused_agents": [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ],
+              "invalidated_agents": [],
+              "clarification_required": false,
+              "clarification_fields": [],
+              "decision_reasons": [
+                "identical_request_reuse_all"
+              ],
+              "reuse_validation": {
+                "raw_available_agents": [
+                  "attraction",
+                  "weather",
+                  "itinerary",
+                  "budget"
+                ],
+                "reusable_agents": [
+                  "attraction",
+                  "weather",
+                  "itinerary",
+                  "budget"
+                ],
+                "unusable_agents": [],
+                "unusable_reasons": {}
+              }
+            },
+            "reuse_execution": {
+              "previous_state_provided": true,
+              "expected_reused_agents": [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ],
+              "reused_agent_results": [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ],
+              "missing_reused_agent_results": [],
+              "expected_reused_agent_count": 4,
+              "reused_agent_result_count": 4,
+              "missing_reused_agent_result_count": 0,
+              "expected_reused_tools": [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ],
+              "reused_tool_results": [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ],
+              "missing_reused_tool_results": [],
+              "expected_reused_tool_count": 3,
+              "reused_tool_result_count": 3,
+              "missing_reused_tool_result_count": 0,
+              "reuse_hit_rate": 1.0,
+              "agent_reuse_hit_rate": 1.0
+            },
+            "result_fingerprints": {
+              "attraction": {
+                "destination": "hangzhou"
+              },
+              "weather": {
+                "destination": "hangzhou",
+                "start_date": "2026-08-01",
+                "duration_days": 2
+              },
+              "itinerary": {
+                "destination": "hangzhou",
+                "start_date": "2026-08-01",
+                "duration_days": 2
+              },
+              "budget": {
+                "destination": "hangzhou",
+                "duration_days": 2,
+                "people_count": 2
+              }
+            }
+          }
+        }
+      },
+      "metadata": {
+        "output_contract": "ctp-experiment-output-v1",
+        "trace_schema_version": "1.7",
+        "tool_call_count": 0,
+        "research_method": "adaptive_multi_agent",
+        "generation_tool_contract": "ctp-research-tools-v1.0",
+        "goal_state_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-01",
+          "duration_days": 2,
+          "people_count": 2
+        },
+        "result_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "adaptive_scheduler": {
+          "name": "goal_state_scheduler",
+          "ticket": {
+            "schema_version": "ctp-goal-state-ticket-v1",
+            "task_type": "partial_replan",
+            "current_slots": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2,
+              "people_count": 2
+            },
+            "previous_slots": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2,
+              "people_count": 2
+            },
+            "changed_slots": [],
+            "preserved_slots": [
+              "destination",
+              "start_date",
+              "duration_days",
+              "people_count"
+            ],
+            "missing_slots": [],
+            "required_capabilities": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "goal_change_type": "identical_request"
+          },
+          "decision": {
+            "schema_version": "ctp-scheduler-decision-v1",
+            "planned_agents": [],
+            "planned_tools": [],
+            "reused_agents": [
+              "attraction",
+              "weather",
+              "itinerary",
+              "budget"
+            ],
+            "invalidated_agents": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "decision_reasons": [
+              "identical_request_reuse_all"
+            ],
+            "reuse_validation": {
+              "raw_available_agents": [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ],
+              "reusable_agents": [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ],
+              "unusable_agents": [],
+              "unusable_reasons": {}
+            }
+          },
+          "reuse_execution": {
+            "previous_state_provided": true,
+            "expected_reused_agents": [
+              "attraction",
+              "weather",
+              "itinerary",
+              "budget"
+            ],
+            "reused_agent_results": [
+              "attraction",
+              "weather",
+              "itinerary",
+              "budget"
+            ],
+            "missing_reused_agent_results": [],
+            "expected_reused_agent_count": 4,
+            "reused_agent_result_count": 4,
+            "missing_reused_agent_result_count": 0,
+            "expected_reused_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "reused_tool_results": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "missing_reused_tool_results": [],
+            "expected_reused_tool_count": 3,
+            "reused_tool_result_count": 3,
+            "missing_reused_tool_result_count": 0,
+            "reuse_hit_rate": 1.0,
+            "agent_reuse_hit_rate": 1.0
+          },
+          "result_fingerprints": {
+            "attraction": {
+              "destination": "hangzhou"
+            },
+            "weather": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2
+            },
+            "itinerary": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2
+            },
+            "budget": {
+              "destination": "hangzhou",
+              "duration_days": 2,
+              "people_count": 2
+            }
+          }
+        },
+        "adaptive_scheduler_metrics": {
+          "m3_scheduler_name": "goal_state_scheduler",
+          "m3_task_type": "partial_replan",
+          "m3_clarification_required": false,
+          "m3_clarification_fields": [],
+          "m3_clarification_field_count": 0,
+          "m3_decision_reasons": [
+            "identical_request_reuse_all"
+          ],
+          "m3_planned_agents": [],
+          "m3_reused_agents": [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ],
+          "m3_invalidated_agents": [],
+          "m3_planned_tools": [],
+          "m3_expected_reused_tools": [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ],
+          "m3_reused_tool_results": [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ],
+          "m3_missing_reused_tool_results": [],
+          "m3_previous_state_provided": true,
+          "m3_m2_reference_agent_count": 4,
+          "m3_m2_reference_tool_count": 3,
+          "m3_planned_agent_count": 0,
+          "m3_executed_agent_count": 0,
+          "m3_reused_agent_count": 4,
+          "m3_invalidated_agent_count": 0,
+          "m3_planned_tool_count": 0,
+          "m3_executed_tool_count": 0,
+          "m3_expected_reused_tool_count": 3,
+          "m3_reused_tool_result_count": 3,
+          "m3_missing_reused_tool_result_count": 0,
+          "m3_agent_reuse_rate": 1.0,
+          "m3_tool_reuse_rate": 1.0,
+          "m3_reuse_hit_rate": 1.0,
+          "m3_agent_call_savings_vs_m2": 4,
+          "m3_tool_call_savings_vs_m2": 3,
+          "m3_agent_call_reduction_rate_vs_m2": 1.0,
+          "m3_tool_call_reduction_rate_vs_m2": 1.0
+        }
+      }
+    },
+    "constraint_report": {
+      "schema_version": "research_tool_result_v1",
+      "tool_contract_version": "ctp-research-tools-v1.0",
+      "tool_name": "constraint_checker",
+      "status": "success",
+      "success": true,
+      "input": {
+        "request": {
+          "case_id": "day4_trace_turn2",
+          "user_input": "same plan again",
+          "city": "",
+          "days": 3,
+          "budget": null
+        },
+        "constraints": {
+          "days": 3
+        }
+      },
+      "data": {
+        "all_passed": false,
+        "applicable_count": 2,
+        "passed_count": 1,
+        "failed_count": 1,
+        "checks": [
+          {
+            "name": "trip_days",
+            "status": "failed",
+            "passed": false,
+            "details": {
+              "expected": 3,
+              "actual": 2
+            }
+          },
+          {
+            "name": "budget_limit",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "limit": null,
+              "actual": 3058.28
+            }
+          },
+          {
+            "name": "weather_adjustment",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "required": true,
+              "adjustment_count": 1
+            }
+          },
+          {
+            "name": "min_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "minimum": null,
+              "actual": 4
+            }
+          },
+          {
+            "name": "max_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "maximum": null,
+              "actual": 4
+            }
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "offline": true,
+        "source_mode": "deterministic_evaluator",
+        "real_time_api_allowed": false,
+        "contract": "ctp-research-tools-v1.0"
+      }
+    },
+    "hard_constraint_applicable_count": 2,
+    "hard_constraint_passed_count": 1,
+    "hard_constraint_failed_count": 1,
+    "hard_constraints_all_satisfied": false,
+    "hcsr": 0.5,
+    "raw_output": {
+      "task_type": "partial_replan",
+      "used_agents": [],
+      "planned_tools": [],
+      "trip_days": 2,
+      "daily_itinerary": [
+        {
+          "day": 1,
+          "attractions": [
+            {
+              "poi_id": "hz001",
+              "name": "西湖风景名胜区",
+              "category": "nature",
+              "indoor_outdoor": "outdoor"
+            },
+            {
+              "poi_id": "hz002",
+              "name": "灵隐飞来峰景区",
+              "category": "history_culture",
+              "indoor_outdoor": "mixed"
+            }
+          ],
+          "notes": "由固定离线 POI 结果生成的实验行程骨架"
+        },
+        {
+          "day": 2,
+          "attractions": [
+            {
+              "poi_id": "hz003",
+              "name": "西溪国家湿地公园",
+              "category": "nature",
+              "indoor_outdoor": "outdoor"
+            },
+            {
+              "poi_id": "hz004",
+              "name": "清河坊历史文化街区",
+              "category": "urban_landmark",
+              "indoor_outdoor": "mixed"
+            }
+          ],
+          "notes": "由固定离线 POI 结果生成的实验行程骨架"
+        }
+      ],
+      "budget": {
+        "city": "hangzhou",
+        "people_count": 2,
+        "days": 2,
+        "spending_level": "medium",
+        "currency": "CNY",
+        "total": 3058.28,
+        "per_person": 1529.14,
+        "daily_average": 1529.14,
+        "breakdown": {
+          "transport": {
+            "recommended": 96.0,
+            "mode": "public_transit",
+            "calculation_rule": "fixed matrix average cost * fixed trip count"
+          },
+          "accommodation": {
+            "recommended": 648.57,
+            "reference_price_cny": 648.57,
+            "room_count": 1,
+            "night_count": 1,
+            "calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+          },
+          "food": {
+            "recommended": 1525.68,
+            "reference_price_cny": 127.14,
+            "meal_count": 6,
+            "calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+          },
+          "tickets": {
+            "recommended": 270.0,
+            "calculation_rule": "sum known fixed adult ticket prices for selected experiment POIs; pending prices are not guessed"
+          },
+          "other": {
+            "recommended": 240,
+            "calculation_rule": "fixed per-person daily allowance"
+          },
+          "buffer": {
+            "recommended": 278.03,
+            "calculation_rule": "10 percent fixed buffer"
+          }
+        },
+        "items": [
+          {
+            "category": "transport",
+            "item": "fixed city transport",
+            "estimated_cost": 96.0,
+            "is_essential": true
+          },
+          {
+            "category": "accommodation",
+            "item": "fixed accommodation area",
+            "estimated_cost": 648.57,
+            "is_essential": true
+          },
+          {
+            "category": "food",
+            "item": "fixed dining area meals",
+            "estimated_cost": 1525.68,
+            "is_essential": true
+          },
+          {
+            "category": "tickets",
+            "item": "fixed POI tickets",
+            "estimated_cost": 270.0,
+            "is_essential": true
+          },
+          {
+            "category": "other",
+            "item": "fixed miscellaneous allowance",
+            "estimated_cost": 240,
+            "is_essential": false
+          }
+        ],
+        "ticket_breakdown": {
+          "ticket_cost": 270.0,
+          "ticket_cost_per_person": 135.0,
+          "details": [
+            {
+              "name": "西湖风景名胜区",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 0.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.free_tag",
+              "estimation_basis": "POI tag indicates free entry"
+            },
+            {
+              "name": "灵隐飞来峰景区",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 60.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+              "estimation_basis": "primary_category=history_culture"
+            },
+            {
+              "name": "西溪国家湿地公园",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 35.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+              "estimation_basis": "primary_category=nature"
+            },
+            {
+              "name": "清河坊历史文化街区",
+              "status": "estimated",
+              "parsed_ticket_yuan": null,
+              "counted_amount_yuan": 40.0,
+              "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+              "estimation_basis": "primary_category=urban_landmark"
+            }
+          ],
+          "summary": {
+            "poi_source_field": "fixed_poi_dataset",
+            "source": "fixed_poi_ticketing",
+            "known_ticket_count": 0,
+            "free_ticket_count": 0,
+            "estimated_ticket_count": 4,
+            "estimated_ticket_total_per_person": 135.0,
+            "pending_confirmation_count": 4,
+            "pending_confirmation_pois": [
+              "西湖风景名胜区",
+              "灵隐飞来峰景区",
+              "西溪国家湿地公园",
+              "清河坊历史文化街区"
+            ],
+            "ignored_non_ticket_count": 0,
+            "fallback_applied": true,
+            "experiment_estimate_rule": "unknown adult ticket prices are counted with explicit fixed category estimates, not treated as zero"
+          }
+        }
+      },
+      "weather": {
+        "city": "杭州",
+        "city_id": "hangzhou",
+        "date": "2026-08-01",
+        "scenario_type": "continuous_change",
+        "requested_scenario_type": "sunny",
+        "scenario_selection": "city_date_hash",
+        "risk_level": "high",
+        "daily_weather": [
+          {
+            "day_index": 1,
+            "date": "2026-08-01",
+            "state": "sunny",
+            "weather": "晴天",
+            "temperature_min_c": 20,
+            "temperature_max_c": 29,
+            "precipitation_mm": 0.0,
+            "risk_level": "low",
+            "risk_tags": [],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          },
+          {
+            "day_index": 2,
+            "date": "2026-08-02",
+            "state": "rain",
+            "weather": "雨天",
+            "temperature_min_c": 17,
+            "temperature_max_c": 23,
+            "precipitation_mm": 26.0,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain"
+            ],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          }
+        ],
+        "planning_constraints": {
+          "dynamic_adjustment_required": true,
+          "indoor_preference": false,
+          "minimum_indoor_activity_ratio": null,
+          "avoid_time_windows": [],
+          "maximum_continuous_outdoor_hours": null,
+          "mandatory_actions": [
+            "必须按天读取天气条件",
+            "不得将同一规划策略直接复制到全部日期",
+            "至少提供一个天气变化后的行程调整"
+          ]
+        },
+        "weather_adjustment_required": true
+      },
+      "weather_adjustments": [
+        {
+          "reason": "continuous_change",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        }
+      ],
+      "execution_status": "completed",
+      "final_answer": "offline acceptance answer",
+      "tool_results": {
+        "poi_search": {
+          "schema_version": "research_tool_result_v1",
+          "tool_contract_version": "ctp-research-tools-v1.0",
+          "tool_name": "poi_search",
+          "status": "success",
+          "success": true,
+          "input": {
+            "city": "hangzhou",
+            "preferences": [],
+            "people": "general",
+            "limit": 4
+          },
+          "data": {
+            "city": "hangzhou",
+            "preferences": [],
+            "people": "general",
+            "attractions": [
+              {
+                "poi_id": "hz001",
+                "name": "西湖风景名胜区",
+                "city": "杭州",
+                "city_id": "hangzhou",
+                "category": "nature",
+                "tags": [
+                  "湖景",
+                  "世界遗产",
+                  "免费"
+                ],
+                "indoor_outdoor": "outdoor",
+                "recommended_duration_hours": 4.0,
+                "ticket_price_cny": null,
+                "ticket_price_known": false,
+                "address": "西湖, 西湖区, 杭州市, 浙江省, 中国",
+                "transport_node_id": "hz001",
+                "evidence": {
+                  "dataset_version": "CTP-POI-v1.0",
+                  "source_file_id": "ctp_poi_hangzhou_v1_0",
+                  "snapshot_date": "2026-07-17",
+                  "offline": true
+                }
+              },
+              {
+                "poi_id": "hz002",
+                "name": "灵隐飞来峰景区",
+                "city": "杭州",
+                "city_id": "hangzhou",
+                "category": "history_culture",
+                "tags": [
+                  "寺院",
+                  "石刻",
+                  "人文"
+                ],
+                "indoor_outdoor": "mixed",
+                "recommended_duration_hours": 3.0,
+                "ticket_price_cny": null,
+                "ticket_price_known": false,
+                "address": "飞来峰, 杭州市, 浙江省, 310013, 中国",
+                "transport_node_id": "hz002",
+                "evidence": {
+                  "dataset_version": "CTP-POI-v1.0",
+                  "source_file_id": "ctp_poi_hangzhou_v1_0",
+                  "snapshot_date": "2026-07-17",
+                  "offline": true
+                }
+              },
+              {
+                "poi_id": "hz003",
+                "name": "西溪国家湿地公园",
+                "city": "杭州",
+                "city_id": "hangzhou",
+                "category": "nature",
+                "tags": [
+                  "湿地",
+                  "生态",
+                  "游船"
+                ],
+                "indoor_outdoor": "outdoor",
+                "recommended_duration_hours": 4.0,
+                "ticket_price_cny": null,
+                "ticket_price_known": false,
+                "address": "西溪国家湿地公园, 西湖区, 杭州市, 浙江省, 中国",
+                "transport_node_id": "hz003",
+                "evidence": {
+                  "dataset_version": "CTP-POI-v1.0",
+                  "source_file_id": "ctp_poi_hangzhou_v1_0",
+                  "snapshot_date": "2026-07-17",
+                  "offline": true
+                }
+              },
+              {
+                "poi_id": "hz004",
+                "name": "清河坊历史文化街区",
+                "city": "杭州",
+                "city_id": "hangzhou",
+                "category": "urban_landmark",
+                "tags": [
+                  "老街",
+                  "小吃",
+                  "购物"
+                ],
+                "indoor_outdoor": "mixed",
+                "recommended_duration_hours": 2.0,
+                "ticket_price_cny": null,
+                "ticket_price_known": false,
+                "address": "清河坊历史文化街区, 清河坊社区, 清波街道, 上城区, 杭州市, 浙江省, 310009, 中国",
+                "transport_node_id": "hz004",
+                "evidence": {
+                  "dataset_version": "CTP-POI-v1.0",
+                  "source_file_id": "ctp_poi_hangzhou_v1_0",
+                  "snapshot_date": "2026-07-17",
+                  "offline": true
+                }
+              }
+            ]
+          },
+          "error": null,
+          "metadata": {
+            "offline": true,
+            "source_mode": "frozen_offline",
+            "real_time_api_allowed": false,
+            "poi_dataset_versions": [
+              "CTP-POI-v1.0"
+            ],
+            "source_file_ids": [
+              "ctp_poi_hangzhou_v1_0"
+            ],
+            "record_count": 4
+          }
+        },
+        "weather_query": {
+          "schema_version": "research_tool_result_v1",
+          "tool_contract_version": "ctp-research-tools-v1.0",
+          "tool_name": "weather_query",
+          "status": "success",
+          "success": true,
+          "input": {
+            "city": "hangzhou",
+            "date": "2026-08-01",
+            "days": 2,
+            "scenario_type": "sunny"
+          },
+          "data": {
+            "city": "杭州",
+            "city_id": "hangzhou",
+            "date": "2026-08-01",
+            "scenario_type": "continuous_change",
+            "requested_scenario_type": "sunny",
+            "scenario_selection": "city_date_hash",
+            "risk_level": "high",
+            "daily_weather": [
+              {
+                "day_index": 1,
+                "date": "2026-08-01",
+                "state": "sunny",
+                "weather": "晴天",
+                "temperature_min_c": 20,
+                "temperature_max_c": 29,
+                "precipitation_mm": 0.0,
+                "risk_level": "low",
+                "risk_tags": [],
+                "suitable_periods": [
+                  "morning",
+                  "afternoon"
+                ],
+                "avoid_periods": []
+              },
+              {
+                "day_index": 2,
+                "date": "2026-08-02",
+                "state": "rain",
+                "weather": "雨天",
+                "temperature_min_c": 17,
+                "temperature_max_c": 23,
+                "precipitation_mm": 26.0,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "afternoon"
+                ],
+                "avoid_periods": []
+              }
+            ],
+            "planning_constraints": {
+              "dynamic_adjustment_required": true,
+              "indoor_preference": false,
+              "minimum_indoor_activity_ratio": null,
+              "avoid_time_windows": [],
+              "maximum_continuous_outdoor_hours": null,
+              "mandatory_actions": [
+                "必须按天读取天气条件",
+                "不得将同一规划策略直接复制到全部日期",
+                "至少提供一个天气变化后的行程调整"
+              ]
+            },
+            "weather_adjustment_required": true
+          },
+          "error": null,
+          "metadata": {
+            "offline": true,
+            "source_mode": "frozen_offline",
+            "real_time_api_allowed": false,
+            "dataset_version": "CTP-WEATHER-v1.0",
+            "source_file_id": "ctp_weather_hangzhou_v1_0",
+            "record_count": 2,
+            "canonical_city_id": "hangzhou",
+            "weather_date_mapping_rule": "sha256(canonical_city_id + date) selects one fixed scenario when date is provided"
+          }
+        },
+        "budget_calculator": {
+          "schema_version": "research_tool_result_v1",
+          "tool_contract_version": "ctp-research-tools-v1.0",
+          "tool_name": "budget_calculator",
+          "status": "success",
+          "success": true,
+          "input": {
+            "city": "hangzhou",
+            "people_count": 2,
+            "days": 2,
+            "attractions": [
+              "hz001",
+              "hz002",
+              "hz003",
+              "hz004"
+            ],
+            "spending_level": "medium"
+          },
+          "data": {
+            "city": "hangzhou",
+            "people_count": 2,
+            "days": 2,
+            "spending_level": "medium",
+            "currency": "CNY",
+            "total": 3058.28,
+            "per_person": 1529.14,
+            "daily_average": 1529.14,
+            "breakdown": {
+              "transport": {
+                "recommended": 96.0,
+                "mode": "public_transit",
+                "calculation_rule": "fixed matrix average cost * fixed trip count"
+              },
+              "accommodation": {
+                "recommended": 648.57,
+                "reference_price_cny": 648.57,
+                "room_count": 1,
+                "night_count": 1,
+                "calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count"
+              },
+              "food": {
+                "recommended": 1525.68,
+                "reference_price_cny": 127.14,
+                "meal_count": 6,
+                "calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count"
+              },
+              "tickets": {
+                "recommended": 270.0,
+                "calculation_rule": "sum known fixed adult ticket prices for selected experiment POIs; pending prices are not guessed"
+              },
+              "other": {
+                "recommended": 240,
+                "calculation_rule": "fixed per-person daily allowance"
+              },
+              "buffer": {
+                "recommended": 278.03,
+                "calculation_rule": "10 percent fixed buffer"
+              }
+            },
+            "items": [
+              {
+                "category": "transport",
+                "item": "fixed city transport",
+                "estimated_cost": 96.0,
+                "is_essential": true
+              },
+              {
+                "category": "accommodation",
+                "item": "fixed accommodation area",
+                "estimated_cost": 648.57,
+                "is_essential": true
+              },
+              {
+                "category": "food",
+                "item": "fixed dining area meals",
+                "estimated_cost": 1525.68,
+                "is_essential": true
+              },
+              {
+                "category": "tickets",
+                "item": "fixed POI tickets",
+                "estimated_cost": 270.0,
+                "is_essential": true
+              },
+              {
+                "category": "other",
+                "item": "fixed miscellaneous allowance",
+                "estimated_cost": 240,
+                "is_essential": false
+              }
+            ],
+            "ticket_breakdown": {
+              "ticket_cost": 270.0,
+              "ticket_cost_per_person": 135.0,
+              "details": [
+                {
+                  "name": "西湖风景名胜区",
+                  "status": "estimated",
+                  "parsed_ticket_yuan": null,
+                  "counted_amount_yuan": 0.0,
+                  "estimation_rule": "experiment_ticket_estimate_v1.free_tag",
+                  "estimation_basis": "POI tag indicates free entry"
+                },
+                {
+                  "name": "灵隐飞来峰景区",
+                  "status": "estimated",
+                  "parsed_ticket_yuan": null,
+                  "counted_amount_yuan": 60.0,
+                  "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                  "estimation_basis": "primary_category=history_culture"
+                },
+                {
+                  "name": "西溪国家湿地公园",
+                  "status": "estimated",
+                  "parsed_ticket_yuan": null,
+                  "counted_amount_yuan": 35.0,
+                  "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                  "estimation_basis": "primary_category=nature"
+                },
+                {
+                  "name": "清河坊历史文化街区",
+                  "status": "estimated",
+                  "parsed_ticket_yuan": null,
+                  "counted_amount_yuan": 40.0,
+                  "estimation_rule": "experiment_ticket_estimate_v1.category_default",
+                  "estimation_basis": "primary_category=urban_landmark"
+                }
+              ],
+              "summary": {
+                "poi_source_field": "fixed_poi_dataset",
+                "source": "fixed_poi_ticketing",
+                "known_ticket_count": 0,
+                "free_ticket_count": 0,
+                "estimated_ticket_count": 4,
+                "estimated_ticket_total_per_person": 135.0,
+                "pending_confirmation_count": 4,
+                "pending_confirmation_pois": [
+                  "西湖风景名胜区",
+                  "灵隐飞来峰景区",
+                  "西溪国家湿地公园",
+                  "清河坊历史文化街区"
+                ],
+                "ignored_non_ticket_count": 0,
+                "fallback_applied": true,
+                "experiment_estimate_rule": "unknown adult ticket prices are counted with explicit fixed category estimates, not treated as zero"
+              }
+            }
+          },
+          "error": null,
+          "metadata": {
+            "offline": true,
+            "source_mode": "frozen_offline",
+            "real_time_api_allowed": false,
+            "dataset_versions": {
+              "poi": "CTP-POI-v1.0",
+              "dining": "CTP-DINING-v1.0",
+              "accommodation": "CTP-ACCOMMODATION-v1.0",
+              "transport": "CTP-TRANSPORT-v1.0"
+            },
+            "source_file_ids": {
+              "poi": "ctp_poi_hangzhou_v1_0",
+              "dining": "ctp_dining_area_hangzhou_v1_0",
+              "accommodation": "ctp_accommodation_area_hangzhou_v1_0",
+              "transport": "ctp_transport_hangzhou_v1_0"
+            },
+            "record_count": 5,
+            "calculation_source": "fixed_offline_dataset"
+          }
+        }
+      },
+      "metadata": {
+        "research_method": "adaptive_multi_agent",
+        "generation_tool_contract": "ctp-research-tools-v1.0",
+        "goal_state_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-01",
+          "duration_days": 2,
+          "people_count": 2
+        },
+        "result_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "adaptive_scheduler": {
+          "name": "goal_state_scheduler",
+          "ticket": {
+            "schema_version": "ctp-goal-state-ticket-v1",
+            "task_type": "partial_replan",
+            "current_slots": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2,
+              "people_count": 2
+            },
+            "previous_slots": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2,
+              "people_count": 2
+            },
+            "changed_slots": [],
+            "preserved_slots": [
+              "destination",
+              "start_date",
+              "duration_days",
+              "people_count"
+            ],
+            "missing_slots": [],
+            "required_capabilities": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "goal_change_type": "identical_request"
+          },
+          "decision": {
+            "schema_version": "ctp-scheduler-decision-v1",
+            "planned_agents": [],
+            "planned_tools": [],
+            "reused_agents": [
+              "attraction",
+              "weather",
+              "itinerary",
+              "budget"
+            ],
+            "invalidated_agents": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "decision_reasons": [
+              "identical_request_reuse_all"
+            ],
+            "reuse_validation": {
+              "raw_available_agents": [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ],
+              "reusable_agents": [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ],
+              "unusable_agents": [],
+              "unusable_reasons": {}
+            }
+          },
+          "reuse_execution": {
+            "previous_state_provided": true,
+            "expected_reused_agents": [
+              "attraction",
+              "weather",
+              "itinerary",
+              "budget"
+            ],
+            "reused_agent_results": [
+              "attraction",
+              "weather",
+              "itinerary",
+              "budget"
+            ],
+            "missing_reused_agent_results": [],
+            "expected_reused_agent_count": 4,
+            "reused_agent_result_count": 4,
+            "missing_reused_agent_result_count": 0,
+            "expected_reused_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "reused_tool_results": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "missing_reused_tool_results": [],
+            "expected_reused_tool_count": 3,
+            "reused_tool_result_count": 3,
+            "missing_reused_tool_result_count": 0,
+            "reuse_hit_rate": 1.0,
+            "agent_reuse_hit_rate": 1.0
+          },
+          "result_fingerprints": {
+            "attraction": {
+              "destination": "hangzhou"
+            },
+            "weather": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2
+            },
+            "itinerary": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-01",
+              "duration_days": 2
+            },
+            "budget": {
+              "destination": "hangzhou",
+              "duration_days": 2,
+              "people_count": 2
+            }
+          }
+        }
+      }
+    },
+    "latency": 40.87,
+    "latency_ms": 40.87,
+    "ttft_ms": null,
+    "trace": {
+      "schema_version": "1.7",
+      "created_at": "2026-07-18T14:19:45.122782+00:00",
+      "request_id": "day4_trace_turn2_adaptive_multi_agent_e869b4c1",
+      "session_id": "exp-day4_trace_turn1-adaptive_multi_agent-r0",
+      "case_id": "day4_trace_turn2",
+      "run_id": "day4_acceptance_20260718T141930Z",
+      "experiment_case_id": "day4_trace_turn2",
+      "experiment_group": null,
+      "repeat_index": 0,
+      "system_variant": "adaptive_multi_agent",
+      "method": "adaptive_multi_agent",
+      "evaluation_mode": "end_to_end",
+      "model_config_name": "day4-acceptance-offline",
+      "input_hash": "dd187d78a56128d087dca64ad4742fcded949260fdaa20ce499d45d4a85b268f",
+      "user_message_hash": "dd187d78a56128d087dca64ad4742fcded949260fdaa20ce499d45d4a85b268f",
+      "user_message": null,
+      "result_hash": "ec3dfdb3e00d254e902a4be9a6a4160c417c5f6df99e925465aae930af74d036",
+      "offline_data": {
+        "schema_version": "fixed_data_manifest_v1",
+        "city_ids": [
+          "beijing",
+          "hangzhou",
+          "xian",
+          "shenzhen",
+          "guilin"
+        ],
+        "snapshot_dirs": [
+          "pois",
+          "weather",
+          "restaurants",
+          "accommodation",
+          "transport"
+        ],
+        "file_count": 25,
+        "expected_file_count": 25,
+        "combined_sha256": "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3",
+        "expected_combined_sha256": "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3",
+        "missing_files": [],
+        "files": [
+          {
+            "kind": "accommodation",
+            "city_id": "beijing",
+            "path": "data/accommodation/beijing.json",
+            "sha256": "91ebdadc86245922c61901a2ecfa437f1c754ed2c3975d68c642f7f8c5c93f05"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "guilin",
+            "path": "data/accommodation/guilin.json",
+            "sha256": "e8bbd330fa10ea575da49201bb69b30edc89874b64175a0c8f2593b09113f75d"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "hangzhou",
+            "path": "data/accommodation/hangzhou.json",
+            "sha256": "b146fa73d48688d36e035179e59f08d12a5a283d1bbe5e45ab1fbce27385bfee"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "shenzhen",
+            "path": "data/accommodation/shenzhen.json",
+            "sha256": "6ed2f5ef6078e7651c1f0106568136656dfab92cfe4cfe6866e4edbc185784e4"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "xian",
+            "path": "data/accommodation/xian.json",
+            "sha256": "6a82d4ba2e8659bd414a048371690525f15b26491e2a2934d4c0d380c95e3aca"
+          },
+          {
+            "kind": "pois",
+            "city_id": "beijing",
+            "path": "data/pois/beijing.json",
+            "sha256": "4bd2fb952e1a9b2fb6670793d007d5ebd2cfc897f67829c4d36538410ac4977e"
+          },
+          {
+            "kind": "pois",
+            "city_id": "guilin",
+            "path": "data/pois/guilin.json",
+            "sha256": "1a6d802bb7295998f5d3d965aff1cb5b59998411645922211b319a5c0bfb09cb"
+          },
+          {
+            "kind": "pois",
+            "city_id": "hangzhou",
+            "path": "data/pois/hangzhou.json",
+            "sha256": "7abd466ba674fa160978d6037c95c0bd64a78deed6b5c454bacad8ba055f8aea"
+          },
+          {
+            "kind": "pois",
+            "city_id": "shenzhen",
+            "path": "data/pois/shenzhen.json",
+            "sha256": "199977c5ef39cef67d52af432922de53f57c4862e27e2fb1b34cff7bbbe17582"
+          },
+          {
+            "kind": "pois",
+            "city_id": "xian",
+            "path": "data/pois/xian.json",
+            "sha256": "7f203268990980552debdc8425b77122c7ba7eb218d349f5723e77eada0e6e99"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "beijing",
+            "path": "data/restaurants/beijing.json",
+            "sha256": "378efb83ef2ba54ff563fd1d09e91403df354c942d31693d3a8725fcf9a11b33"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "guilin",
+            "path": "data/restaurants/guilin.json",
+            "sha256": "0b6c68e469096b53779ede207450df55db9040234e89d7cdb3e0bd907bf1a5fc"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "hangzhou",
+            "path": "data/restaurants/hangzhou.json",
+            "sha256": "214312ef2d5878038b74b9467210851184fbcad32edebe556bfee77a9cb881a0"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "shenzhen",
+            "path": "data/restaurants/shenzhen.json",
+            "sha256": "2d8572cfc4f87380b44e1026b39c228617b2e3989cac82baebc61d58109972ec"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "xian",
+            "path": "data/restaurants/xian.json",
+            "sha256": "b4eb9c0f3503e63a988441cf4a8fc942c9c69edb1c797ef745b7ec446986a2f5"
+          },
+          {
+            "kind": "transport",
+            "city_id": "beijing",
+            "path": "data/transport/beijing.json",
+            "sha256": "758967b5cc01305b5c228d728a43bd91dc6a5f25e8366185bb459b7aa789929b"
+          },
+          {
+            "kind": "transport",
+            "city_id": "guilin",
+            "path": "data/transport/guilin.json",
+            "sha256": "475c97fb492d2386c82bb29863cde96d7ab8e78e9f14d2dd399f9b05102765c7"
+          },
+          {
+            "kind": "transport",
+            "city_id": "hangzhou",
+            "path": "data/transport/hangzhou.json",
+            "sha256": "3aa7ab8650eeeb605f95ca8779fa20aca4274b4b4134ac81e3d7911119f2134f"
+          },
+          {
+            "kind": "transport",
+            "city_id": "shenzhen",
+            "path": "data/transport/shenzhen.json",
+            "sha256": "ed0adb7927e11b66e8f2b8ed6dbfa397f84ec363edeee20aac0a21a92c246923"
+          },
+          {
+            "kind": "transport",
+            "city_id": "xian",
+            "path": "data/transport/xian.json",
+            "sha256": "78977ab060a1c71fe87382ffc88a57644c721ea1270afc9520a3ae3b829472c0"
+          },
+          {
+            "kind": "weather",
+            "city_id": "beijing",
+            "path": "data/weather/beijing.json",
+            "sha256": "909fd6078a489aa09765a187411e4afa26c30ee8d3fd540734ed67eb3b62a348"
+          },
+          {
+            "kind": "weather",
+            "city_id": "guilin",
+            "path": "data/weather/guilin.json",
+            "sha256": "40cbe4ee2ce08189922d4639de5d59155050f6e4412fb4cb1a3f7c62d8574740"
+          },
+          {
+            "kind": "weather",
+            "city_id": "hangzhou",
+            "path": "data/weather/hangzhou.json",
+            "sha256": "d29568c5ab66f71261304511e7687b721e426176aff0da2152ed1bbee5c3e10a"
+          },
+          {
+            "kind": "weather",
+            "city_id": "shenzhen",
+            "path": "data/weather/shenzhen.json",
+            "sha256": "630a643c25608a9eef54e934ae7fe8a2eed59f7cb61f39f10484c08d90aba82e"
+          },
+          {
+            "kind": "weather",
+            "city_id": "xian",
+            "path": "data/weather/xian.json",
+            "sha256": "26734c7f640ddabcddbca955672a4aa75927946a174df2a9dca2a43a5100b607"
+          }
+        ]
+      },
+      "status": "completed",
+      "mode": "planning",
+      "intent": "general_chat",
+      "route": "GENERAL_CHAT",
+      "extracted_info": {},
+      "constraints": [],
+      "missing_fields": [],
+      "planned_agents": [],
+      "executed_agents": [],
+      "planned_tools": [],
+      "executed_tools": [],
+      "selected_agents": [],
+      "selected_tools": [],
+      "goal": {
+        "intent": "general_chat",
+        "route": "GENERAL_CHAT",
+        "slots": {},
+        "constraints": [],
+        "planned_agents": [],
+        "selected_agents": []
+      },
+      "stage_timings": {},
+      "agent_timings": {},
+      "agent_runs": [],
+      "llm_calls": [],
+      "tool_calls": [],
+      "api_calls": [],
+      "adaptive_scheduler": {
+        "name": "goal_state_scheduler",
+        "ticket": {
+          "schema_version": "ctp-goal-state-ticket-v1",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-01",
+            "duration_days": 2,
+            "people_count": 2
+          },
+          "previous_slots": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-01",
+            "duration_days": 2,
+            "people_count": 2
+          },
+          "changed_slots": [],
+          "preserved_slots": [
+            "destination",
+            "start_date",
+            "duration_days",
+            "people_count"
+          ],
+          "missing_slots": [],
+          "required_capabilities": [],
+          "clarification_required": false,
+          "clarification_fields": [],
+          "goal_change_type": "identical_request"
+        },
+        "decision": {
+          "schema_version": "ctp-scheduler-decision-v1",
+          "planned_agents": [],
+          "planned_tools": [],
+          "reused_agents": [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ],
+          "invalidated_agents": [],
+          "clarification_required": false,
+          "clarification_fields": [],
+          "decision_reasons": [
+            "identical_request_reuse_all"
+          ],
+          "reuse_validation": {
+            "raw_available_agents": [
+              "attraction",
+              "weather",
+              "itinerary",
+              "budget"
+            ],
+            "reusable_agents": [
+              "attraction",
+              "weather",
+              "itinerary",
+              "budget"
+            ],
+            "unusable_agents": [],
+            "unusable_reasons": {}
+          }
+        },
+        "reuse_execution": {
+          "previous_state_provided": true,
+          "expected_reused_agents": [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ],
+          "reused_agent_results": [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 4,
+          "reused_agent_result_count": 4,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ],
+          "reused_tool_results": [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 3,
+          "reused_tool_result_count": 3,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": 1.0,
+          "agent_reuse_hit_rate": 1.0
+        },
+        "result_fingerprints": {
+          "attraction": {
+            "destination": "hangzhou"
+          },
+          "weather": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-01",
+            "duration_days": 2
+          },
+          "itinerary": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-01",
+            "duration_days": 2
+          },
+          "budget": {
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2
+          }
+        }
+      },
+      "total_duration_ms": 30.02,
+      "first_body_token_ms": null,
+      "first_token_ms": null,
+      "error": null,
+      "llm_call_count": 0,
+      "tool_call_count": 0,
+      "successful_tool_call_count": 0,
+      "failed_tool_call_count": 0,
+      "tool_call_success_rate": null,
+      "planned_tool_count": 0,
+      "executed_tool_count": 0,
+      "selected_tool_count": 0,
+      "api_call_count": 0,
+      "agent_call_count": 0,
+      "failed_agent_count": 0,
+      "cache_hit_count": 0,
+      "fallback_count": 0,
+      "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z\\traces\\20260718T141945154789Z_day4_trace_turn2_adaptive_multi_agent_e869b4c1_7524a875.jsonl"
+    },
+    "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\day4_acceptance\\day4_acceptance_20260718T141930Z\\traces\\20260718T141945154789Z_day4_trace_turn2_adaptive_multi_agent_e869b4c1_7524a875.jsonl",
+    "status": "completed",
+    "metrics": {
+      "expected_tools": [],
+      "selected_tools": [],
+      "expected_tool_count": 0,
+      "correct_tool_count": null,
+      "tool_selection_accuracy": null,
+      "intent_correct": null,
+      "route_correct": null,
+      "agents_correct": null,
+      "constraint_report": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "constraint_checker",
+        "status": "success",
+        "success": true,
+        "input": {
+          "request": {
+            "case_id": "day4_trace_turn2",
+            "user_input": "same plan again",
+            "city": "",
+            "days": 3,
+            "budget": null
+          },
+          "constraints": {
+            "days": 3
+          }
+        },
+        "data": {
+          "all_passed": false,
+          "applicable_count": 2,
+          "passed_count": 1,
+          "failed_count": 1,
+          "checks": [
+            {
+              "name": "trip_days",
+              "status": "failed",
+              "passed": false,
+              "details": {
+                "expected": 3,
+                "actual": 2
+              }
+            },
+            {
+              "name": "budget_limit",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "limit": null,
+                "actual": 3058.28
+              }
+            },
+            {
+              "name": "weather_adjustment",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "required": true,
+                "adjustment_count": 1
+              }
+            },
+            {
+              "name": "min_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "minimum": null,
+                "actual": 4
+              }
+            },
+            {
+              "name": "max_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "maximum": null,
+                "actual": 4
+              }
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "deterministic_evaluator",
+          "real_time_api_allowed": false,
+          "contract": "ctp-research-tools-v1.0"
+        }
+      },
+      "hard_constraint_applicable_count": 2,
+      "hard_constraint_passed_count": 1,
+      "hard_constraint_failed_count": 1,
+      "hard_constraints_all_satisfied": false,
+      "hcsr": 0.5,
+      "m3_scheduler_name": "goal_state_scheduler",
+      "m3_task_type": "partial_replan",
+      "m3_clarification_required": false,
+      "m3_clarification_fields": [],
+      "m3_clarification_field_count": 0,
+      "m3_decision_reasons": [
+        "identical_request_reuse_all"
+      ],
+      "m3_planned_agents": [],
+      "m3_reused_agents": [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ],
+      "m3_invalidated_agents": [],
+      "m3_planned_tools": [],
+      "m3_expected_reused_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "m3_reused_tool_results": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "m3_missing_reused_tool_results": [],
+      "m3_previous_state_provided": true,
+      "m3_m2_reference_agent_count": 4,
+      "m3_m2_reference_tool_count": 3,
+      "m3_planned_agent_count": 0,
+      "m3_executed_agent_count": 0,
+      "m3_reused_agent_count": 4,
+      "m3_invalidated_agent_count": 0,
+      "m3_planned_tool_count": 0,
+      "m3_executed_tool_count": 0,
+      "m3_expected_reused_tool_count": 3,
+      "m3_reused_tool_result_count": 3,
+      "m3_missing_reused_tool_result_count": 0,
+      "m3_agent_reuse_rate": 1.0,
+      "m3_tool_reuse_rate": 1.0,
+      "m3_reuse_hit_rate": 1.0,
+      "m3_agent_call_savings_vs_m2": 4,
+      "m3_tool_call_savings_vs_m2": 3,
+      "m3_agent_call_reduction_rate_vs_m2": 1.0,
+      "m3_tool_call_reduction_rate_vs_m2": 1.0
+    },
+    "error": null
+  }
+]
