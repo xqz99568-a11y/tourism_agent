@@ -10,6 +10,7 @@ from app.core.goal_state_scheduler import (
     DECISION_SCHEMA_VERSION,
     TICKET_SCHEMA_VERSION,
     build_goal_state_ticket,
+    is_goal_state_agent_reusable,
     normalize_slots,
     schedule_goal_state_ticket,
 )
@@ -414,6 +415,86 @@ def test_expired_previous_result_is_not_reusable() -> None:
     )
 
 
+def test_expired_previous_state_flags_are_not_reusable() -> None:
+    slots = {
+        "destination": "hangzhou",
+        "start_date": "2026-08-01",
+        "duration_days": 2,
+        "people_count": 2,
+    }
+    for marker, value in (
+        ("status", "expired"),
+        ("expired", True),
+    ):
+        previous_state = _successful_previous_state(slots, agents=("attraction",))
+        previous_state[marker] = value
+
+        assert not is_goal_state_agent_reusable(
+            "attraction",
+            current_slots=slots,
+            previous_state=previous_state,
+        )
+
+
+def test_expired_tool_result_flag_is_not_reusable() -> None:
+    slots = {
+        "destination": "hangzhou",
+        "start_date": "2026-08-01",
+        "duration_days": 2,
+        "people_count": 2,
+    }
+    previous_state = _successful_previous_state(slots, agents=("attraction",))
+    previous_state["tool_results"]["poi_search"]["expired"] = True
+
+    assert not is_goal_state_agent_reusable(
+        "attraction",
+        current_slots=slots,
+        previous_state=previous_state,
+    )
+
+
+def test_previous_fingerprint_extra_conditions_do_not_match_missing_current_slots() -> None:
+    current_slots = {
+        "destination": "hangzhou",
+        "duration_days": 2,
+        "people_count": 2,
+    }
+
+    attraction_state = _successful_previous_state(
+        {"destination": "hangzhou"},
+        agents=("attraction",),
+    )
+    attraction_state["result_fingerprints"] = {
+        "attraction": {
+            "destination": "hangzhou",
+            "preferences": ["museum"],
+        }
+    }
+    assert not is_goal_state_agent_reusable(
+        "attraction",
+        current_slots={"destination": "hangzhou"},
+        previous_state=attraction_state,
+    )
+
+    budget_state = _successful_previous_state(
+        current_slots,
+        agents=("attraction", "budget"),
+    )
+    budget_state["result_fingerprints"] = {
+        "budget": {
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_level": "luxury",
+        }
+    }
+    assert not is_goal_state_agent_reusable(
+        "budget",
+        current_slots=current_slots,
+        previous_state=budget_state,
+    )
+
+
 def test_empty_preferences_and_none_budget_are_explicit_slot_changes() -> None:
     previous_state = _successful_previous_state(
         {
@@ -461,6 +542,29 @@ def test_regenerate_wins_over_same_condition_terms() -> None:
     assert decision.planned_agents == ["attraction", "weather", "itinerary", "budget"]
     assert decision.reused_agents == []
     assert decision.decision_reasons == ["explicit_replan_requested"]
+
+
+def test_attraction_expansion_wins_over_same_condition_terms() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "destination": "hangzhou",
+            "start_date": "2026-08-01",
+            "duration_days": 2,
+            "people_count": 2,
+        }
+    )
+
+    ticket = build_goal_state_ticket(
+        user_input="same plan, recommend more attractions",
+        current_slots={},
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.goal_change_type == "goal_shift_attraction"
+    assert ticket.task_type == "attraction_recommendation"
+    assert decision.planned_agents == ["attraction"]
+    assert decision.reused_agents == []
 
 
 def test_normalize_slots_ignores_empty_values_and_unknown_fields() -> None:

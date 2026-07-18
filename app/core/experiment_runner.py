@@ -1301,6 +1301,11 @@ class ExperimentRunner:
         return self._session_id_with_repeat(f"exp-{case['case_id']}-{method}")
 
     def _session_id_with_repeat(self, session_id: str) -> str:
+        run_id = os.getenv("EXPERIMENT_RUN_ID")
+        if run_id:
+            run_suffix = f"-run-{_session_component(run_id)}"
+            if not session_id.endswith(run_suffix) and run_suffix not in session_id:
+                session_id = f"{session_id}{run_suffix}"
         repeat_index = os.getenv("EXPERIMENT_REPEAT_INDEX")
         if repeat_index is None:
             return session_id
@@ -2722,6 +2727,12 @@ def _optional_text(value: Any) -> Optional[str]:
         return None
     text = str(value).strip()
     return text or None
+
+
+def _session_component(value: Any) -> str:
+    text = _optional_text(value) or "run"
+    safe = "".join(char if char.isalnum() or char in "_.-" else "_" for char in text)
+    return safe.strip("._-") or "run"
 
 
 def _validate_repeats(value: Any) -> int:

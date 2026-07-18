@@ -2118,6 +2118,59 @@
           "identical_request_reuse_all"
         ]
       }
+    },
+    {
+      "case_id": "sched_016_same_plan_more_attractions",
+      "turn_type": "multi_turn",
+      "user_input": "same plan, recommend more attractions",
+      "previous_state": {
+        "slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-10",
+          "duration_days": 3,
+          "people_count": 2,
+          "traveler_group": "adult",
+          "budget_level": "standard",
+          "preferences": [
+            "classic"
+          ]
+        }
+      },
+      "current_slots": {},
+      "expected_ticket": {
+        "task_type": "attraction_recommendation",
+        "changed_slots": [],
+        "preserved_slots": [
+          "destination",
+          "start_date",
+          "duration_days",
+          "people_count",
+          "traveler_group",
+          "budget_level",
+          "preferences"
+        ],
+        "missing_slots": [],
+        "required_capabilities": [
+          "poi_evidence"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "attraction"
+        ],
+        "planned_tools": [
+          "poi_search"
+        ],
+        "reused_agents": [],
+        "invalidated_agents": [],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "single_capability_request"
+        ]
+      }
     }
   ]
 }

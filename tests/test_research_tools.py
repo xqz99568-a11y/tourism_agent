@@ -749,6 +749,36 @@ def test_experiment_session_id_is_isolated_by_repeat_index(tmp_path: Path) -> No
     assert first["trace"]["session_id"] != second["trace"]["session_id"]
 
 
+def test_experiment_session_id_is_isolated_by_run_id(tmp_path: Path) -> None:
+    class FakeLLM:
+        async def chat(self, messages, tools=None):
+            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    case = {
+        "case_id": "run-session-isolation",
+        "user_input": "recommend attractions in Hangzhou",
+        "slots": {"destination": "hangzhou"},
+    }
+
+    first = runner.run(
+        case,
+        method="adaptive_multi_agent",
+        run_id="run-A",
+        repeat_index=0,
+    )
+    second = runner.run(
+        case,
+        method="adaptive_multi_agent",
+        run_id="run-B",
+        repeat_index=0,
+    )
+
+    assert "-run-run-A-r0" in first["trace"]["session_id"]
+    assert "-run-run-B-r0" in second["trace"]["session_id"]
+    assert first["trace"]["session_id"] != second["trace"]["session_id"]
+
+
 def test_real_m3_rejects_reuse_when_previous_tool_input_fingerprint_mismatches(
     tmp_path: Path,
 ) -> None:

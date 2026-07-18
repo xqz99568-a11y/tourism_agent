@@ -358,10 +358,10 @@ class GoalStateTicketBuilder:
         text = _normalize_text(user_input)
         if _contains_any(text, EXPLICIT_REPLAN_TERMS):
             return "explicit_replan"
-        if _contains_any(text, IDENTICAL_REQUEST_TERMS):
-            return "identical_request"
         if _contains_any(text, ATTRACTION_EXPANSION_TERMS):
             return "goal_shift_attraction"
+        if _contains_any(text, IDENTICAL_REQUEST_TERMS):
+            return "identical_request"
         if _contains_any(text, GENERAL_CHAT_TERMS) and not _contains_any(
             text,
             TRIP_TERMS + ATTRACTION_TERMS + WEATHER_TERMS + BUDGET_TERMS,
@@ -1150,6 +1150,8 @@ def _raw_agent_available(
 ) -> bool:
     if not isinstance(previous_state, Mapping):
         return False
+    if _previous_state_failed(previous_state):
+        return False
     available_results = previous_state.get("available_results")
     if isinstance(available_results, Mapping) and agent_name in available_results:
         if not bool(available_results.get(agent_name)):
@@ -1167,6 +1169,8 @@ def _agent_has_successful_artifact(
     *,
     previous_state: Mapping[str, Any] | None,
 ) -> bool:
+    if _previous_state_failed(previous_state):
+        return False
     if not _raw_agent_available(previous_state, agent_name):
         return False
     tool_results = _previous_tool_results_from_state(previous_state)
@@ -1191,6 +1195,17 @@ def _agent_has_successful_artifact(
 def _previous_state_failed(previous_state: Mapping[str, Any] | None) -> bool:
     if not isinstance(previous_state, Mapping):
         return False
+    if any(
+        _truthy_expired_flag(value)
+        for value in (
+            previous_state.get("expired"),
+            previous_state.get("stale"),
+            _nested_mapping(previous_state, "trace", "expired"),
+            _nested_mapping(previous_state, "output", "expired"),
+            _nested_mapping(previous_state, "raw_output", "expired"),
+        )
+    ):
+        return True
     candidates = [
         previous_state.get("status"),
         previous_state.get("execution_status"),
@@ -1206,6 +1221,8 @@ def _previous_state_failed(previous_state: Mapping[str, Any] | None) -> bool:
 
 def _tool_result_success(result: Any) -> bool:
     if not isinstance(result, Mapping):
+        return False
+    if _truthy_expired_flag(result.get("expired")) or _truthy_expired_flag(result.get("stale")):
         return False
     status = str(result.get("status") or "").lower()
     if status in {
@@ -1353,6 +1370,8 @@ def _fingerprint_candidate_matches(
         if slot not in comparable_slots:
             continue
         if slot not in expected:
+            if not _fingerprint_extra_missing_is_allowed(agent_name, slot, candidate_value):
+                return False
             continue
         if _fingerprint_value(expected.get(slot)) != _fingerprint_value(candidate_value):
             return False
@@ -1370,6 +1389,25 @@ def _fingerprint_missing_is_allowed(agent_name: str, slot: str) -> bool:
     } or (
         agent_name == "budget" and slot in {"preferences", "traveler_group"}
     )
+
+
+def _fingerprint_extra_missing_is_allowed(agent_name: str, slot: str, value: Any) -> bool:
+    normalized = _fingerprint_value(value)
+    if _is_empty_value(normalized):
+        return True
+    if slot == "traveler_group" and normalized == "general":
+        return True
+    if slot == "weather_scenario" and normalized == "sunny":
+        return True
+    if slot == "budget_level" and normalized == "medium":
+        return True
+    return False
+
+
+def _truthy_expired_flag(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value or "").strip().lower() in {"1", "true", "yes", "expired", "stale"}
 
 
 def _normalize_fingerprint(value: Mapping[str, Any]) -> dict[str, Any]:
