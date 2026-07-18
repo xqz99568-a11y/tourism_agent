@@ -1,7 +1,11 @@
 import asyncio
+import json
 import os
+import shutil
 import sys
 from pathlib import Path
+
+import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -14,7 +18,18 @@ from app.agents.base import AgentStatus
 from app.agents.budget import BudgetAgent
 from app.core.context import ExecutionContext, SessionContext
 from app.core.experiment_runner import ExperimentRunner
-from app.core.fixed_data import FIXED_CITY_IDS, FixedTourismData, get_fixed_tourism_data
+from app.core.fixed_data import (
+    DATA_ROOT,
+    FIXED_CITY_IDS,
+    FIXED_DATA_EXPECTED_COMBINED_SHA256,
+    FIXED_DATA_EXPECTED_FILE_COUNT,
+    FIXED_DATA_EXPECTED_FILE_HASHES,
+    FIXED_DATA_SNAPSHOT_DIRS,
+    FixedDataError,
+    FixedTourismData,
+    get_fixed_tourism_data,
+    validate_fixed_data_snapshot,
+)
 from app.tools.budget_calc import BudgetCalculatorTool
 from app.tools.poi_search import POIDetailTool, POISearchTool
 from app.tools.route_plan import RoutePlanningTool
@@ -32,6 +47,45 @@ REQUIRED_METADATA_FIELDS = {
     "snapshot_date",
     "data_mode",
 }
+
+
+def test_fixed_data_snapshot_matches_locked_hashes() -> None:
+    manifest = validate_fixed_data_snapshot()
+
+    assert manifest["file_count"] == FIXED_DATA_EXPECTED_FILE_COUNT == 25
+    assert manifest["combined_sha256"] == FIXED_DATA_EXPECTED_COMBINED_SHA256
+    assert manifest["missing_files"] == []
+    assert {item["path"]: item["sha256"] for item in manifest["files"]} == FIXED_DATA_EXPECTED_FILE_HASHES
+
+
+def test_fixed_data_snapshot_validation_fails_when_file_missing(tmp_path: Path) -> None:
+    data_root = _copy_fixed_snapshot(tmp_path)
+    (data_root / "pois" / "beijing.json").unlink()
+
+    with pytest.raises(FixedDataError, match="missing fixed data files"):
+        validate_fixed_data_snapshot(data_root)
+
+
+def test_fixed_data_snapshot_validation_fails_when_file_modified(tmp_path: Path) -> None:
+    data_root = _copy_fixed_snapshot(tmp_path)
+    target = data_root / "weather" / "hangzhou.json"
+    payload = json.loads(target.read_text(encoding="utf-8"))
+    payload["metadata"]["snapshot_test_mutation"] = True
+    target.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    with pytest.raises(FixedDataError, match="modified fixed data files"):
+        validate_fixed_data_snapshot(data_root)
+
+
+def _copy_fixed_snapshot(tmp_path: Path) -> Path:
+    data_root = tmp_path / "data"
+    for directory in FIXED_DATA_SNAPSHOT_DIRS:
+        for city_id in FIXED_CITY_IDS:
+            source = DATA_ROOT / directory / f"{city_id}.json"
+            target = data_root / directory / f"{city_id}.json"
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, target)
+    return data_root
 
 
 def test_fixed_five_city_data_and_transport_matrix_are_complete() -> None:

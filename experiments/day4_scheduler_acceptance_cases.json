@@ -1,0 +1,2176 @@
+{
+  "schema_version": "ctp-day4-scheduler-acceptance-v1",
+  "description": "Day4 task 1 frozen acceptance cases for the goal-state adaptive scheduler. These cases are for scheduler logic only and must not call real LLMs or external APIs.",
+  "ticket_schema_version": "ctp-goal-state-ticket-v1",
+  "decision_schema_version": "ctp-scheduler-decision-v1",
+  "canonical_agent_order": [
+    "attraction",
+    "weather",
+    "itinerary",
+    "budget"
+  ],
+  "canonical_tool_order": [
+    "poi_search",
+    "weather_query",
+    "budget_calculator"
+  ],
+  "cases": [
+    {
+      "case_id": "sched_001_full_new_plan",
+      "turn_type": "single_turn",
+      "user_input": "我想和朋友两个人 2026-08-10 去北京玩 3 天，预算标准，帮我做完整行程。",
+      "previous_state": null,
+      "current_slots": {
+        "destination": "beijing",
+        "start_date": "2026-08-10",
+        "duration_days": 3,
+        "people_count": 2,
+        "traveler_group": "adult",
+        "budget_level": "standard",
+        "preferences": []
+      },
+      "expected_ticket": {
+        "task_type": "trip_planning",
+        "changed_slots": [
+          "destination",
+          "start_date",
+          "duration_days",
+          "people_count",
+          "traveler_group",
+          "budget_level"
+        ],
+        "preserved_slots": [],
+        "missing_slots": [],
+        "required_capabilities": [
+          "poi_evidence",
+          "weather_evidence",
+          "itinerary_generation",
+          "budget_estimation"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "planned_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "reused_agents": [],
+        "invalidated_agents": [],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "new_full_plan"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_002_missing_destination",
+      "turn_type": "single_turn",
+      "user_input": "我想 2026-08-10 出发玩 3 天，两个人，帮我做完整旅行计划。",
+      "previous_state": null,
+      "current_slots": {
+        "start_date": "2026-08-10",
+        "duration_days": 3,
+        "people_count": 2,
+        "traveler_group": "adult"
+      },
+      "expected_ticket": {
+        "task_type": "clarification",
+        "changed_slots": [
+          "start_date",
+          "duration_days",
+          "people_count",
+          "traveler_group"
+        ],
+        "preserved_slots": [],
+        "missing_slots": [
+          "destination"
+        ],
+        "required_capabilities": [
+          "clarification"
+        ],
+        "clarification_required": true,
+        "clarification_fields": [
+          "destination"
+        ]
+      },
+      "expected_decision": {
+        "planned_agents": [],
+        "planned_tools": [],
+        "reused_agents": [],
+        "invalidated_agents": [],
+        "clarification_required": true,
+        "clarification_fields": [
+          "destination"
+        ],
+        "decision_reasons": [
+          "missing_required_slots"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_003_attraction_only",
+      "turn_type": "single_turn",
+      "user_input": "推荐几个杭州适合拍照打卡的景点就行。",
+      "previous_state": null,
+      "current_slots": {
+        "destination": "hangzhou",
+        "preferences": [
+          "photo_spot"
+        ]
+      },
+      "expected_ticket": {
+        "task_type": "attraction_recommendation",
+        "changed_slots": [
+          "destination",
+          "preferences"
+        ],
+        "preserved_slots": [],
+        "missing_slots": [],
+        "required_capabilities": [
+          "poi_evidence"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "attraction"
+        ],
+        "planned_tools": [
+          "poi_search"
+        ],
+        "reused_agents": [],
+        "invalidated_agents": [],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "single_capability_request"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_004_weather_only",
+      "turn_type": "single_turn",
+      "user_input": "帮我查一下西安 2026-08-10 开始两天的天气风险。",
+      "previous_state": null,
+      "current_slots": {
+        "destination": "xian",
+        "start_date": "2026-08-10",
+        "duration_days": 2
+      },
+      "expected_ticket": {
+        "task_type": "weather_query",
+        "changed_slots": [
+          "destination",
+          "start_date",
+          "duration_days"
+        ],
+        "preserved_slots": [],
+        "missing_slots": [],
+        "required_capabilities": [
+          "weather_evidence"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "weather"
+        ],
+        "planned_tools": [
+          "weather_query"
+        ],
+        "reused_agents": [],
+        "invalidated_agents": [],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "single_capability_request"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_005_budget_from_existing_plan",
+      "turn_type": "multi_turn",
+      "user_input": "这个方案大概要花多少钱？",
+      "previous_state": {
+        "slots": {
+          "destination": "guilin",
+          "start_date": "2026-09-01",
+          "duration_days": 3,
+          "people_count": 2,
+          "traveler_group": "adult",
+          "budget_level": "standard",
+          "preferences": [
+            "classic"
+          ]
+        },
+        "available_results": {
+          "attraction": "fingerprint:guilin_classic_poi_v1",
+          "weather": "fingerprint:guilin_20260901_weather_v1",
+          "itinerary": "fingerprint:guilin_3d_itinerary_v1"
+        },
+        "tool_results": {
+          "poi_search": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "guilin",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "limit": 6
+            },
+            "data": {
+              "city": "guilin",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "attractions": [
+                {
+                  "poi_id": "guilin_poi_001",
+                  "name": "guilin poi 1",
+                  "city": "guilin",
+                  "category": "attraction",
+                  "indoor_outdoor": "outdoor"
+                },
+                {
+                  "poi_id": "guilin_poi_002",
+                  "name": "guilin poi 2",
+                  "city": "guilin",
+                  "category": "attraction",
+                  "indoor_outdoor": "indoor"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "guilin",
+              "date": "2026-09-01",
+              "days": 3,
+              "scenario_type": "sunny"
+            },
+            "data": {
+              "city": "guilin",
+              "date": "2026-09-01",
+              "scenario_type": "sunny",
+              "daily_weather": [
+                {
+                  "date": "2026-09-01",
+                  "condition": "sunny",
+                  "risk_level": "low"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          }
+        },
+        "daily_itinerary": [
+          {
+            "day": 1,
+            "attractions": [
+              {
+                "poi_id": "guilin_poi_001",
+                "name": "guilin poi 1"
+              }
+            ],
+            "notes": "acceptance fixture itinerary artifact"
+          }
+        ]
+      },
+      "current_slots": {
+        "destination": "guilin",
+        "start_date": "2026-09-01",
+        "duration_days": 3,
+        "people_count": 2,
+        "traveler_group": "adult",
+        "budget_level": "standard",
+        "preferences": [
+          "classic"
+        ]
+      },
+      "expected_ticket": {
+        "task_type": "budget_query",
+        "changed_slots": [],
+        "preserved_slots": [
+          "destination",
+          "start_date",
+          "duration_days",
+          "people_count",
+          "traveler_group",
+          "budget_level",
+          "preferences"
+        ],
+        "missing_slots": [],
+        "required_capabilities": [
+          "budget_estimation"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "budget"
+        ],
+        "planned_tools": [
+          "budget_calculator"
+        ],
+        "reused_agents": [
+          "attraction"
+        ],
+        "invalidated_agents": [],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "single_capability_request"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_006_general_chat",
+      "turn_type": "single_turn",
+      "user_input": "你好，今天心情不错。",
+      "previous_state": null,
+      "current_slots": {},
+      "expected_ticket": {
+        "task_type": "general_chat",
+        "changed_slots": [],
+        "preserved_slots": [],
+        "missing_slots": [],
+        "required_capabilities": [
+          "chat_response"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [],
+        "planned_tools": [],
+        "reused_agents": [],
+        "invalidated_agents": [],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "general_chat_no_agents"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_007_destination_changed",
+      "turn_type": "multi_turn",
+      "user_input": "目的地改成桂林，其他条件不变，重新做完整计划。",
+      "previous_state": {
+        "slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-09-01",
+          "duration_days": 3,
+          "people_count": 2,
+          "traveler_group": "adult",
+          "budget_level": "standard",
+          "preferences": [
+            "classic"
+          ]
+        },
+        "available_results": {
+          "attraction": "fingerprint:hangzhou_classic_poi_v1",
+          "weather": "fingerprint:hangzhou_20260901_weather_v1",
+          "itinerary": "fingerprint:hangzhou_3d_itinerary_v1",
+          "budget": "fingerprint:hangzhou_3d_budget_v1"
+        },
+        "tool_results": {
+          "poi_search": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "limit": 6
+            },
+            "data": {
+              "city": "hangzhou",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "attractions": [
+                {
+                  "poi_id": "hangzhou_poi_001",
+                  "name": "hangzhou poi 1",
+                  "city": "hangzhou",
+                  "category": "attraction",
+                  "indoor_outdoor": "outdoor"
+                },
+                {
+                  "poi_id": "hangzhou_poi_002",
+                  "name": "hangzhou poi 2",
+                  "city": "hangzhou",
+                  "category": "attraction",
+                  "indoor_outdoor": "indoor"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "date": "2026-09-01",
+              "days": 3,
+              "scenario_type": "sunny"
+            },
+            "data": {
+              "city": "hangzhou",
+              "date": "2026-09-01",
+              "scenario_type": "sunny",
+              "daily_weather": [
+                {
+                  "date": "2026-09-01",
+                  "condition": "sunny",
+                  "risk_level": "low"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "budget_calculator": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "budget_calculator",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "people_count": 2,
+              "days": 3,
+              "attractions": [
+                "hangzhou_poi_001",
+                "hangzhou_poi_002"
+              ],
+              "spending_level": "standard"
+            },
+            "data": {
+              "city": "hangzhou",
+              "people_count": 2,
+              "days": 3,
+              "spending_level": "standard",
+              "currency": "CNY",
+              "total": 1000
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          }
+        },
+        "daily_itinerary": [
+          {
+            "day": 1,
+            "attractions": [
+              {
+                "poi_id": "hangzhou_poi_001",
+                "name": "hangzhou poi 1"
+              }
+            ],
+            "notes": "acceptance fixture itinerary artifact"
+          }
+        ]
+      },
+      "current_slots": {
+        "destination": "guilin",
+        "start_date": "2026-09-01",
+        "duration_days": 3,
+        "people_count": 2,
+        "traveler_group": "adult",
+        "budget_level": "standard",
+        "preferences": [
+          "classic"
+        ]
+      },
+      "expected_ticket": {
+        "task_type": "partial_replan",
+        "changed_slots": [
+          "destination"
+        ],
+        "preserved_slots": [
+          "start_date",
+          "duration_days",
+          "people_count",
+          "traveler_group",
+          "budget_level",
+          "preferences"
+        ],
+        "missing_slots": [],
+        "required_capabilities": [
+          "poi_evidence",
+          "weather_evidence",
+          "itinerary_generation",
+          "budget_estimation"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "planned_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "reused_agents": [],
+        "invalidated_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "destination_changed_invalidate_all"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_008_duration_changed",
+      "turn_type": "multi_turn",
+      "user_input": "还是杭州，但从 3 天改成 4 天，其他不变。",
+      "previous_state": {
+        "slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-09-01",
+          "duration_days": 3,
+          "people_count": 2,
+          "traveler_group": "adult",
+          "budget_level": "standard",
+          "preferences": [
+            "classic"
+          ]
+        },
+        "available_results": {
+          "attraction": "fingerprint:hangzhou_classic_poi_v1",
+          "weather": "fingerprint:hangzhou_20260901_3d_weather_v1",
+          "itinerary": "fingerprint:hangzhou_3d_itinerary_v1",
+          "budget": "fingerprint:hangzhou_3d_budget_v1"
+        },
+        "tool_results": {
+          "poi_search": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "limit": 6
+            },
+            "data": {
+              "city": "hangzhou",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "attractions": [
+                {
+                  "poi_id": "hangzhou_poi_001",
+                  "name": "hangzhou poi 1",
+                  "city": "hangzhou",
+                  "category": "attraction",
+                  "indoor_outdoor": "outdoor"
+                },
+                {
+                  "poi_id": "hangzhou_poi_002",
+                  "name": "hangzhou poi 2",
+                  "city": "hangzhou",
+                  "category": "attraction",
+                  "indoor_outdoor": "indoor"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "date": "2026-09-01",
+              "days": 3,
+              "scenario_type": "sunny"
+            },
+            "data": {
+              "city": "hangzhou",
+              "date": "2026-09-01",
+              "scenario_type": "sunny",
+              "daily_weather": [
+                {
+                  "date": "2026-09-01",
+                  "condition": "sunny",
+                  "risk_level": "low"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "budget_calculator": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "budget_calculator",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "people_count": 2,
+              "days": 3,
+              "attractions": [
+                "hangzhou_poi_001",
+                "hangzhou_poi_002"
+              ],
+              "spending_level": "standard"
+            },
+            "data": {
+              "city": "hangzhou",
+              "people_count": 2,
+              "days": 3,
+              "spending_level": "standard",
+              "currency": "CNY",
+              "total": 1000
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          }
+        },
+        "daily_itinerary": [
+          {
+            "day": 1,
+            "attractions": [
+              {
+                "poi_id": "hangzhou_poi_001",
+                "name": "hangzhou poi 1"
+              }
+            ],
+            "notes": "acceptance fixture itinerary artifact"
+          }
+        ]
+      },
+      "current_slots": {
+        "destination": "hangzhou",
+        "start_date": "2026-09-01",
+        "duration_days": 4,
+        "people_count": 2,
+        "traveler_group": "adult",
+        "budget_level": "standard",
+        "preferences": [
+          "classic"
+        ]
+      },
+      "expected_ticket": {
+        "task_type": "partial_replan",
+        "changed_slots": [
+          "duration_days"
+        ],
+        "preserved_slots": [
+          "destination",
+          "start_date",
+          "people_count",
+          "traveler_group",
+          "budget_level",
+          "preferences"
+        ],
+        "missing_slots": [],
+        "required_capabilities": [
+          "weather_evidence",
+          "itinerary_generation",
+          "budget_estimation"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "planned_tools": [
+          "weather_query",
+          "budget_calculator"
+        ],
+        "reused_agents": [
+          "attraction"
+        ],
+        "invalidated_agents": [
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "duration_changed_partial_replan"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_009_start_date_changed",
+      "turn_type": "multi_turn",
+      "user_input": "出发日期改到 2026-09-05，天数和人数不变。",
+      "previous_state": {
+        "slots": {
+          "destination": "beijing",
+          "start_date": "2026-09-01",
+          "duration_days": 3,
+          "people_count": 2,
+          "traveler_group": "adult",
+          "budget_level": "standard",
+          "preferences": [
+            "classic"
+          ]
+        },
+        "available_results": {
+          "attraction": "fingerprint:beijing_classic_poi_v1",
+          "weather": "fingerprint:beijing_20260901_weather_v1",
+          "itinerary": "fingerprint:beijing_20260901_itinerary_v1",
+          "budget": "fingerprint:beijing_3d_budget_v1"
+        },
+        "tool_results": {
+          "poi_search": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "beijing",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "limit": 6
+            },
+            "data": {
+              "city": "beijing",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "attractions": [
+                {
+                  "poi_id": "beijing_poi_001",
+                  "name": "beijing poi 1",
+                  "city": "beijing",
+                  "category": "attraction",
+                  "indoor_outdoor": "outdoor"
+                },
+                {
+                  "poi_id": "beijing_poi_002",
+                  "name": "beijing poi 2",
+                  "city": "beijing",
+                  "category": "attraction",
+                  "indoor_outdoor": "indoor"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "beijing",
+              "date": "2026-09-01",
+              "days": 3,
+              "scenario_type": "sunny"
+            },
+            "data": {
+              "city": "beijing",
+              "date": "2026-09-01",
+              "scenario_type": "sunny",
+              "daily_weather": [
+                {
+                  "date": "2026-09-01",
+                  "condition": "sunny",
+                  "risk_level": "low"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "budget_calculator": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "budget_calculator",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "beijing",
+              "people_count": 2,
+              "days": 3,
+              "attractions": [
+                "beijing_poi_001",
+                "beijing_poi_002"
+              ],
+              "spending_level": "standard"
+            },
+            "data": {
+              "city": "beijing",
+              "people_count": 2,
+              "days": 3,
+              "spending_level": "standard",
+              "currency": "CNY",
+              "total": 1000
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          }
+        },
+        "daily_itinerary": [
+          {
+            "day": 1,
+            "attractions": [
+              {
+                "poi_id": "beijing_poi_001",
+                "name": "beijing poi 1"
+              }
+            ],
+            "notes": "acceptance fixture itinerary artifact"
+          }
+        ]
+      },
+      "current_slots": {
+        "destination": "beijing",
+        "start_date": "2026-09-05",
+        "duration_days": 3,
+        "people_count": 2,
+        "traveler_group": "adult",
+        "budget_level": "standard",
+        "preferences": [
+          "classic"
+        ]
+      },
+      "expected_ticket": {
+        "task_type": "partial_replan",
+        "changed_slots": [
+          "start_date"
+        ],
+        "preserved_slots": [
+          "destination",
+          "duration_days",
+          "people_count",
+          "traveler_group",
+          "budget_level",
+          "preferences"
+        ],
+        "missing_slots": [],
+        "required_capabilities": [
+          "weather_evidence",
+          "itinerary_generation"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "weather",
+          "itinerary"
+        ],
+        "planned_tools": [
+          "weather_query"
+        ],
+        "reused_agents": [
+          "attraction",
+          "budget"
+        ],
+        "invalidated_agents": [
+          "weather",
+          "itinerary"
+        ],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "date_changed_weather_replan"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_010_people_count_changed",
+      "turn_type": "multi_turn",
+      "user_input": "人数从 2 个成人改成 4 个成人，看看预算变化。",
+      "previous_state": {
+        "slots": {
+          "destination": "xian",
+          "start_date": "2026-10-01",
+          "duration_days": 3,
+          "people_count": 2,
+          "traveler_group": "adult",
+          "budget_level": "standard",
+          "preferences": [
+            "history"
+          ]
+        },
+        "available_results": {
+          "attraction": "fingerprint:xian_history_poi_v1",
+          "weather": "fingerprint:xian_20261001_weather_v1",
+          "itinerary": "fingerprint:xian_3d_itinerary_v1",
+          "budget": "fingerprint:xian_2p_budget_v1"
+        },
+        "tool_results": {
+          "poi_search": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "xian",
+              "preferences": [
+                "history"
+              ],
+              "people": "adult",
+              "limit": 6
+            },
+            "data": {
+              "city": "xian",
+              "preferences": [
+                "history"
+              ],
+              "people": "adult",
+              "attractions": [
+                {
+                  "poi_id": "xian_poi_001",
+                  "name": "xian poi 1",
+                  "city": "xian",
+                  "category": "attraction",
+                  "indoor_outdoor": "outdoor"
+                },
+                {
+                  "poi_id": "xian_poi_002",
+                  "name": "xian poi 2",
+                  "city": "xian",
+                  "category": "attraction",
+                  "indoor_outdoor": "indoor"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "xian",
+              "date": "2026-10-01",
+              "days": 3,
+              "scenario_type": "sunny"
+            },
+            "data": {
+              "city": "xian",
+              "date": "2026-10-01",
+              "scenario_type": "sunny",
+              "daily_weather": [
+                {
+                  "date": "2026-10-01",
+                  "condition": "sunny",
+                  "risk_level": "low"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "budget_calculator": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "budget_calculator",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "xian",
+              "people_count": 2,
+              "days": 3,
+              "attractions": [
+                "xian_poi_001",
+                "xian_poi_002"
+              ],
+              "spending_level": "standard"
+            },
+            "data": {
+              "city": "xian",
+              "people_count": 2,
+              "days": 3,
+              "spending_level": "standard",
+              "currency": "CNY",
+              "total": 1000
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          }
+        },
+        "daily_itinerary": [
+          {
+            "day": 1,
+            "attractions": [
+              {
+                "poi_id": "xian_poi_001",
+                "name": "xian poi 1"
+              }
+            ],
+            "notes": "acceptance fixture itinerary artifact"
+          }
+        ]
+      },
+      "current_slots": {
+        "destination": "xian",
+        "start_date": "2026-10-01",
+        "duration_days": 3,
+        "people_count": 4,
+        "traveler_group": "adult",
+        "budget_level": "standard",
+        "preferences": [
+          "history"
+        ]
+      },
+      "expected_ticket": {
+        "task_type": "budget_query",
+        "changed_slots": [
+          "people_count"
+        ],
+        "preserved_slots": [
+          "destination",
+          "start_date",
+          "duration_days",
+          "traveler_group",
+          "budget_level",
+          "preferences"
+        ],
+        "missing_slots": [],
+        "required_capabilities": [
+          "budget_estimation"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "budget"
+        ],
+        "planned_tools": [
+          "budget_calculator"
+        ],
+        "reused_agents": [
+          "attraction"
+        ],
+        "invalidated_agents": [
+          "budget"
+        ],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "people_count_changed_budget_only"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_011_traveler_group_changed",
+      "turn_type": "multi_turn",
+      "user_input": "同行人改成带老人，行程少走路一点。",
+      "previous_state": {
+        "slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-10",
+          "duration_days": 3,
+          "people_count": 2,
+          "traveler_group": "adult",
+          "budget_level": "standard",
+          "preferences": [
+            "classic"
+          ]
+        },
+        "available_results": {
+          "attraction": "fingerprint:beijing_adult_poi_v1",
+          "weather": "fingerprint:beijing_20260810_weather_v1",
+          "itinerary": "fingerprint:beijing_adult_itinerary_v1",
+          "budget": "fingerprint:beijing_adult_budget_v1"
+        },
+        "tool_results": {
+          "poi_search": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "beijing",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "limit": 6
+            },
+            "data": {
+              "city": "beijing",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "attractions": [
+                {
+                  "poi_id": "beijing_poi_001",
+                  "name": "beijing poi 1",
+                  "city": "beijing",
+                  "category": "attraction",
+                  "indoor_outdoor": "outdoor"
+                },
+                {
+                  "poi_id": "beijing_poi_002",
+                  "name": "beijing poi 2",
+                  "city": "beijing",
+                  "category": "attraction",
+                  "indoor_outdoor": "indoor"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "beijing",
+              "date": "2026-08-10",
+              "days": 3,
+              "scenario_type": "sunny"
+            },
+            "data": {
+              "city": "beijing",
+              "date": "2026-08-10",
+              "scenario_type": "sunny",
+              "daily_weather": [
+                {
+                  "date": "2026-08-10",
+                  "condition": "sunny",
+                  "risk_level": "low"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "budget_calculator": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "budget_calculator",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "beijing",
+              "people_count": 2,
+              "days": 3,
+              "attractions": [
+                "beijing_poi_001",
+                "beijing_poi_002"
+              ],
+              "spending_level": "standard"
+            },
+            "data": {
+              "city": "beijing",
+              "people_count": 2,
+              "days": 3,
+              "spending_level": "standard",
+              "currency": "CNY",
+              "total": 1000
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          }
+        },
+        "daily_itinerary": [
+          {
+            "day": 1,
+            "attractions": [
+              {
+                "poi_id": "beijing_poi_001",
+                "name": "beijing poi 1"
+              }
+            ],
+            "notes": "acceptance fixture itinerary artifact"
+          }
+        ]
+      },
+      "current_slots": {
+        "destination": "beijing",
+        "start_date": "2026-08-10",
+        "duration_days": 3,
+        "people_count": 2,
+        "traveler_group": "elderly",
+        "budget_level": "standard",
+        "preferences": [
+          "classic",
+          "low_walking"
+        ]
+      },
+      "expected_ticket": {
+        "task_type": "partial_replan",
+        "changed_slots": [
+          "traveler_group",
+          "preferences"
+        ],
+        "preserved_slots": [
+          "destination",
+          "start_date",
+          "duration_days",
+          "people_count",
+          "budget_level"
+        ],
+        "missing_slots": [],
+        "required_capabilities": [
+          "poi_evidence",
+          "itinerary_generation",
+          "budget_estimation"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "attraction",
+          "itinerary",
+          "budget"
+        ],
+        "planned_tools": [
+          "poi_search",
+          "budget_calculator"
+        ],
+        "reused_agents": [
+          "weather"
+        ],
+        "invalidated_agents": [
+          "attraction",
+          "itinerary",
+          "budget"
+        ],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "traveler_group_changed_replan",
+          "preferences_changed_replan"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_012_preferences_changed",
+      "turn_type": "multi_turn",
+      "user_input": "多安排博物馆和历史文化类景点。",
+      "previous_state": {
+        "slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-20",
+          "duration_days": 3,
+          "people_count": 2,
+          "traveler_group": "adult",
+          "budget_level": "standard",
+          "preferences": [
+            "classic"
+          ]
+        },
+        "available_results": {
+          "attraction": "fingerprint:hangzhou_classic_poi_v1",
+          "weather": "fingerprint:hangzhou_20260820_weather_v1",
+          "itinerary": "fingerprint:hangzhou_classic_itinerary_v1",
+          "budget": "fingerprint:hangzhou_classic_budget_v1"
+        },
+        "tool_results": {
+          "poi_search": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "limit": 6
+            },
+            "data": {
+              "city": "hangzhou",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "attractions": [
+                {
+                  "poi_id": "hangzhou_poi_001",
+                  "name": "hangzhou poi 1",
+                  "city": "hangzhou",
+                  "category": "attraction",
+                  "indoor_outdoor": "outdoor"
+                },
+                {
+                  "poi_id": "hangzhou_poi_002",
+                  "name": "hangzhou poi 2",
+                  "city": "hangzhou",
+                  "category": "attraction",
+                  "indoor_outdoor": "indoor"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "date": "2026-08-20",
+              "days": 3,
+              "scenario_type": "sunny"
+            },
+            "data": {
+              "city": "hangzhou",
+              "date": "2026-08-20",
+              "scenario_type": "sunny",
+              "daily_weather": [
+                {
+                  "date": "2026-08-20",
+                  "condition": "sunny",
+                  "risk_level": "low"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "budget_calculator": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "budget_calculator",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "hangzhou",
+              "people_count": 2,
+              "days": 3,
+              "attractions": [
+                "hangzhou_poi_001",
+                "hangzhou_poi_002"
+              ],
+              "spending_level": "standard"
+            },
+            "data": {
+              "city": "hangzhou",
+              "people_count": 2,
+              "days": 3,
+              "spending_level": "standard",
+              "currency": "CNY",
+              "total": 1000
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          }
+        },
+        "daily_itinerary": [
+          {
+            "day": 1,
+            "attractions": [
+              {
+                "poi_id": "hangzhou_poi_001",
+                "name": "hangzhou poi 1"
+              }
+            ],
+            "notes": "acceptance fixture itinerary artifact"
+          }
+        ]
+      },
+      "current_slots": {
+        "destination": "hangzhou",
+        "start_date": "2026-08-20",
+        "duration_days": 3,
+        "people_count": 2,
+        "traveler_group": "adult",
+        "budget_level": "standard",
+        "preferences": [
+          "museum",
+          "history"
+        ]
+      },
+      "expected_ticket": {
+        "task_type": "partial_replan",
+        "changed_slots": [
+          "preferences"
+        ],
+        "preserved_slots": [
+          "destination",
+          "start_date",
+          "duration_days",
+          "people_count",
+          "traveler_group",
+          "budget_level"
+        ],
+        "missing_slots": [],
+        "required_capabilities": [
+          "poi_evidence",
+          "itinerary_generation",
+          "budget_estimation"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "attraction",
+          "itinerary",
+          "budget"
+        ],
+        "planned_tools": [
+          "poi_search",
+          "budget_calculator"
+        ],
+        "reused_agents": [
+          "weather"
+        ],
+        "invalidated_agents": [
+          "attraction",
+          "itinerary",
+          "budget"
+        ],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "preferences_changed_replan"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_013_budget_changed_replan",
+      "turn_type": "multi_turn",
+      "user_input": "预算降到每人 800 元以内，帮我重新安排。",
+      "previous_state": {
+        "slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-15",
+          "duration_days": 2,
+          "people_count": 2,
+          "traveler_group": "adult",
+          "budget_level": "standard",
+          "preferences": [
+            "city_walk"
+          ]
+        },
+        "available_results": {
+          "attraction": "fingerprint:shenzhen_citywalk_poi_v1",
+          "weather": "fingerprint:shenzhen_20260815_weather_v1",
+          "itinerary": "fingerprint:shenzhen_standard_itinerary_v1",
+          "budget": "fingerprint:shenzhen_standard_budget_v1"
+        },
+        "tool_results": {
+          "poi_search": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "shenzhen",
+              "preferences": [
+                "city_walk"
+              ],
+              "people": "adult",
+              "limit": 4
+            },
+            "data": {
+              "city": "shenzhen",
+              "preferences": [
+                "city_walk"
+              ],
+              "people": "adult",
+              "attractions": [
+                {
+                  "poi_id": "shenzhen_poi_001",
+                  "name": "shenzhen poi 1",
+                  "city": "shenzhen",
+                  "category": "attraction",
+                  "indoor_outdoor": "outdoor"
+                },
+                {
+                  "poi_id": "shenzhen_poi_002",
+                  "name": "shenzhen poi 2",
+                  "city": "shenzhen",
+                  "category": "attraction",
+                  "indoor_outdoor": "indoor"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "shenzhen",
+              "date": "2026-08-15",
+              "days": 2,
+              "scenario_type": "sunny"
+            },
+            "data": {
+              "city": "shenzhen",
+              "date": "2026-08-15",
+              "scenario_type": "sunny",
+              "daily_weather": [
+                {
+                  "date": "2026-08-15",
+                  "condition": "sunny",
+                  "risk_level": "low"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "budget_calculator": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "budget_calculator",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "shenzhen",
+              "people_count": 2,
+              "days": 2,
+              "attractions": [
+                "shenzhen_poi_001",
+                "shenzhen_poi_002"
+              ],
+              "spending_level": "standard"
+            },
+            "data": {
+              "city": "shenzhen",
+              "people_count": 2,
+              "days": 2,
+              "spending_level": "standard",
+              "currency": "CNY",
+              "total": 1000
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          }
+        },
+        "daily_itinerary": [
+          {
+            "day": 1,
+            "attractions": [
+              {
+                "poi_id": "shenzhen_poi_001",
+                "name": "shenzhen poi 1"
+              }
+            ],
+            "notes": "acceptance fixture itinerary artifact"
+          }
+        ]
+      },
+      "current_slots": {
+        "destination": "shenzhen",
+        "start_date": "2026-08-15",
+        "duration_days": 2,
+        "people_count": 2,
+        "traveler_group": "adult",
+        "budget_amount": 800,
+        "budget_level": "low",
+        "preferences": [
+          "city_walk"
+        ]
+      },
+      "expected_ticket": {
+        "task_type": "partial_replan",
+        "changed_slots": [
+          "budget_amount",
+          "budget_level"
+        ],
+        "preserved_slots": [
+          "destination",
+          "start_date",
+          "duration_days",
+          "people_count",
+          "traveler_group",
+          "preferences"
+        ],
+        "missing_slots": [],
+        "required_capabilities": [
+          "poi_evidence",
+          "itinerary_generation",
+          "budget_estimation"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "attraction",
+          "itinerary",
+          "budget"
+        ],
+        "planned_tools": [
+          "poi_search",
+          "budget_calculator"
+        ],
+        "reused_agents": [
+          "weather"
+        ],
+        "invalidated_agents": [
+          "attraction",
+          "itinerary",
+          "budget"
+        ],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "budget_changed_replan"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_014_weather_adjustment",
+      "turn_type": "multi_turn",
+      "user_input": "第二天可能下雨，帮我把行程调整一下，其他尽量不变。",
+      "previous_state": {
+        "slots": {
+          "destination": "guilin",
+          "start_date": "2026-09-01",
+          "duration_days": 3,
+          "people_count": 2,
+          "traveler_group": "adult",
+          "budget_level": "standard",
+          "preferences": [
+            "landscape"
+          ]
+        },
+        "available_results": {
+          "attraction": "fingerprint:guilin_landscape_poi_v1",
+          "weather": "fingerprint:guilin_20260901_normal_weather_v1",
+          "itinerary": "fingerprint:guilin_normal_itinerary_v1",
+          "budget": "fingerprint:guilin_standard_budget_v1"
+        },
+        "tool_results": {
+          "poi_search": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "guilin",
+              "preferences": [
+                "landscape"
+              ],
+              "people": "adult",
+              "limit": 6
+            },
+            "data": {
+              "city": "guilin",
+              "preferences": [
+                "landscape"
+              ],
+              "people": "adult",
+              "attractions": [
+                {
+                  "poi_id": "guilin_poi_001",
+                  "name": "guilin poi 1",
+                  "city": "guilin",
+                  "category": "attraction",
+                  "indoor_outdoor": "outdoor"
+                },
+                {
+                  "poi_id": "guilin_poi_002",
+                  "name": "guilin poi 2",
+                  "city": "guilin",
+                  "category": "attraction",
+                  "indoor_outdoor": "indoor"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "guilin",
+              "date": "2026-09-01",
+              "days": 3,
+              "scenario_type": "sunny"
+            },
+            "data": {
+              "city": "guilin",
+              "date": "2026-09-01",
+              "scenario_type": "sunny",
+              "daily_weather": [
+                {
+                  "date": "2026-09-01",
+                  "condition": "sunny",
+                  "risk_level": "low"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "budget_calculator": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "budget_calculator",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "guilin",
+              "people_count": 2,
+              "days": 3,
+              "attractions": [
+                "guilin_poi_001",
+                "guilin_poi_002"
+              ],
+              "spending_level": "standard"
+            },
+            "data": {
+              "city": "guilin",
+              "people_count": 2,
+              "days": 3,
+              "spending_level": "standard",
+              "currency": "CNY",
+              "total": 1000
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          }
+        },
+        "daily_itinerary": [
+          {
+            "day": 1,
+            "attractions": [
+              {
+                "poi_id": "guilin_poi_001",
+                "name": "guilin poi 1"
+              }
+            ],
+            "notes": "acceptance fixture itinerary artifact"
+          }
+        ]
+      },
+      "current_slots": {
+        "destination": "guilin",
+        "start_date": "2026-09-01",
+        "duration_days": 3,
+        "people_count": 2,
+        "traveler_group": "adult",
+        "budget_level": "standard",
+        "preferences": [
+          "landscape"
+        ],
+        "weather_scenario": "rainy_day_2"
+      },
+      "expected_ticket": {
+        "task_type": "weather_adjustment",
+        "changed_slots": [
+          "weather_scenario"
+        ],
+        "preserved_slots": [
+          "destination",
+          "start_date",
+          "duration_days",
+          "people_count",
+          "traveler_group",
+          "budget_level",
+          "preferences"
+        ],
+        "missing_slots": [],
+        "required_capabilities": [
+          "weather_evidence",
+          "itinerary_generation"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "weather",
+          "itinerary"
+        ],
+        "planned_tools": [
+          "weather_query"
+        ],
+        "reused_agents": [
+          "attraction"
+        ],
+        "invalidated_agents": [
+          "weather",
+          "itinerary"
+        ],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "weather_changed_itinerary_adjustment"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_015_identical_request",
+      "turn_type": "multi_turn",
+      "user_input": "就按这个方案，不用改。",
+      "previous_state": {
+        "slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-10",
+          "duration_days": 3,
+          "people_count": 2,
+          "traveler_group": "adult",
+          "budget_level": "standard",
+          "preferences": [
+            "classic"
+          ]
+        },
+        "available_results": {
+          "attraction": "fingerprint:beijing_classic_poi_v1",
+          "weather": "fingerprint:beijing_20260810_weather_v1",
+          "itinerary": "fingerprint:beijing_classic_itinerary_v1",
+          "budget": "fingerprint:beijing_standard_budget_v1"
+        },
+        "tool_results": {
+          "poi_search": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "beijing",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "limit": 6
+            },
+            "data": {
+              "city": "beijing",
+              "preferences": [
+                "classic"
+              ],
+              "people": "adult",
+              "attractions": [
+                {
+                  "poi_id": "beijing_poi_001",
+                  "name": "beijing poi 1",
+                  "city": "beijing",
+                  "category": "attraction",
+                  "indoor_outdoor": "outdoor"
+                },
+                {
+                  "poi_id": "beijing_poi_002",
+                  "name": "beijing poi 2",
+                  "city": "beijing",
+                  "category": "attraction",
+                  "indoor_outdoor": "indoor"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "beijing",
+              "date": "2026-08-10",
+              "days": 3,
+              "scenario_type": "sunny"
+            },
+            "data": {
+              "city": "beijing",
+              "date": "2026-08-10",
+              "scenario_type": "sunny",
+              "daily_weather": [
+                {
+                  "date": "2026-08-10",
+                  "condition": "sunny",
+                  "risk_level": "low"
+                }
+              ]
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          },
+          "budget_calculator": {
+            "schema_version": "research_tool_result_v1",
+            "tool_name": "budget_calculator",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "beijing",
+              "people_count": 2,
+              "days": 3,
+              "attractions": [
+                "beijing_poi_001",
+                "beijing_poi_002"
+              ],
+              "spending_level": "standard"
+            },
+            "data": {
+              "city": "beijing",
+              "people_count": 2,
+              "days": 3,
+              "spending_level": "standard",
+              "currency": "CNY",
+              "total": 1000
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "acceptance_fixture"
+            }
+          }
+        },
+        "daily_itinerary": [
+          {
+            "day": 1,
+            "attractions": [
+              {
+                "poi_id": "beijing_poi_001",
+                "name": "beijing poi 1"
+              }
+            ],
+            "notes": "acceptance fixture itinerary artifact"
+          }
+        ]
+      },
+      "current_slots": {
+        "destination": "beijing",
+        "start_date": "2026-08-10",
+        "duration_days": 3,
+        "people_count": 2,
+        "traveler_group": "adult",
+        "budget_level": "standard",
+        "preferences": [
+          "classic"
+        ]
+      },
+      "expected_ticket": {
+        "task_type": "partial_replan",
+        "changed_slots": [],
+        "preserved_slots": [
+          "destination",
+          "start_date",
+          "duration_days",
+          "people_count",
+          "traveler_group",
+          "budget_level",
+          "preferences"
+        ],
+        "missing_slots": [],
+        "required_capabilities": [],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [],
+        "planned_tools": [],
+        "reused_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "invalidated_agents": [],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "identical_request_reuse_all"
+        ]
+      }
+    },
+    {
+      "case_id": "sched_016_same_plan_more_attractions",
+      "turn_type": "multi_turn",
+      "user_input": "same plan, recommend more attractions",
+      "previous_state": {
+        "slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-10",
+          "duration_days": 3,
+          "people_count": 2,
+          "traveler_group": "adult",
+          "budget_level": "standard",
+          "preferences": [
+            "classic"
+          ]
+        }
+      },
+      "current_slots": {},
+      "expected_ticket": {
+        "task_type": "attraction_recommendation",
+        "changed_slots": [],
+        "preserved_slots": [
+          "destination",
+          "start_date",
+          "duration_days",
+          "people_count",
+          "traveler_group",
+          "budget_level",
+          "preferences"
+        ],
+        "missing_slots": [],
+        "required_capabilities": [
+          "poi_evidence"
+        ],
+        "clarification_required": false,
+        "clarification_fields": []
+      },
+      "expected_decision": {
+        "planned_agents": [
+          "attraction"
+        ],
+        "planned_tools": [
+          "poi_search"
+        ],
+        "reused_agents": [],
+        "invalidated_agents": [],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "single_capability_request"
+        ]
+      }
+    }
+  ]
+}
