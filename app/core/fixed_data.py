@@ -21,6 +21,35 @@ OFFLINE_ENV_NAMES = (
 
 FIXED_CITY_IDS = ("beijing", "hangzhou", "xian", "shenzhen", "guilin")
 FIXED_DATA_SNAPSHOT_DIRS = ("pois", "weather", "restaurants", "accommodation", "transport")
+FIXED_DATA_EXPECTED_FILE_COUNT = 25
+FIXED_DATA_EXPECTED_COMBINED_SHA256 = "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3"
+FIXED_DATA_EXPECTED_FILE_HASHES = {
+    "data/accommodation/beijing.json": "91ebdadc86245922c61901a2ecfa437f1c754ed2c3975d68c642f7f8c5c93f05",
+    "data/accommodation/guilin.json": "e8bbd330fa10ea575da49201bb69b30edc89874b64175a0c8f2593b09113f75d",
+    "data/accommodation/hangzhou.json": "b146fa73d48688d36e035179e59f08d12a5a283d1bbe5e45ab1fbce27385bfee",
+    "data/accommodation/shenzhen.json": "6ed2f5ef6078e7651c1f0106568136656dfab92cfe4cfe6866e4edbc185784e4",
+    "data/accommodation/xian.json": "6a82d4ba2e8659bd414a048371690525f15b26491e2a2934d4c0d380c95e3aca",
+    "data/pois/beijing.json": "4bd2fb952e1a9b2fb6670793d007d5ebd2cfc897f67829c4d36538410ac4977e",
+    "data/pois/guilin.json": "1a6d802bb7295998f5d3d965aff1cb5b59998411645922211b319a5c0bfb09cb",
+    "data/pois/hangzhou.json": "7abd466ba674fa160978d6037c95c0bd64a78deed6b5c454bacad8ba055f8aea",
+    "data/pois/shenzhen.json": "199977c5ef39cef67d52af432922de53f57c4862e27e2fb1b34cff7bbbe17582",
+    "data/pois/xian.json": "7f203268990980552debdc8425b77122c7ba7eb218d349f5723e77eada0e6e99",
+    "data/restaurants/beijing.json": "378efb83ef2ba54ff563fd1d09e91403df354c942d31693d3a8725fcf9a11b33",
+    "data/restaurants/guilin.json": "0b6c68e469096b53779ede207450df55db9040234e89d7cdb3e0bd907bf1a5fc",
+    "data/restaurants/hangzhou.json": "214312ef2d5878038b74b9467210851184fbcad32edebe556bfee77a9cb881a0",
+    "data/restaurants/shenzhen.json": "2d8572cfc4f87380b44e1026b39c228617b2e3989cac82baebc61d58109972ec",
+    "data/restaurants/xian.json": "b4eb9c0f3503e63a988441cf4a8fc942c9c69edb1c797ef745b7ec446986a2f5",
+    "data/transport/beijing.json": "758967b5cc01305b5c228d728a43bd91dc6a5f25e8366185bb459b7aa789929b",
+    "data/transport/guilin.json": "475c97fb492d2386c82bb29863cde96d7ab8e78e9f14d2dd399f9b05102765c7",
+    "data/transport/hangzhou.json": "3aa7ab8650eeeb605f95ca8779fa20aca4274b4b4134ac81e3d7911119f2134f",
+    "data/transport/shenzhen.json": "ed0adb7927e11b66e8f2b8ed6dbfa397f84ec363edeee20aac0a21a92c246923",
+    "data/transport/xian.json": "78977ab060a1c71fe87382ffc88a57644c721ea1270afc9520a3ae3b829472c0",
+    "data/weather/beijing.json": "909fd6078a489aa09765a187411e4afa26c30ee8d3fd540734ed67eb3b62a348",
+    "data/weather/guilin.json": "40cbe4ee2ce08189922d4639de5d59155050f6e4412fb4cb1a3f7c62d8574740",
+    "data/weather/hangzhou.json": "d29568c5ab66f71261304511e7687b721e426176aff0da2152ed1bbee5c3e10a",
+    "data/weather/shenzhen.json": "630a643c25608a9eef54e934ae7fe8a2eed59f7cb61f39f10484c08d90aba82e",
+    "data/weather/xian.json": "26734c7f640ddabcddbca955672a4aa75927946a174df2a9dca2a43a5100b607",
+}
 
 CITY_ALIASES = {
     "beijing": ("beijing", "bj", "北京", "北京市"),
@@ -1008,28 +1037,80 @@ def get_fixed_tourism_data() -> FixedTourismData:
 def fixed_data_file_manifest(data_root: Path = DATA_ROOT) -> Dict[str, Any]:
     """Return SHA-256 hashes for the fixed data files used by experiments."""
     files: List[Dict[str, Any]] = []
+    missing_files: List[str] = []
     for directory in FIXED_DATA_SNAPSHOT_DIRS:
         folder = data_root / directory
         for city_id in FIXED_CITY_IDS:
             path = folder / f"{city_id}.json"
+            manifest_path = _manifest_relative_path(path, data_root)
             if not path.exists():
+                missing_files.append(manifest_path)
                 continue
             digest = hashlib.sha256(path.read_bytes()).hexdigest()
             files.append(
                 {
                     "kind": directory,
                     "city_id": city_id,
-                    "path": path.relative_to(REPO_ROOT).as_posix(),
+                    "path": manifest_path,
                     "sha256": digest,
                 }
             )
     files.sort(key=lambda item: (item["kind"], item["city_id"], item["path"]))
+    missing_files.sort()
     combined_source = json.dumps(files, ensure_ascii=False, sort_keys=True).encode("utf-8")
     return {
         "schema_version": "fixed_data_manifest_v1",
         "city_ids": list(FIXED_CITY_IDS),
         "snapshot_dirs": list(FIXED_DATA_SNAPSHOT_DIRS),
         "file_count": len(files),
+        "expected_file_count": FIXED_DATA_EXPECTED_FILE_COUNT,
         "combined_sha256": hashlib.sha256(combined_source).hexdigest(),
+        "expected_combined_sha256": FIXED_DATA_EXPECTED_COMBINED_SHA256,
+        "missing_files": missing_files,
         "files": files,
     }
+
+
+def validate_fixed_data_snapshot(data_root: Path = DATA_ROOT) -> Dict[str, Any]:
+    """Fail fast when the formal offline data snapshot differs from the locked set."""
+    manifest = fixed_data_file_manifest(data_root)
+    actual_hashes = {item["path"]: item["sha256"] for item in manifest["files"]}
+    expected_paths = set(FIXED_DATA_EXPECTED_FILE_HASHES)
+    actual_paths = set(actual_hashes)
+    missing_paths = sorted(expected_paths - actual_paths)
+    unexpected_paths = sorted(actual_paths - expected_paths)
+    changed_paths = sorted(
+        path
+        for path, expected_hash in FIXED_DATA_EXPECTED_FILE_HASHES.items()
+        if path in actual_hashes and actual_hashes[path] != expected_hash
+    )
+
+    errors: List[str] = []
+    if manifest["file_count"] != FIXED_DATA_EXPECTED_FILE_COUNT:
+        errors.append(
+            f"expected {FIXED_DATA_EXPECTED_FILE_COUNT} fixed data files, got {manifest['file_count']}"
+        )
+    if missing_paths:
+        errors.append(f"missing fixed data files: {', '.join(missing_paths)}")
+    if unexpected_paths:
+        errors.append(f"unexpected fixed data files: {', '.join(unexpected_paths)}")
+    if changed_paths:
+        errors.append(f"modified fixed data files: {', '.join(changed_paths)}")
+    if manifest["combined_sha256"] != FIXED_DATA_EXPECTED_COMBINED_SHA256:
+        errors.append(
+            "fixed data combined hash mismatch: "
+            f"expected {FIXED_DATA_EXPECTED_COMBINED_SHA256}, got {manifest['combined_sha256']}"
+        )
+    if errors:
+        raise FixedDataError("formal fixed data snapshot validation failed; " + "; ".join(errors))
+    return manifest
+
+
+def _manifest_relative_path(path: Path, data_root: Path) -> str:
+    try:
+        return path.relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        try:
+            return (Path("data") / path.relative_to(data_root)).as_posix()
+        except ValueError:
+            return path.as_posix()

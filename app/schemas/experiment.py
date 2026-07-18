@@ -60,6 +60,8 @@ def normalize_experiment_output(
     trace_record = trace or {}
     if _already_normalized(raw_output):
         payload = dict(raw_output)
+        if error or _has_failed_tool_calls(payload.get("called_tools")) or _has_failed_tool_results(payload.get("tool_results")):
+            payload["execution_status"] = "failed"
         if constraint_report is not None:
             payload.update(
                 {
@@ -92,8 +94,16 @@ def normalize_experiment_output(
         or trace_record.get("planned_agents")
         or trace_record.get("selected_agents")
     )
-    status = "failed" if error else str(trace_record.get("status") or "completed")
+    status = _execution_status(error, trace_record, raw_mapping, tool_calls)
     final_answer = _final_answer(raw_output)
+    output_metadata = {
+        "output_contract": EXPERIMENT_OUTPUT_SCHEMA_VERSION,
+        "trace_schema_version": trace_record.get("schema_version"),
+        "tool_call_count": len(tool_calls),
+    }
+    if isinstance(raw_mapping.get("metadata"), dict):
+        output_metadata.update(raw_mapping["metadata"])
+
     model = ExperimentMethodOutput(
         case_id=str(case.get("case_id") or ""),
         method=method,
@@ -125,17 +135,110 @@ def normalize_experiment_output(
         execution_status=status,
         final_answer=final_answer,
         raw_output=raw_output,
-        metadata={
-            "output_contract": EXPERIMENT_OUTPUT_SCHEMA_VERSION,
-            "trace_schema_version": trace_record.get("schema_version"),
-            "tool_call_count": len(tool_calls),
-        },
+        metadata=output_metadata,
     )
     return model.model_dump(mode="json")
 
 
 def _already_normalized(value: Any) -> bool:
     return isinstance(value, dict) and value.get("schema_version") == EXPERIMENT_OUTPUT_SCHEMA_VERSION
+
+
+def _execution_status(
+    error: Optional[str],
+    trace_record: Dict[str, Any],
+    raw_mapping: Dict[str, Any],
+    tool_calls: List[ExperimentToolCallSummary],
+) -> str:
+    if error:
+        return "failed"
+    if _has_failed_tool_calls([item.model_dump(mode="json") for item in tool_calls]):
+        return "failed"
+    if _has_failed_tool_results(raw_mapping.get("tool_results")):
+        return "failed"
+    trace_status = str(trace_record.get("status") or "").lower()
+    if trace_status == "clarification":
+        return "clarification"
+    if trace_status in {
+        "failed",
+        "error",
+        "timeout",
+        "cancelled",
+        "canceled",
+        "aborted",
+        "expired",
+        "stale",
+    }:
+        return "failed"
+    raw_status = str(raw_mapping.get("execution_status") or "").lower()
+    if raw_status == "clarification":
+        return "clarification"
+    if raw_status in {
+        "failed",
+        "error",
+        "timeout",
+        "cancelled",
+        "canceled",
+        "aborted",
+        "expired",
+        "stale",
+    }:
+        return "failed"
+    return "completed"
+
+
+def _has_failed_tool_calls(calls: Any) -> bool:
+    if not isinstance(calls, list):
+        return False
+    for call in calls:
+        if isinstance(call, ExperimentToolCallSummary):
+            call = call.model_dump(mode="json")
+        if not isinstance(call, dict):
+            continue
+        if call.get("success") is False:
+            return True
+        status = str(call.get("status") or "").lower()
+        if status in {
+            "failed",
+            "error",
+            "timeout",
+            "cancelled",
+            "canceled",
+            "aborted",
+            "expired",
+            "stale",
+        }:
+            return True
+        if call.get("error"):
+            return True
+    return False
+
+
+def _has_failed_tool_results(results: Any) -> bool:
+    if isinstance(results, dict):
+        iterable = results.values()
+    elif isinstance(results, list):
+        iterable = results
+    else:
+        return False
+    for result in iterable:
+        if not isinstance(result, dict):
+            continue
+        if result.get("success") is False:
+            return True
+        status = str(result.get("status") or "").lower()
+        if status in {
+            "failed",
+            "error",
+            "timeout",
+            "cancelled",
+            "canceled",
+            "aborted",
+            "expired",
+            "stale",
+        }:
+            return True
+    return False
 
 
 def _final_answer(value: Any) -> str:

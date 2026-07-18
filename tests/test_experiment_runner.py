@@ -58,12 +58,10 @@ def test_runner_runs_same_case_through_four_methods_and_exports_csv(
     )
 
     results = runner.run_benchmark(benchmark_path)
+    expected_methods = runner._ordered_methods_for_benchmark(list(ExperimentRunner.METHODS))
 
     assert [(item["case_id"], item["method"]) for item in results] == [
-        ("case001", "llm_direct"),
-        ("case001", "single_agent"),
-        ("case001", "fixed_multi_agent"),
-        ("case001", "adaptive_multi_agent"),
+        ("case001", method) for method in expected_methods
     ]
     for result in results:
         assert set(result) >= {"case_id", "method", "output", "latency", "trace"}
@@ -80,14 +78,9 @@ def test_runner_runs_same_case_through_four_methods_and_exports_csv(
         assert result["metrics"]["intent_correct"] is False
         assert result["metrics"]["route_correct"] is False
 
-    csv_path = tmp_path / "results" / "benchmark_results.csv"
+    csv_path = tmp_path / "results" / runner.run_id / "benchmark_results.csv"
     rows = list(csv.DictReader(csv_path.open(encoding="utf-8-sig")))
-    assert [row["method"] for row in rows] == [
-        "llm_direct",
-        "single_agent",
-        "fixed_multi_agent",
-        "adaptive_multi_agent",
-    ]
+    assert [row["method"] for row in rows] == expected_methods
     assert all(row["case_id"] == "case001" for row in rows)
     assert all(row["evaluation_mode"] == "end_to_end" for row in rows)
     assert all(row["tool_selection_accuracy"] == "1.0" for row in rows)
@@ -329,16 +322,15 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
         assert trace["run_id"] == "phase1-offline-run"
         assert trace["model_config_name"] == "offline-static"
 
-    manifest = json.loads(
-        (output_dir / "experiment_manifest.json").read_text(encoding="utf-8")
-    )
+    run_output_dir = output_dir / "phase1-offline-run"
+    manifest = json.loads((run_output_dir / "experiment_manifest.json").read_text(encoding="utf-8"))
     assert manifest["dataset_version"] == "2026-07-14"
     assert manifest["dataset"]["id"] == "phase1_offline_acceptance"
     assert manifest["dataset_path"] == benchmark_path.as_posix()
     assert manifest["dataset"]["path"] == benchmark_path.as_posix()
     assert manifest["results"] == {
-        "csv": (output_dir / "benchmark_results.csv").as_posix(),
-        "json": (output_dir / "benchmark_results.json").as_posix(),
+        "csv": (run_output_dir / "benchmark_results.csv").as_posix(),
+        "json": (run_output_dir / "benchmark_results.json").as_posix(),
     }
     assert all(
         "\\" not in path
@@ -356,7 +348,36 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     assert manifest["strict_mode"] is True
     assert manifest["repeats"] == 2
     assert manifest["model_config_name"] == "offline-static"
-    assert len(list(csv.DictReader((output_dir / "benchmark_results.csv").open(encoding="utf-8-sig")))) == 16
+    assert manifest["method_order_seed"] == runner.method_order_seed
+    assert manifest["offline_data"]["snapshot"]["combined_sha256"] == (
+        "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3"
+    )
+    assert len(list(csv.DictReader((run_output_dir / "benchmark_results.csv").open(encoding="utf-8-sig")))) == 16
+
+
+def test_phase1_offline_acceptance_script_checks_sixteen_runs(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    from experiments import run_phase1_offline_acceptance as acceptance
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "run_phase1_offline_acceptance.py",
+            "--output-dir",
+            str(tmp_path / "phase1_acceptance"),
+        ],
+    )
+
+    assert acceptance.main() == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["result_count"] == 16
+    assert payload["expected_count"] == 16
+    assert Path(payload["output_dir"]).name == payload["run_id"]
+    assert Path(payload["manifest"]).parent == Path(payload["output_dir"])
 
 
 def test_runner_loads_trace_by_exact_request_id_not_newest_file(tmp_path: Path) -> None:

@@ -149,21 +149,21 @@
         {
           "source_id": "src_bj_ha001_02",
           "source_type": "public_accommodation_reference",
-          "source_name": "西安旅游网公开住宿攻略",
-          "url": "https://www.tang.org.cn/83048.html",
+          "source_name": "固定受控离线住宿分区数据",
+          "url": null,
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "classification",
             "transport",
             "tradeoffs"
           ],
-          "verification_status": "retrieved_public_reference"
+          "verification_status": "controlled_offline_data"
         },
         {
           "source_id": "src_bj_ha001_03",
           "source_type": "public_price_reference",
-          "source_name": "西安旅游网公开住宿攻略（固定实验房价校准）",
-          "url": "https://www.tang.org.cn/79120.html",
+          "source_name": "固定受控离线住宿房价校准数据",
+          "url": null,
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "budget"
@@ -304,21 +304,21 @@
         {
           "source_id": "src_bj_ha002_02",
           "source_type": "public_accommodation_reference",
-          "source_name": "西安旅游网公开住宿攻略",
-          "url": "https://www.tang.org.cn/83048.html",
+          "source_name": "固定受控离线住宿分区数据",
+          "url": null,
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "classification",
             "transport",
             "tradeoffs"
           ],
-          "verification_status": "retrieved_public_reference"
+          "verification_status": "controlled_offline_data"
         },
         {
           "source_id": "src_bj_ha002_03",
           "source_type": "public_price_reference",
-          "source_name": "西安旅游网公开住宿攻略（固定实验房价校准）",
-          "url": "https://www.tang.org.cn/79120.html",
+          "source_name": "固定受控离线住宿房价校准数据",
+          "url": null,
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "budget"
@@ -609,21 +609,21 @@
         {
           "source_id": "src_bj_ha004_02",
           "source_type": "public_accommodation_reference",
-          "source_name": "西安旅游网公开住宿攻略",
-          "url": "https://www.tang.org.cn/83048.html",
+          "source_name": "固定受控离线住宿分区数据",
+          "url": null,
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "classification",
             "transport",
             "tradeoffs"
           ],
-          "verification_status": "retrieved_public_reference"
+          "verification_status": "controlled_offline_data"
         },
         {
           "source_id": "src_bj_ha004_03",
           "source_type": "public_price_reference",
-          "source_name": "西安旅游网公开住宿攻略（固定实验房价校准）",
-          "url": "https://www.tang.org.cn/79120.html",
+          "source_name": "固定受控离线住宿房价校准数据",
+          "url": null,
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "budget"
@@ -761,21 +761,21 @@
         {
           "source_id": "src_bj_ha005_02",
           "source_type": "public_accommodation_reference",
-          "source_name": "西安旅游网公开住宿攻略",
-          "url": "https://www.tang.org.cn/83048.html",
+          "source_name": "固定受控离线住宿分区数据",
+          "url": null,
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "classification",
             "transport",
             "tradeoffs"
           ],
-          "verification_status": "retrieved_public_reference"
+          "verification_status": "controlled_offline_data"
         },
         {
           "source_id": "src_bj_ha005_03",
           "source_type": "public_price_reference",
-          "source_name": "西安旅游网公开住宿攻略（固定实验房价校准）",
-          "url": "https://www.tang.org.cn/79120.html",
+          "source_name": "固定受控离线住宿房价校准数据",
+          "url": null,
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "budget"
@@ -911,21 +911,21 @@
         {
           "source_id": "src_bj_ha006_02",
           "source_type": "public_accommodation_reference",
-          "source_name": "西安旅游网公开住宿攻略",
-          "url": "https://www.tang.org.cn/83048.html",
+          "source_name": "固定受控离线住宿分区数据",
+          "url": null,
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "classification",
             "transport",
             "tradeoffs"
           ],
-          "verification_status": "retrieved_public_reference"
+          "verification_status": "controlled_offline_data"
         },
         {
           "source_id": "src_bj_ha006_03",
           "source_type": "public_price_reference",
-          "source_name": "西安旅游网公开住宿攻略（固定实验房价校准）",
-          "url": "https://www.tang.org.cn/79120.html",
+          "source_name": "固定受控离线住宿房价校准数据",
+          "url": null,
           "accessed_at": "2026-07-17",
           "covered_fields": [
             "budget"

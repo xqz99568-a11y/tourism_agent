@@ -20,7 +20,7 @@ from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 REDACTED = "[REDACTED]"
-TRACE_SCHEMA_VERSION = "1.6"
+TRACE_SCHEMA_VERSION = "1.7"
 DEFAULT_TRACE_DIR = Path("experiments/results/traces")
 DEFAULT_TRACE_INTENT = "general_chat"
 DEFAULT_TRACE_ROUTE = "GENERAL_CHAT"
@@ -218,7 +218,16 @@ def _success_from_status(status: Optional[str], success: Optional[bool]) -> Opti
         return bool(success)
     if status is None:
         return None
-    return str(status).lower() not in {"failed", "error", "timeout", "cancelled", "canceled", "aborted"}
+    return str(status).lower() not in {
+        "failed",
+        "error",
+        "timeout",
+        "cancelled",
+        "canceled",
+        "aborted",
+        "expired",
+        "stale",
+    }
 
 
 def _first_present(*values: Any) -> Any:
@@ -335,6 +344,7 @@ class TraceState:
     llm_calls: List[Dict[str, Any]] = field(default_factory=list)
     tool_calls: List[Dict[str, Any]] = field(default_factory=list)
     api_calls: List[Dict[str, Any]] = field(default_factory=list)
+    adaptive_scheduler: Optional[Dict[str, Any]] = None
     total_duration_ms: Optional[float] = None
     first_body_token_ms: Optional[float] = None
     error: Optional[str] = None
@@ -388,6 +398,10 @@ class TraceState:
                 continue
             setattr(self, key, sanitize_value(value))
 
+    def set_scheduler_info(self, scheduler: Any) -> None:
+        if isinstance(scheduler, dict):
+            self.adaptive_scheduler = sanitize_value(scheduler)
+
     def record_event(self, event: Dict[str, Any]) -> None:
         if not isinstance(event, dict):
             return
@@ -411,7 +425,7 @@ class TraceState:
             self.mark_status("aborted", error=event.get("error") or event.get("message"))
         elif event.get("requires_clarification"):
             self.status = "clarification"
-        elif status == "failed" or phase == "error":
+        elif status in {"failed", "expired", "stale"} or phase == "error":
             self.mark_status("failed", error=event.get("error") or event.get("message") or self.error)
         elif (
             status == "completed"
@@ -757,7 +771,17 @@ class TraceState:
                     current is None
                     or current == "unknown"
                     or str(current).lower() in {"running", "pending", "unknown"}
-                    or str(value).lower() in {"failed", "error", "timeout", "cancelled", "canceled", "aborted"}
+                    or str(value).lower()
+                    in {
+                        "failed",
+                        "error",
+                        "timeout",
+                        "cancelled",
+                        "canceled",
+                        "aborted",
+                        "expired",
+                        "stale",
+                    }
                 ):
                     existing[key] = value
                 elif key == "success" and (current is None or value is False):
@@ -880,7 +904,17 @@ class TraceState:
         failed_agent_count = sum(
             1
             for run in self.agent_runs
-            if str(run.get("status") or "").lower() in {"failed", "error", "timeout", "cancelled", "canceled", "aborted"}
+            if str(run.get("status") or "").lower()
+            in {
+                "failed",
+                "error",
+                "timeout",
+                "cancelled",
+                "canceled",
+                "aborted",
+                "expired",
+                "stale",
+            }
         )
         successful_tool_call_count = sum(1 for call in self.tool_calls if call.get("success") is True)
         failed_tool_call_count = sum(1 for call in self.tool_calls if call.get("success") is False)
@@ -955,6 +989,7 @@ class TraceState:
             "llm_calls": self.llm_calls,
             "tool_calls": self.tool_calls,
             "api_calls": self.api_calls,
+            "adaptive_scheduler": self.adaptive_scheduler,
             "total_duration_ms": self.total_duration_ms,
             "first_body_token_ms": self.first_body_token_ms,
             "first_token_ms": self.first_body_token_ms,
@@ -1122,6 +1157,12 @@ def set_trace_result_summary(result: Any, *, offline_data: Any = None) -> None:
     trace = get_current_trace()
     if trace is not None:
         trace.set_result_summary(result, offline_data=offline_data)
+
+
+def set_trace_scheduler_info(scheduler: Dict[str, Any]) -> None:
+    trace = get_current_trace()
+    if trace is not None:
+        trace.set_scheduler_info(scheduler)
 
 
 def set_trace_selected_agents(agents: List[str]) -> None:

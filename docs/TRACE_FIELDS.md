@@ -49,6 +49,8 @@ MODEL_CONFIG_NAME=default
 - `schema_version=1.4` 起将计划选择与真实执行拆分为 `planned_agents`、`executed_agents`、`planned_tools` 和 `executed_tools`；`record_tool_call()` 只更新执行侧字段。
 - `schema_version=1.5` 起新增顶层 `case_id` 兼容字段；Runner 保证 `case_id`、`method`、`repeat_index`、`system_variant`、`run_id` 和 `model_config_name` 随每条实验 Trace 一起持久化。
 - `schema_version=1.6` 起新增 `input_hash`、`result_hash` 和 `offline_data`，用于记录输入摘要、输出摘要和固定数据快照摘要。
+- 工具调用只要 `success=false`、`status=failed/error/timeout/cancelled` 或存在错误信息，统一方法输出的 `execution_status` 必须为 `failed`，实验结果顶层 `status` 也必须为 `failed`。
+- 工具参数缺失、工具不存在、超时或执行异常也必须写入一次 `tool_calls`，并保留 `research_tool_result_v1` 统一错误结果，避免成功率与工具失败率统计口径不一致。
 - `total_duration_ms`：请求总耗时，单位为毫秒。
 - `first_body_token_ms`：从请求开始到首次用户可见正文 content 的耗时。`phase_update`、`message`、`thinking_step` 等进度事件不计入正文 TTFT。`first_token_ms` 暂保留为兼容别名。
 - `error`：失败时记录的脱敏错误信息。
@@ -84,3 +86,35 @@ python experiments/run_phase1_offline_acceptance.py
 - `agent_calls` 中每个 Agent 的调用次数和耗时分布。
 - `llm_call_count`、`tool_call_count`、`api_call_count`、`mock_count`、`fallback_count`、`cache_hit_count`。
 - `slowest_stage_by_mean_ms` 和 `slowest_agent_by_mean_ms`，用于快速定位平均耗时最高的阶段或 Agent。
+
+## Formal acceptance locking rules
+
+- `experiment_manifest.json` must include `method_order_seed`; benchmark methods are shuffled by this fixed seed before execution.
+- Formal acceptance output must be stored in an independent `run_id` directory such as `experiments/results/phase1_acceptance_runs/<run_id>/`.
+- The run directory must contain `benchmark_results.csv`, `benchmark_results.json`, `experiment_manifest.json`, and `traces/`.
+- Existing acceptance result directories are historical evidence and must not be overwritten.
+- The manifest fixed-data snapshot must report exactly 25 files and the combined SHA-256 `90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3`.
+
+## Day 4 adaptive scheduler trace fields
+
+`schema_version=1.7` adds top-level `adaptive_scheduler` for M3 evidence. It is
+written into persistent trace files, not only CSV or returned JSON. The field
+contains:
+
+- `ticket`: goal-state task ticket, including current slots, previous slots,
+  changed slots, preserved slots, missing slots, required capabilities, and
+  `goal_change_type`.
+- `decision`: scheduler output, including planned agents/tools, reused agents,
+  invalidated agents, clarification fields, decision reasons, and
+  `reuse_validation`.
+- `reuse_execution`: actual execution-side reuse evidence, including expected
+  reused tools, actually reused tool results, missing reused tool results, and
+  `reuse_hit_rate`.
+- `result_fingerprints`: semantic fingerprints of newly produced results, used
+  by the next turn to prevent reuse when the old tool input does not match the
+  current destination, date, duration, people count, preferences, or budget
+  state.
+
+For paper experiments, reuse metrics must be derived from these persisted
+fields. A previous result is reusable only when it is successful and its input
+fingerprint is compatible with the current goal-state slots.

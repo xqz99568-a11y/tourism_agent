@@ -1,0 +1,227 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-07-17T16:35:07.911701Z",
+  "run_id": "phase1_acceptance_2ad8ac8_20260718",
+  "dataset_id": "phase1_offline_acceptance",
+  "dataset_version": "2026-07-14",
+  "dataset_path": "experiments/phase1_offline_cases.json",
+  "dataset_sha256": "5be5dcd71d1e988cee895e07da2876c59f895d18a430248f90ec3be2eadd0e02",
+  "dataset": {
+    "id": "phase1_offline_acceptance",
+    "version": "2026-07-14",
+    "path": "experiments/phase1_offline_cases.json",
+    "sha256": "5be5dcd71d1e988cee895e07da2876c59f895d18a430248f90ec3be2eadd0e02"
+  },
+  "git_commit": "2ad8ac80f222d108708c455933dec3c28984b646",
+  "git": {
+    "commit": "2ad8ac80f222d108708c455933dec3c28984b646"
+  },
+  "methods": [
+    "adaptive_multi_agent",
+    "single_agent",
+    "llm_direct",
+    "fixed_multi_agent"
+  ],
+  "method_order_seed": 20260718,
+  "repeats": 2,
+  "repeat_index_start": 0,
+  "system_variant": "per_method",
+  "model_config_name": "offline-static",
+  "model": "offline-static-model",
+  "temperature": 0.0,
+  "cache_enabled": false,
+  "cache_disabled": true,
+  "strict_mode": true,
+  "model_config": {
+    "name": "offline-static",
+    "model": "offline-static-model",
+    "temperature": 0.0
+  },
+  "cache": {
+    "enabled": false,
+    "disabled": true
+  },
+  "offline_data": {
+    "enabled": true,
+    "env": "TOURISM_FORMAL_EXPERIMENT_OFFLINE",
+    "policy": "formal experiments use frozen local datasets and forbid real-time tourism APIs",
+    "snapshot": {
+      "schema_version": "fixed_data_manifest_v1",
+      "city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "snapshot_dirs": [
+        "pois",
+        "weather",
+        "restaurants",
+        "accommodation",
+        "transport"
+      ],
+      "file_count": 25,
+      "expected_file_count": 25,
+      "combined_sha256": "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3",
+      "expected_combined_sha256": "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3",
+      "missing_files": [],
+      "files": [
+        {
+          "kind": "accommodation",
+          "city_id": "beijing",
+          "path": "data/accommodation/beijing.json",
+          "sha256": "91ebdadc86245922c61901a2ecfa437f1c754ed2c3975d68c642f7f8c5c93f05"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "guilin",
+          "path": "data/accommodation/guilin.json",
+          "sha256": "e8bbd330fa10ea575da49201bb69b30edc89874b64175a0c8f2593b09113f75d"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "hangzhou",
+          "path": "data/accommodation/hangzhou.json",
+          "sha256": "b146fa73d48688d36e035179e59f08d12a5a283d1bbe5e45ab1fbce27385bfee"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "shenzhen",
+          "path": "data/accommodation/shenzhen.json",
+          "sha256": "6ed2f5ef6078e7651c1f0106568136656dfab92cfe4cfe6866e4edbc185784e4"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "xian",
+          "path": "data/accommodation/xian.json",
+          "sha256": "6a82d4ba2e8659bd414a048371690525f15b26491e2a2934d4c0d380c95e3aca"
+        },
+        {
+          "kind": "pois",
+          "city_id": "beijing",
+          "path": "data/pois/beijing.json",
+          "sha256": "4bd2fb952e1a9b2fb6670793d007d5ebd2cfc897f67829c4d36538410ac4977e"
+        },
+        {
+          "kind": "pois",
+          "city_id": "guilin",
+          "path": "data/pois/guilin.json",
+          "sha256": "1a6d802bb7295998f5d3d965aff1cb5b59998411645922211b319a5c0bfb09cb"
+        },
+        {
+          "kind": "pois",
+          "city_id": "hangzhou",
+          "path": "data/pois/hangzhou.json",
+          "sha256": "7abd466ba674fa160978d6037c95c0bd64a78deed6b5c454bacad8ba055f8aea"
+        },
+        {
+          "kind": "pois",
+          "city_id": "shenzhen",
+          "path": "data/pois/shenzhen.json",
+          "sha256": "199977c5ef39cef67d52af432922de53f57c4862e27e2fb1b34cff7bbbe17582"
+        },
+        {
+          "kind": "pois",
+          "city_id": "xian",
+          "path": "data/pois/xian.json",
+          "sha256": "7f203268990980552debdc8425b77122c7ba7eb218d349f5723e77eada0e6e99"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "beijing",
+          "path": "data/restaurants/beijing.json",
+          "sha256": "378efb83ef2ba54ff563fd1d09e91403df354c942d31693d3a8725fcf9a11b33"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "guilin",
+          "path": "data/restaurants/guilin.json",
+          "sha256": "0b6c68e469096b53779ede207450df55db9040234e89d7cdb3e0bd907bf1a5fc"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "hangzhou",
+          "path": "data/restaurants/hangzhou.json",
+          "sha256": "214312ef2d5878038b74b9467210851184fbcad32edebe556bfee77a9cb881a0"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "shenzhen",
+          "path": "data/restaurants/shenzhen.json",
+          "sha256": "2d8572cfc4f87380b44e1026b39c228617b2e3989cac82baebc61d58109972ec"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "xian",
+          "path": "data/restaurants/xian.json",
+          "sha256": "b4eb9c0f3503e63a988441cf4a8fc942c9c69edb1c797ef745b7ec446986a2f5"
+        },
+        {
+          "kind": "transport",
+          "city_id": "beijing",
+          "path": "data/transport/beijing.json",
+          "sha256": "758967b5cc01305b5c228d728a43bd91dc6a5f25e8366185bb459b7aa789929b"
+        },
+        {
+          "kind": "transport",
+          "city_id": "guilin",
+          "path": "data/transport/guilin.json",
+          "sha256": "475c97fb492d2386c82bb29863cde96d7ab8e78e9f14d2dd399f9b05102765c7"
+        },
+        {
+          "kind": "transport",
+          "city_id": "hangzhou",
+          "path": "data/transport/hangzhou.json",
+          "sha256": "3aa7ab8650eeeb605f95ca8779fa20aca4274b4b4134ac81e3d7911119f2134f"
+        },
+        {
+          "kind": "transport",
+          "city_id": "shenzhen",
+          "path": "data/transport/shenzhen.json",
+          "sha256": "ed0adb7927e11b66e8f2b8ed6dbfa397f84ec363edeee20aac0a21a92c246923"
+        },
+        {
+          "kind": "transport",
+          "city_id": "xian",
+          "path": "data/transport/xian.json",
+          "sha256": "78977ab060a1c71fe87382ffc88a57644c721ea1270afc9520a3ae3b829472c0"
+        },
+        {
+          "kind": "weather",
+          "city_id": "beijing",
+          "path": "data/weather/beijing.json",
+          "sha256": "909fd6078a489aa09765a187411e4afa26c30ee8d3fd540734ed67eb3b62a348"
+        },
+        {
+          "kind": "weather",
+          "city_id": "guilin",
+          "path": "data/weather/guilin.json",
+          "sha256": "40cbe4ee2ce08189922d4639de5d59155050f6e4412fb4cb1a3f7c62d8574740"
+        },
+        {
+          "kind": "weather",
+          "city_id": "hangzhou",
+          "path": "data/weather/hangzhou.json",
+          "sha256": "d29568c5ab66f71261304511e7687b721e426176aff0da2152ed1bbee5c3e10a"
+        },
+        {
+          "kind": "weather",
+          "city_id": "shenzhen",
+          "path": "data/weather/shenzhen.json",
+          "sha256": "630a643c25608a9eef54e934ae7fe8a2eed59f7cb61f39f10484c08d90aba82e"
+        },
+        {
+          "kind": "weather",
+          "city_id": "xian",
+          "path": "data/weather/xian.json",
+          "sha256": "26734c7f640ddabcddbca955672a4aa75927946a174df2a9dca2a43a5100b607"
+        }
+      ]
+    }
+  },
+  "results": {
+    "csv": "experiments/results/phase1_acceptance_runs/phase1_acceptance_2ad8ac8_20260718/benchmark_results.csv",
+    "json": "experiments/results/phase1_acceptance_runs/phase1_acceptance_2ad8ac8_20260718/benchmark_results.json"
+  }
+}
