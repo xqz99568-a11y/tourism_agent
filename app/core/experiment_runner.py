@@ -33,6 +33,13 @@ from app.core.experiment_metrics import (
     constraint_metrics_from_report,
 )
 from app.core.fixed_data import validate_fixed_data_snapshot
+from app.core.goal_state_scheduler import (
+    RESULT_DEPENDENCIES,
+    build_goal_state_result_fingerprints,
+    build_goal_state_ticket,
+    is_goal_state_agent_reusable,
+    schedule_goal_state_ticket,
+)
 from app.core.llm.client import LLMMessage, ToolDefinition, get_llm
 from app.core.tool_executor import ToolExecutor
 from app.core.tracing import (
@@ -47,6 +54,7 @@ from app.core.tracing import (
     request_trace,
     set_trace_intent_info,
     set_trace_result_summary,
+    set_trace_scheduler_info,
     set_trace_selected_agents,
     start_agent_run,
     trace_component,
@@ -469,6 +477,35 @@ class ExperimentRunner:
             "hard_constraint_failed_count",
             "hard_constraints_all_satisfied",
             "hcsr",
+            "m3_scheduler_name",
+            "m3_task_type",
+            "m3_clarification_required",
+            "m3_clarification_field_count",
+            "m3_decision_reasons",
+            "m3_planned_agents",
+            "m3_reused_agents",
+            "m3_invalidated_agents",
+            "m3_planned_tools",
+            "m3_reused_tool_results",
+            "m3_missing_reused_tool_results",
+            "m3_m2_reference_agent_count",
+            "m3_m2_reference_tool_count",
+            "m3_planned_agent_count",
+            "m3_executed_agent_count",
+            "m3_reused_agent_count",
+            "m3_invalidated_agent_count",
+            "m3_planned_tool_count",
+            "m3_executed_tool_count",
+            "m3_expected_reused_tool_count",
+            "m3_reused_tool_result_count",
+            "m3_missing_reused_tool_result_count",
+            "m3_agent_reuse_rate",
+            "m3_tool_reuse_rate",
+            "m3_reuse_hit_rate",
+            "m3_agent_call_savings_vs_m2",
+            "m3_tool_call_savings_vs_m2",
+            "m3_agent_call_reduction_rate_vs_m2",
+            "m3_tool_call_reduction_rate_vs_m2",
             "input_hash",
             "result_hash",
             "offline_data_sha256",
@@ -710,7 +747,7 @@ class ExperimentRunner:
         method: ExperimentMethod,
         request_id: str,
     ) -> Any:
-        session_id = f"exp-{case['case_id']}-{method}-{uuid.uuid4().hex[:8]}"
+        session_id = self._case_session_id(case, method)
         with request_trace(
             request_id,
             session_id,
@@ -730,7 +767,7 @@ class ExperimentRunner:
 
         app = self.app_factory() if self.app_factory else TourismSystemApp()
         app.ensure_runtime_initialized()
-        session_id = f"exp-{case['case_id']}-{uuid.uuid4().hex[:8]}"
+        session_id = self._case_session_id(case, "full_system")
         session = app.get_or_create_session(session_id)
         final_content = ""
         async for event in app.orchestrator.process(session, case["user_input"], request_id):
@@ -757,7 +794,7 @@ class ExperimentRunner:
             "但需要尽量给出结构化、可执行的旅游建议。\n\n用户请求："
             f"{case['user_input']}"
         )
-        session_id = f"exp-{case['case_id']}-single_agent-{uuid.uuid4().hex[:8]}"
+        session_id = self._case_session_id(case, "single_agent")
         with request_trace(
             request_id,
             session_id,
@@ -886,10 +923,15 @@ class ExperimentRunner:
         return generation_tools()
 
     async def _run_fixed_multi_agent(self, case: Dict[str, Any], request_id: str) -> Dict[str, Any]:
-        agents = ["attraction", "weather", "itinerary", "budget"] if self._is_tourism_case(case) else []
+        execution_case = self._case_for_fixed_multi_agent(case)
+        agents = (
+            ["attraction", "weather", "itinerary", "budget"]
+            if self._is_tourism_case(execution_case)
+            else []
+        )
         tools = list(GENERATION_TOOL_NAMES) if agents else []
         return await self._run_research_multi_agent(
-            case=case,
+            case=execution_case,
             request_id=request_id,
             method="fixed_multi_agent",
             planned_agents=agents,
@@ -898,12 +940,28 @@ class ExperimentRunner:
 
     async def _run_adaptive_multi_agent(self, case: Dict[str, Any], request_id: str) -> Dict[str, Any]:
         plan = self._select_adaptive_research_plan(case)
+        previous_state = self._goal_state_previous_state(case)
+        reused_tool_results = self._reused_research_tool_results(
+            previous_state=previous_state,
+            scheduler_metadata=plan.get("scheduler"),
+        )
+        scheduler_metadata = self._scheduler_metadata_with_reuse_execution(
+            scheduler_metadata=plan.get("scheduler"),
+            previous_state=previous_state,
+            reused_tool_results=reused_tool_results,
+        )
+        execution_case = self._case_with_goal_state_slots(
+            case,
+            scheduler_metadata=scheduler_metadata,
+        )
         return await self._run_research_multi_agent(
-            case=case,
+            case=execution_case,
             request_id=request_id,
             method="adaptive_multi_agent",
             planned_agents=plan["agents"],
             planned_tools=plan["tools"],
+            scheduler_metadata=scheduler_metadata,
+            initial_tool_results=reused_tool_results,
         )
 
     async def _run_research_multi_agent(
@@ -914,8 +972,10 @@ class ExperimentRunner:
         method: ExperimentMethod,
         planned_agents: List[str],
         planned_tools: List[str],
+        scheduler_metadata: Optional[Dict[str, Any]] = None,
+        initial_tool_results: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
-        session_id = f"exp-{case['case_id']}-{method}-{uuid.uuid4().hex[:8]}"
+        session_id = self._case_session_id(case, method)
         with request_trace(
             request_id,
             session_id,
@@ -928,11 +988,14 @@ class ExperimentRunner:
                 self._initialize_trace_for_evaluation(case)
                 set_trace_selected_agents(planned_agents)
                 record_planned_tools(planned_tools)
+                if scheduler_metadata is not None:
+                    set_trace_scheduler_info(scheduler_metadata)
 
             tool_results = await self._execute_research_tool_plan(
                 case=case,
                 agents=planned_agents,
                 tools=planned_tools,
+                initial_tool_results=initial_tool_results,
             )
             result = await self._build_research_method_output(
                 case=case,
@@ -940,7 +1003,11 @@ class ExperimentRunner:
                 planned_agents=planned_agents,
                 planned_tools=planned_tools,
                 tool_results=tool_results,
+                scheduler_metadata=scheduler_metadata,
             )
+            result_scheduler = _nested_mapping(result, "metadata", "adaptive_scheduler")
+            if isinstance(result_scheduler, dict):
+                set_trace_scheduler_info(result_scheduler)
             set_trace_result_summary(result, offline_data=self._offline_data_summary(compact=True))
             return result
 
@@ -950,13 +1017,26 @@ class ExperimentRunner:
         case: Dict[str, Any],
         agents: List[str],
         tools: List[str],
+        initial_tool_results: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         catalog = {tool.name: tool for tool in generation_tools()}
         executor = ToolExecutor(tools=catalog)
-        tool_results: Dict[str, Any] = {}
+        tool_results: Dict[str, Any] = dict(initial_tool_results or {})
         planned_tool_set = set(tools)
+        failed_agents: set[str] = set()
 
         for agent_name in agents:
+            blocked_by = self._blocked_upstream_agents(agent_name, tool_results, failed_agents)
+            if blocked_by:
+                mark_trace_status(
+                    "failed",
+                    error=(
+                        f"{agent_name} skipped because upstream result is unavailable: "
+                        f"{', '.join(blocked_by)}"
+                    ),
+                )
+                failed_agents.add(agent_name)
+                continue
             agent_tools = [
                 tool_name
                 for tool_name in self._tools_for_research_agent(agent_name)
@@ -977,6 +1057,7 @@ class ExperimentRunner:
                         if call.is_failed or call.error:
                             agent_error = f"{tool_name}: {call.error or call.status.value}"
                             mark_trace_status("failed", error=agent_error)
+                            break
                 finish_agent_run(
                     agent_run,
                     agent_name=agent_name,
@@ -984,6 +1065,8 @@ class ExperimentRunner:
                     tool_count=len(agent_tools),
                     error=agent_error,
                 )
+                if agent_error:
+                    failed_agents.add(agent_name)
             except BaseException as exc:
                 finish_agent_run(
                     agent_run,
@@ -995,6 +1078,40 @@ class ExperimentRunner:
                 raise
         return tool_results
 
+    def _blocked_upstream_agents(
+        self,
+        agent_name: str,
+        tool_results: Dict[str, Any],
+        failed_agents: set[str],
+    ) -> List[str]:
+        blocked: List[str] = []
+        for upstream in RESULT_DEPENDENCIES.get(agent_name, ()):
+            if upstream in failed_agents or not self._agent_result_available_for_execution(
+                upstream,
+                tool_results,
+            ):
+                blocked.append(upstream)
+        return blocked
+
+    def _agent_result_available_for_execution(
+        self,
+        agent_name: str,
+        tool_results: Dict[str, Any],
+    ) -> bool:
+        if agent_name == "attraction":
+            return self._is_successful_reusable_tool_result(
+                tool_results.get("poi_search")
+            ) and bool(self._attractions_from_tool_result(tool_results.get("poi_search")))
+        if agent_name == "weather":
+            return self._is_successful_reusable_tool_result(
+                tool_results.get("weather_query")
+            ) and bool(self._tool_data(tool_results.get("weather_query")).get("daily_weather"))
+        if agent_name == "budget":
+            return self._is_successful_reusable_tool_result(
+                tool_results.get("budget_calculator")
+            )
+        return True
+
     def _tools_for_research_agent(self, agent_name: str) -> List[str]:
         mapping = {
             "attraction": ["poi_search"],
@@ -1003,6 +1120,345 @@ class ExperimentRunner:
             "budget": ["budget_calculator"],
         }
         return mapping.get(agent_name, [])
+
+    def _reused_research_tool_results(
+        self,
+        *,
+        previous_state: Optional[Dict[str, Any]],
+        scheduler_metadata: Optional[Dict[str, Any]],
+        ) -> Dict[str, Any]:
+        decision = self._scheduler_decision(scheduler_metadata)
+        previous_tool_results = self._previous_tool_results_from_state(previous_state)
+        reused_agents = _as_list(decision.get("reused_agents"))
+        invalidated_agents = set(_as_list(decision.get("invalidated_agents")))
+        ticket = scheduler_metadata.get("ticket") if isinstance(scheduler_metadata, dict) else None
+        current_slots = ticket.get("current_slots") if isinstance(ticket, dict) else {}
+
+        reused_tool_results: Dict[str, Any] = {}
+        for agent_name in reused_agents:
+            if agent_name in invalidated_agents:
+                continue
+            if not is_goal_state_agent_reusable(
+                agent_name,
+                current_slots=current_slots,
+                previous_state=previous_state,
+            ):
+                continue
+            for tool_name in self._tools_for_research_agent(agent_name):
+                result = previous_tool_results.get(tool_name)
+                if self._is_successful_reusable_tool_result(result):
+                    reused_tool_results[tool_name] = result
+        return reused_tool_results
+
+    def _scheduler_metadata_with_reuse_execution(
+        self,
+        *,
+        scheduler_metadata: Optional[Dict[str, Any]],
+        previous_state: Optional[Dict[str, Any]],
+        reused_tool_results: Dict[str, Any],
+    ) -> Optional[Dict[str, Any]]:
+        if scheduler_metadata is None:
+            return None
+
+        decision = self._scheduler_decision(scheduler_metadata)
+        reused_agents = _as_list(decision.get("reused_agents"))
+        expected_reused_tools = self._tools_for_agents(reused_agents)
+        reused_tools = [tool for tool in expected_reused_tools if tool in reused_tool_results]
+        missing_reused_tools = [
+            tool for tool in expected_reused_tools if tool not in reused_tool_results
+        ]
+        ticket = scheduler_metadata.get("ticket") if isinstance(scheduler_metadata, dict) else None
+        current_slots = ticket.get("current_slots") if isinstance(ticket, dict) else {}
+        actual_reused_agents = self._actual_reused_agents_from_reuse_execution(
+            expected_agents=reused_agents,
+            reused_tool_results=reused_tool_results,
+            previous_state=previous_state,
+            current_slots=current_slots,
+        )
+        missing_reused_agents = [
+            agent for agent in reused_agents if agent not in set(actual_reused_agents)
+        ]
+        expected_reused_tool_count = len(expected_reused_tools)
+        reused_tool_result_count = len(reused_tools)
+        return {
+            **scheduler_metadata,
+            "reuse_execution": {
+                "previous_state_provided": previous_state is not None,
+                "expected_reused_agents": reused_agents,
+                "reused_agent_results": actual_reused_agents,
+                "missing_reused_agent_results": missing_reused_agents,
+                "expected_reused_agent_count": len(reused_agents),
+                "reused_agent_result_count": len(actual_reused_agents),
+                "missing_reused_agent_result_count": len(missing_reused_agents),
+                "expected_reused_tools": expected_reused_tools,
+                "reused_tool_results": reused_tools,
+                "missing_reused_tool_results": missing_reused_tools,
+                "expected_reused_tool_count": expected_reused_tool_count,
+                "reused_tool_result_count": reused_tool_result_count,
+                "missing_reused_tool_result_count": len(missing_reused_tools),
+                "reuse_hit_rate": _safe_ratio(
+                    reused_tool_result_count,
+                    expected_reused_tool_count,
+                ),
+                "agent_reuse_hit_rate": _safe_ratio(
+                    len(actual_reused_agents),
+                    len(reused_agents),
+                ),
+            },
+        }
+
+    def _scheduler_decision(self, scheduler_metadata: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+        if not isinstance(scheduler_metadata, dict):
+            return {}
+        decision = scheduler_metadata.get("decision")
+        return decision if isinstance(decision, dict) else {}
+
+    def _actual_reused_agents_from_reuse_execution(
+        self,
+        *,
+        expected_agents: List[str],
+        reused_tool_results: Dict[str, Any],
+        previous_state: Optional[Dict[str, Any]],
+        current_slots: Dict[str, Any],
+    ) -> List[str]:
+        actual: List[str] = []
+        reused_tool_set = set(reused_tool_results)
+        for agent_name in expected_agents:
+            if not is_goal_state_agent_reusable(
+                agent_name,
+                current_slots=current_slots,
+                previous_state=previous_state,
+            ):
+                continue
+            agent_tools = self._tools_for_research_agent(agent_name)
+            if agent_tools:
+                if all(tool_name in reused_tool_set for tool_name in agent_tools):
+                    actual.append(agent_name)
+                continue
+            if agent_name == "itinerary" and self._previous_daily_itinerary_from_state(previous_state):
+                actual.append(agent_name)
+        return _ordered_unique(actual)
+
+    def _actual_reused_agents_from_scheduler(
+        self,
+        scheduler_metadata: Optional[Dict[str, Any]],
+    ) -> List[str]:
+        if not isinstance(scheduler_metadata, dict):
+            return []
+        reuse_execution = scheduler_metadata.get("reuse_execution")
+        if isinstance(reuse_execution, dict):
+            return _as_list(reuse_execution.get("reused_agent_results"))
+        return []
+
+    def _case_with_goal_state_slots(
+        self,
+        case: Dict[str, Any],
+        *,
+        scheduler_metadata: Optional[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        if not isinstance(scheduler_metadata, dict):
+            return case
+        ticket = scheduler_metadata.get("ticket")
+        current_slots = ticket.get("current_slots") if isinstance(ticket, dict) else None
+        if not isinstance(current_slots, dict):
+            return case
+        merged_slots = dict(case.get("slots") if isinstance(case.get("slots"), dict) else {})
+        merged_slots.update(current_slots)
+        return {**case, "slots": merged_slots}
+
+    def _case_for_fixed_multi_agent(self, case: Dict[str, Any]) -> Dict[str, Any]:
+        previous_state = self._goal_state_previous_state(case)
+        if previous_state is None:
+            return case
+        ticket = build_goal_state_ticket(
+            user_input=str(case.get("user_input") or ""),
+            current_slots=self._goal_state_current_slots(case),
+            previous_state=previous_state,
+        )
+        if ticket.task_type in {"general_chat", "clarification"}:
+            return case
+        return self._case_with_goal_state_slots(
+            case,
+            scheduler_metadata={"ticket": ticket.to_dict()},
+        )
+
+    def _case_session_id(self, case: Dict[str, Any], method: ExperimentMethod) -> str:
+        for value in (
+            _nested_mapping(case, "previous_state", "trace", "session_id"),
+            _nested_mapping(case, "previous_state", "session_id"),
+        ):
+            text = _optional_text(value)
+            if text:
+                return text
+        for value in (
+            case.get("session_id"),
+            case.get("conversation_id"),
+            case.get("thread_id"),
+        ):
+            text = _optional_text(value)
+            if text:
+                return self._session_id_with_repeat(text)
+        return self._session_id_with_repeat(f"exp-{case['case_id']}-{method}")
+
+    def _session_id_with_repeat(self, session_id: str) -> str:
+        repeat_index = os.getenv("EXPERIMENT_REPEAT_INDEX")
+        if repeat_index is None:
+            return session_id
+        suffix = f"-r{repeat_index}"
+        return session_id if session_id.endswith(suffix) else f"{session_id}{suffix}"
+
+    def _is_successful_reusable_tool_result(self, result: Any) -> bool:
+        if not isinstance(result, dict):
+            return False
+        status = str(result.get("status") or "").lower()
+        if status in {
+            "failed",
+            "error",
+            "timeout",
+            "cancelled",
+            "canceled",
+            "aborted",
+            "expired",
+            "stale",
+        }:
+            return False
+        if result.get("success") is False:
+            return False
+        return not result.get("error")
+
+    def _previous_tool_results_from_state(
+        self,
+        previous_state: Optional[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        if not isinstance(previous_state, dict):
+            return {}
+
+        candidates = [
+            previous_state.get("tool_results"),
+            _nested_mapping(previous_state, "raw_output", "tool_results"),
+            _nested_mapping(previous_state, "output", "tool_results"),
+            _nested_mapping(previous_state, "output", "raw_output", "tool_results"),
+        ]
+        for candidate in candidates:
+            if isinstance(candidate, dict):
+                return {
+                    str(tool_name): result
+                    for tool_name, result in candidate.items()
+                    if isinstance(result, dict)
+                }
+        return {}
+
+    def _previous_daily_itinerary_from_state(
+        self,
+        previous_state: Optional[Dict[str, Any]],
+    ) -> List[Dict[str, Any]]:
+        if not isinstance(previous_state, dict):
+            return []
+        for candidate in (
+            previous_state.get("daily_itinerary"),
+            _nested_mapping(previous_state, "raw_output", "daily_itinerary"),
+            _nested_mapping(previous_state, "output", "daily_itinerary"),
+            _nested_mapping(previous_state, "output", "raw_output", "daily_itinerary"),
+        ):
+            if isinstance(candidate, list):
+                return [item for item in candidate if isinstance(item, dict)]
+            if isinstance(candidate, dict) and isinstance(candidate.get("days"), list):
+                return [item for item in candidate["days"] if isinstance(item, dict)]
+        return []
+
+    def _scheduler_requires_clarification(
+        self,
+        scheduler_metadata: Optional[Dict[str, Any]],
+    ) -> bool:
+        if not isinstance(scheduler_metadata, dict):
+            return False
+        ticket = scheduler_metadata.get("ticket") if isinstance(scheduler_metadata.get("ticket"), dict) else {}
+        decision = (
+            scheduler_metadata.get("decision")
+            if isinstance(scheduler_metadata.get("decision"), dict)
+            else {}
+        )
+        return bool(
+            decision.get("clarification_required")
+            or ticket.get("clarification_required")
+            or ticket.get("task_type") == "clarification"
+        )
+
+    def _scheduler_clarification_fields(
+        self,
+        scheduler_metadata: Optional[Dict[str, Any]],
+    ) -> List[str]:
+        if not isinstance(scheduler_metadata, dict):
+            return []
+        ticket = scheduler_metadata.get("ticket") if isinstance(scheduler_metadata.get("ticket"), dict) else {}
+        decision = (
+            scheduler_metadata.get("decision")
+            if isinstance(scheduler_metadata.get("decision"), dict)
+            else {}
+        )
+        return _as_list(decision.get("clarification_fields") or ticket.get("clarification_fields"))
+
+    def _compose_clarification_answer(self, clarification_fields: List[str]) -> str:
+        field_labels = {
+            "destination": "目的地城市",
+            "start_date": "出发日期",
+            "duration_days": "旅行天数",
+            "people_count": "出行人数",
+            "previous_state": "上一轮方案",
+        }
+        labels = [field_labels.get(field, field) for field in clarification_fields]
+        if not labels:
+            return "需要先补充关键信息后，才能继续生成旅游方案。"
+        return "需要先补充：" + "、".join(labels) + "。请补充后我再生成旅游方案。"
+
+    def _daily_itinerary_for_research_output(
+        self,
+        *,
+        trip_days: int,
+        attractions: List[Dict[str, Any]],
+        weather: Dict[str, Any],
+        planned_agents: List[str],
+        reused_agents: List[str],
+        previous_state: Optional[Dict[str, Any]],
+    ) -> List[Dict[str, Any]]:
+        if "itinerary" in planned_agents and attractions and weather:
+            return self._build_daily_itinerary(trip_days, attractions)
+        if "itinerary" in reused_agents:
+            return self._previous_daily_itinerary_from_state(previous_state)
+        return []
+
+    def _produced_result_agents_from_artifacts(
+        self,
+        *,
+        planned_agents: List[str],
+        tool_results: Dict[str, Any],
+        daily_itinerary: List[Dict[str, Any]],
+    ) -> List[str]:
+        produced: List[str] = []
+        if "attraction" in planned_agents and self._agent_result_available_for_execution(
+            "attraction",
+            tool_results,
+        ):
+            produced.append("attraction")
+        if "weather" in planned_agents and self._agent_result_available_for_execution(
+            "weather",
+            tool_results,
+        ):
+            produced.append("weather")
+        if "itinerary" in planned_agents and daily_itinerary:
+            produced.append("itinerary")
+        if "budget" in planned_agents and self._agent_result_available_for_execution(
+            "budget",
+            tool_results,
+        ):
+            produced.append("budget")
+        return produced
+
+    def _tools_for_agents(self, agent_names: List[str]) -> List[str]:
+        tool_set: set[str] = set()
+        for agent_name in agent_names:
+            tool_set.update(self._tools_for_research_agent(agent_name))
+        return [tool for tool in GENERATION_TOOL_NAMES if tool in tool_set]
 
     def _research_tool_arguments(
         self,
@@ -1044,12 +1500,67 @@ class ExperimentRunner:
         planned_agents: List[str],
         planned_tools: List[str],
         tool_results: Dict[str, Any],
+        scheduler_metadata: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
+        if self._scheduler_requires_clarification(scheduler_metadata):
+            clarification_fields = self._scheduler_clarification_fields(scheduler_metadata)
+            mark_trace_status("clarification")
+            result_fingerprints = build_goal_state_result_fingerprints(
+                slots=case.get("slots") if isinstance(case.get("slots"), dict) else {},
+                tool_results=tool_results,
+                daily_itinerary=[],
+                result_agents=[],
+            )
+            enriched_scheduler_metadata = self._scheduler_metadata_with_result_fingerprints(
+                scheduler_metadata,
+                result_fingerprints,
+            )
+            return {
+                "task_type": "clarification",
+                "used_agents": planned_agents,
+                "planned_tools": planned_tools,
+                "trip_days": None,
+                "daily_itinerary": [],
+                "budget": None,
+                "weather": None,
+                "weather_adjustments": [],
+                "execution_status": "clarification",
+                "final_answer": self._compose_clarification_answer(clarification_fields),
+                "tool_results": tool_results,
+                "metadata": self._research_method_metadata(
+                    method=method,
+                    scheduler_metadata=enriched_scheduler_metadata,
+                    case=case,
+                    result_agents=[],
+                ),
+            }
+
+        previous_state = self._goal_state_previous_state(case)
+        actual_reused_agents = self._actual_reused_agents_from_scheduler(
+            scheduler_metadata,
+        )
         attractions = self._attractions_from_tool_result(tool_results.get("poi_search"))
         weather = self._tool_data(tool_results.get("weather_query"))
         budget = self._tool_data(tool_results.get("budget_calculator"))
         trip_days = self._case_duration(case)
-        daily_itinerary = self._build_daily_itinerary(trip_days, attractions)
+        daily_itinerary = self._daily_itinerary_for_research_output(
+            trip_days=trip_days,
+            attractions=attractions,
+            weather=weather,
+            planned_agents=planned_agents,
+            reused_agents=actual_reused_agents,
+            previous_state=previous_state,
+        )
+        result_agents = _ordered_unique(
+            [
+                *self._produced_result_agents_from_artifacts(
+                    planned_agents=planned_agents,
+                    tool_results=tool_results,
+                    daily_itinerary=daily_itinerary,
+                ),
+                *actual_reused_agents,
+            ]
+        )
         weather_adjustments = self._build_weather_adjustments(weather, attractions)
         final_answer = await self._compose_research_answer(
             case=case,
@@ -1061,8 +1572,18 @@ class ExperimentRunner:
             budget=budget,
             weather_adjustments=weather_adjustments,
         )
+        result_fingerprints = build_goal_state_result_fingerprints(
+            slots=case.get("slots") if isinstance(case.get("slots"), dict) else {},
+            tool_results=tool_results,
+            daily_itinerary=daily_itinerary,
+            result_agents=result_agents,
+        )
+        enriched_scheduler_metadata = self._scheduler_metadata_with_result_fingerprints(
+            scheduler_metadata,
+            result_fingerprints,
+        )
         return {
-            "task_type": self._infer_research_task_type(case),
+            "task_type": self._research_output_task_type(case, scheduler_metadata),
             "used_agents": planned_agents,
             "planned_tools": planned_tools,
             "trip_days": trip_days,
@@ -1073,6 +1594,12 @@ class ExperimentRunner:
             "execution_status": self._execution_status_from_tool_results(tool_results),
             "final_answer": final_answer,
             "tool_results": tool_results,
+            "metadata": self._research_method_metadata(
+                method=method,
+                scheduler_metadata=enriched_scheduler_metadata,
+                case=case,
+                result_agents=result_agents,
+            ),
         }
 
     async def _compose_research_answer(
@@ -1118,22 +1645,204 @@ class ExperimentRunner:
         )
         return response.content
 
-    def _select_adaptive_research_plan(self, case: Dict[str, Any]) -> Dict[str, List[str]]:
-        if not self._is_tourism_case(case):
-            return {"agents": [], "tools": []}
-
-        task_type = self._infer_research_task_type(case)
-        if task_type == "weather_adjustment":
-            return {"agents": ["weather", "itinerary"], "tools": ["weather_query"]}
-        if task_type == "budget_control":
-            return {"agents": ["budget"], "tools": ["budget_calculator"]}
-        if task_type == "attraction_recommendation":
-            return {"agents": ["attraction"], "tools": ["poi_search"]}
-        if task_type == "general_chat":
-            return {"agents": [], "tools": []}
+    def _select_adaptive_research_plan(self, case: Dict[str, Any]) -> Dict[str, Any]:
+        previous_state = self._goal_state_previous_state(case)
+        ticket = build_goal_state_ticket(
+            user_input=str(case.get("user_input") or ""),
+            current_slots=self._goal_state_current_slots(case),
+            previous_state=previous_state,
+        )
+        decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
         return {
-            "agents": ["attraction", "weather", "itinerary", "budget"],
-            "tools": list(GENERATION_TOOL_NAMES),
+            "agents": decision.planned_agents,
+            "tools": decision.planned_tools,
+            "scheduler": {
+                "name": "goal_state_scheduler",
+                "ticket": ticket.to_dict(),
+                "decision": decision.to_dict(),
+            },
+        }
+
+    def _goal_state_current_slots(self, case: Dict[str, Any]) -> Dict[str, Any]:
+        slots: Dict[str, Any] = {}
+        if isinstance(case.get("structured_request"), dict):
+            slots.update(_slots_from_mapping(case["structured_request"]))
+        if isinstance(case.get("slots"), dict):
+            slots.update(case["slots"])
+        slots.update(_slots_from_mapping(case))
+        if case.get("preferences") is not None:
+            slots.setdefault("preferences", case.get("preferences"))
+        if case.get("constraints"):
+            slots.setdefault("special_requirements", case.get("constraints"))
+        return slots
+
+    def _goal_state_previous_state(self, case: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        previous_state = case.get("previous_state")
+        if not isinstance(previous_state, dict):
+            return None
+
+        normalized = dict(previous_state)
+        slots = normalized.get("slots")
+        if not isinstance(slots, dict):
+            ticket = self._previous_scheduler_ticket_from_state(previous_state)
+            ticket_slots = ticket.get("current_slots") if isinstance(ticket, dict) else None
+            if isinstance(ticket_slots, dict):
+                normalized["slots"] = ticket_slots
+            else:
+                recovered_slots = self._previous_goal_state_slots_from_state(previous_state)
+                if recovered_slots:
+                    normalized["slots"] = recovered_slots
+
+        tool_results = self._previous_tool_results_from_state(previous_state)
+        if tool_results:
+            normalized["tool_results"] = tool_results
+
+        result_fingerprints = normalized.get("result_fingerprints")
+        if not isinstance(result_fingerprints, dict):
+            normalized["result_fingerprints"] = build_goal_state_result_fingerprints(
+                slots=normalized.get("slots") if isinstance(normalized.get("slots"), dict) else {},
+                tool_results=tool_results,
+                daily_itinerary=(
+                    previous_state.get("daily_itinerary")
+                    or _nested_mapping(previous_state, "raw_output", "daily_itinerary")
+                    or _nested_mapping(previous_state, "output", "daily_itinerary")
+                    or _nested_mapping(previous_state, "output", "raw_output", "daily_itinerary")
+                ),
+                result_agents=self._previous_result_agents_from_state(previous_state),
+            )
+
+        available_results = normalized.get("available_results")
+        if not isinstance(available_results, dict):
+            normalized["available_results"] = self._infer_available_results_from_previous_state(
+                previous_state=previous_state,
+                tool_results=tool_results,
+            )
+        return normalized
+
+    def _previous_goal_state_slots_from_state(self, previous_state: Dict[str, Any]) -> Dict[str, Any]:
+        candidates = [
+            _nested_mapping(previous_state, "metadata", "goal_state_slots"),
+            _nested_mapping(previous_state, "raw_output", "metadata", "goal_state_slots"),
+            _nested_mapping(previous_state, "output", "metadata", "goal_state_slots"),
+            _nested_mapping(previous_state, "output", "raw_output", "metadata", "goal_state_slots"),
+            _nested_mapping(previous_state, "raw_output", "slots"),
+            _nested_mapping(previous_state, "output", "raw_output", "slots"),
+        ]
+        for candidate in candidates:
+            if isinstance(candidate, dict):
+                normalized = _slots_from_mapping(candidate)
+                normalized.update(candidate)
+                return normalized
+        return {}
+
+    def _previous_result_agents_from_state(self, previous_state: Dict[str, Any]) -> List[str]:
+        candidates = [
+            _nested_mapping(previous_state, "metadata", "result_agents"),
+            _nested_mapping(previous_state, "raw_output", "metadata", "result_agents"),
+            _nested_mapping(previous_state, "output", "metadata", "result_agents"),
+            _nested_mapping(previous_state, "output", "raw_output", "metadata", "result_agents"),
+            previous_state.get("used_agents"),
+            _nested_mapping(previous_state, "raw_output", "used_agents"),
+            _nested_mapping(previous_state, "output", "used_agents"),
+            _nested_mapping(previous_state, "output", "raw_output", "used_agents"),
+            _nested_mapping(previous_state, "trace", "executed_agents"),
+            _nested_mapping(previous_state, "trace", "planned_agents"),
+        ]
+        for candidate in candidates:
+            values = _as_list(candidate)
+            if values:
+                return values
+        inferred: List[str] = []
+        tool_results = self._previous_tool_results_from_state(previous_state)
+        if self._is_successful_reusable_tool_result(tool_results.get("poi_search")):
+            inferred.append("attraction")
+        if self._is_successful_reusable_tool_result(tool_results.get("weather_query")):
+            inferred.append("weather")
+        if self._previous_daily_itinerary_from_state(previous_state):
+            inferred.append("itinerary")
+        if self._is_successful_reusable_tool_result(tool_results.get("budget_calculator")):
+            inferred.append("budget")
+        return _ordered_unique(inferred)
+
+    def _previous_scheduler_ticket_from_state(self, previous_state: Dict[str, Any]) -> Dict[str, Any]:
+        candidates = [
+            _nested_mapping(previous_state, "metadata", "adaptive_scheduler", "ticket"),
+            _nested_mapping(previous_state, "raw_output", "metadata", "adaptive_scheduler", "ticket"),
+            _nested_mapping(previous_state, "output", "metadata", "adaptive_scheduler", "ticket"),
+            _nested_mapping(previous_state, "output", "raw_output", "metadata", "adaptive_scheduler", "ticket"),
+        ]
+        for candidate in candidates:
+            if isinstance(candidate, dict):
+                return candidate
+        return {}
+
+    def _infer_available_results_from_previous_state(
+        self,
+        *,
+        previous_state: Dict[str, Any],
+        tool_results: Dict[str, Any],
+    ) -> Dict[str, bool]:
+        previous_result_agents = set(self._previous_result_agents_from_state(previous_state))
+        available = {
+            "attraction": (
+                "attraction" in previous_result_agents
+                and self._is_successful_reusable_tool_result(tool_results.get("poi_search"))
+            ),
+            "weather": (
+                "weather" in previous_result_agents
+                and self._is_successful_reusable_tool_result(tool_results.get("weather_query"))
+            ),
+            "budget": (
+                "budget" in previous_result_agents
+                and self._is_successful_reusable_tool_result(tool_results.get("budget_calculator"))
+            ),
+            "itinerary": (
+                "itinerary" in previous_result_agents
+                and bool(self._previous_daily_itinerary_from_state(previous_state))
+            ),
+        }
+        return {agent: has_result for agent, has_result in available.items() if has_result}
+
+    def _research_output_task_type(
+        self,
+        case: Dict[str, Any],
+        scheduler_metadata: Optional[Dict[str, Any]],
+    ) -> str:
+        ticket = scheduler_metadata.get("ticket") if isinstance(scheduler_metadata, dict) else None
+        if isinstance(ticket, dict) and ticket.get("task_type"):
+            return str(ticket["task_type"])
+        return self._infer_research_task_type(case)
+
+    def _research_method_metadata(
+        self,
+        *,
+        method: ExperimentMethod,
+        scheduler_metadata: Optional[Dict[str, Any]],
+        case: Optional[Dict[str, Any]] = None,
+        result_agents: Optional[List[str]] = None,
+    ) -> Dict[str, Any]:
+        metadata: Dict[str, Any] = {
+            "research_method": method,
+            "generation_tool_contract": "ctp-research-tools-v1.0",
+        }
+        if case is not None:
+            metadata["goal_state_slots"] = self._goal_state_current_slots(case)
+        if result_agents is not None:
+            metadata["result_agents"] = _ordered_unique(result_agents)
+        if scheduler_metadata is not None:
+            metadata["adaptive_scheduler"] = scheduler_metadata
+        return metadata
+
+    def _scheduler_metadata_with_result_fingerprints(
+        self,
+        scheduler_metadata: Optional[Dict[str, Any]],
+        result_fingerprints: Dict[str, Any],
+    ) -> Optional[Dict[str, Any]]:
+        if scheduler_metadata is None:
+            return None
+        return {
+            **scheduler_metadata,
+            "result_fingerprints": result_fingerprints,
         }
 
     def _infer_research_task_type(self, case: Dict[str, Any]) -> str:
@@ -1178,11 +1887,14 @@ class ExperimentRunner:
         structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
         for value in (
             slots.get("duration"),
+            slots.get("duration_days"),
             slots.get("days"),
             structured.get("days"),
             structured.get("duration"),
+            structured.get("duration_days"),
             case.get("days"),
             case.get("duration"),
+            case.get("duration_days"),
         ):
             if value is None or value == "":
                 continue
@@ -1206,8 +1918,9 @@ class ExperimentRunner:
         return _optional_text(value)
 
     def _case_preferences(self, case: Dict[str, Any]) -> List[str]:
+        slots = case.get("slots") if isinstance(case.get("slots"), dict) else {}
         structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
-        preferences = structured.get("preferences") or case.get("preferences") or []
+        preferences = slots.get("preferences") or structured.get("preferences") or case.get("preferences") or []
         constraints = case.get("constraints") or structured.get("constraints") or []
         return [*_as_list(preferences), *_as_list(constraints)]
 
@@ -1216,8 +1929,11 @@ class ExperimentRunner:
         structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
         return str(
             slots.get("traveler_type")
+            or slots.get("traveler_group")
             or structured.get("traveler_type")
+            or structured.get("traveler_group")
             or case.get("traveler_type")
+            or case.get("traveler_group")
             or "general"
         )
 
@@ -1256,6 +1972,7 @@ class ExperimentRunner:
         if value:
             return str(value)
         budget = slots.get("budget") or structured.get("budget") or case.get("budget")
+        budget = budget or slots.get("budget_amount") or structured.get("budget_amount") or case.get("budget_amount")
         try:
             budget_value = float(budget)
         except (TypeError, ValueError):
@@ -1272,10 +1989,13 @@ class ExperimentRunner:
         for value in (
             slots.get("budget_limit"),
             slots.get("budget"),
+            slots.get("budget_amount"),
             structured.get("budget_limit"),
             structured.get("budget"),
+            structured.get("budget_amount"),
             case.get("budget_limit"),
             case.get("budget"),
+            case.get("budget_amount"),
         ):
             if value is None or value == "":
                 continue
@@ -1401,7 +2121,16 @@ class ExperimentRunner:
 
     def _execution_status_from_tool_results(self, tool_results: Dict[str, Any]) -> str:
         for result in tool_results.values():
-            if isinstance(result, dict) and result.get("status") == "failed":
+            if isinstance(result, dict) and str(result.get("status") or "").lower() in {
+                "failed",
+                "error",
+                "timeout",
+                "cancelled",
+                "canceled",
+                "aborted",
+                "expired",
+                "stale",
+            }:
                 return "failed"
         return "completed"
 
@@ -1415,7 +2144,7 @@ class ExperimentRunner:
         user_prompt: str,
         selected_agents: List[str],
     ) -> str:
-        session_id = f"exp-{case['case_id']}-{method}-{uuid.uuid4().hex[:8]}"
+        session_id = self._case_session_id(case, method)
         with request_trace(
             request_id,
             session_id,
@@ -1538,6 +2267,16 @@ class ExperimentRunner:
         )
         metrics = self._score_against_expected(case.get("expected") or {}, trace_record)
         metrics.update(constraint_metrics_from_report(constraint_report))
+        adaptive_scheduler_metrics = self._adaptive_scheduler_metrics_from_output(
+            structured_output,
+            trace_record,
+        )
+        if adaptive_scheduler_metrics:
+            metrics.update(adaptive_scheduler_metrics)
+            self._attach_adaptive_scheduler_metrics(
+                structured_output,
+                adaptive_scheduler_metrics,
+            )
         input_hash = _stable_hash({"case_id": case["case_id"], "user_input": case["user_input"], "slots": case.get("slots")})
         result_hash = _stable_hash(structured_output)
         offline_data = self._offline_data_summary()
@@ -1663,6 +2402,125 @@ class ExperimentRunner:
             ),
         }
 
+    def _adaptive_scheduler_metrics_from_output(
+        self,
+        structured_output: Dict[str, Any],
+        trace_record: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        scheduler = _nested_mapping(structured_output, "metadata", "adaptive_scheduler")
+        if not isinstance(scheduler, dict):
+            trace_scheduler = trace_record.get("adaptive_scheduler")
+            scheduler = trace_scheduler if isinstance(trace_scheduler, dict) else {}
+        if not isinstance(scheduler, dict) or not scheduler:
+            return {}
+
+        ticket = scheduler.get("ticket") if isinstance(scheduler.get("ticket"), dict) else {}
+        decision = scheduler.get("decision") if isinstance(scheduler.get("decision"), dict) else {}
+        reuse_execution = (
+            scheduler.get("reuse_execution")
+            if isinstance(scheduler.get("reuse_execution"), dict)
+            else {}
+        )
+
+        planned_agents = _as_list(decision.get("planned_agents"))
+        planned_tools = _as_list(decision.get("planned_tools"))
+        reused_agents = _as_list(reuse_execution.get("reused_agent_results"))
+        invalidated_agents = _as_list(decision.get("invalidated_agents"))
+        clarification_fields = _as_list(
+            decision.get("clarification_fields") or ticket.get("clarification_fields")
+        )
+        decision_reasons = _as_list(decision.get("decision_reasons"))
+        reused_tool_results = _as_list(reuse_execution.get("reused_tool_results"))
+        missing_reused_tool_results = _as_list(
+            reuse_execution.get("missing_reused_tool_results")
+        )
+        expected_reused_tools = _as_list(
+            reuse_execution.get("expected_reused_tools")
+        ) or self._tools_for_agents(reused_agents)
+
+        executed_agents = _as_list(trace_record.get("executed_agents"))
+        executed_tools = _as_list(trace_record.get("executed_tools"))
+        agent_scope = _ordered_unique([*planned_agents, *reused_agents])
+        tool_scope = _ordered_unique([*planned_tools, *expected_reused_tools])
+
+        m2_reference_agent_count, m2_reference_tool_count = self._m2_reference_counts_for_m3(
+            ticket=ticket,
+        )
+        agent_call_savings = max(0, m2_reference_agent_count - len(planned_agents))
+        tool_call_savings = max(0, m2_reference_tool_count - len(planned_tools))
+
+        expected_reused_tool_count = len(expected_reused_tools)
+        reused_tool_result_count = len(reused_tool_results)
+
+        return {
+            "m3_scheduler_name": scheduler.get("name") or "goal_state_scheduler",
+            "m3_task_type": ticket.get("task_type"),
+            "m3_clarification_required": bool(
+                decision.get("clarification_required")
+                or ticket.get("clarification_required")
+            ),
+            "m3_clarification_fields": clarification_fields,
+            "m3_clarification_field_count": len(clarification_fields),
+            "m3_decision_reasons": decision_reasons,
+            "m3_planned_agents": planned_agents,
+            "m3_reused_agents": reused_agents,
+            "m3_invalidated_agents": invalidated_agents,
+            "m3_planned_tools": planned_tools,
+            "m3_expected_reused_tools": expected_reused_tools,
+            "m3_reused_tool_results": reused_tool_results,
+            "m3_missing_reused_tool_results": missing_reused_tool_results,
+            "m3_previous_state_provided": bool(
+                reuse_execution.get("previous_state_provided")
+            ),
+            "m3_m2_reference_agent_count": m2_reference_agent_count,
+            "m3_m2_reference_tool_count": m2_reference_tool_count,
+            "m3_planned_agent_count": len(planned_agents),
+            "m3_executed_agent_count": len(executed_agents),
+            "m3_reused_agent_count": len(reused_agents),
+            "m3_invalidated_agent_count": len(invalidated_agents),
+            "m3_planned_tool_count": len(planned_tools),
+            "m3_executed_tool_count": len(executed_tools),
+            "m3_expected_reused_tool_count": expected_reused_tool_count,
+            "m3_reused_tool_result_count": reused_tool_result_count,
+            "m3_missing_reused_tool_result_count": len(missing_reused_tool_results),
+            "m3_agent_reuse_rate": _safe_ratio(len(reused_agents), len(agent_scope)),
+            "m3_tool_reuse_rate": _safe_ratio(reused_tool_result_count, len(tool_scope)),
+            "m3_reuse_hit_rate": _safe_ratio(
+                reused_tool_result_count,
+                expected_reused_tool_count,
+            ),
+            "m3_agent_call_savings_vs_m2": agent_call_savings,
+            "m3_tool_call_savings_vs_m2": tool_call_savings,
+            "m3_agent_call_reduction_rate_vs_m2": _safe_ratio(
+                agent_call_savings,
+                m2_reference_agent_count,
+            ),
+            "m3_tool_call_reduction_rate_vs_m2": _safe_ratio(
+                tool_call_savings,
+                m2_reference_tool_count,
+            ),
+        }
+
+    def _m2_reference_counts_for_m3(
+        self,
+        *,
+        ticket: Dict[str, Any],
+    ) -> tuple[int, int]:
+        task_type = str(ticket.get("task_type") or "")
+        if task_type == "general_chat":
+            return 0, 0
+        return 4, len(GENERATION_TOOL_NAMES)
+
+    def _attach_adaptive_scheduler_metrics(
+        self,
+        structured_output: Dict[str, Any],
+        scheduler_metrics: Dict[str, Any],
+    ) -> None:
+        metadata = structured_output.setdefault("metadata", {})
+        if not isinstance(metadata, dict):
+            return
+        metadata["adaptive_scheduler_metrics"] = dict(scheduler_metrics)
+
     def _flatten_result_for_csv(self, result: Dict[str, Any]) -> Dict[str, Any]:
         trace = result.get("trace") or {}
         metrics = result.get("metrics") or {}
@@ -1698,6 +2556,37 @@ class ExperimentRunner:
             "hard_constraint_failed_count": metrics.get("hard_constraint_failed_count"),
             "hard_constraints_all_satisfied": metrics.get("hard_constraints_all_satisfied"),
             "hcsr": metrics.get("hcsr"),
+            "m3_scheduler_name": metrics.get("m3_scheduler_name"),
+            "m3_task_type": metrics.get("m3_task_type"),
+            "m3_clarification_required": metrics.get("m3_clarification_required"),
+            "m3_clarification_field_count": metrics.get("m3_clarification_field_count"),
+            "m3_decision_reasons": "|".join(_as_list(metrics.get("m3_decision_reasons"))),
+            "m3_planned_agents": "|".join(_as_list(metrics.get("m3_planned_agents"))),
+            "m3_reused_agents": "|".join(_as_list(metrics.get("m3_reused_agents"))),
+            "m3_invalidated_agents": "|".join(_as_list(metrics.get("m3_invalidated_agents"))),
+            "m3_planned_tools": "|".join(_as_list(metrics.get("m3_planned_tools"))),
+            "m3_reused_tool_results": "|".join(_as_list(metrics.get("m3_reused_tool_results"))),
+            "m3_missing_reused_tool_results": "|".join(
+                _as_list(metrics.get("m3_missing_reused_tool_results"))
+            ),
+            "m3_m2_reference_agent_count": metrics.get("m3_m2_reference_agent_count"),
+            "m3_m2_reference_tool_count": metrics.get("m3_m2_reference_tool_count"),
+            "m3_planned_agent_count": metrics.get("m3_planned_agent_count"),
+            "m3_executed_agent_count": metrics.get("m3_executed_agent_count"),
+            "m3_reused_agent_count": metrics.get("m3_reused_agent_count"),
+            "m3_invalidated_agent_count": metrics.get("m3_invalidated_agent_count"),
+            "m3_planned_tool_count": metrics.get("m3_planned_tool_count"),
+            "m3_executed_tool_count": metrics.get("m3_executed_tool_count"),
+            "m3_expected_reused_tool_count": metrics.get("m3_expected_reused_tool_count"),
+            "m3_reused_tool_result_count": metrics.get("m3_reused_tool_result_count"),
+            "m3_missing_reused_tool_result_count": metrics.get("m3_missing_reused_tool_result_count"),
+            "m3_agent_reuse_rate": metrics.get("m3_agent_reuse_rate"),
+            "m3_tool_reuse_rate": metrics.get("m3_tool_reuse_rate"),
+            "m3_reuse_hit_rate": metrics.get("m3_reuse_hit_rate"),
+            "m3_agent_call_savings_vs_m2": metrics.get("m3_agent_call_savings_vs_m2"),
+            "m3_tool_call_savings_vs_m2": metrics.get("m3_tool_call_savings_vs_m2"),
+            "m3_agent_call_reduction_rate_vs_m2": metrics.get("m3_agent_call_reduction_rate_vs_m2"),
+            "m3_tool_call_reduction_rate_vs_m2": metrics.get("m3_tool_call_reduction_rate_vs_m2"),
             "input_hash": result.get("input_hash"),
             "result_hash": result.get("result_hash"),
             "offline_data_sha256": (result.get("offline_data") or {}).get("combined_sha256"),
@@ -1763,7 +2652,15 @@ def _slots_from_mapping(data: Dict[str, Any]) -> Dict[str, Any]:
         "budget_amount": "budget",
         "budget_level": "budget_level",
         "num_travelers": "num_travelers",
+        "people_count": "people_count",
         "traveler_type": "traveler_type",
+        "traveler_group": "traveler_group",
+        "start_date": "start_date",
+        "date": "start_date",
+        "preferences": "preferences",
+        "special_requirements": "special_requirements",
+        "weather_scenario": "weather_scenario",
+        "scenario_type": "weather_scenario",
     }
     for source, target in mapping.items():
         if source in data and data[source] is not None:
@@ -1781,6 +2678,32 @@ def _as_list(value: Any) -> List[str]:
     if isinstance(value, tuple | set):
         return [str(item) for item in value if item]
     return [str(value)]
+
+
+def _ordered_unique(values: Iterable[str]) -> List[str]:
+    seen: set[str] = set()
+    result: List[str] = []
+    for value in values:
+        if not value or value in seen:
+            continue
+        seen.add(value)
+        result.append(value)
+    return result
+
+
+def _safe_ratio(numerator: int | float, denominator: int | float) -> Optional[float]:
+    if not denominator:
+        return None
+    return round(float(numerator) / float(denominator), 4)
+
+
+def _nested_mapping(value: Any, *keys: str) -> Any:
+    current = value
+    for key in keys:
+        if not isinstance(current, dict):
+            return None
+        current = current.get(key)
+    return current
 
 
 def _json_tool_result(value: Any) -> str:

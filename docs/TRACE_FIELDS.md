@@ -94,3 +94,27 @@ python experiments/run_phase1_offline_acceptance.py
 - The run directory must contain `benchmark_results.csv`, `benchmark_results.json`, `experiment_manifest.json`, and `traces/`.
 - Existing acceptance result directories are historical evidence and must not be overwritten.
 - The manifest fixed-data snapshot must report exactly 25 files and the combined SHA-256 `90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3`.
+
+## Day 4 adaptive scheduler trace fields
+
+`schema_version=1.7` adds top-level `adaptive_scheduler` for M3 evidence. It is
+written into persistent trace files, not only CSV or returned JSON. The field
+contains:
+
+- `ticket`: goal-state task ticket, including current slots, previous slots,
+  changed slots, preserved slots, missing slots, required capabilities, and
+  `goal_change_type`.
+- `decision`: scheduler output, including planned agents/tools, reused agents,
+  invalidated agents, clarification fields, decision reasons, and
+  `reuse_validation`.
+- `reuse_execution`: actual execution-side reuse evidence, including expected
+  reused tools, actually reused tool results, missing reused tool results, and
+  `reuse_hit_rate`.
+- `result_fingerprints`: semantic fingerprints of newly produced results, used
+  by the next turn to prevent reuse when the old tool input does not match the
+  current destination, date, duration, people count, preferences, or budget
+  state.
+
+For paper experiments, reuse metrics must be derived from these persisted
+fields. A previous result is reusable only when it is successful and its input
+fingerprint is compatible with the current goal-state slots.

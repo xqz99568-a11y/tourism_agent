@@ -96,6 +96,14 @@ def normalize_experiment_output(
     )
     status = _execution_status(error, trace_record, raw_mapping, tool_calls)
     final_answer = _final_answer(raw_output)
+    output_metadata = {
+        "output_contract": EXPERIMENT_OUTPUT_SCHEMA_VERSION,
+        "trace_schema_version": trace_record.get("schema_version"),
+        "tool_call_count": len(tool_calls),
+    }
+    if isinstance(raw_mapping.get("metadata"), dict):
+        output_metadata.update(raw_mapping["metadata"])
+
     model = ExperimentMethodOutput(
         case_id=str(case.get("case_id") or ""),
         method=method,
@@ -127,11 +135,7 @@ def normalize_experiment_output(
         execution_status=status,
         final_answer=final_answer,
         raw_output=raw_output,
-        metadata={
-            "output_contract": EXPERIMENT_OUTPUT_SCHEMA_VERSION,
-            "trace_schema_version": trace_record.get("schema_version"),
-            "tool_call_count": len(tool_calls),
-        },
+        metadata=output_metadata,
     )
     return model.model_dump(mode="json")
 
@@ -153,10 +157,32 @@ def _execution_status(
     if _has_failed_tool_results(raw_mapping.get("tool_results")):
         return "failed"
     trace_status = str(trace_record.get("status") or "").lower()
-    if trace_status in {"failed", "error", "timeout", "cancelled", "canceled", "aborted"}:
+    if trace_status == "clarification":
+        return "clarification"
+    if trace_status in {
+        "failed",
+        "error",
+        "timeout",
+        "cancelled",
+        "canceled",
+        "aborted",
+        "expired",
+        "stale",
+    }:
         return "failed"
     raw_status = str(raw_mapping.get("execution_status") or "").lower()
-    if raw_status in {"failed", "error", "timeout", "cancelled", "canceled", "aborted"}:
+    if raw_status == "clarification":
+        return "clarification"
+    if raw_status in {
+        "failed",
+        "error",
+        "timeout",
+        "cancelled",
+        "canceled",
+        "aborted",
+        "expired",
+        "stale",
+    }:
         return "failed"
     return "completed"
 
@@ -172,7 +198,16 @@ def _has_failed_tool_calls(calls: Any) -> bool:
         if call.get("success") is False:
             return True
         status = str(call.get("status") or "").lower()
-        if status in {"failed", "error", "timeout", "cancelled", "canceled", "aborted"}:
+        if status in {
+            "failed",
+            "error",
+            "timeout",
+            "cancelled",
+            "canceled",
+            "aborted",
+            "expired",
+            "stale",
+        }:
             return True
         if call.get("error"):
             return True
@@ -192,7 +227,16 @@ def _has_failed_tool_results(results: Any) -> bool:
         if result.get("success") is False:
             return True
         status = str(result.get("status") or "").lower()
-        if status in {"failed", "error", "timeout", "cancelled", "canceled", "aborted"}:
+        if status in {
+            "failed",
+            "error",
+            "timeout",
+            "cancelled",
+            "canceled",
+            "aborted",
+            "expired",
+            "stale",
+        }:
             return True
     return False
 
