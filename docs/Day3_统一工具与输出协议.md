@@ -174,8 +174,8 @@ runner 对四种方法输出统一封装为 `ctp-experiment-output-v1`：
 
 ## 九、验收锁定规则
 
-- 固定离线数据锁定为 25 个正式文件，综合哈希为 `90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3`。
-- 实验启动前必须校验 25 个文件的文件级 SHA-256 和综合 SHA-256；缺文件或哈希变化时立即终止。
+- 固定离线数据锁定为 25 个正式文件，哈希策略为 `canonical_json_utf8_sort_keys_v1`，综合哈希为 `8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0`。
+- 实验启动前必须校验 25 个文件的规范化 JSON SHA-256 和综合 SHA-256；只改变换行、空格或 JSON 键顺序不视为数据变更，旅游字段内容变化时必须立即终止。
 - `limit`、`days`、`people_count` 等数字参数不得自动纠错；非法值必须返回 `status=failed` 和 `error.code=invalid_arguments`。
 - benchmark 运行顺序使用固定随机种子打乱，种子写入 manifest。
 - CSV、JSON、Trace 和 manifest 必须保存在独立 `run_id` 目录，旧验收证据只读保留，不覆盖。

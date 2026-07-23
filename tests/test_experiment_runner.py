@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -11,6 +12,10 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.core.experiment_runner import ExperimentRunner
+from app.core.fixed_data import (
+    CANONICAL_JSON_SHA256_STRATEGY,
+    FIXED_DATA_EXPECTED_COMBINED_SHA256,
+)
 from app.core.llm.client import ToolCall
 from app.core.tracing import get_current_trace, record_selected_tool, set_trace_selected_agents
 
@@ -85,6 +90,47 @@ def test_runner_runs_same_case_through_four_methods_and_exports_csv(
     assert all(row["evaluation_mode"] == "end_to_end" for row in rows)
     assert all(row["tool_selection_accuracy"] == "1.0" for row in rows)
     assert all(float(row["ttft_ms"]) >= 0 for row in rows)
+
+
+def test_experiment_manifest_dataset_hash_ignores_json_formatting(tmp_path: Path) -> None:
+    lf_path = tmp_path / "benchmark_lf.json"
+    crlf_path = tmp_path / "benchmark_crlf.json"
+    lf_path.write_bytes(
+        b'{\n'
+        b'  "dataset_version": "v1",\n'
+        b'  "dataset_id": "formatting_cases",\n'
+        b'  "cases": [\n'
+        b'    {"case_id": "c1", "user_input": "plan"}\n'
+        b'  ]\n'
+        b'}\n'
+    )
+    crlf_path.write_bytes(
+        b'{\r\n'
+        b'  "cases": [\r\n'
+        b'    {"user_input": "plan", "case_id": "c1"}\r\n'
+        b'  ],\r\n'
+        b'  "dataset_id": "formatting_cases",\r\n'
+        b'  "dataset_version": "v1"\r\n'
+        b'}\r\n'
+    )
+    assert hashlib.sha256(lf_path.read_bytes()).hexdigest() != hashlib.sha256(
+        crlf_path.read_bytes()
+    ).hexdigest()
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", output_dir=tmp_path / "results")
+    lf_manifest = runner.write_experiment_manifest(
+        benchmark_path=lf_path,
+        output_path=tmp_path / "manifest_lf.json",
+    )
+    crlf_manifest = runner.write_experiment_manifest(
+        benchmark_path=crlf_path,
+        output_path=tmp_path / "manifest_crlf.json",
+    )
+
+    assert lf_manifest["dataset_hash_strategy"] == CANONICAL_JSON_SHA256_STRATEGY
+    assert lf_manifest["dataset_sha256"] == crlf_manifest["dataset_sha256"]
+    assert lf_manifest["dataset"]["sha256"] == crlf_manifest["dataset"]["sha256"]
+    assert lf_manifest["dataset"]["hash_strategy"] == CANONICAL_JSON_SHA256_STRATEGY
 
 
 def test_llm_baselines_do_not_write_expected_intent_or_route_to_end_to_end_trace(
@@ -342,6 +388,11 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     )
     assert len(manifest["dataset_sha256"]) == 64
     assert len(manifest["git_commit"]) == 40
+    assert manifest["git"]["commit"] == manifest["git_commit"]
+    assert manifest["git"]["working_tree_clean"] == manifest["working_tree_clean"]
+    assert manifest["git"]["status_short"] == manifest["git_status_short"]
+    assert isinstance(manifest["working_tree_clean"], bool)
+    assert isinstance(manifest["git_status_short"], list)
     assert manifest["model"] == "offline-static-model"
     assert manifest["temperature"] == 0.0
     assert manifest["cache_enabled"] is False
@@ -349,9 +400,8 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     assert manifest["repeats"] == 2
     assert manifest["model_config_name"] == "offline-static"
     assert manifest["method_order_seed"] == runner.method_order_seed
-    assert manifest["offline_data"]["snapshot"]["combined_sha256"] == (
-        "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3"
-    )
+    assert manifest["offline_data"]["snapshot"]["hash_strategy"] == CANONICAL_JSON_SHA256_STRATEGY
+    assert manifest["offline_data"]["snapshot"]["combined_sha256"] == FIXED_DATA_EXPECTED_COMBINED_SHA256
     assert len(list(csv.DictReader((run_output_dir / "benchmark_results.csv").open(encoding="utf-8-sig")))) == 16
 
 

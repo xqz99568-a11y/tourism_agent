@@ -22,33 +22,34 @@ OFFLINE_ENV_NAMES = (
 FIXED_CITY_IDS = ("beijing", "hangzhou", "xian", "shenzhen", "guilin")
 FIXED_DATA_SNAPSHOT_DIRS = ("pois", "weather", "restaurants", "accommodation", "transport")
 FIXED_DATA_EXPECTED_FILE_COUNT = 25
-FIXED_DATA_EXPECTED_COMBINED_SHA256 = "90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3"
+CANONICAL_JSON_SHA256_STRATEGY = "canonical_json_utf8_sort_keys_v1"
+FIXED_DATA_EXPECTED_COMBINED_SHA256 = "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0"
 FIXED_DATA_EXPECTED_FILE_HASHES = {
-    "data/accommodation/beijing.json": "91ebdadc86245922c61901a2ecfa437f1c754ed2c3975d68c642f7f8c5c93f05",
-    "data/accommodation/guilin.json": "e8bbd330fa10ea575da49201bb69b30edc89874b64175a0c8f2593b09113f75d",
-    "data/accommodation/hangzhou.json": "b146fa73d48688d36e035179e59f08d12a5a283d1bbe5e45ab1fbce27385bfee",
-    "data/accommodation/shenzhen.json": "6ed2f5ef6078e7651c1f0106568136656dfab92cfe4cfe6866e4edbc185784e4",
-    "data/accommodation/xian.json": "6a82d4ba2e8659bd414a048371690525f15b26491e2a2934d4c0d380c95e3aca",
-    "data/pois/beijing.json": "4bd2fb952e1a9b2fb6670793d007d5ebd2cfc897f67829c4d36538410ac4977e",
-    "data/pois/guilin.json": "1a6d802bb7295998f5d3d965aff1cb5b59998411645922211b319a5c0bfb09cb",
-    "data/pois/hangzhou.json": "7abd466ba674fa160978d6037c95c0bd64a78deed6b5c454bacad8ba055f8aea",
-    "data/pois/shenzhen.json": "199977c5ef39cef67d52af432922de53f57c4862e27e2fb1b34cff7bbbe17582",
-    "data/pois/xian.json": "7f203268990980552debdc8425b77122c7ba7eb218d349f5723e77eada0e6e99",
-    "data/restaurants/beijing.json": "378efb83ef2ba54ff563fd1d09e91403df354c942d31693d3a8725fcf9a11b33",
-    "data/restaurants/guilin.json": "0b6c68e469096b53779ede207450df55db9040234e89d7cdb3e0bd907bf1a5fc",
-    "data/restaurants/hangzhou.json": "214312ef2d5878038b74b9467210851184fbcad32edebe556bfee77a9cb881a0",
-    "data/restaurants/shenzhen.json": "2d8572cfc4f87380b44e1026b39c228617b2e3989cac82baebc61d58109972ec",
-    "data/restaurants/xian.json": "b4eb9c0f3503e63a988441cf4a8fc942c9c69edb1c797ef745b7ec446986a2f5",
-    "data/transport/beijing.json": "758967b5cc01305b5c228d728a43bd91dc6a5f25e8366185bb459b7aa789929b",
-    "data/transport/guilin.json": "475c97fb492d2386c82bb29863cde96d7ab8e78e9f14d2dd399f9b05102765c7",
-    "data/transport/hangzhou.json": "3aa7ab8650eeeb605f95ca8779fa20aca4274b4b4134ac81e3d7911119f2134f",
-    "data/transport/shenzhen.json": "ed0adb7927e11b66e8f2b8ed6dbfa397f84ec363edeee20aac0a21a92c246923",
-    "data/transport/xian.json": "78977ab060a1c71fe87382ffc88a57644c721ea1270afc9520a3ae3b829472c0",
-    "data/weather/beijing.json": "909fd6078a489aa09765a187411e4afa26c30ee8d3fd540734ed67eb3b62a348",
-    "data/weather/guilin.json": "40cbe4ee2ce08189922d4639de5d59155050f6e4412fb4cb1a3f7c62d8574740",
-    "data/weather/hangzhou.json": "d29568c5ab66f71261304511e7687b721e426176aff0da2152ed1bbee5c3e10a",
-    "data/weather/shenzhen.json": "630a643c25608a9eef54e934ae7fe8a2eed59f7cb61f39f10484c08d90aba82e",
-    "data/weather/xian.json": "26734c7f640ddabcddbca955672a4aa75927946a174df2a9dca2a43a5100b607",
+    "data/accommodation/beijing.json": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+    "data/accommodation/guilin.json": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+    "data/accommodation/hangzhou.json": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+    "data/accommodation/shenzhen.json": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+    "data/accommodation/xian.json": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+    "data/pois/beijing.json": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+    "data/pois/guilin.json": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+    "data/pois/hangzhou.json": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+    "data/pois/shenzhen.json": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+    "data/pois/xian.json": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+    "data/restaurants/beijing.json": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+    "data/restaurants/guilin.json": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+    "data/restaurants/hangzhou.json": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+    "data/restaurants/shenzhen.json": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+    "data/restaurants/xian.json": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+    "data/transport/beijing.json": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+    "data/transport/guilin.json": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+    "data/transport/hangzhou.json": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+    "data/transport/shenzhen.json": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+    "data/transport/xian.json": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+    "data/weather/beijing.json": "a6b32944050cc2a638d09a67be8d7747ca2b0153527f856d85b4813651c91d0a",
+    "data/weather/guilin.json": "450d86b2f7121f970e7c48e5a38ad113c8e4289c0356f448221ce1d63d412f94",
+    "data/weather/hangzhou.json": "e4ea7c0b10b350cd4c7ba739746e0634d0aa86d77378d858104c0f789f6f64fd",
+    "data/weather/shenzhen.json": "533e74a25a72fdc58a0f31746f10dd405611b3ab007f18d0319566deaec5e281",
+    "data/weather/xian.json": "7d9e244e1bd64d129cb75b641a09adc8521d9ce082b4a28de7bbb2aadb92cef4",
 }
 
 CITY_ALIASES = {
@@ -139,8 +140,29 @@ def is_formal_offline_mode() -> bool:
     return any(_env_true(os.getenv(name)) for name in OFFLINE_ENV_NAMES)
 
 
-def _read_json(path: Path) -> Dict[str, Any]:
+def _read_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8-sig"))
+
+
+def canonical_json_bytes(value: Any) -> bytes:
+    """Serialize JSON-compatible content in a platform-independent form."""
+    return json.dumps(
+        value,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+        default=str,
+    ).encode("utf-8")
+
+
+def canonical_json_sha256(value: Any) -> str:
+    """Return SHA-256 over canonical JSON content, not raw file bytes."""
+    return hashlib.sha256(canonical_json_bytes(value)).hexdigest()
+
+
+def canonical_json_file_sha256(path: Path) -> str:
+    """Hash a JSON file by parsed content so LF/CRLF and key order are ignored."""
+    return canonical_json_sha256(_read_json(path))
 
 
 def _as_list(value: Any) -> List[Any]:
@@ -1035,7 +1057,7 @@ def get_fixed_tourism_data() -> FixedTourismData:
 
 
 def fixed_data_file_manifest(data_root: Path = DATA_ROOT) -> Dict[str, Any]:
-    """Return SHA-256 hashes for the fixed data files used by experiments."""
+    """Return canonical SHA-256 hashes for the fixed data files used by experiments."""
     files: List[Dict[str, Any]] = []
     missing_files: List[str] = []
     for directory in FIXED_DATA_SNAPSHOT_DIRS:
@@ -1046,20 +1068,22 @@ def fixed_data_file_manifest(data_root: Path = DATA_ROOT) -> Dict[str, Any]:
             if not path.exists():
                 missing_files.append(manifest_path)
                 continue
-            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            digest = canonical_json_file_sha256(path)
             files.append(
                 {
                     "kind": directory,
                     "city_id": city_id,
                     "path": manifest_path,
                     "sha256": digest,
+                    "hash_strategy": CANONICAL_JSON_SHA256_STRATEGY,
                 }
             )
     files.sort(key=lambda item: (item["kind"], item["city_id"], item["path"]))
     missing_files.sort()
-    combined_source = json.dumps(files, ensure_ascii=False, sort_keys=True).encode("utf-8")
+    combined_source = canonical_json_bytes(files)
     return {
-        "schema_version": "fixed_data_manifest_v1",
+        "schema_version": "fixed_data_manifest_v2",
+        "hash_strategy": CANONICAL_JSON_SHA256_STRATEGY,
         "city_ids": list(FIXED_CITY_IDS),
         "snapshot_dirs": list(FIXED_DATA_SNAPSHOT_DIRS),
         "file_count": len(files),
