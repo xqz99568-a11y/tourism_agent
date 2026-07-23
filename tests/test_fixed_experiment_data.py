@@ -1,4 +1,5 @@
 import asyncio
+import hashlib
 import json
 import os
 import shutil
@@ -19,6 +20,7 @@ from app.agents.budget import BudgetAgent
 from app.core.context import ExecutionContext, SessionContext
 from app.core.experiment_runner import ExperimentRunner
 from app.core.fixed_data import (
+    CANONICAL_JSON_SHA256_STRATEGY,
     DATA_ROOT,
     FIXED_CITY_IDS,
     FIXED_DATA_EXPECTED_COMBINED_SHA256,
@@ -53,8 +55,29 @@ def test_fixed_data_snapshot_matches_locked_hashes() -> None:
     manifest = validate_fixed_data_snapshot()
 
     assert manifest["file_count"] == FIXED_DATA_EXPECTED_FILE_COUNT == 25
+    assert manifest["hash_strategy"] == CANONICAL_JSON_SHA256_STRATEGY
     assert manifest["combined_sha256"] == FIXED_DATA_EXPECTED_COMBINED_SHA256
     assert manifest["missing_files"] == []
+    assert {item["path"]: item["sha256"] for item in manifest["files"]} == FIXED_DATA_EXPECTED_FILE_HASHES
+    assert {item["path"]: item["hash_strategy"] for item in manifest["files"]} == {
+        path: CANONICAL_JSON_SHA256_STRATEGY
+        for path in FIXED_DATA_EXPECTED_FILE_HASHES
+    }
+
+
+def test_fixed_data_snapshot_validation_ignores_json_formatting(tmp_path: Path) -> None:
+    data_root = _copy_fixed_snapshot(tmp_path)
+    target = data_root / "pois" / "beijing.json"
+    original_raw_sha = hashlib.sha256(target.read_bytes()).hexdigest()
+    payload = json.loads(target.read_text(encoding="utf-8-sig"))
+    reformatted = json.dumps(payload, ensure_ascii=False, sort_keys=True, indent=4)
+    target.write_bytes(reformatted.replace("\n", "\r\n").encode("utf-8"))
+
+    assert hashlib.sha256(target.read_bytes()).hexdigest() != original_raw_sha
+
+    manifest = validate_fixed_data_snapshot(data_root)
+
+    assert manifest["combined_sha256"] == FIXED_DATA_EXPECTED_COMBINED_SHA256
     assert {item["path"]: item["sha256"] for item in manifest["files"]} == FIXED_DATA_EXPECTED_FILE_HASHES
 
 

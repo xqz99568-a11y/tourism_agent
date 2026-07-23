@@ -67,7 +67,7 @@ Trace 文件不会记录完整 Prompt、API Key、授权头、密码、token 或
 - Git commit、运行 ID、方法列表和重复次数；
 - 模型、温度、`model_config_name` 和 `system_variant`；
 - 缓存启用/禁用状态与 strict mode。
-- 固定离线数据文件级 SHA-256 清单，包括 POI、天气、餐饮、住宿和交通文件。
+- 固定离线数据规范化 JSON SHA-256 清单，包括 POI、天气、餐饮、住宿和交通文件。
 
 Phase 1 的纯离线验收命令为：
 
@@ -93,7 +93,7 @@ python experiments/run_phase1_offline_acceptance.py
 - Formal acceptance output must be stored in an independent `run_id` directory such as `experiments/results/phase1_acceptance_runs/<run_id>/`.
 - The run directory must contain `benchmark_results.csv`, `benchmark_results.json`, `experiment_manifest.json`, and `traces/`.
 - Existing acceptance result directories are historical evidence and must not be overwritten.
-- The manifest fixed-data snapshot must report exactly 25 files and the combined SHA-256 `90d9db7e967b44c4bf481a567ebeb76357c0231ee4c5e3c992740a18c1b54af3`.
+- The manifest fixed-data snapshot must report exactly 25 files, hash strategy `canonical_json_utf8_sort_keys_v1`, and combined SHA-256 `8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0`.
 
 ## Day 4 adaptive scheduler trace fields
 

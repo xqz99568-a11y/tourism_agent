@@ -32,7 +32,11 @@ from app.core.experiment_metrics import (
     build_experiment_record,
     constraint_metrics_from_report,
 )
-from app.core.fixed_data import validate_fixed_data_snapshot
+from app.core.fixed_data import (
+    CANONICAL_JSON_SHA256_STRATEGY,
+    canonical_json_sha256,
+    validate_fixed_data_snapshot,
+)
 from app.core.goal_state_scheduler import (
     RESULT_DEPENDENCIES,
     build_goal_state_result_fingerprints,
@@ -145,6 +149,7 @@ class ExperimentRunner:
             if method_order_seed is not None
             else _environment_int("EXPERIMENT_METHOD_ORDER_SEED", 20260718)
         )
+        self.git_status_short_at_start = _git_status_short()
         self.fixed_data_manifest = validate_fixed_data_snapshot()
         self.experiment_records: List[Dict[str, Any]] = []
         self.current_context: Optional[ExperimentContext] = None
@@ -355,7 +360,7 @@ class ExperimentRunner:
             or metadata.get("version")
             or dataset_id
         )
-        dataset_sha256 = hashlib.sha256(raw_bytes).hexdigest()
+        dataset_sha256 = canonical_json_sha256(document)
         cache_disabled = is_experiment_cache_disabled()
         strict_mode = is_experiment_strict_mode()
         model = os.getenv("LLM_MODEL") or settings.llm.model
@@ -365,6 +370,8 @@ class ExperimentRunner:
             _optional_text(model_config_name) or self.model_config_name
         )
         commit = _git_commit()
+        git_status_short = list(self.git_status_short_at_start)
+        working_tree_clean = len(git_status_short) == 0
         manifest = {
             "schema_version": "1.0",
             "created_at": datetime.utcnow().isoformat() + "Z",
@@ -373,14 +380,22 @@ class ExperimentRunner:
             "dataset_version": str(dataset_version),
             "dataset_path": benchmark_file.as_posix(),
             "dataset_sha256": dataset_sha256,
+            "dataset_hash_strategy": CANONICAL_JSON_SHA256_STRATEGY,
             "dataset": {
                 "id": str(dataset_id),
                 "version": str(dataset_version),
                 "path": benchmark_file.as_posix(),
                 "sha256": dataset_sha256,
+                "hash_strategy": CANONICAL_JSON_SHA256_STRATEGY,
             },
             "git_commit": commit,
-            "git": {"commit": commit},
+            "working_tree_clean": working_tree_clean,
+            "git_status_short": git_status_short,
+            "git": {
+                "commit": commit,
+                "working_tree_clean": working_tree_clean,
+                "status_short": git_status_short,
+            },
             "methods": list(methods or self.METHODS),
             "method_order_seed": self.method_order_seed if method_order_seed is None else method_order_seed,
             "repeats": self.repeats if repeats is None else _validate_repeats(repeats),
@@ -2016,6 +2031,7 @@ class ExperimentRunner:
             return manifest
         return {
             "schema_version": manifest["schema_version"],
+            "hash_strategy": manifest["hash_strategy"],
             "city_ids": manifest["city_ids"],
             "file_count": manifest["file_count"],
             "combined_sha256": manifest["combined_sha256"],
@@ -2790,6 +2806,19 @@ def _git_commit() -> str:
     except (OSError, subprocess.CalledProcessError):
         return "unknown"
     return completed.stdout.strip() or "unknown"
+
+
+def _git_status_short() -> List[str]:
+    try:
+        completed = subprocess.run(
+            ["git", "status", "--short"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return []
+    return completed.stdout.splitlines()
 
 
 def _optional_equal(expected: Any, actual: Any) -> Optional[bool]:
