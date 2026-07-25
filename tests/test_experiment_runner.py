@@ -18,6 +18,7 @@ from app.core.fixed_data import (
 )
 from app.core.llm.client import ToolCall
 from app.core.tracing import get_current_trace, record_selected_tool, set_trace_selected_agents
+from app.tools.research_tools import GENERATION_TOOL_NAMES
 
 
 def test_runner_runs_same_case_through_four_methods_and_exports_csv(
@@ -428,6 +429,175 @@ def test_phase1_offline_acceptance_script_checks_sixteen_runs(
     assert payload["expected_count"] == 16
     assert Path(payload["output_dir"]).name == payload["run_id"]
     assert Path(payload["manifest"]).parent == Path(payload["output_dir"])
+
+
+def test_real_runner_passes_successful_tool_results_to_constraint_checker(
+    tmp_path: Path,
+) -> None:
+    class FakeLLM:
+        async def chat(self, messages, tools=None):
+            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    result = runner.run(
+        {
+            "case_id": "runner-tool-evidence-success",
+            "user_input": "Plan a two-day Hangzhou trip with budget 10000",
+            "slots": {
+                "destination": "hangzhou",
+                "duration": 2,
+                "num_travelers": 2,
+                "budget": 10000,
+                "start_date": "2026-08-01",
+            },
+        },
+        method="fixed_multi_agent",
+    )
+
+    checks = {
+        item["name"]: item
+        for item in result["constraint_report"]["data"]["checks"]
+    }
+
+    assert result["raw_output"]["tool_results"].keys() >= set(GENERATION_TOOL_NAMES)
+    assert checks["tool_evidence"]["status"] == "passed"
+    assert checks["tool_evidence"]["details"]["required_tools"] == list(GENERATION_TOOL_NAMES)
+    assert checks["tool_evidence"]["details"]["missing_or_failed"] == []
+
+
+def test_real_runner_constraint_checker_fails_when_tool_evidence_missing(
+    tmp_path: Path,
+) -> None:
+    async def handler(case):
+        return {
+            "task_type": "trip_planning",
+            "used_agents": ["attraction", "weather", "itinerary", "budget"],
+            "planned_tools": list(GENERATION_TOOL_NAMES),
+            "trip_days": 1,
+            "daily_itinerary": [
+                {
+                    "day": 1,
+                    "attractions": [
+                        {"poi_id": "hz005", "name": "中国茶叶博物馆"},
+                    ],
+                }
+            ],
+            "weather": {"scenario_type": "sunny", "daily_weather": []},
+            "budget": {"total": 500},
+            "weather_adjustments": [],
+            "tool_results": {
+                "poi_search": {
+                    "tool_name": "poi_search",
+                    "status": "success",
+                    "success": True,
+                    "data": {},
+                }
+            },
+            "final_answer": "缺少天气和预算工具证据的方案",
+        }
+
+    runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces",
+        method_handlers={"adaptive_multi_agent": handler},
+    )
+    result = runner.run(
+        {
+            "case_id": "runner-tool-evidence-missing",
+            "user_input": "帮我规划杭州一天旅游，预算1000",
+            "slots": {
+                "destination": "杭州",
+                "duration": 1,
+                "budget": 1000,
+            },
+        },
+        method="adaptive_multi_agent",
+    )
+
+    checks = {
+        item["name"]: item
+        for item in result["constraint_report"]["data"]["checks"]
+    }
+
+    assert checks["tool_evidence"]["status"] == "failed"
+    assert checks["tool_evidence"]["details"]["missing_or_failed"] == [
+        "weather_query",
+        "budget_calculator",
+    ]
+    assert result["hard_constraints_all_satisfied"] is False
+    assert result["hcsr"] < 1.0
+
+
+def test_real_runner_constraint_checker_fails_when_tool_evidence_failed(
+    tmp_path: Path,
+) -> None:
+    async def handler(case):
+        return {
+            "task_type": "trip_planning",
+            "used_agents": ["attraction", "weather", "itinerary", "budget"],
+            "planned_tools": list(GENERATION_TOOL_NAMES),
+            "trip_days": 1,
+            "daily_itinerary": [
+                {
+                    "day": 1,
+                    "attractions": [
+                        {"poi_id": "hz005", "name": "中国茶叶博物馆"},
+                    ],
+                }
+            ],
+            "weather": {"scenario_type": "sunny", "daily_weather": []},
+            "budget": {"total": 500},
+            "weather_adjustments": [],
+            "tool_results": {
+                "poi_search": {
+                    "tool_name": "poi_search",
+                    "status": "success",
+                    "success": True,
+                    "data": {},
+                },
+                "weather_query": {
+                    "tool_name": "weather_query",
+                    "status": "failed",
+                    "success": False,
+                    "data": {},
+                    "error": {"code": "forced_failure"},
+                },
+                "budget_calculator": {
+                    "tool_name": "budget_calculator",
+                    "status": "success",
+                    "success": True,
+                    "data": {},
+                },
+            },
+            "final_answer": "包含失败天气工具证据的方案",
+        }
+
+    runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces",
+        method_handlers={"adaptive_multi_agent": handler},
+    )
+    result = runner.run(
+        {
+            "case_id": "runner-tool-evidence-failed",
+            "user_input": "帮我规划杭州一天旅游，预算1000",
+            "slots": {
+                "destination": "杭州",
+                "duration": 1,
+                "budget": 1000,
+            },
+        },
+        method="adaptive_multi_agent",
+    )
+
+    checks = {
+        item["name"]: item
+        for item in result["constraint_report"]["data"]["checks"]
+    }
+
+    assert checks["tool_evidence"]["status"] == "failed"
+    assert checks["tool_evidence"]["details"]["missing_or_failed"] == ["weather_query"]
+    assert result["hard_constraints_all_satisfied"] is False
+    assert result["output"]["execution_status"] == "failed"
+    assert result["status"] == "failed"
 
 
 def test_runner_loads_trace_by_exact_request_id_not_newest_file(tmp_path: Path) -> None:

@@ -2274,7 +2274,11 @@ class ExperimentRunner:
             trace=trace_record,
             error=error,
         )
-        constraint_report = await self._run_constraint_checker(case, preliminary_output)
+        constraint_report = await self._run_constraint_checker(
+            case,
+            preliminary_output,
+            raw_output=output,
+        )
         structured_output = normalize_experiment_output(
             case=case,
             method=method,
@@ -2338,13 +2342,13 @@ class ExperimentRunner:
         self,
         case: Dict[str, Any],
         structured_output: Dict[str, Any],
+        raw_output: Any = None,
     ) -> Dict[str, Any]:
         checker = ResearchConstraintCheckerTool()
-        plan = {
-            key: value
-            for key, value in structured_output.items()
-            if key not in {"method", "used_agents", "called_tools", "metadata"}
-        }
+        plan = self._constraint_checker_plan(
+            structured_output=structured_output,
+            raw_output=raw_output,
+        )
         result = await checker.execute(
             request=self._constraint_request_payload(case),
             plan=plan,
@@ -2367,6 +2371,44 @@ class ExperimentRunner:
             "error": {"code": "checker_output_error", "message": result.error or "invalid checker output"},
             "metadata": {"offline": True, "source_mode": "deterministic_evaluator"},
         }
+
+    def _constraint_checker_plan(
+        self,
+        *,
+        structured_output: Dict[str, Any],
+        raw_output: Any = None,
+    ) -> Dict[str, Any]:
+        plan = {
+            key: value
+            for key, value in structured_output.items()
+            if key not in {"method", "used_agents", "called_tools", "metadata"}
+        }
+        tool_results = self._tool_results_for_constraint_checker(
+            structured_output=structured_output,
+            raw_output=raw_output,
+        )
+        if isinstance(tool_results, dict):
+            plan["tool_results"] = tool_results
+        return plan
+
+    def _tool_results_for_constraint_checker(
+        self,
+        *,
+        structured_output: Dict[str, Any],
+        raw_output: Any = None,
+    ) -> Optional[Dict[str, Any]]:
+        for candidate in (
+            raw_output,
+            structured_output,
+            structured_output.get("raw_output"),
+            _nested_mapping(structured_output, "raw_output", "raw_output"),
+        ):
+            if not isinstance(candidate, dict):
+                continue
+            tool_results = candidate.get("tool_results")
+            if isinstance(tool_results, dict):
+                return tool_results
+        return None
 
     def _constraint_request_payload(self, case: Dict[str, Any]) -> Dict[str, Any]:
         payload = dict(case.get("slots") or {})
