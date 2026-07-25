@@ -21,6 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 DEFAULT_OUTPUT_ROOT = ROOT / "experiments" / "results" / "day4_acceptance"
+INPUT_HASH_STRATEGY = "git_blob_sha256_v1"
 
 HASHED_INPUTS = {
     "source": [
@@ -227,6 +228,10 @@ def _build_manifest(
     representative: dict[str, Any],
     git_info: dict[str, Any],
 ) -> dict[str, Any]:
+    input_sha256 = {
+        group: _hash_input_files(paths, commit=git_info.get("commit"))
+        for group, paths in HASHED_INPUTS.items()
+    }
     return {
         "schema_version": "day4-acceptance-manifest-v1",
         "run_id": run_id,
@@ -234,6 +239,7 @@ def _build_manifest(
         "passed": passed,
         "output_dir": str(output_dir),
         "git": git_info,
+        "input_hash_strategy": INPUT_HASH_STRATEGY,
         "scope": {
             "scheduler": "app/core/goal_state_scheduler.py",
             "runner": "app/core/experiment_runner.py",
@@ -270,11 +276,13 @@ def _build_manifest(
             "different run_id values must use isolated experiment session ids",
             "M3 scheduler metrics must be recoverable from trace after output exceptions",
             "acceptance manifest must freeze git state, SHA-256 inputs, outputs, and representative trace",
+            "acceptance input SHA-256 values must use git blob content and rebuild from the recorded commit",
         ],
-        "input_sha256": {
-            group: _hash_files(paths)
-            for group, paths in HASHED_INPUTS.items()
-        },
+        "input_sha256": input_sha256,
+        "input_sha256_reconstruction": _reconstruct_input_hashes(
+            input_sha256,
+            commit=git_info.get("commit"),
+        ),
         "commands": command_results,
         "representative_run": representative,
         "output_sha256": _hash_output_files(output_dir),
@@ -304,12 +312,70 @@ def _git_command(args: list[str], *, strip: bool) -> str | None:
     return completed.stdout.strip() if strip else completed.stdout.rstrip("\r\n")
 
 
-def _hash_files(paths: list[str]) -> dict[str, str | None]:
+def _hash_input_files(
+    paths: list[str],
+    *,
+    commit: str | None,
+    root: Path = ROOT,
+) -> dict[str, str | None]:
     hashes: dict[str, str | None] = {}
     for relative in paths:
-        path = ROOT / relative
-        hashes[relative] = _sha256_file(path) if path.exists() else None
+        hashes[relative] = _git_blob_sha256(relative, commit=commit, root=root)
     return hashes
+
+
+def _reconstruct_input_hashes(
+    input_sha256: dict[str, dict[str, str | None]],
+    *,
+    commit: str | None,
+    root: Path = ROOT,
+) -> dict[str, Any]:
+    mismatches: list[dict[str, str | None]] = []
+    expected_count = 0
+    reconstructed_count = 0
+    for group in sorted(input_sha256):
+        for relative, expected in sorted(input_sha256[group].items()):
+            expected_count += 1
+            actual = _git_blob_sha256(relative, commit=commit, root=root)
+            if actual is not None:
+                reconstructed_count += 1
+            if actual != expected:
+                mismatches.append(
+                    {
+                        "group": group,
+                        "path": relative,
+                        "expected": expected,
+                        "actual": actual,
+                    }
+                )
+    return {
+        "hash_strategy": INPUT_HASH_STRATEGY,
+        "commit": commit,
+        "expected_file_count": expected_count,
+        "reconstructed_file_count": reconstructed_count,
+        "all_passed": not mismatches and reconstructed_count == expected_count,
+        "mismatches": mismatches,
+    }
+
+
+def _git_blob_sha256(
+    relative_path: str,
+    *,
+    commit: str | None,
+    root: Path = ROOT,
+) -> str | None:
+    if not commit:
+        return None
+    git_path = relative_path.replace("\\", "/")
+    completed = subprocess.run(
+        ["git", "show", f"{commit}:{git_path}"],
+        cwd=root,
+        capture_output=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        return None
+    return hashlib.sha256(completed.stdout).hexdigest()
 
 
 def _hash_output_files(output_dir: Path) -> dict[str, str]:
@@ -336,6 +402,7 @@ def _render_report(manifest: dict[str, Any]) -> str:
         f"- created_at: `{manifest['created_at']}`",
         f"- git_commit: `{(manifest.get('git') or {}).get('commit')}`",
         f"- working_tree_clean: `{(manifest.get('git') or {}).get('working_tree_clean')}`",
+        f"- input_hash_strategy: `{manifest.get('input_hash_strategy')}`",
         "",
         "## Checked requirements",
         "",
