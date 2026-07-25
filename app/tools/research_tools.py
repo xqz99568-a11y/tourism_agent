@@ -631,7 +631,10 @@ def _check_constraints(
         or _contains_rain(weather_payload)
     )
 
-    attractions = _collect_plan_attractions(plan)
+    attraction_refs = _collect_plan_attraction_refs(plan)
+    attractions = [ref["raw"] for ref in attraction_refs]
+    city_id = _constraint_city_id(plan, request, constraints)
+    resolved_attractions = _resolve_attraction_refs(attraction_refs, city_id)
     min_attractions = _first_present(constraints.get("min_attractions"), request.get("min_attractions"))
     max_attractions = _first_present(constraints.get("max_attractions"), request.get("max_attractions"))
 
@@ -666,6 +669,13 @@ def _check_constraints(
             len(attractions) <= _safe_int(max_attractions),
             {"maximum": max_attractions, "actual": len(attractions)},
         ),
+        _poi_existence_check(attraction_refs, resolved_attractions, city_id),
+        _duplicate_attractions_check(attraction_refs, resolved_attractions),
+        _must_include_pois_check(attraction_refs, resolved_attractions, request, constraints, city_id),
+        _forbidden_pois_check(attraction_refs, resolved_attractions, request, constraints, city_id),
+        _rain_attraction_suitability_check(weather_payload, attraction_refs, resolved_attractions),
+        _senior_accessibility_check(request, constraints, attraction_refs, resolved_attractions),
+        _tool_evidence_check(plan, constraints),
     ]
 
 
@@ -702,6 +712,384 @@ def _collect_plan_attractions(plan: Dict[str, Any]) -> List[Any]:
             if isinstance(items, list):
                 results.extend(items)
     return results
+
+
+def _collect_plan_attraction_refs(plan: Dict[str, Any]) -> List[Dict[str, Any]]:
+    refs: List[Dict[str, Any]] = []
+    direct = plan.get("attractions")
+    if isinstance(direct, list):
+        refs.extend(_coerce_attraction_refs(direct, day_index=None))
+
+    daily = plan.get("daily_itinerary") or plan.get("itinerary") or []
+    if isinstance(daily, dict):
+        daily = daily.get("days") or []
+    if isinstance(daily, list):
+        for index, day in enumerate(daily, start=1):
+            if not isinstance(day, dict):
+                continue
+            day_index = _safe_int(day.get("day") or day.get("day_index") or index)
+            for key in ("attractions", "pois", "poi_list"):
+                items = day.get(key)
+                if isinstance(items, list):
+                    refs.extend(_coerce_attraction_refs(items, day_index=day_index))
+            activities = day.get("activities") or day.get("schedule") or []
+            if isinstance(activities, list):
+                refs.extend(_coerce_attraction_refs(activities, day_index=day_index))
+    return refs
+
+
+def _coerce_attraction_refs(items: List[Any], *, day_index: Optional[int]) -> List[Dict[str, Any]]:
+    refs: List[Dict[str, Any]] = []
+    for item in items:
+        ref = _coerce_attraction_ref(item, day_index=day_index)
+        if ref is not None:
+            refs.append(ref)
+    return refs
+
+
+def _coerce_attraction_ref(item: Any, *, day_index: Optional[int]) -> Optional[Dict[str, Any]]:
+    if isinstance(item, str):
+        text = item.strip()
+        if not text:
+            return None
+        return {"id": None, "name": text, "identifier": text, "day_index": day_index, "raw": item}
+    if not isinstance(item, dict):
+        return None
+    nested = item.get("poi") if isinstance(item.get("poi"), dict) else {}
+    poi_id = _first_present(
+        item.get("poi_id"),
+        item.get("id"),
+        item.get("attraction_id"),
+        nested.get("poi_id"),
+        nested.get("id"),
+    )
+    name = _first_present(
+        item.get("name"),
+        item.get("poi_name"),
+        item.get("attraction_name"),
+        item.get("title"),
+        nested.get("name"),
+        nested.get("poi_name"),
+    )
+    identifier = _first_present(poi_id, name)
+    if not identifier:
+        return None
+    return {
+        "id": str(poi_id).strip() if poi_id else None,
+        "name": str(name).strip() if name else None,
+        "identifier": str(identifier).strip(),
+        "day_index": day_index,
+        "raw": item,
+    }
+
+
+def _constraint_city_id(plan: Dict[str, Any], request: Dict[str, Any], constraints: Dict[str, Any]) -> Optional[str]:
+    candidates = [
+        constraints.get("city"),
+        constraints.get("destination"),
+        request.get("city"),
+        request.get("destination"),
+        request.get("destination_city"),
+    ]
+    weather = plan.get("weather") if isinstance(plan.get("weather"), dict) else {}
+    budget = plan.get("budget") if isinstance(plan.get("budget"), dict) else {}
+    candidates.extend([weather.get("city_id"), weather.get("city"), budget.get("city_id"), budget.get("city")])
+    for ref in _collect_plan_attraction_refs(plan):
+        raw = ref.get("raw")
+        if isinstance(raw, dict):
+            candidates.extend([raw.get("city_id"), raw.get("city")])
+    dataset = get_fixed_tourism_data()
+    for candidate in candidates:
+        city_id = dataset.resolve_city_id(candidate)
+        if city_id:
+            return city_id
+    return None
+
+
+def _resolve_attraction_refs(refs: List[Dict[str, Any]], city_id: Optional[str]) -> List[Dict[str, Any]]:
+    dataset = get_fixed_tourism_data()
+    resolved: List[Dict[str, Any]] = []
+    for ref in refs:
+        entity = None
+        matched_by = None
+        for key in ("id", "name", "identifier"):
+            value = ref.get(key)
+            if not value:
+                continue
+            candidate = dataset.find_entity(value, city_id)
+            if candidate and candidate.get("kind") == "poi":
+                entity = candidate
+                matched_by = key
+                break
+        resolved.append({**ref, "entity": entity, "matched_by": matched_by})
+    return resolved
+
+
+def _poi_existence_check(
+    refs: List[Dict[str, Any]],
+    resolved_refs: List[Dict[str, Any]],
+    city_id: Optional[str],
+) -> Dict[str, Any]:
+    if not refs:
+        return _check_item("poi_existence", True, False, {"attraction_count": 0})
+    unresolved = [_attraction_display(ref) for ref in resolved_refs if ref.get("entity") is None]
+    return _check_item(
+        "poi_existence",
+        False,
+        not unresolved,
+        {"city_id": city_id, "attraction_count": len(refs), "unresolved": unresolved},
+    )
+
+
+def _duplicate_attractions_check(
+    refs: List[Dict[str, Any]],
+    resolved_refs: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    if len(refs) < 2:
+        return _check_item("duplicate_attractions", True, False, {"attraction_count": len(refs)})
+    counts: Dict[str, int] = {}
+    labels: Dict[str, str] = {}
+    for ref in resolved_refs:
+        key = _resolved_attraction_key(ref)
+        counts[key] = counts.get(key, 0) + 1
+        labels.setdefault(key, _attraction_display(ref))
+    duplicates = [
+        {"key": key, "label": labels.get(key), "count": count}
+        for key, count in counts.items()
+        if count > 1
+    ]
+    return _check_item(
+        "duplicate_attractions",
+        False,
+        not duplicates,
+        {"duplicates": duplicates, "unique_count": len(counts), "attraction_count": len(refs)},
+    )
+
+
+def _must_include_pois_check(
+    refs: List[Dict[str, Any]],
+    resolved_refs: List[Dict[str, Any]],
+    request: Dict[str, Any],
+    constraints: Dict[str, Any],
+    city_id: Optional[str],
+) -> Dict[str, Any]:
+    required = _constraint_text_list(
+        constraints,
+        request,
+        "must_include_pois",
+        "must_include_attractions",
+        "required_pois",
+        "required_attractions",
+        "must_visit",
+    )
+    if not required:
+        return _check_item("must_include_pois", True, False, {"required": []})
+    missing = [item for item in required if not _required_ref_present(item, resolved_refs, city_id)]
+    return _check_item("must_include_pois", False, not missing, {"required": required, "missing": missing})
+
+
+def _forbidden_pois_check(
+    refs: List[Dict[str, Any]],
+    resolved_refs: List[Dict[str, Any]],
+    request: Dict[str, Any],
+    constraints: Dict[str, Any],
+    city_id: Optional[str],
+) -> Dict[str, Any]:
+    forbidden = _constraint_text_list(
+        constraints,
+        request,
+        "forbidden_pois",
+        "forbidden_attractions",
+        "avoid_pois",
+        "avoid_attractions",
+        "excluded_pois",
+        "excluded_attractions",
+    )
+    if not forbidden:
+        return _check_item("forbidden_pois", True, False, {"forbidden": []})
+    violations = [item for item in forbidden if _required_ref_present(item, resolved_refs, city_id)]
+    return _check_item("forbidden_pois", False, not violations, {"forbidden": forbidden, "violations": violations})
+
+
+def _rain_attraction_suitability_check(
+    weather_payload: Any,
+    refs: List[Dict[str, Any]],
+    resolved_refs: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    if not _contains_rain(weather_payload):
+        return _check_item("rain_attraction_suitability", True, False, {"rain_detected": False})
+    if not refs:
+        return _check_item(
+            "rain_attraction_suitability",
+            True,
+            False,
+            {"rain_detected": True, "attraction_count": 0},
+        )
+    conflicts: List[Dict[str, Any]] = []
+    for ref in resolved_refs:
+        entity = ref.get("entity")
+        if not entity:
+            continue
+        raw = entity.get("raw") or {}
+        formatted = entity.get("formatted") or {}
+        environment = raw.get("environment") or {}
+        suitability = str(((environment.get("weather_suitability") or {}).get("rain") or "")).lower()
+        outdoor_ratio = _safe_float(environment.get("outdoor_ratio"))
+        environment_type = str(formatted.get("indoor_outdoor") or environment.get("type") or "").lower()
+        if suitability != "suitable" or environment_type == "outdoor" or outdoor_ratio >= 0.5:
+            conflicts.append(
+                {
+                    "poi": _attraction_display(ref),
+                    "rain_suitability": suitability or None,
+                    "environment_type": environment_type or None,
+                    "outdoor_ratio": outdoor_ratio,
+                }
+            )
+    return _check_item(
+        "rain_attraction_suitability",
+        False,
+        not conflicts,
+        {"rain_detected": True, "conflicts": conflicts},
+    )
+
+
+def _senior_accessibility_check(
+    request: Dict[str, Any],
+    constraints: Dict[str, Any],
+    refs: List[Dict[str, Any]],
+    resolved_refs: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    if not _is_senior_request(request, constraints):
+        return _check_item("senior_accessibility", True, False, {"senior_request": False})
+    if not refs:
+        return _check_item(
+            "senior_accessibility",
+            True,
+            False,
+            {"senior_request": True, "attraction_count": 0},
+        )
+    high_intensity: List[Dict[str, Any]] = []
+    for ref in resolved_refs:
+        entity = ref.get("entity")
+        if not entity:
+            continue
+        profile = ((entity.get("raw") or {}).get("visit_profile") or {})
+        intensity = str(profile.get("intensity") or "").lower()
+        walking_level = str(profile.get("walking_level") or "").lower()
+        if intensity == "high" or walking_level == "high":
+            high_intensity.append(
+                {"poi": _attraction_display(ref), "intensity": intensity or None, "walking_level": walking_level or None}
+            )
+    return _check_item(
+        "senior_accessibility",
+        False,
+        not high_intensity,
+        {"senior_request": True, "high_intensity": high_intensity},
+    )
+
+
+def _tool_evidence_check(plan: Dict[str, Any], constraints: Dict[str, Any]) -> Dict[str, Any]:
+    tool_results = plan.get("tool_results")
+    requires_evidence = bool(constraints.get("require_tool_evidence"))
+    if not requires_evidence and not isinstance(tool_results, dict):
+        return _check_item("tool_evidence", True, False, {"required": False})
+    tool_results = tool_results if isinstance(tool_results, dict) else {}
+    required_tools: List[str] = []
+    if _collect_plan_attraction_refs(plan):
+        required_tools.append("poi_search")
+    if isinstance(plan.get("weather"), dict) and plan.get("weather"):
+        required_tools.append("weather_query")
+    if isinstance(plan.get("budget"), dict) and plan.get("budget"):
+        required_tools.append("budget_calculator")
+    required_tools = _ordered_unique_text(required_tools)
+    missing_or_failed = [tool_name for tool_name in required_tools if not _tool_result_success(tool_results.get(tool_name))]
+    return _check_item(
+        "tool_evidence",
+        not required_tools,
+        not missing_or_failed,
+        {"required": requires_evidence, "required_tools": required_tools, "missing_or_failed": missing_or_failed},
+    )
+
+
+def _constraint_text_list(constraints: Dict[str, Any], request: Dict[str, Any], *keys: str) -> List[str]:
+    values: List[str] = []
+    for container in (constraints, request):
+        for key in keys:
+            values.extend(_as_text_list(container.get(key)))
+    return _ordered_unique_text(values)
+
+
+def _required_ref_present(value: str, resolved_refs: List[Dict[str, Any]], city_id: Optional[str]) -> bool:
+    target_entity = get_fixed_tourism_data().find_entity(value, city_id)
+    target_keys = {_normalize_key(value)}
+    if target_entity and target_entity.get("kind") == "poi":
+        formatted = target_entity.get("formatted") or {}
+        target_keys.update(_normalize_key(item) for item in (formatted.get("id"), formatted.get("name")) if item)
+    for ref in resolved_refs:
+        if target_keys & _attraction_match_keys(ref):
+            return True
+    return False
+
+
+def _attraction_match_keys(ref: Dict[str, Any]) -> set[str]:
+    keys = {_normalize_key(item) for item in (ref.get("id"), ref.get("name"), ref.get("identifier")) if item}
+    entity = ref.get("entity")
+    if entity:
+        formatted = entity.get("formatted") or {}
+        keys.update(_normalize_key(item) for item in (formatted.get("id"), formatted.get("name")) if item)
+    return {key for key in keys if key}
+
+
+def _resolved_attraction_key(ref: Dict[str, Any]) -> str:
+    entity = ref.get("entity")
+    if entity:
+        formatted = entity.get("formatted") or {}
+        return _normalize_key(_first_present(formatted.get("id"), formatted.get("name")))
+    return _normalize_key(ref.get("identifier"))
+
+
+def _attraction_display(ref: Dict[str, Any]) -> str:
+    entity = ref.get("entity")
+    if entity:
+        formatted = entity.get("formatted") or {}
+        return str(_first_present(formatted.get("id"), formatted.get("name"), ref.get("identifier")) or "")
+    return str(_first_present(ref.get("id"), ref.get("name"), ref.get("identifier")) or "")
+
+
+def _is_senior_request(request: Dict[str, Any], constraints: Dict[str, Any]) -> bool:
+    text = f"{request} {constraints}".lower()
+    return any(
+        marker in text
+        for marker in ("senior", "elder", "elderly", "older", "old people", "老年", "老人", "长辈", "父母", "爸妈")
+    )
+
+
+def _tool_result_success(result: Any) -> bool:
+    if not isinstance(result, dict):
+        return False
+    if result.get("success") is False:
+        return False
+    status = str(result.get("status") or "").lower()
+    return status in {"success", "no_result", "completed"}
+
+
+def _normalize_key(value: Any) -> str:
+    return str(value or "").strip().lower()
+
+
+def _ordered_unique_text(values: Iterable[Any]) -> List[str]:
+    seen = set()
+    result: List[str] = []
+    for value in values:
+        text = str(value or "").strip()
+        if not text:
+            continue
+        key = text.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        result.append(text)
+    return result
 
 
 def _contains_rain(weather_payload: Any) -> bool:

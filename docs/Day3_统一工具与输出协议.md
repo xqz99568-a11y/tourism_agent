@@ -179,3 +179,17 @@ runner 对四种方法输出统一封装为 `ctp-experiment-output-v1`：
 - `limit`、`days`、`people_count` 等数字参数不得自动纠错；非法值必须返回 `status=failed` 和 `error.code=invalid_arguments`。
 - benchmark 运行顺序使用固定随机种子打乱，种子写入 manifest。
 - CSV、JSON、Trace 和 manifest 必须保存在独立 `run_id` 目录，旧验收证据只读保留，不覆盖。
+
+## 十、约束检查器的轻量确定性扩展
+
+第 3 天的 `constraint_checker` 不是最终论文评价器，但必须能拦截结构化输出中的明显硬错误。当前新增以下可程序化检查：
+
+- `poi_existence`：行程中的景点必须能在固定 POI 数据中按 ID 或名称解析。
+- `duplicate_attractions`：同一行程中不得重复安排同一景点。
+- `must_include_pois`：显式要求必去的景点必须出现。
+- `forbidden_pois`：显式禁止或规避的景点不得出现。
+- `rain_attraction_suitability`：雨天不得继续安排固定数据中雨天非完全适宜、户外占比较高或户外型景点。
+- `senior_accessibility`：老年游客场景不得安排高强度或高步行强度景点。
+- `tool_evidence`：当结果提供 `tool_results` 或显式要求工具证据时，POI、天气、预算结果必须有对应成功工具结果支撑。
+
+仍留给第 5 天完整评价器处理的内容包括：多轮旧条件保留、信息不足澄清质量、闲聊误调业务 Agent、最终文本与证据的一致性细粒度评分。
