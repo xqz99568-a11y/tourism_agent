@@ -228,6 +228,92 @@ def test_constraint_checker_reports_applicable_constraints() -> None:
     assert result.data["data"]["applicable_count"] >= 3
 
 
+def test_constraint_checker_detects_fictional_duplicate_required_and_forbidden_pois() -> None:
+    result = asyncio.run(
+        ResearchConstraintCheckerTool().execute(
+            request={"city": "Hangzhou"},
+            plan={
+                "daily_itinerary": [
+                    {
+                        "day": 1,
+                        "attractions": [
+                            {"poi_id": "hz001", "name": "西湖风景名胜区"},
+                            {"poi_id": "hz001", "name": "西湖风景名胜区"},
+                            {"name": "不存在的幻想景点XYZ"},
+                        ],
+                    }
+                ],
+            },
+            constraints={
+                "must_include_pois": ["hz002"],
+                "forbidden_pois": ["hz001"],
+            },
+        )
+    )
+
+    checks = {item["name"]: item for item in result.data["data"]["checks"]}
+    assert checks["poi_existence"]["status"] == "failed"
+    assert checks["duplicate_attractions"]["status"] == "failed"
+    assert checks["must_include_pois"]["status"] == "failed"
+    assert checks["forbidden_pois"]["status"] == "failed"
+    assert "不存在的幻想景点XYZ" in checks["poi_existence"]["details"]["unresolved"]
+    assert checks["must_include_pois"]["details"]["missing"] == ["hz002"]
+    assert checks["forbidden_pois"]["details"]["violations"] == ["hz001"]
+
+
+def test_constraint_checker_detects_rain_senior_and_tool_evidence_risks() -> None:
+    result = asyncio.run(
+        ResearchConstraintCheckerTool().execute(
+            request={"city": "Beijing", "people": "senior travelers"},
+            plan={
+                "daily_itinerary": [{"day": 1, "attractions": [{"poi_id": "bj003"}]}],
+                "weather": {"scenario_type": "rain"},
+                "weather_adjustments": [{"action": "prepare umbrellas"}],
+                "tool_results": {
+                    "poi_search": {"status": "success", "success": True},
+                },
+            },
+            constraints={"require_tool_evidence": True},
+        )
+    )
+
+    checks = {item["name"]: item for item in result.data["data"]["checks"]}
+    assert checks["poi_existence"]["status"] == "passed"
+    assert checks["rain_attraction_suitability"]["status"] == "failed"
+    assert checks["senior_accessibility"]["status"] == "failed"
+    assert checks["tool_evidence"]["status"] == "failed"
+    assert checks["tool_evidence"]["details"]["missing_or_failed"] == ["weather_query"]
+
+
+def test_constraint_checker_passes_supported_indoor_senior_rain_plan_with_tool_evidence() -> None:
+    result = asyncio.run(
+        ResearchConstraintCheckerTool().execute(
+            request={"city": "Hangzhou", "people": "senior travelers"},
+            plan={
+                "daily_itinerary": [{"day": 1, "attractions": [{"poi_id": "hz005"}]}],
+                "weather": {"scenario_type": "rain"},
+                "weather_adjustments": [{"action": "prefer indoor museum visit"}],
+                "tool_results": {
+                    "poi_search": {"status": "success", "success": True},
+                    "weather_query": {"status": "success", "success": True},
+                },
+            },
+            constraints={
+                "must_include_pois": ["hz005"],
+                "forbidden_pois": ["hz001"],
+                "require_tool_evidence": True,
+            },
+        )
+    )
+
+    checks = {item["name"]: item for item in result.data["data"]["checks"]}
+    assert result.data["data"]["all_passed"] is True
+    assert checks["poi_existence"]["status"] == "passed"
+    assert checks["rain_attraction_suitability"]["status"] == "passed"
+    assert checks["senior_accessibility"]["status"] == "passed"
+    assert checks["tool_evidence"]["status"] == "passed"
+
+
 def test_m3_uses_goal_state_scheduler_for_plan_selection() -> None:
     runner = ExperimentRunner()
 
