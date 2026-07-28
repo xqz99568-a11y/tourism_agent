@@ -2,12 +2,13 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
 
 EXPERIMENT_OUTPUT_SCHEMA_VERSION = "ctp-experiment-output-v1"
+EXPERIMENT_EXECUTION_STATUSES = ("completed", "failed", "clarification")
 
 
 class ExperimentToolCallSummary(BaseModel):
@@ -24,12 +25,16 @@ class ExperimentToolCallSummary(BaseModel):
 class ExperimentMethodOutput(BaseModel):
     """Unified output shape required by the paper experiment pipeline."""
 
-    schema_version: str = EXPERIMENT_OUTPUT_SCHEMA_VERSION
+    schema_version: Literal[EXPERIMENT_OUTPUT_SCHEMA_VERSION] = EXPERIMENT_OUTPUT_SCHEMA_VERSION
     case_id: str
     method: str
     task_type: str = "unknown"
+    planned_agents: List[str] = Field(default_factory=list)
     used_agents: List[str] = Field(default_factory=list)
+    planned_tools: List[str] = Field(default_factory=list)
     called_tools: List[ExperimentToolCallSummary] = Field(default_factory=list)
+    tool_results: Dict[str, Any] = Field(default_factory=dict)
+    attractions: List[Dict[str, Any]] = Field(default_factory=list)
     trip_days: Optional[int] = None
     daily_itinerary: List[Dict[str, Any]] = Field(default_factory=list)
     budget: Optional[Dict[str, Any]] = None
@@ -41,7 +46,7 @@ class ExperimentMethodOutput(BaseModel):
     hard_constraint_applicable_count: int = 0
     hard_constraints_all_satisfied: Optional[bool] = None
     hcsr: Optional[float] = None
-    execution_status: str = "completed"
+    execution_status: Literal["completed", "failed", "clarification"] = "completed"
     final_answer: str = ""
     raw_output: Any = None
     metadata: Dict[str, Any] = Field(default_factory=dict)
@@ -77,20 +82,13 @@ def normalize_experiment_output(
         return model.model_dump(mode="json")
 
     raw_mapping = raw_output if isinstance(raw_output, dict) else {}
-    tool_calls = [
-        ExperimentToolCallSummary(
-            tool_name=str(call.get("tool_name") or call.get("name") or ""),
-            status=str(call.get("status") or "unknown"),
-            success=call.get("success"),
-            arguments=call.get("params") or call.get("arguments") or {},
-            duration_ms=call.get("duration_ms") if isinstance(call.get("duration_ms"), (int, float)) else None,
-            error=call.get("error"),
-        )
-        for call in trace_record.get("tool_calls") or []
-        if call.get("tool_name") or call.get("name")
-    ]
+    tool_calls = _tool_call_summaries(
+        trace_record.get("tool_calls") or raw_mapping.get("called_tools") or []
+    )
+    tool_results = raw_mapping.get("tool_results") if isinstance(raw_mapping.get("tool_results"), dict) else {}
     used_agents = _as_text_list(
         trace_record.get("executed_agents")
+        or raw_mapping.get("used_agents")
         or trace_record.get("planned_agents")
         or trace_record.get("selected_agents")
     )
@@ -108,8 +106,12 @@ def normalize_experiment_output(
         case_id=str(case.get("case_id") or ""),
         method=method,
         task_type=_infer_task_type(case, trace_record, raw_mapping),
+        planned_agents=_as_text_list(raw_mapping.get("planned_agents") or trace_record.get("planned_agents")),
         used_agents=used_agents,
+        planned_tools=_as_text_list(raw_mapping.get("planned_tools") or trace_record.get("planned_tools")),
         called_tools=tool_calls,
+        tool_results=tool_results,
+        attractions=_as_dict_list(raw_mapping.get("attractions") or _tool_result_attractions(tool_results)),
         trip_days=_first_int(
             raw_mapping.get("trip_days"),
             raw_mapping.get("days"),
@@ -142,6 +144,39 @@ def normalize_experiment_output(
 
 def _already_normalized(value: Any) -> bool:
     return isinstance(value, dict) and value.get("schema_version") == EXPERIMENT_OUTPUT_SCHEMA_VERSION
+
+
+def _tool_call_summaries(calls: Any) -> List[ExperimentToolCallSummary]:
+    if not isinstance(calls, list):
+        return []
+    summaries: List[ExperimentToolCallSummary] = []
+    for call in calls:
+        if isinstance(call, ExperimentToolCallSummary):
+            summaries.append(call)
+            continue
+        if not isinstance(call, dict) or not (call.get("tool_name") or call.get("name")):
+            continue
+        error = call.get("error")
+        summaries.append(
+            ExperimentToolCallSummary(
+                tool_name=str(call.get("tool_name") or call.get("name") or ""),
+                status=str(call.get("status") or "unknown"),
+                success=call.get("success"),
+                arguments=call.get("params") or call.get("arguments") or {},
+                duration_ms=call.get("duration_ms") if isinstance(call.get("duration_ms"), (int, float)) else None,
+                error=None if error is None else str(error),
+            )
+        )
+    return summaries
+
+
+def _tool_result_attractions(tool_results: Dict[str, Any]) -> List[Dict[str, Any]]:
+    poi_result = tool_results.get("poi_search")
+    if not isinstance(poi_result, dict):
+        return []
+    data = poi_result.get("data")
+    attractions = data.get("attractions") if isinstance(data, dict) else []
+    return [item for item in attractions if isinstance(item, dict)] if isinstance(attractions, list) else []
 
 
 def _execution_status(
