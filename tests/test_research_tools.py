@@ -500,6 +500,14 @@ def test_real_m2_and_m3_use_same_unified_tool_results(tmp_path: Path) -> None:
     assert m2["output"]["daily_itinerary"] == m3["output"]["daily_itinerary"]
     assert m3["output"]["metadata"]["adaptive_scheduler"]["ticket"]["task_type"] == "trip_planning"
     assert m3["output"]["metadata"]["adaptive_scheduler"]["decision"]["planned_tools"] == list(GENERATION_TOOL_NAMES)
+    assert m3["output"]["metadata"]["scheduler"] == m3["output"]["metadata"]["adaptive_scheduler"]
+    assert m3["trace"]["scheduler"] == m3["trace"]["adaptive_scheduler"]
+    assert m3["output"]["planned_agents"] == ["attraction", "weather", "itinerary", "budget"]
+    assert m3["output"]["used_agents"] == m3["trace"]["executed_agents"]
+    assert m3["output"]["planned_tools"] == list(GENERATION_TOOL_NAMES)
+    assert [call["tool_name"] for call in m3["output"]["called_tools"]] == list(GENERATION_TOOL_NAMES)
+    assert m3["output"]["tool_results"].keys() >= set(GENERATION_TOOL_NAMES)
+    assert m3["output"]["attractions"]
     assert m2["result_hash"]
     assert m2["offline_data"]["combined_sha256"] == m3["offline_data"]["combined_sha256"]
 
@@ -571,13 +579,20 @@ def test_real_m3_reuses_previous_attractions_when_duration_changes(tmp_path: Pat
     assert second["trace"]["adaptive_scheduler"]["ticket"]["task_type"] == "partial_replan"
     assert second["trace"]["adaptive_scheduler"]["decision"]["reused_agents"] == ["attraction"]
     assert second["trace"]["adaptive_scheduler"]["reuse_execution"]["reuse_hit_rate"] == 1.0
+    assert second["output"]["metadata"]["scheduler"] == scheduler
+    assert second["output"]["metadata"]["reuse_execution"] == scheduler["reuse_execution"]
 
     assert second["trace"]["planned_agents"] == ["weather", "itinerary", "budget"]
     assert second["trace"]["executed_agents"] == ["weather", "itinerary", "budget"]
     assert second["trace"]["planned_tools"] == ["weather_query", "budget_calculator"]
     assert second["trace"]["executed_tools"] == ["weather_query", "budget_calculator"]
+    assert second["output"]["planned_agents"] == ["weather", "itinerary", "budget"]
+    assert second["output"]["used_agents"] == second["trace"]["executed_agents"]
+    assert second["output"]["planned_tools"] == ["weather_query", "budget_calculator"]
     assert "poi_search" in second["raw_output"]["tool_results"]
+    assert "poi_search" in second["output"]["tool_results"]
     assert second["raw_output"]["tool_results"]["poi_search"] == first["raw_output"]["tool_results"]["poi_search"]
+    assert second["output"]["tool_results"]["poi_search"] == first["raw_output"]["tool_results"]["poi_search"]
     assert len(second["output"]["daily_itinerary"]) == 3
     assert second["output"]["budget"]["days"] == 3
 

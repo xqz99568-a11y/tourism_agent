@@ -16,6 +16,10 @@ from app.core.fixed_data import (
     CANONICAL_JSON_SHA256_STRATEGY,
     FIXED_DATA_EXPECTED_COMBINED_SHA256,
 )
+from app.core.independent_evaluator import (
+    EVALUATION_SCHEMA_VERSION,
+    EVALUATION_SUMMARY_SCHEMA_VERSION,
+)
 from app.core.llm.client import ToolCall
 from app.core.tracing import get_current_trace, record_selected_tool, set_trace_selected_agents
 from app.tools.research_tools import GENERATION_TOOL_NAMES
@@ -83,6 +87,9 @@ def test_runner_runs_same_case_through_four_methods_and_exports_csv(
         assert result["metrics"]["tool_selection_accuracy"] == 1.0
         assert result["metrics"]["intent_correct"] is False
         assert result["metrics"]["route_correct"] is False
+        assert result["evaluation"]["schema_version"] == EVALUATION_SCHEMA_VERSION
+        assert result["evaluation"]["catalog_id"] == "day5_independent_evaluator_rules"
+        assert "stsr" in result["metrics"]
 
     csv_path = tmp_path / "results" / runner.run_id / "benchmark_results.csv"
     rows = list(csv.DictReader(csv_path.open(encoding="utf-8-sig")))
@@ -91,6 +98,10 @@ def test_runner_runs_same_case_through_four_methods_and_exports_csv(
     assert all(row["evaluation_mode"] == "end_to_end" for row in rows)
     assert all(row["tool_selection_accuracy"] == "1.0" for row in rows)
     assert all(float(row["ttft_ms"]) >= 0 for row in rows)
+    assert {"stsr", "evaluation_hcsr", "evaluation_failed_rule_ids", "agent_selection_f1", "tool_selection_f1"} <= set(rows[0])
+    summary = json.loads((csv_path.parent / "evaluation_summary.json").read_text(encoding="utf-8"))
+    assert summary["schema_version"] == EVALUATION_SUMMARY_SCHEMA_VERSION
+    assert summary["result_count"] == 4
 
 
 def test_experiment_manifest_dataset_hash_ignores_json_formatting(tmp_path: Path) -> None:
@@ -132,6 +143,10 @@ def test_experiment_manifest_dataset_hash_ignores_json_formatting(tmp_path: Path
     assert lf_manifest["dataset_sha256"] == crlf_manifest["dataset_sha256"]
     assert lf_manifest["dataset"]["sha256"] == crlf_manifest["dataset"]["sha256"]
     assert lf_manifest["dataset"]["hash_strategy"] == CANONICAL_JSON_SHA256_STRATEGY
+    assert lf_manifest["evaluation"]["schema_version"] == EVALUATION_SCHEMA_VERSION
+    assert lf_manifest["evaluation"]["summary_schema_version"] == EVALUATION_SUMMARY_SCHEMA_VERSION
+    assert lf_manifest["evaluation"]["catalog_id"] == "day5_independent_evaluator_rules"
+    assert lf_manifest["evaluation"]["catalog_sha256"] == crlf_manifest["evaluation"]["catalog_sha256"]
 
 
 def test_llm_baselines_do_not_write_expected_intent_or_route_to_end_to_end_trace(
@@ -378,6 +393,8 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     assert manifest["results"] == {
         "csv": (run_output_dir / "benchmark_results.csv").as_posix(),
         "json": (run_output_dir / "benchmark_results.json").as_posix(),
+        "summary": (run_output_dir / "evaluation_summary.json").as_posix(),
+        "paper_tables": (run_output_dir / "paper_tables.md").as_posix(),
     }
     assert all(
         "\\" not in path
@@ -403,6 +420,20 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     assert manifest["method_order_seed"] == runner.method_order_seed
     assert manifest["offline_data"]["snapshot"]["hash_strategy"] == CANONICAL_JSON_SHA256_STRATEGY
     assert manifest["offline_data"]["snapshot"]["combined_sha256"] == FIXED_DATA_EXPECTED_COMBINED_SHA256
+    assert manifest["evaluation"]["schema_version"] == EVALUATION_SCHEMA_VERSION
+    assert manifest["evaluation"]["summary_schema_version"] == EVALUATION_SUMMARY_SCHEMA_VERSION
+    assert manifest["evaluation"]["catalog_id"] == "day5_independent_evaluator_rules"
+    assert manifest["evaluation"]["catalog_hash_strategy"] == CANONICAL_JSON_SHA256_STRATEGY
+    assert len(manifest["evaluation"]["catalog_sha256"]) == 64
+    assert "\\" not in manifest["evaluation"]["catalog_path"]
+    summary = json.loads((run_output_dir / "evaluation_summary.json").read_text(encoding="utf-8"))
+    assert summary["schema_version"] == EVALUATION_SUMMARY_SCHEMA_VERSION
+    assert set(summary["methods"]) == set(ExperimentRunner.METHODS)
+    assert summary["paired_m3_vs_m2"]["pair_count"] == 2
+    assert summary["methods"]["adaptive_multi_agent"]["raw_run_count"] == 4
+    paper_tables = (run_output_dir / "paper_tables.md").read_text(encoding="utf-8")
+    assert "Method-level results" in paper_tables
+    assert "Paired M3 vs M2 statistics" in paper_tables
     assert len(list(csv.DictReader((run_output_dir / "benchmark_results.csv").open(encoding="utf-8-sig")))) == 16
 
 

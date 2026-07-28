@@ -44,6 +44,15 @@ from app.core.goal_state_scheduler import (
     is_goal_state_agent_reusable,
     schedule_goal_state_ticket,
 )
+from app.core.independent_evaluator import (
+    DEFAULT_RULE_CATALOG_PATH,
+    EVALUATION_SUMMARY_SCHEMA_VERSION,
+    EVALUATION_SCHEMA_VERSION,
+    evaluate_case,
+    load_rule_catalog,
+    render_paper_tables,
+    summarize_evaluation_results,
+)
 from app.core.llm.client import LLMMessage, ToolDefinition, get_llm
 from app.core.tool_executor import ToolExecutor
 from app.core.tracing import (
@@ -260,6 +269,8 @@ class ExperimentRunner:
         model_config_name: Optional[str] = None,
         csv_path: Optional[str | Path] = None,
         json_path: Optional[str | Path] = None,
+        summary_path: Optional[str | Path] = None,
+        paper_tables_path: Optional[str | Path] = None,
         manifest_path: Optional[str | Path] = None,
     ) -> List[Dict[str, Any]]:
         """Run all benchmark cases through all requested methods."""
@@ -273,6 +284,8 @@ class ExperimentRunner:
                 model_config_name=model_config_name,
                 csv_path=csv_path,
                 json_path=json_path,
+                summary_path=summary_path,
+                paper_tables_path=paper_tables_path,
                 manifest_path=manifest_path,
             )
         )
@@ -288,6 +301,8 @@ class ExperimentRunner:
         model_config_name: Optional[str] = None,
         csv_path: Optional[str | Path] = None,
         json_path: Optional[str | Path] = None,
+        summary_path: Optional[str | Path] = None,
+        paper_tables_path: Optional[str | Path] = None,
         manifest_path: Optional[str | Path] = None,
     ) -> List[Dict[str, Any]]:
         benchmark_file = Path(benchmark_path)
@@ -319,10 +334,16 @@ class ExperimentRunner:
             csv_path = benchmark_output_dir / "benchmark_results.csv"
         if json_path is None:
             json_path = benchmark_output_dir / "benchmark_results.json"
+        if summary_path is None:
+            summary_path = benchmark_output_dir / "evaluation_summary.json"
+        if paper_tables_path is None:
+            paper_tables_path = benchmark_output_dir / "paper_tables.md"
         if manifest_path is None:
             manifest_path = benchmark_output_dir / "experiment_manifest.json"
         self.export_csv(results, csv_path)
         self.export_json(results, json_path)
+        summary = self.export_evaluation_summary(results, summary_path)
+        self.export_paper_tables(summary, paper_tables_path)
         self.write_experiment_manifest(
             benchmark_path=benchmark_file,
             output_path=manifest_path,
@@ -332,7 +353,12 @@ class ExperimentRunner:
             method_order_seed=self.method_order_seed,
             system_variant=system_variant,
             model_config_name=model_config_name,
-            result_paths={"csv": csv_path, "json": json_path},
+            result_paths={
+                "csv": csv_path,
+                "json": json_path,
+                "summary": summary_path,
+                "paper_tables": paper_tables_path,
+            },
         )
         return results
 
@@ -369,6 +395,7 @@ class ExperimentRunner:
         resolved_model_config = (
             _optional_text(model_config_name) or self.model_config_name
         )
+        rule_catalog = load_rule_catalog()
         commit = _git_commit()
         git_status_short = list(self.git_status_short_at_start)
         working_tree_clean = len(git_status_short) == 0
@@ -418,6 +445,15 @@ class ExperimentRunner:
                 "env": "TOURISM_FORMAL_EXPERIMENT_OFFLINE",
                 "policy": "formal experiments use frozen local datasets and forbid real-time tourism APIs",
                 "snapshot": self._offline_data_summary(),
+            },
+            "evaluation": {
+                "schema_version": EVALUATION_SCHEMA_VERSION,
+                "summary_schema_version": EVALUATION_SUMMARY_SCHEMA_VERSION,
+                "catalog_id": rule_catalog.get("catalog_id"),
+                "catalog_path": DEFAULT_RULE_CATALOG_PATH.as_posix(),
+                "catalog_sha256": canonical_json_sha256(rule_catalog),
+                "catalog_hash_strategy": CANONICAL_JSON_SHA256_STRATEGY,
+                "guards": rule_catalog.get("evaluator_guards") or [],
             },
             "results": {
                 key: Path(value).as_posix()
@@ -492,6 +528,30 @@ class ExperimentRunner:
             "hard_constraint_failed_count",
             "hard_constraints_all_satisfied",
             "hcsr",
+            "stsr",
+            "evaluation_hcsr",
+            "evaluation_failed_rule_count",
+            "evaluation_failed_rule_ids",
+            "agent_set_exact_match",
+            "necessary_agent_coverage",
+            "agent_selection_f1",
+            "extra_agent_count",
+            "duplicate_agent_count",
+            "planned_actual_agent_consistency",
+            "agent_execution_success_rate",
+            "tool_set_exact_match",
+            "necessary_tool_coverage",
+            "tool_selection_f1",
+            "extra_tool_count",
+            "duplicate_tool_count",
+            "forbidden_tool_call_count",
+            "planned_actual_tool_consistency",
+            "tool_call_success_rate",
+            "tool_failure_count",
+            "tool_failure_types",
+            "total_tokens",
+            "estimated_cost",
+            "cost_per_success",
             "m3_scheduler_name",
             "m3_task_type",
             "m3_clarification_required",
@@ -538,6 +598,20 @@ class ExperimentRunner:
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def export_evaluation_summary(self, results: List[Dict[str, Any]], output_path: str | Path) -> Dict[str, Any]:
+        summary = summarize_evaluation_results(results)
+        path = Path(output_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+        return summary
+
+    def export_paper_tables(self, summary: Dict[str, Any], output_path: str | Path) -> str:
+        table_text = render_paper_tables(summary)
+        path = Path(output_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(table_text, encoding="utf-8")
+        return table_text
 
     # ------------------------------------------------------------------
     # Original metric helper API kept for compatibility
@@ -1537,8 +1611,10 @@ class ExperimentRunner:
             )
             return {
                 "task_type": "clarification",
-                "used_agents": planned_agents,
+                "planned_agents": planned_agents,
+                "used_agents": [],
                 "planned_tools": planned_tools,
+                "attractions": [],
                 "trip_days": None,
                 "daily_itinerary": [],
                 "budget": None,
@@ -1604,8 +1680,10 @@ class ExperimentRunner:
         )
         return {
             "task_type": self._research_output_task_type(case, scheduler_metadata),
+            "planned_agents": planned_agents,
             "used_agents": planned_agents,
             "planned_tools": planned_tools,
+            "attractions": attractions,
             "trip_days": trip_days,
             "daily_itinerary": daily_itinerary,
             "budget": budget or None,
@@ -1851,6 +1929,10 @@ class ExperimentRunner:
             metadata["result_agents"] = _ordered_unique(result_agents)
         if scheduler_metadata is not None:
             metadata["adaptive_scheduler"] = scheduler_metadata
+            metadata["scheduler"] = scheduler_metadata
+            reuse_execution = scheduler_metadata.get("reuse_execution")
+            if isinstance(reuse_execution, dict):
+                metadata["reuse_execution"] = reuse_execution
         return metadata
 
     def _scheduler_metadata_with_result_fingerprints(
@@ -2302,6 +2384,12 @@ class ExperimentRunner:
                 structured_output,
                 adaptive_scheduler_metrics,
             )
+        evaluation = evaluate_case(
+            case=case,
+            output=structured_output,
+            trace=trace_record,
+        )
+        metrics.update(evaluation.get("metrics") or {})
         input_hash = _stable_hash({"case_id": case["case_id"], "user_input": case["user_input"], "slots": case.get("slots")})
         result_hash = _stable_hash(structured_output)
         offline_data = self._offline_data_summary()
@@ -2333,6 +2421,7 @@ class ExperimentRunner:
             "ttft_ms": ttft_ms if isinstance(ttft_ms, (int, float)) else None,
             "trace": trace_record,
             "trace_file": trace_record.get("trace_file"),
+            "evaluation": evaluation,
             "status": "failed" if error else structured_output.get("execution_status") or trace_record.get("status", "completed"),
             "metrics": metrics,
             "error": error,
@@ -2381,13 +2470,13 @@ class ExperimentRunner:
         plan = {
             key: value
             for key, value in structured_output.items()
-            if key not in {"method", "used_agents", "called_tools", "metadata"}
+            if key not in {"method", "used_agents", "called_tools", "tool_results", "metadata"}
         }
         tool_results = self._tool_results_for_constraint_checker(
             structured_output=structured_output,
             raw_output=raw_output,
         )
-        if isinstance(tool_results, dict):
+        if isinstance(tool_results, dict) and tool_results:
             plan["tool_results"] = tool_results
         return plan
 
@@ -2406,7 +2495,7 @@ class ExperimentRunner:
             if not isinstance(candidate, dict):
                 continue
             tool_results = candidate.get("tool_results")
-            if isinstance(tool_results, dict):
+            if isinstance(tool_results, dict) and tool_results:
                 return tool_results
         return None
 
@@ -2619,6 +2708,30 @@ class ExperimentRunner:
             "hard_constraint_failed_count": metrics.get("hard_constraint_failed_count"),
             "hard_constraints_all_satisfied": metrics.get("hard_constraints_all_satisfied"),
             "hcsr": metrics.get("hcsr"),
+            "stsr": metrics.get("stsr"),
+            "evaluation_hcsr": metrics.get("evaluation_hcsr"),
+            "evaluation_failed_rule_count": metrics.get("evaluation_failed_rule_count"),
+            "evaluation_failed_rule_ids": "|".join(_as_list(metrics.get("evaluation_failed_rule_ids"))),
+            "agent_set_exact_match": metrics.get("agent_set_exact_match"),
+            "necessary_agent_coverage": metrics.get("necessary_agent_coverage"),
+            "agent_selection_f1": metrics.get("agent_selection_f1"),
+            "extra_agent_count": metrics.get("extra_agent_count"),
+            "duplicate_agent_count": metrics.get("duplicate_agent_count"),
+            "planned_actual_agent_consistency": metrics.get("planned_actual_agent_consistency"),
+            "agent_execution_success_rate": metrics.get("agent_execution_success_rate"),
+            "tool_set_exact_match": metrics.get("tool_set_exact_match"),
+            "necessary_tool_coverage": metrics.get("necessary_tool_coverage"),
+            "tool_selection_f1": metrics.get("tool_selection_f1"),
+            "extra_tool_count": metrics.get("extra_tool_count"),
+            "duplicate_tool_count": metrics.get("duplicate_tool_count"),
+            "forbidden_tool_call_count": metrics.get("forbidden_tool_call_count"),
+            "planned_actual_tool_consistency": metrics.get("planned_actual_tool_consistency"),
+            "tool_call_success_rate": metrics.get("tool_call_success_rate"),
+            "tool_failure_count": metrics.get("tool_failure_count"),
+            "tool_failure_types": "|".join(_as_list(metrics.get("tool_failure_types"))),
+            "total_tokens": metrics.get("total_tokens"),
+            "estimated_cost": metrics.get("estimated_cost"),
+            "cost_per_success": metrics.get("cost_per_success"),
             "m3_scheduler_name": metrics.get("m3_scheduler_name"),
             "m3_task_type": metrics.get("m3_task_type"),
             "m3_clarification_required": metrics.get("m3_clarification_required"),

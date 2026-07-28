@@ -1,0 +1,140 @@
+{
+  "schema_version": "ctp-day5-acceptance-cases-v1",
+  "dataset_id": "day5_evaluation_acceptance",
+  "dataset_version": "2026-07-28",
+  "description": "Offline acceptance set covering all Day5 evaluation task types.",
+  "cases": [
+    {
+      "case_id": "day5_trip_planning",
+      "user_input": "Plan a two-day Hangzhou trip with attractions, weather and budget.",
+      "task_type": "trip_planning",
+      "slots": {"destination": "hangzhou", "duration": 2, "budget": 1000},
+      "expected": {
+        "task_type": "trip_planning",
+        "duration_days": 2,
+        "min_attractions": 2,
+        "max_attractions": 3,
+        "max_pois_per_day": 2,
+        "budget_limit": 1000,
+        "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+        "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+        "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]]
+      }
+    },
+    {
+      "case_id": "day5_attraction_single",
+      "user_input": "Recommend two Hangzhou attractions only.",
+      "task_type": "attraction_recommendation",
+      "slots": {"destination": "hangzhou"},
+      "expected": {
+        "task_type": "attraction_recommendation",
+        "min_attractions": 2,
+        "max_attractions": 2,
+        "required_tools": ["poi_search"],
+        "accepted_agent_sets": [["attraction"]],
+        "accepted_tool_sets": [["poi_search"]]
+      }
+    },
+    {
+      "case_id": "day5_weather_single",
+      "user_input": "Check the weather for a Hangzhou trip.",
+      "task_type": "weather_query",
+      "slots": {"destination": "hangzhou", "duration": 2},
+      "expected": {
+        "task_type": "weather_query",
+        "required_tools": ["weather_query"],
+        "accepted_agent_sets": [["weather"]],
+        "accepted_tool_sets": [["weather_query"]]
+      }
+    },
+    {
+      "case_id": "day5_budget_single",
+      "user_input": "Estimate whether the Hangzhou trip can stay within 1000.",
+      "task_type": "budget_query",
+      "slots": {"destination": "hangzhou", "duration": 2, "budget": 1000},
+      "expected": {
+        "task_type": "budget_query",
+        "budget_limit": 1000,
+        "required_tools": ["budget_calculator"],
+        "accepted_agent_sets": [["budget"]],
+        "accepted_tool_sets": [["budget_calculator"]]
+      }
+    },
+    {
+      "case_id": "day5_partial_replan",
+      "user_input": "Keep the standard budget but change the trip from two days to three days.",
+      "task_type": "partial_replan",
+      "current_slots": {"duration_days": 3, "budget_level": "standard"},
+      "previous_state": {
+        "slots": {"duration_days": 2, "budget_level": "standard"},
+        "budget": {"total": 900, "spending_level": "standard"}
+      },
+      "expected": {
+        "task_type": "partial_replan",
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 3,
+        "max_pois_per_day": 1,
+        "budget_limit": 1200,
+        "changed_slots": ["duration_days"],
+        "preserved_slots": ["budget_level"],
+        "required_tools": ["poi_search", "budget_calculator"],
+        "accepted_agent_sets": [["attraction", "itinerary", "budget"]],
+        "accepted_tool_sets": [["poi_search", "budget_calculator"]]
+      }
+    },
+    {
+      "case_id": "day5_weather_adjustment",
+      "user_input": "It will rain on day 2; adjust only the affected part and keep the rest.",
+      "task_type": "weather_adjustment",
+      "current_slots": {"weather_scenario": "rainy_day_2", "budget_level": "standard"},
+      "previous_state": {
+        "slots": {"duration_days": 2, "budget_level": "standard"},
+        "daily_itinerary": [
+          {"day": 1, "attractions": [{"poi_id": "hz001", "name": "West Lake"}]},
+          {"day": 2, "attractions": [{"poi_id": "hz002", "name": "Lingyin Temple"}]}
+        ],
+        "attractions": [
+          {"poi_id": "hz001", "name": "West Lake"},
+          {"poi_id": "hz002", "name": "Lingyin Temple"}
+        ],
+        "budget": {"total": 900, "spending_level": "standard"}
+      },
+      "expected": {
+        "task_type": "weather_adjustment",
+        "duration_days": 2,
+        "min_attractions": 2,
+        "max_attractions": 2,
+        "max_pois_per_day": 1,
+        "weather_adjustment_required": true,
+        "changed_slots": ["weather_scenario"],
+        "preserved_slots": ["budget_level"],
+        "required_tools": ["weather_query"],
+        "accepted_agent_sets": [["weather", "itinerary"]],
+        "accepted_tool_sets": [["weather_query"]]
+      }
+    },
+    {
+      "case_id": "day5_clarification",
+      "user_input": "I want a Hangzhou trip, but I have not said dates or duration.",
+      "task_type": "clarification",
+      "expected": {
+        "task_type": "clarification",
+        "missing_slots": ["start_date", "duration_days"],
+        "accepted_agent_sets": [[]],
+        "accepted_tool_sets": [[]]
+      }
+    },
+    {
+      "case_id": "day5_general_chat",
+      "user_input": "Hello, no travel planning is needed.",
+      "task_type": "general_chat",
+      "expected": {
+        "task_type": "general_chat",
+        "accepted_agent_sets": [[]],
+        "accepted_tool_sets": [[]],
+        "forbidden_tools": ["poi_search", "weather_query", "budget_calculator"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "schema_version": "ctp-evaluation-rule-catalog-v1",
+  "catalog_id": "day5_independent_evaluator_rules",
+  "frozen_on": "2026-07-25",
+  "status_values": ["passed", "failed", "na"],
+  "task_types": [
+    "trip_planning",
+    "attraction_recommendation",
+    "weather_query",
+    "budget_query",
+    "partial_replan",
+    "weather_adjustment",
+    "clarification",
+    "general_chat"
+  ],
+  "task_aliases": {
+    "budget_control": "budget_query",
+    "attraction_query": "attraction_recommendation",
+    "poi_query": "attraction_recommendation",
+    "chat": "general_chat"
+  },
+  "score_usages": ["stsr_gate", "hcsr", "agent_tool_metric", "diagnostic"],
+  "metric_rules": {
+    "stsr": "passed when all applicable stsr_gate rules pass and no applicable hcsr rule fails",
+    "hcsr": "passed applicable hcsr rules / all applicable hcsr rules; na rules are excluded"
+  },
+  "evaluator_guards": [
+    "method_blind",
+    "no_llm_or_live_api",
+    "no_output_repair",
+    "structured_fields_only",
+    "append_only_evidence"
+  ],
+  "rules": [
+    {"id": "G_SCHEMA_VALID", "usage": "stsr_gate", "tasks": ["*"], "inputs": ["schema_version", "case_id", "task_type", "execution_status"], "passed": "valid unified output", "failed": "invalid schema", "na": "never", "failure_code": "schema_invalid"},
+    {"id": "G_EXECUTION_STATUS_VALID", "usage": "stsr_gate", "tasks": ["*"], "inputs": ["execution_status", "called_tools", "trace.tool_calls"], "passed": "status matches evidence", "failed": "completed despite failed evidence", "na": "never", "failure_code": "execution_status_incoherent"},
+    {"id": "G_FINAL_ANSWER_CONSISTENT", "usage": "stsr_gate", "tasks": ["*"], "inputs": ["final_answer", "daily_itinerary", "attractions", "budget", "weather", "tool_results"], "passed": "final text is non-empty and consistent with structured evidence", "failed": "empty or contradictory final text", "na": "never", "failure_code": "final_answer_inconsistent"},
+    {"id": "G_TASK_TYPE_MATCH", "usage": "stsr_gate", "tasks": ["*"], "inputs": ["gold.task_type", "task_type"], "passed": "task type matches gold", "failed": "wrong task type", "na": "never", "failure_code": "task_type_mismatch"},
+    {"id": "H_TRIP_DAYS", "usage": "hcsr", "tasks": ["trip_planning", "partial_replan", "weather_adjustment"], "inputs": ["gold.duration_days", "trip_days", "daily_itinerary"], "passed": "day count matches", "failed": "wrong day count", "na": "no duration constraint", "failure_code": "trip_days_mismatch"},
+    {"id": "H_ATTRACTION_COUNT_BOUNDS", "usage": "hcsr", "tasks": ["trip_planning", "attraction_recommendation", "partial_replan", "weather_adjustment"], "inputs": ["gold.min_attractions", "gold.max_attractions", "daily_itinerary"], "passed": "POI count within bounds", "failed": "POI count out of bounds", "na": "no count bound", "failure_code": "attraction_count_out_of_bounds"},
+    {"id": "H_DAILY_LOAD_LIMIT", "usage": "hcsr", "tasks": ["trip_planning", "partial_replan", "weather_adjustment"], "inputs": ["gold.max_pois_per_day", "daily_itinerary"], "passed": "daily load within limit", "failed": "daily load exceeded", "na": "no daily limit", "failure_code": "daily_load_exceeded"},
+    {"id": "H_BUDGET_LIMIT", "usage": "hcsr", "tasks": ["trip_planning", "budget_query", "partial_replan"], "inputs": ["gold.budget_limit", "budget.total", "budget.per_person"], "passed": "budget within limit", "failed": "budget missing or over limit", "na": "no budget limit", "failure_code": "budget_limit_exceeded"},
+    {"id": "H_POI_GROUNDED", "usage": "hcsr", "tasks": ["trip_planning", "attraction_recommendation", "budget_query", "partial_replan", "weather_adjustment"], "inputs": ["fixed_data.pois", "daily_itinerary", "attractions"], "passed": "all POIs resolve to frozen data", "failed": "unresolved POI exists", "na": "no POI output", "failure_code": "poi_not_grounded"},
+    {"id": "H_NO_DUPLICATE_POIS", "usage": "hcsr", "tasks": ["trip_planning", "attraction_recommendation", "partial_replan", "weather_adjustment"], "inputs": ["daily_itinerary", "attractions"], "passed": "no duplicate POI", "failed": "duplicate POI", "na": "fewer than two POIs", "failure_code": "duplicate_poi"},
+    {"id": "H_MUST_INCLUDE_POIS", "usage": "hcsr", "tasks": ["trip_planning", "attraction_recommendation", "partial_replan", "weather_adjustment"], "inputs": ["gold.must_include_pois", "daily_itinerary", "fixed_data.pois"], "passed": "required POIs included", "failed": "required POI missing", "na": "no required POI", "failure_code": "required_poi_missing"},
+    {"id": "H_FORBIDDEN_POIS", "usage": "hcsr", "tasks": ["trip_planning", "attraction_recommendation", "partial_replan", "weather_adjustment"], "inputs": ["gold.forbidden_pois", "daily_itinerary", "fixed_data.pois"], "passed": "forbidden POIs excluded", "failed": "forbidden POI present", "na": "no forbidden POI", "failure_code": "forbidden_poi_present"},
+    {"id": "H_RAIN_SUITABILITY", "usage": "hcsr", "tasks": ["trip_planning", "partial_replan", "weather_adjustment"], "inputs": ["weather", "daily_itinerary", "fixed_data.pois.environment"], "passed": "rain days avoid unsuitable outdoor POIs", "failed": "rain conflict exists", "na": "no rain condition", "failure_code": "rain_unsuitable_poi"},
+    {"id": "H_SENIOR_ACCESSIBILITY", "usage": "hcsr", "tasks": ["trip_planning", "attraction_recommendation", "partial_replan", "weather_adjustment"], "inputs": ["gold.traveler_group", "daily_itinerary", "fixed_data.pois.visit_profile"], "passed": "senior plan avoids high intensity POIs", "failed": "senior plan includes high intensity POI", "na": "not senior-sensitive", "failure_code": "senior_high_intensity_poi"},
+    {"id": "H_WEATHER_ADJUSTMENT_REQUIRED", "usage": "hcsr", "tasks": ["trip_planning", "weather_adjustment", "partial_replan"], "inputs": ["weather", "weather_adjustments", "gold.weather_adjustment_required"], "passed": "weather risk has adjustment", "failed": "weather adjustment missing", "na": "no adjustment required", "failure_code": "weather_adjustment_missing"},
+    {"id": "H_WEATHER_EVIDENCE", "usage": "hcsr", "tasks": ["trip_planning", "weather_query", "partial_replan", "weather_adjustment"], "inputs": ["weather", "tool_results.weather_query", "fixed_data.weather"], "passed": "weather supported by frozen evidence", "failed": "weather unsupported", "na": "weather not required", "failure_code": "weather_evidence_missing"},
+    {"id": "H_BUDGET_EVIDENCE", "usage": "hcsr", "tasks": ["trip_planning", "budget_query", "partial_replan"], "inputs": ["budget", "tool_results.budget_calculator"], "passed": "budget supported by calculator", "failed": "budget unsupported", "na": "budget not required", "failure_code": "budget_evidence_missing"},
+    {"id": "H_TOOL_EVIDENCE", "usage": "hcsr", "tasks": ["trip_planning", "attraction_recommendation", "weather_query", "budget_query", "partial_replan", "weather_adjustment"], "inputs": ["called_tools", "tool_results", "gold.required_tools"], "passed": "required tools succeeded or valid reuse exists", "failed": "required tool missing or failed", "na": "no tool required", "failure_code": "tool_evidence_missing"},
+    {"id": "T_CLARIFICATION_MISSING_FIELDS", "usage": "stsr_gate", "tasks": ["clarification"], "inputs": ["gold.missing_slots", "metadata.clarification_fields"], "passed": "asks for required missing slots", "failed": "wrong clarification fields", "na": "not clarification", "failure_code": "clarification_fields_wrong"},
+    {"id": "T_CLARIFICATION_NO_PREMATURE_PLAN", "usage": "stsr_gate", "tasks": ["clarification"], "inputs": ["execution_status", "daily_itinerary", "called_tools", "used_agents"], "passed": "no premature plan", "failed": "plan generated before clarification", "na": "not clarification", "failure_code": "premature_plan"},
+    {"id": "T_GENERAL_CHAT_NO_BUSINESS_EXECUTION", "usage": "stsr_gate", "tasks": ["general_chat"], "inputs": ["used_agents", "called_tools", "trace.executed_agents", "trace.executed_tools"], "passed": "no tourism execution", "failed": "tourism execution occurred", "na": "not general chat", "failure_code": "general_chat_business_execution"},
+    {"id": "T_GENERAL_CHAT_NO_TRIP_ARTIFACT", "usage": "stsr_gate", "tasks": ["general_chat"], "inputs": ["daily_itinerary", "budget", "weather"], "passed": "no trip artifact", "failed": "trip artifact produced", "na": "not general chat", "failure_code": "general_chat_trip_artifact"},
+    {"id": "T_ATTRACTION_SINGLE_SCOPE", "usage": "stsr_gate", "tasks": ["attraction_recommendation"], "inputs": ["used_agents", "called_tools", "attractions", "daily_itinerary"], "passed": "attraction-only scope kept", "failed": "unrelated full chain or missing POIs", "na": "not attraction task", "failure_code": "attraction_scope_violation"},
+    {"id": "T_WEATHER_SINGLE_SCOPE", "usage": "stsr_gate", "tasks": ["weather_query"], "inputs": ["weather", "used_agents", "called_tools"], "passed": "weather-only scope kept", "failed": "unrelated full chain or missing weather", "na": "not weather task", "failure_code": "weather_scope_violation"},
+    {"id": "T_BUDGET_SINGLE_SCOPE", "usage": "stsr_gate", "tasks": ["budget_query"], "inputs": ["budget", "used_agents", "called_tools"], "passed": "budget-only scope kept", "failed": "unrelated full chain or missing budget", "na": "not budget task", "failure_code": "budget_scope_violation"},
+    {"id": "T_PARTIAL_CHANGED_SLOTS_APPLIED", "usage": "stsr_gate", "tasks": ["partial_replan"], "inputs": ["gold.changed_slots", "metadata.scheduler.ticket.changed_slots"], "passed": "changed slots applied", "failed": "changed slot ignored", "na": "not partial replan", "failure_code": "changed_slot_not_applied"},
+    {"id": "T_PARTIAL_PRESERVED_SLOTS_KEPT", "usage": "stsr_gate", "tasks": ["partial_replan"], "inputs": ["gold.preserved_slots", "metadata.scheduler.ticket.preserved_slots"], "passed": "preserved slots kept", "failed": "preserved slot changed", "na": "no preserved slot", "failure_code": "preserved_slot_changed"},
+    {"id": "T_PARTIAL_REUSE_VALIDITY", "usage": "agent_tool_metric", "tasks": ["partial_replan", "weather_adjustment"], "inputs": ["metadata.scheduler.decision.reused_agents", "metadata.reuse_execution", "trace.scheduler"], "passed": "reuse claim has valid artifact", "failed": "invalid reuse claim", "na": "no reuse claimed", "failure_code": "invalid_reuse_claim"},
+    {"id": "T_WEATHER_AFFECTED_CONTENT_ADJUSTED", "usage": "stsr_gate", "tasks": ["weather_adjustment"], "inputs": ["gold.weather_change", "weather_adjustments", "daily_itinerary"], "passed": "affected content adjusted", "failed": "affected content not adjusted", "na": "not weather adjustment", "failure_code": "weather_affected_content_not_adjusted"},
+    {"id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED", "usage": "stsr_gate", "tasks": ["weather_adjustment"], "inputs": ["gold.previous_artifacts", "daily_itinerary", "budget"], "passed": "unaffected content preserved", "failed": "unaffected content changed", "na": "no previous artifact", "failure_code": "weather_unaffected_content_changed"},
+    {"id": "S_AGENT_SET_MATCH", "usage": "agent_tool_metric", "tasks": ["*"], "inputs": ["gold.accepted_agent_sets", "used_agents", "trace.executed_agents"], "passed": "actual agents match gold", "failed": "agent set mismatch", "na": "no gold agent expectation", "failure_code": "agent_set_mismatch"},
+    {"id": "S_TOOL_SET_MATCH", "usage": "agent_tool_metric", "tasks": ["*"], "inputs": ["gold.accepted_tool_sets", "called_tools", "trace.executed_tools"], "passed": "actual tools match gold", "failed": "tool set mismatch", "na": "no gold tool expectation", "failure_code": "tool_set_mismatch"},
+    {"id": "S_PLANNED_ACTUAL_AGENT_CONSISTENCY", "usage": "agent_tool_metric", "tasks": ["*"], "inputs": ["trace.planned_agents", "trace.executed_agents"], "passed": "planned agents accounted for", "failed": "planned/actual agents inconsistent", "na": "no planned agents", "failure_code": "planned_actual_agent_inconsistent"},
+    {"id": "S_PLANNED_ACTUAL_TOOL_CONSISTENCY", "usage": "agent_tool_metric", "tasks": ["*"], "inputs": ["trace.planned_tools", "trace.executed_tools"], "passed": "planned tools accounted for", "failed": "planned/actual tools inconsistent", "na": "no planned tools", "failure_code": "planned_actual_tool_inconsistent"},
+    {"id": "S_FORBIDDEN_GENERATION_TOOLS", "usage": "agent_tool_metric", "tasks": ["*"], "inputs": ["gold.forbidden_tools", "called_tools", "trace.executed_tools"], "passed": "forbidden tools not used", "failed": "forbidden tool used", "na": "no forbidden tool rule", "failure_code": "forbidden_tool_used"}
+  ]
+}

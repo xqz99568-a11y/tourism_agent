@@ -990,6 +990,7 @@ class TraceState:
             "tool_calls": self.tool_calls,
             "api_calls": self.api_calls,
             "adaptive_scheduler": self.adaptive_scheduler,
+            "scheduler": self.adaptive_scheduler,
             "total_duration_ms": self.total_duration_ms,
             "first_body_token_ms": self.first_body_token_ms,
             "first_token_ms": self.first_body_token_ms,
