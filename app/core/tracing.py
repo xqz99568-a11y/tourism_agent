@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional
 
 from app.core.config import settings
+from app.core.llm_costing import build_llm_cost_record
 from app.core.logger import get_logger
 
 logger = get_logger(__name__)
@@ -59,6 +60,8 @@ _NON_SECRET_TOKEN_COUNT_KEYS = {
     "tokens_used",
     "first_body_token_ms",
     "first_token_ms",
+    "input_token_unit_price",
+    "output_token_unit_price",
 }
 _NON_SECRET_TOKEN_CONTAINER_KEYS = {"tokens", "usage", "cached_source_usage"}
 _SECRET_VALUE_PATTERNS = (
@@ -610,6 +613,8 @@ class TraceState:
         agent_name: Optional[str] = None,
         status: str = "completed",
         tokens: Any = None,
+        usage: Optional[Dict[str, Any]] = None,
+        llm_call_count: Any = None,
         tool_count: Any = None,
         error: Any = None,
     ) -> None:
@@ -633,6 +638,23 @@ class TraceState:
             "tool_count": tool_count,
             "error": sanitize_value(str(error)) if error else None,
         }
+        if usage is not None:
+            sanitized_usage = sanitize_value(usage)
+            entry["usage"] = sanitized_usage
+            if isinstance(sanitized_usage, dict):
+                prompt_tokens = sanitized_usage.get("prompt_tokens") or sanitized_usage.get("input_tokens")
+                completion_tokens = (
+                    sanitized_usage.get("completion_tokens")
+                    or sanitized_usage.get("output_tokens")
+                )
+                total_tokens = sanitized_usage.get("total_tokens") or sanitized_usage.get("tokens_used")
+                entry["prompt_tokens"] = prompt_tokens
+                entry["completion_tokens"] = completion_tokens
+                entry["total_tokens"] = total_tokens
+                if tokens is None:
+                    entry["tokens"] = total_tokens
+        if llm_call_count is not None:
+            entry["llm_call_count"] = llm_call_count
         if entry["agent_name"]:
             self.add_executed_agents([str(entry["agent_name"])])
         self.agent_runs.append(sanitize_value(entry))
@@ -716,13 +738,21 @@ class TraceState:
         mock_used = bool(call.get("mock") if mock is None else mock)
         fallback_used = bool(call.get("fallback") if fallback is None else fallback)
         cache_hit_value = bool(call.get("cache_hit") if cache_hit is None else cache_hit)
+        resolved_provider = str(provider or call.get("provider") or "unknown")
+        resolved_model = str(model or call.get("model") or "unknown")
+        cost_record = build_llm_cost_record(
+            usage=tokens if isinstance(tokens, dict) else {},
+            provider=resolved_provider,
+            model=resolved_model,
+            mock=mock_used,
+        )
         entry = {
             "call_id": call["call_id"],
             "id": call["call_id"],
             "agent_name": call.get("agent_name"),
             "component": call.get("component"),
-            "provider": str(provider or call.get("provider") or "unknown"),
-            "model": str(model or call.get("model") or "unknown"),
+            "provider": resolved_provider,
+            "model": resolved_model,
             "streaming": bool(call.get("streaming")),
             "duration_ms": _round_ms(duration_ms),
             "ttft_ms": _round_ms(ttft_ms),
@@ -740,6 +770,9 @@ class TraceState:
             "message_count": call.get("message_count"),
             "message_chars": call.get("message_chars"),
             "tool_count": call.get("tool_count"),
+            "prompt_version": call.get("prompt_version"),
+            "prompt_hash": call.get("prompt_hash"),
+            **cost_record,
         }
         if output_chars is not None:
             entry["output_chars"] = int(output_chars)
@@ -1121,6 +1154,8 @@ def finish_agent_run(
     agent_name: Optional[str] = None,
     status: str = "completed",
     tokens: Any = None,
+    usage: Optional[Dict[str, Any]] = None,
+    llm_call_count: Any = None,
     tool_count: Any = None,
     error: Any = None,
 ) -> None:
@@ -1131,6 +1166,8 @@ def finish_agent_run(
             agent_name=agent_name,
             status=status,
             tokens=tokens,
+            usage=usage,
+            llm_call_count=llm_call_count,
             tool_count=tool_count,
             error=error,
         )
@@ -1205,6 +1242,8 @@ def start_llm_call(
     message_count: Optional[int] = None,
     message_chars: Optional[int] = None,
     tool_count: Optional[int] = None,
+    prompt_version: Optional[str] = None,
+    prompt_hash: Optional[str] = None,
 ) -> Optional[Dict[str, Any]]:
     if get_current_trace() is None:
         return None
@@ -1223,6 +1262,8 @@ def start_llm_call(
         "message_count": message_count,
         "message_chars": message_chars,
         "tool_count": tool_count,
+        "prompt_version": prompt_version,
+        "prompt_hash": prompt_hash,
         "ttft_ms": None,
     }
 

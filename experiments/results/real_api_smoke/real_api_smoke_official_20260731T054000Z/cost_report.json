@@ -1,0 +1,43 @@
+{
+  "schema_version": "ctp-real-api-smoke-v1",
+  "status": "completed",
+  "costing_schema_version": "ctp-llm-costing-v1",
+  "currency": "USD",
+  "estimated_cost": 0.000312,
+  "standardized_estimated_cost": 0.000312,
+  "actual_cost": null,
+  "actual_cost_available": false,
+  "actual_cost_statuses": [
+    "not_reported_by_provider"
+  ],
+  "price_snapshots": [
+    {
+      "schema_version": "ctp-llm-costing-v1",
+      "provider": "vectorengine_openai_compatible",
+      "model": "gpt-5-mini",
+      "price_snapshot_date": "2026-07-31",
+      "price_source_url": "https://developers.openai.com/api/docs/models/gpt-5-mini",
+      "currency": "USD",
+      "price_unit": "per_1k_tokens",
+      "input_token_unit_price": 0.00025,
+      "output_token_unit_price": 0.002,
+      "pricing_mode": "standardized_token_estimate"
+    }
+  ],
+  "calls": [
+    {
+      "provider": "vectorengine_openai_compatible",
+      "model": "gpt-5-mini",
+      "estimated_cost": 0.000312,
+      "standardized_estimated_cost": 0.000312,
+      "actual_cost": null,
+      "actual_cost_status": "not_reported_by_provider",
+      "input_token_unit_price": 0.00025,
+      "output_token_unit_price": 0.002,
+      "price_snapshot_date": "2026-07-31",
+      "price_source_url": "https://developers.openai.com/api/docs/models/gpt-5-mini",
+      "prompt_version": "ctp-real-api-smoke-prompt-v1",
+      "prompt_hash": "5cfd56991153b10303687be466452ebed2122a72aee5ed60cd80ac437f307b07"
+    }
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "schema_version": "ctp-day6-acceptance-cases-v1",
+  "dataset_id": "day6_pipeline_acceptance",
+  "dataset_version": "2026-07-30",
+  "description": "Small offline acceptance set for Day6 four-method experiment pipeline. This is not a formal paper result dataset.",
+  "cases": [
+    {
+      "case_id": "day6_full_plan",
+      "user_input": "Plan a two-day Hangzhou trip for two people starting 2026-08-01, budget 5000 yuan, include attractions, weather, and budget.",
+      "expected": {
+        "task_type": "trip_planning",
+        "duration_days": 2,
+        "min_attractions": 2,
+        "max_pois_per_day": 2,
+        "budget_limit": 5000,
+        "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+        "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+        "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+        "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
+      }
+    },
+    {
+      "case_id": "day6_attraction_single",
+      "user_input": "Recommend Hangzhou attractions only. Do not make a full itinerary.",
+      "expected": {
+        "task_type": "attraction_recommendation",
+        "min_attractions": 2,
+        "required_tools": ["poi_search"],
+        "accepted_agent_sets": [["attraction"]],
+        "accepted_tool_sets": [["poi_search"]],
+        "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
+      }
+    },
+    {
+      "case_id": "day6_weather_single",
+      "user_input": "Check only the Hangzhou weather forecast for two days from 2026-08-01. Do not plan an itinerary.",
+      "expected": {
+        "task_type": "weather_query",
+        "required_tools": ["weather_query"],
+        "accepted_agent_sets": [["weather"]],
+        "accepted_tool_sets": [["weather_query"]],
+        "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
+      }
+    },
+    {
+      "case_id": "day6_general_chat",
+      "user_input": "Hello, I am only saying hi and do not need travel planning.",
+      "expected": {
+        "task_type": "general_chat",
+        "accepted_agent_sets": [[]],
+        "accepted_tool_sets": [[]],
+        "forbidden_tools": ["poi_search", "weather_query", "budget_calculator"],
+        "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
+      }
+    },
+    {
+      "case_id": "day6_clarification_missing_date_days",
+      "user_input": "I want to visit Beijing, but I have not decided travel dates or trip length yet.",
+      "expected": {
+        "task_type": "clarification",
+        "missing_slots": ["start_date", "duration_days"],
+        "accepted_agent_sets": [[]],
+        "accepted_tool_sets": [[]],
+        "forbidden_tools": ["poi_search", "weather_query", "budget_calculator"],
+        "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
+      }
+    },
+    {
+      "case_id": "day6_scenario_people_change",
+      "case_type": "multi_turn",
+      "description": "First run a full Hangzhou plan, then change only the people count and evaluate the budget-only target turn.",
+      "turns": [
+        {
+          "turn_id": "t1_full_plan",
+          "target_turn": false,
+          "user_input": "Plan a two-day Hangzhou trip for two people starting 2026-08-01, budget 5000 yuan, include attractions, weather, itinerary, and budget.",
+          "expected": {
+            "task_type": "trip_planning",
+            "duration_days": 2,
+            "min_attractions": 2,
+            "max_pois_per_day": 2,
+            "budget_limit": 5000,
+            "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+            "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+            "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+            "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
+          }
+        },
+        {
+          "turn_id": "t2_people_change",
+          "target_turn": true,
+          "user_input": "Change the plan for three people. Recalculate only the budget. Keep all other conditions unchanged.",
+          "expected": {
+            "task_type": "budget_query",
+            "duration_days": 2,
+            "changed_slots": ["people_count"],
+            "preserved_slots": ["destination", "start_date", "duration_days"],
+            "required_tools": ["budget_calculator"],
+            "accepted_agent_sets": [["budget"]],
+            "accepted_tool_sets": [["budget_calculator"]],
+            "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "day6_scenario_rain_day2",
+      "case_type": "multi_turn",
+      "description": "First run a full Hangzhou plan, then change the second day to rain and evaluate the weather/itinerary adjustment target turn.",
+      "turns": [
+        {
+          "turn_id": "t1_full_plan",
+          "target_turn": false,
+          "user_input": "Plan a two-day Hangzhou trip for two people starting 2026-08-01, budget 5000 yuan, include attractions, weather, itinerary, and budget.",
+          "expected": {
+            "task_type": "trip_planning",
+            "duration_days": 2,
+            "min_attractions": 2,
+            "max_pois_per_day": 2,
+            "budget_limit": 5000,
+            "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+            "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+            "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+            "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
+          }
+        },
+        {
+          "turn_id": "t2_rain_day2",
+          "target_turn": true,
+          "user_input": "The second day becomes rain. Adjust the itinerary for rainy weather, keep the destination, date, people count, and budget unchanged.",
+          "weather_change": {
+            "scenario_type": "rain",
+            "affected_days": [2]
+          },
+          "expected": {
+            "task_type": "weather_adjustment",
+            "duration_days": 2,
+            "weather_change": {
+              "scenario_type": "rain",
+              "affected_days": [2]
+            },
+            "changed_slots": ["weather_scenario"],
+            "preserved_slots": ["destination", "start_date", "duration_days", "people_count"],
+            "required_tools": ["weather_query"],
+            "accepted_agent_sets": [["weather", "itinerary"]],
+            "accepted_tool_sets": [["weather_query"]],
+            "hard_constraints": {
+              "weather_adjustment_required": true
+            },
+            "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "day6_scenario_repeat_request",
+      "case_type": "multi_turn",
+      "description": "First run a full Hangzhou plan, then repeat the same request and evaluate whether M3 can reuse all prior results.",
+      "turns": [
+        {
+          "turn_id": "t1_full_plan",
+          "target_turn": false,
+          "user_input": "Plan a two-day Hangzhou trip for two people starting 2026-08-01, budget 5000 yuan, include attractions, weather, itinerary, and budget.",
+          "expected": {
+            "task_type": "trip_planning",
+            "duration_days": 2,
+            "min_attractions": 2,
+            "max_pois_per_day": 2,
+            "budget_limit": 5000,
+            "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+            "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+            "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+            "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
+          }
+        },
+        {
+          "turn_id": "t2_repeat_same",
+          "target_turn": true,
+          "user_input": "Same again. Repeat the previous Hangzhou trip request exactly and do not change any condition.",
+          "expected": {
+            "task_type": "partial_replan",
+            "duration_days": 2,
+            "min_attractions": 2,
+            "max_pois_per_day": 2,
+            "budget_limit": 5000,
+            "changed_slots": [],
+            "preserved_slots": ["destination", "start_date", "duration_days", "people_count"],
+            "required_tools": [],
+            "accepted_agent_sets": [[]],
+            "accepted_tool_sets": [[]],
+            "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
+          }
+        }
+      ]
+    }
+  ]
+}

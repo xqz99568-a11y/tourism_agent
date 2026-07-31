@@ -1,29 +1,10 @@
 {
+  "schema_version": "ctp-benchmark-manifest-v1",
   "dataset_id": "tourism_benchmark_v1",
-  "description": "Paper benchmark cases for comparing llm_direct, single_agent, and full_system.",
-  "cases": [
-    {
-      "case_id": "case001",
-      "user_input": "帮我规划杭州3天旅游",
-      "slots": {
-        "destination": "杭州",
-        "duration": 3
-      },
-      "constraints": [
-        "3天行程",
-        "目的地杭州"
-      ],
-      "expected": {
-        "intent": "trip_planning",
-        "route": "FULL_NEW_PLAN",
-        "selected_agents": [
-          "attraction",
-          "weather",
-          "itinerary",
-          "budget"
-        ],
-        "selected_tools": []
-      }
-    }
+  "dataset_version": "2026-07-30-dev",
+  "split": "development",
+  "description": "Benchmark manifest for the current paper-level development split. Replace or extend this manifest when the formal 100-120 case test split is frozen.",
+  "case_files": [
+    "ctp120_dev.json"
   ]
 }

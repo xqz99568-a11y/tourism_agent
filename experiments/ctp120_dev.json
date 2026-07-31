@@ -1,0 +1,474 @@
+{
+  "schema_version": "ctp-benchmark-v1",
+  "dataset_id": "ctp120_dev",
+  "dataset_version": "2026-07-30",
+  "split": "development",
+  "target_formal_case_count": 120,
+  "description": "Twenty-case development split for paper-level tourism multi-agent experiments. Cases cover fixed offline cities, task types, tool gold labels, hard constraints, multi-turn changes, weather adjustment, clarification, and general chat.",
+  "cases": [
+    {
+      "case_id": "ctp_dev_001_hangzhou_full_plan",
+      "user_input": "Plan a two day Hangzhou trip for two people starting 2026-08-01. Include attractions, weather, itinerary, and budget. Budget 5000 yuan.",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+        "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+        "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+        "hard_constraints": {
+          "duration_days": 2,
+          "min_attractions": 3,
+          "max_attractions": 4,
+          "max_pois_per_day": 2,
+          "budget_limit": 5000,
+          "traveler_group": "couple"
+        }
+      }
+    },
+    {
+      "case_id": "ctp_dev_002_beijing_senior_full_plan",
+      "user_input": "Create a three day Beijing travel plan for four travelers, all seniors, starting 2026-08-03. Include attractions, weather, route rhythm, and budget 8000 yuan.",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+        "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+        "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+        "hard_constraints": {
+          "duration_days": 3,
+          "min_attractions": 3,
+          "max_attractions": 6,
+          "max_pois_per_day": 2,
+          "budget_limit": 8000,
+          "traveler_group": "senior"
+        }
+      }
+    },
+    {
+      "case_id": "ctp_dev_003_xian_family_full_plan",
+      "user_input": "Plan a two day Xian family trip with kids starting 2026-08-05. Prefer history and culture, include weather and budget 6000 yuan.",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+        "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+        "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+        "hard_constraints": {
+          "duration_days": 2,
+          "min_attractions": 3,
+          "max_attractions": 4,
+          "max_pois_per_day": 2,
+          "budget_limit": 6000,
+          "traveler_group": "family"
+        }
+      }
+    },
+    {
+      "case_id": "ctp_dev_004_shenzhen_full_plan",
+      "user_input": "Plan a two day Shenzhen trip for two adults starting 2026-08-07. Include city landmarks, weather forecast, daily itinerary, and budget 7000 yuan.",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+        "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+        "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+        "hard_constraints": {
+          "duration_days": 2,
+          "min_attractions": 3,
+          "max_attractions": 4,
+          "max_pois_per_day": 2,
+          "budget_limit": 7000
+        }
+      }
+    },
+    {
+      "case_id": "ctp_dev_005_guilin_nature_attractions",
+      "user_input": "Recommend only three Guilin nature attractions. Do not create a full itinerary, weather report, or budget.",
+      "expected": {
+        "task_type": "attraction_recommendation",
+        "min_attractions": 3,
+        "max_attractions": 3,
+        "required_tools": ["poi_search"],
+        "accepted_agent_sets": [["attraction"]],
+        "accepted_tool_sets": [["poi_search"]]
+      }
+    },
+    {
+      "case_id": "ctp_dev_006_beijing_indoor_attractions",
+      "user_input": "Recommend only two Beijing indoor or museum-style attractions for a rainy backup list. No itinerary or budget.",
+      "expected": {
+        "task_type": "attraction_recommendation",
+        "min_attractions": 2,
+        "max_attractions": 2,
+        "required_tools": ["poi_search"],
+        "accepted_agent_sets": [["attraction"]],
+        "accepted_tool_sets": [["poi_search"]]
+      }
+    },
+    {
+      "case_id": "ctp_dev_007_xian_weather_only",
+      "user_input": "Check only the Xian weather forecast for three days from 2026-08-09. Do not recommend attractions.",
+      "expected": {
+        "task_type": "weather_query",
+        "required_tools": ["weather_query"],
+        "accepted_agent_sets": [["weather"]],
+        "accepted_tool_sets": [["weather_query"]]
+      }
+    },
+    {
+      "case_id": "ctp_dev_008_shenzhen_weather_only",
+      "user_input": "Only check Shenzhen weather for two days from 2026-08-11. No route, attractions, or budget.",
+      "expected": {
+        "task_type": "weather_query",
+        "required_tools": ["weather_query"],
+        "accepted_agent_sets": [["weather"]],
+        "accepted_tool_sets": [["weather_query"]]
+      }
+    },
+    {
+      "case_id": "ctp_dev_009_guilin_rough_budget",
+      "user_input": "Estimate only a rough budget for a three day Guilin trip for two people. Do not calculate attraction tickets.",
+      "expected": {
+        "task_type": "budget_query",
+        "budget_limit": 4500,
+        "required_tools": ["budget_calculator"],
+        "accepted_agent_sets": [["budget"]],
+        "accepted_tool_sets": [["budget_calculator"]]
+      }
+    },
+    {
+      "case_id": "ctp_dev_010_hangzhou_rough_budget",
+      "user_input": "Only estimate whether a two day Hangzhou trip for three people can stay within budget 4000 yuan. No attraction ticket calculation.",
+      "expected": {
+        "task_type": "budget_query",
+        "budget_limit": 4000,
+        "required_tools": ["budget_calculator"],
+        "accepted_agent_sets": [["budget"]],
+        "accepted_tool_sets": [["budget_calculator"]]
+      }
+    },
+    {
+      "case_id": "ctp_dev_011_beijing_clarification",
+      "user_input": "I want to visit Beijing, but I have not decided travel dates, trip length, or budget yet.",
+      "expected": {
+        "task_type": "clarification",
+        "missing_slots": ["start_date", "duration_days", "budget_amount"],
+        "accepted_agent_sets": [[]],
+        "accepted_tool_sets": [[]],
+        "forbidden_tools": ["poi_search", "weather_query", "budget_calculator"]
+      }
+    },
+    {
+      "case_id": "ctp_dev_012_missing_destination_clarification",
+      "user_input": "Please help me plan a family trip next month, but I have not chosen the destination or number of days.",
+      "expected": {
+        "task_type": "clarification",
+        "missing_slots": ["destination", "duration_days", "start_date"],
+        "accepted_agent_sets": [[]],
+        "accepted_tool_sets": [[]],
+        "forbidden_tools": ["poi_search", "weather_query", "budget_calculator"]
+      }
+    },
+    {
+      "case_id": "ctp_dev_013_general_chat_capability",
+      "user_input": "Hello, I only want to know what this tourism assistant can do. Do not make a travel plan.",
+      "expected": {
+        "task_type": "general_chat",
+        "accepted_agent_sets": [[]],
+        "accepted_tool_sets": [[]],
+        "forbidden_tools": ["poi_search", "weather_query", "budget_calculator"]
+      }
+    },
+    {
+      "case_id": "ctp_dev_014_general_chat_goodnight",
+      "user_input": "Thanks, no attractions, weather, route, or budget are needed. I am just saying good night.",
+      "expected": {
+        "task_type": "general_chat",
+        "accepted_agent_sets": [[]],
+        "accepted_tool_sets": [[]],
+        "forbidden_tools": ["poi_search", "weather_query", "budget_calculator"]
+      }
+    },
+    {
+      "case_id": "ctp_dev_015_hangzhou_people_change",
+      "case_type": "multi_turn",
+      "description": "A full Hangzhou plan followed by a people-count-only budget update.",
+      "turns": [
+        {
+          "turn_id": "t1_full_plan",
+          "target_turn": false,
+          "user_input": "First make a two day Hangzhou plan for two travelers starting 2026-08-13, with attractions, weather, itinerary, and budget 5200 yuan.",
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+            "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+            "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+            "hard_constraints": {
+              "duration_days": 2,
+              "min_attractions": 3,
+              "max_pois_per_day": 2,
+              "budget_limit": 5200
+            }
+          }
+        },
+        {
+          "turn_id": "t2_people_change",
+          "target_turn": true,
+          "user_input": "Change the traveler count to three people. Recalculate only the budget and keep destination, start date, and itinerary unchanged.",
+          "current_slots": {
+            "people_count": 3
+          },
+          "expected": {
+            "task_type": "budget_query",
+            "changed_slots": ["people_count"],
+            "preserved_slots": ["destination", "start_date", "duration_days"],
+            "duration_days": 2,
+            "required_tools": ["budget_calculator"],
+            "accepted_agent_sets": [["budget"]],
+            "accepted_tool_sets": [["budget_calculator"]]
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "ctp_dev_016_beijing_duration_change",
+      "case_type": "multi_turn",
+      "description": "A Beijing plan followed by a duration extension.",
+      "turns": [
+        {
+          "turn_id": "t1_full_plan",
+          "target_turn": false,
+          "user_input": "Build a two day Beijing plan for two adults starting 2026-08-15, including attractions, weather, itinerary, and budget 6500 yuan.",
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+            "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+            "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+            "hard_constraints": {
+              "duration_days": 2,
+              "min_attractions": 3,
+              "max_pois_per_day": 2,
+              "budget_limit": 6500
+            }
+          }
+        },
+        {
+          "turn_id": "t2_extend_duration",
+          "target_turn": true,
+          "user_input": "Extend this Beijing trip to three days. Keep the city, start date, people count, and spending level unchanged.",
+          "current_slots": {
+            "duration_days": 3
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "changed_slots": ["duration_days"],
+            "preserved_slots": ["destination", "start_date", "people_count", "budget_level"],
+            "required_tools": ["weather_query", "budget_calculator"],
+            "accepted_agent_sets": [["weather", "itinerary", "budget"]],
+            "accepted_tool_sets": [["weather_query", "budget_calculator"]],
+            "hard_constraints": {
+              "duration_days": 3,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            }
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "ctp_dev_017_xian_preference_change",
+      "case_type": "multi_turn",
+      "description": "A Xian plan followed by a preference and traveler-group update.",
+      "turns": [
+        {
+          "turn_id": "t1_full_plan",
+          "target_turn": false,
+          "user_input": "Prepare a two day Xian history trip for two adults starting 2026-08-17, with attractions, weather, itinerary, and budget 5600 yuan.",
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+            "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+            "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+            "hard_constraints": {
+              "duration_days": 2,
+              "min_attractions": 3,
+              "max_pois_per_day": 2,
+              "budget_limit": 5600
+            }
+          }
+        },
+        {
+          "turn_id": "t2_family_preference",
+          "target_turn": true,
+          "user_input": "Now change it to a family-friendly, low-walking Xian plan. Keep the same dates, two days, and budget level.",
+          "current_slots": {
+            "traveler_group": "family",
+            "preferences": ["family", "low_intensity"]
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "changed_slots": ["traveler_group", "preferences"],
+            "preserved_slots": ["destination", "start_date", "duration_days", "budget_level"],
+            "required_tools": ["poi_search", "budget_calculator"],
+            "accepted_agent_sets": [["attraction", "itinerary", "budget"]],
+            "accepted_tool_sets": [["poi_search", "budget_calculator"]],
+            "hard_constraints": {
+              "duration_days": 2,
+              "traveler_group": "family",
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            }
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "ctp_dev_018_guilin_rain_adjustment",
+      "case_type": "multi_turn",
+      "description": "A Guilin plan followed by a day-two rain adjustment.",
+      "turns": [
+        {
+          "turn_id": "t1_full_plan",
+          "target_turn": false,
+          "user_input": "Make a two day Guilin nature trip for two people starting 2026-08-19, including attractions, weather, itinerary, and budget 4800 yuan.",
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+            "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+            "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+            "hard_constraints": {
+              "duration_days": 2,
+              "min_attractions": 3,
+              "max_pois_per_day": 2,
+              "budget_limit": 4800
+            }
+          }
+        },
+        {
+          "turn_id": "t2_rain_day2",
+          "target_turn": true,
+          "user_input": "The second day in Guilin becomes rainy. Adjust only the affected day and keep the other day and budget unchanged.",
+          "current_slots": {
+            "weather_scenario": "rain"
+          },
+          "weather_change": {
+            "scenario_type": "rain",
+            "affected_days": [2]
+          },
+          "expected": {
+            "task_type": "weather_adjustment",
+            "changed_slots": ["weather_scenario"],
+            "preserved_slots": ["destination", "start_date", "duration_days", "people_count", "budget_level"],
+            "required_tools": ["weather_query"],
+            "accepted_agent_sets": [["weather", "itinerary"]],
+            "accepted_tool_sets": [["weather_query"]],
+            "weather_change": {
+              "scenario_type": "rain",
+              "affected_days": [2]
+            },
+            "hard_constraints": {
+              "duration_days": 2,
+              "min_attractions": 3,
+              "max_pois_per_day": 2,
+              "weather_adjustment_required": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "ctp_dev_019_shenzhen_heat_adjustment",
+      "case_type": "multi_turn",
+      "description": "A Shenzhen plan followed by a day-one high-temperature adjustment.",
+      "turns": [
+        {
+          "turn_id": "t1_full_plan",
+          "target_turn": false,
+          "user_input": "Design a two day Shenzhen city trip for two people starting 2026-08-21, with attractions, weather, itinerary, and budget 7200 yuan.",
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+            "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+            "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+            "hard_constraints": {
+              "duration_days": 2,
+              "min_attractions": 3,
+              "max_pois_per_day": 2,
+              "budget_limit": 7200
+            }
+          }
+        },
+        {
+          "turn_id": "t2_heat_day1",
+          "target_turn": true,
+          "user_input": "The first day in Shenzhen becomes high temperature. Move outdoor activities to cooler periods or indoor backups, and keep budget unchanged.",
+          "current_slots": {
+            "weather_scenario": "high_temperature"
+          },
+          "weather_change": {
+            "scenario_type": "high_temperature",
+            "affected_days": [1]
+          },
+          "expected": {
+            "task_type": "weather_adjustment",
+            "changed_slots": ["weather_scenario"],
+            "preserved_slots": ["destination", "start_date", "duration_days", "people_count", "budget_level"],
+            "required_tools": ["weather_query"],
+            "accepted_agent_sets": [["weather", "itinerary"]],
+            "accepted_tool_sets": [["weather_query"]],
+            "weather_change": {
+              "scenario_type": "high_temperature",
+              "affected_days": [1]
+            },
+            "hard_constraints": {
+              "duration_days": 2,
+              "min_attractions": 3,
+              "max_pois_per_day": 2,
+              "weather_adjustment_required": true
+            }
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "ctp_dev_020_hangzhou_repeat_no_change",
+      "case_type": "multi_turn",
+      "description": "A Hangzhou plan followed by a full repeat request with no changed slots.",
+      "turns": [
+        {
+          "turn_id": "t1_full_plan",
+          "target_turn": false,
+          "user_input": "Generate a two day Hangzhou culture trip for two adults starting 2026-08-23, with attractions, weather, itinerary, and budget 5100 yuan.",
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": ["poi_search", "weather_query", "budget_calculator"],
+            "accepted_agent_sets": [["attraction", "weather", "itinerary", "budget"]],
+            "accepted_tool_sets": [["poi_search", "weather_query", "budget_calculator"]],
+            "hard_constraints": {
+              "duration_days": 2,
+              "min_attractions": 3,
+              "max_pois_per_day": 2,
+              "budget_limit": 5100
+            }
+          }
+        },
+        {
+          "turn_id": "t2_repeat_same",
+          "target_turn": true,
+          "user_input": "Repeat exactly the same Hangzhou request again with no changes. Reuse the previous result if possible.",
+          "expected": {
+            "task_type": "partial_replan",
+            "replan_policy": "no_change_reuse",
+            "changed_slots": [],
+            "preserved_slots": ["destination", "start_date", "duration_days", "people_count", "budget_level"],
+            "required_tools": [],
+            "accepted_agent_sets": [[]],
+            "accepted_tool_sets": [[]],
+            "hard_constraints": {
+              "duration_days": 2,
+              "min_attractions": 3,
+              "max_pois_per_day": 2,
+              "budget_limit": 5100
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

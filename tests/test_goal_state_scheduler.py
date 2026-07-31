@@ -117,6 +117,53 @@ def test_goal_state_scheduler_matches_day4_acceptance_cases() -> None:
             assert decision[field] == expected_value, f"{case['case_id']} {field}"
 
 
+def test_complete_plan_with_attractions_weather_and_budget_beats_weather_query() -> None:
+    ticket = build_goal_state_ticket(
+        user_input=(
+            "请为两人规划杭州2天旅游，2026-08-01出发，"
+            "预算5000元，需要景点、天气和预算。"
+        ),
+        current_slots={
+            "destination": "hangzhou",
+            "start_date": "2026-08-01",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5000,
+        },
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "trip_planning"
+    assert ticket.required_capabilities == [
+        "poi_evidence",
+        "weather_evidence",
+        "itinerary_generation",
+        "budget_estimation",
+    ]
+    assert decision.planned_agents == ["attraction", "weather", "itinerary", "budget"]
+    assert decision.planned_tools == [
+        "poi_search",
+        "weather_query",
+        "budget_calculator",
+    ]
+
+
+def test_clear_weather_only_request_still_routes_to_weather_agent() -> None:
+    ticket = build_goal_state_ticket(
+        user_input="帮我查一下西安 2026-08-10 开始两天的天气风险。",
+        current_slots={
+            "destination": "xian",
+            "start_date": "2026-08-10",
+            "duration_days": 2,
+        },
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "weather_query"
+    assert decision.planned_agents == ["weather"]
+    assert decision.planned_tools == ["weather_query"]
+
+
 def test_goal_state_ticket_merges_previous_state_when_current_turn_only_has_changes() -> None:
     ticket = build_goal_state_ticket(
         user_input="目的地改成桂林，其他条件不变，重新做完整计划。",
@@ -256,6 +303,37 @@ def test_goal_shift_without_slot_change_is_not_identical_reuse() -> None:
     assert redo_decision.decision_reasons == ["explicit_replan_requested"]
 
 
+def test_greeting_that_negates_travel_planning_is_general_chat() -> None:
+    ticket = build_goal_state_ticket(
+        user_input="Hello, I am only saying hi and do not need travel planning.",
+        current_slots={},
+        previous_state=None,
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "general_chat"
+    assert ticket.clarification_required is False
+    assert decision.planned_agents == []
+    assert decision.planned_tools == []
+
+
+def test_weather_only_with_negated_itinerary_is_weather_query() -> None:
+    ticket = build_goal_state_ticket(
+        user_input="Check only the Hangzhou weather forecast for two days from 2026-08-01. Do not plan an itinerary.",
+        current_slots={
+            "destination": "hangzhou",
+            "start_date": "2026-08-01",
+            "duration_days": 2,
+        },
+        previous_state=None,
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "weather_query"
+    assert decision.planned_agents == ["weather"]
+    assert decision.planned_tools == ["weather_query"]
+
+
 def test_dependency_cascade_removes_agents_from_reuse_set() -> None:
     failed_poi = {
         "tool_name": "poi_search",
@@ -326,7 +404,7 @@ def test_budget_query_requires_reusable_attraction_upstream() -> None:
     )
 
     ticket = build_goal_state_ticket(
-        user_input="how much will the budget cost for four people",
+        user_input="how much will attraction tickets and admission cost for four people",
         current_slots={"people_count": 4},
         previous_state=previous_state,
     )
@@ -335,6 +413,48 @@ def test_budget_query_requires_reusable_attraction_upstream() -> None:
     assert ticket.task_type == "budget_query"
     assert decision.planned_agents == ["attraction", "budget"]
     assert decision.reused_agents == []
+
+
+def test_rough_budget_query_without_ticket_dependency_uses_budget_only() -> None:
+    ticket = build_goal_state_ticket(
+        user_input="rough budget estimate for a two day Hangzhou trip for two people",
+        current_slots={
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2,
+        },
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "budget_query"
+    assert ticket.dependency_policy == {
+        "budget_scope": "rough_budget_without_ticket_dependency",
+        "requires_attraction_evidence": False,
+    }
+    assert decision.planned_agents == ["budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+    assert decision.decision_reasons == ["rough_budget_without_ticket_dependency"]
+
+
+def test_ticket_budget_query_without_previous_attractions_runs_attraction_first() -> None:
+    ticket = build_goal_state_ticket(
+        user_input="estimate attraction tickets and total admission cost for a two day Hangzhou trip for two people",
+        current_slots={
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2,
+        },
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "budget_query"
+    assert ticket.dependency_policy == {
+        "budget_scope": "ticket_budget_requires_attraction_evidence",
+        "requires_attraction_evidence": True,
+    }
+    assert decision.planned_agents == ["attraction", "budget"]
+    assert decision.planned_tools == ["poi_search", "budget_calculator"]
+    assert decision.decision_reasons == ["ticket_budget_requires_attraction_evidence"]
 
 
 def test_identical_request_with_only_budget_result_replans_full_plan() -> None:
