@@ -118,7 +118,6 @@ tourism-agent-cli = "app.cli:main"
 packages = ["app"]
 
 [tool.pytest.ini_options]
-asyncio_mode = "auto"
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]

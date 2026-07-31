@@ -1,0 +1,17 @@
+{
+  "schema_version": "ctp-real-api-smoke-v1",
+  "status": "completed",
+  "latency_ms": 7864.83,
+  "first_body_token_ms": 7864.14,
+  "llm_call_count": 1,
+  "llm_total_duration_ms": 7863.79,
+  "calls": [
+    {
+      "provider": "vectorengine_openai_compatible",
+      "model": "gpt-5-mini",
+      "duration_ms": 7863.79,
+      "ttft_ms": null,
+      "success": true
+    }
+  ]
+}

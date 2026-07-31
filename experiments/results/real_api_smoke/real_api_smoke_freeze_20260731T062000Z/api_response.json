@@ -1,0 +1,28 @@
+{
+  "schema_version": "ctp-real-api-smoke-v1",
+  "status": "completed",
+  "run_id": "real_api_smoke_freeze_20260731T062000Z",
+  "case_id": "real_api_smoke_connectivity",
+  "provider": "vectorengine_openai_compatible",
+  "base_url": "https://api.vectorengine.ai/v1",
+  "model": "gpt-5-mini",
+  "response_model": "gpt-5-mini",
+  "finish_reason": "stop",
+  "response_received": true,
+  "content_received": true,
+  "content_sha256": "7fbe9108a9a062fa52024eb9cacdc291e11eee0aff432f1eed801a1d290fdcfb",
+  "content_preview": "{\"ok\": true, \"message\": \"pong\"}",
+  "usage": {
+    "prompt_tokens": 56,
+    "completion_tokens": 149,
+    "total_tokens": 205
+  },
+  "latency_ms": 5466.18,
+  "prompt_version": "ctp-real-api-smoke-prompt-v1",
+  "prompt_hash": "5cfd56991153b10303687be466452ebed2122a72aee5ed60cd80ac437f307b07",
+  "trace_file": "D:/Code/Tourism_Agent/experiments/results/real_api_smoke/real_api_smoke_freeze_20260731T062000Z/traces/20260731T064046425368Z_real_api_smoke_connectivity_real_api_smoke_freeze_20260731T062000Z_3f3a96de.jsonl",
+  "llm_call_id": "3de282df0fb745f6ad0d95eff52a9e66",
+  "mock": false,
+  "fallback": false,
+  "error": null
+}

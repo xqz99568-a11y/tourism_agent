@@ -57,6 +57,24 @@ _DESCRIPTIVE_METRICS = (
     ("tool_failure_count", ("metrics", "tool_failure_count")),
     ("total_tokens", ("metrics", "total_tokens")),
     ("estimated_cost", ("metrics", "estimated_cost")),
+    ("standardized_estimated_cost", ("metrics", "standardized_estimated_cost")),
+    ("actual_cost", ("metrics", "actual_cost")),
+    ("llm_call_count", ("metrics", "llm_call_count")),
+    ("agent_llm_call_count", ("metrics", "agent_llm_call_count")),
+    ("api_call_count", ("metrics", "api_call_count")),
+    ("prompt_tokens", ("metrics", "prompt_tokens")),
+    ("completion_tokens", ("metrics", "completion_tokens")),
+    ("agent_prompt_tokens", ("metrics", "agent_prompt_tokens")),
+    ("agent_completion_tokens", ("metrics", "agent_completion_tokens")),
+    ("agent_total_tokens", ("metrics", "agent_total_tokens")),
+    ("successful_agent_call_count", ("metrics", "successful_agent_call_count")),
+    ("failed_agent_call_count", ("metrics", "failed_agent_call_count")),
+    ("successful_tool_call_count", ("metrics", "successful_tool_call_count")),
+    ("failed_tool_call_count", ("metrics", "failed_tool_call_count")),
+    ("llm_total_duration_ms", ("metrics", "llm_total_duration_ms")),
+    ("agent_total_duration_ms", ("metrics", "agent_total_duration_ms")),
+    ("tool_total_duration_ms", ("metrics", "tool_total_duration_ms")),
+    ("api_total_duration_ms", ("metrics", "api_total_duration_ms")),
     ("latency_ms", ("latency_ms",)),
     ("agent_call_count", ("trace", "agent_call_count")),
     ("tool_call_count", ("trace", "tool_call_count")),
@@ -76,6 +94,20 @@ _PAIRED_METRICS = (
     ("tool_call_success_rate", ("metrics", "tool_call_success_rate"), False),
     ("total_tokens", ("metrics", "total_tokens"), False),
     ("estimated_cost", ("metrics", "estimated_cost"), False),
+    ("standardized_estimated_cost", ("metrics", "standardized_estimated_cost"), False),
+    ("actual_cost", ("metrics", "actual_cost"), False),
+    ("llm_call_count", ("metrics", "llm_call_count"), False),
+    ("agent_llm_call_count", ("metrics", "agent_llm_call_count"), False),
+    ("api_call_count", ("metrics", "api_call_count"), False),
+    ("prompt_tokens", ("metrics", "prompt_tokens"), False),
+    ("completion_tokens", ("metrics", "completion_tokens"), False),
+    ("agent_prompt_tokens", ("metrics", "agent_prompt_tokens"), False),
+    ("agent_completion_tokens", ("metrics", "agent_completion_tokens"), False),
+    ("agent_total_tokens", ("metrics", "agent_total_tokens"), False),
+    ("llm_total_duration_ms", ("metrics", "llm_total_duration_ms"), False),
+    ("agent_total_duration_ms", ("metrics", "agent_total_duration_ms"), False),
+    ("tool_total_duration_ms", ("metrics", "tool_total_duration_ms"), False),
+    ("api_total_duration_ms", ("metrics", "api_total_duration_ms"), False),
     ("latency_ms", ("latency_ms",), False),
     ("agent_call_count", ("trace", "agent_call_count"), False),
     ("tool_call_count", ("trace", "tool_call_count"), False),
@@ -97,6 +129,35 @@ _METHOD_SUMMARY_METRICS = (
     "tool_failure_count",
     "total_tokens",
     "estimated_cost",
+    "standardized_estimated_cost",
+    "actual_cost",
+    "llm_call_count",
+    "agent_llm_call_count",
+    "api_call_count",
+    "prompt_tokens",
+    "completion_tokens",
+    "agent_prompt_tokens",
+    "agent_completion_tokens",
+    "agent_total_tokens",
+    "planned_agent_count",
+    "used_agent_count",
+    "executed_agent_count",
+    "successful_agent_call_count",
+    "failed_agent_call_count",
+    "duplicate_agent_call_count",
+    "planned_executed_agent_coverage",
+    "planned_tool_count",
+    "called_tool_count",
+    "executed_tool_count",
+    "successful_tool_call_count",
+    "failed_tool_call_count",
+    "duplicate_tool_call_count",
+    "planned_executed_tool_coverage",
+    "llm_total_duration_ms",
+    "agent_total_duration_ms",
+    "tool_total_duration_ms",
+    "api_total_duration_ms",
+    "stage_total_duration_ms",
 )
 _METHOD_LABELS = {
     "llm_direct": "M0 Direct LLM",
@@ -116,22 +177,42 @@ def summarize_evaluation_results(results: List[Dict[str, Any]]) -> Dict[str, Any
     raw_by_method: Dict[str, List[Dict[str, Any]]] = {}
     for result in results:
         raw_by_method.setdefault(str(result.get("method") or "unknown"), []).append(result)
+    quality_results = [result for result in results if _is_quality_evaluation_row(result)]
+    quality_by_method: Dict[str, List[Dict[str, Any]]] = {}
+    for result in quality_results:
+        quality_by_method.setdefault(str(result.get("method") or "unknown"), []).append(result)
     by_method = {
         method: _aggregate_repeated_cases(rows)
-        for method, rows in raw_by_method.items()
+        for method, rows in quality_by_method.items()
+    }
+    quality_units = {_evaluation_unit_id(result) for result in quality_results}
+    scenario_ids = {
+        str(result.get("scenario_id") or result.get("case_id") or "")
+        for result in results
+        if _is_scenario_row(result)
     }
     return {
         "schema_version": EVALUATION_SUMMARY_SCHEMA_VERSION,
         "result_count": len(results),
         "raw_run_count": len(results),
-        "unique_case_count": len({str(result.get("case_id") or "") for result in results}),
+        "quality_result_count": len(quality_results),
+        "unique_case_count": len(quality_units),
         "method_case_count": sum(len(rows) for rows in by_method.values()),
-        "independent_case_count": len({str(result.get("case_id") or "") for result in results}),
+        "independent_case_count": len(quality_units),
+        "scenario_case_count": len(scenario_ids),
+        "quality_evaluation_scope": {
+            "single_turn": "all single-turn cases",
+            "multi_turn": "target_turn_only",
+            "default_target_turn": "last turn when target_turn is not specified",
+        },
         "repeat_aggregation": {
             "enabled": True,
-            "unit": "case_id",
+            "unit": "evaluation_unit_id",
             "raw_result_count": len(results),
+            "quality_result_count": len(quality_results),
+            "scenario_turns_are_repeats": False,
         },
+        "scenario_costs": _scenario_cost_summary(raw_by_method),
         "methods": {
             method: _method_summary(rows)
             for method, rows in sorted(by_method.items())
@@ -151,6 +232,8 @@ def render_paper_tables(summary: Dict[str, Any]) -> str:
     """Render compact Markdown tables from evaluation_summary.json."""
     methods = summary.get("methods") if isinstance(summary.get("methods"), dict) else {}
     paired = summary.get("paired_statistics") if isinstance(summary.get("paired_statistics"), dict) else {}
+    scenario_cost_methods = _nested(summary, "scenario_costs", "methods")
+    scenario_cost_methods = scenario_cost_methods if isinstance(scenario_cost_methods, dict) else {}
     lines = [
         "# Paper Result Tables",
         "",
@@ -189,15 +272,37 @@ def render_paper_tables(summary: Dict[str, Any]) -> str:
         "",
         "## Token and cost",
         "",
-        "| Method | Tokens/case | Cost/case | Cost/success | Successful cases |",
-        "|---|---:|---:|---:|---:|",
+        "| Method | LLM calls | Prompt tokens | Completion tokens | Tokens/case | Cost/case | Standardized cost/case | Actual cost/case | Cost/success | Successful cases |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ])
     for method in _method_order(methods):
         row = methods.get(method) or {}
         lines.append(
-            f"| {_method_label(method)} | {_fmt(row.get('total_tokens_mean'))} "
-            f"| {_fmt(row.get('estimated_cost_mean'))} | {_fmt(row.get('cost_per_success_mean'))} "
+            f"| {_method_label(method)} | {_fmt(row.get('llm_call_count_mean'))} "
+            f"| {_fmt(row.get('prompt_tokens_mean'))} | {_fmt(row.get('completion_tokens_mean'))} "
+            f"| {_fmt(row.get('total_tokens_mean'))} "
+            f"| {_fmt(row.get('estimated_cost_mean'))} | {_fmt(row.get('standardized_estimated_cost_mean'))} "
+            f"| {_fmt(row.get('actual_cost_mean'))} | {_fmt(row.get('cost_per_success_mean'))} "
             f"| {_fmt(row.get('successful_case_count'))} |"
+        )
+    lines.extend([
+        "",
+        "## Multi-turn scenario costs",
+        "",
+        "| Method | Scenarios | Target turn incremental LLM calls | Target turn incremental tokens | Target turn incremental tools | Scenario total LLM calls | Scenario total tokens | Scenario total tools | Scenario total latency ms |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ])
+    for method in _method_order({**methods, **scenario_cost_methods}):
+        row = scenario_cost_methods.get(method) or {}
+        lines.append(
+            f"| {_method_label(method)} | {row.get('scenario_count', 0)} "
+            f"| {_fmt(row.get('target_increment_llm_call_count_mean'))} "
+            f"| {_fmt(row.get('target_increment_total_tokens_mean'))} "
+            f"| {_fmt(row.get('target_increment_called_tool_count_mean'))} "
+            f"| {_fmt(row.get('scenario_total_llm_call_count_mean'))} "
+            f"| {_fmt(row.get('scenario_total_total_tokens_mean'))} "
+            f"| {_fmt(row.get('scenario_total_called_tool_count_mean'))} "
+            f"| {_fmt(row.get('scenario_total_latency_ms_mean'))} |"
         )
     lines.extend([
         "",
@@ -480,6 +585,8 @@ def _metrics(rules: List[Dict[str, Any]], gold: Dict[str, Any], output: Dict[str
     stsr = bool(gates) and all(item["status"] == "passed" for item in gates) and h_fail == 0
     total_tokens = _trace_total_tokens(trace)
     estimated_cost = _trace_cost(trace)
+    standardized_estimated_cost = _trace_standardized_cost(trace)
+    actual_cost = _trace_actual_cost(trace)
     tool_failure_types = _tool_failure_types(output, trace)
     return {
         "stsr": stsr,
@@ -517,6 +624,8 @@ def _metrics(rules: List[Dict[str, Any]], gold: Dict[str, Any], output: Dict[str
         "tool_failure_types": tool_failure_types,
         "total_tokens": total_tokens,
         "estimated_cost": estimated_cost,
+        "standardized_estimated_cost": standardized_estimated_cost,
+        "actual_cost": actual_cost,
         "cost_per_success": estimated_cost if stsr and estimated_cost is not None else None,
     }
 
@@ -1133,15 +1242,162 @@ def _mean_delta(pairs: List[tuple[Dict[str, Any], Dict[str, Any]]], metric: str)
     return _mean_num(values)
 
 
+def _is_scenario_row(row: Dict[str, Any]) -> bool:
+    return bool(row.get("scenario_id")) or _first_int(row.get("scenario_turn_count")) is not None
+
+
+def _is_quality_evaluation_row(row: Dict[str, Any]) -> bool:
+    if not _is_scenario_row(row):
+        return True
+    if "target_turn" in row:
+        return _bool(row.get("target_turn"))
+    turn_index = _first_int(row.get("turn_index"))
+    turn_count = _first_int(row.get("scenario_turn_count"))
+    if turn_index is None or turn_count is None:
+        return True
+    return turn_index == turn_count - 1
+
+
+def _evaluation_unit_id(row: Dict[str, Any]) -> str:
+    scenario_id = str(row.get("scenario_id") or "")
+    if scenario_id:
+        turn_id = str(row.get("turn_id") or row.get("turn_index") or "target")
+        return f"{scenario_id}:{turn_id}"
+    return str(row.get("case_id") or "")
+
+
+def _scenario_id(row: Dict[str, Any]) -> str:
+    return str(row.get("scenario_id") or row.get("case_id") or "")
+
+
+def _scenario_run_id(row: Dict[str, Any]) -> str:
+    repeat_index = row.get("repeat_index")
+    repeat_text = "none" if repeat_index is None else str(repeat_index)
+    return f"{_scenario_id(row)}::repeat={repeat_text}"
+
+
+def _scenario_cost_summary(raw_by_method: Dict[str, List[Dict[str, Any]]]) -> Dict[str, Any]:
+    methods: Dict[str, Dict[str, Any]] = {}
+    all_scenario_ids = {
+        _scenario_id(row)
+        for rows in raw_by_method.values()
+        for row in rows
+        if _is_scenario_row(row) and _scenario_id(row)
+    }
+    for method, rows in sorted(raw_by_method.items()):
+        scenario_rows = [row for row in rows if _is_scenario_row(row)]
+        if not scenario_rows:
+            methods[method] = {
+                "scenario_count": 0,
+                "target_turn_count": 0,
+            }
+            continue
+        groups: Dict[str, List[Dict[str, Any]]] = {}
+        for row in scenario_rows:
+            groups.setdefault(_scenario_run_id(row), []).append(row)
+        methods[method] = _scenario_cost_method_summary(groups)
+    return {
+        "enabled": True,
+        "scope": {
+            "target_increment": "target turn only",
+            "scenario_total": "sum of all turns in the same scenario and repeat",
+        },
+        "scenario_count": len(all_scenario_ids),
+        "methods": methods,
+    }
+
+
+def _scenario_cost_method_summary(groups: Dict[str, List[Dict[str, Any]]]) -> Dict[str, Any]:
+    total_rows = [_aggregate_scenario_cost(rows) for rows in groups.values()]
+    target_rows = [_aggregate_target_increment_cost(rows) for rows in groups.values()]
+    metrics = (
+        "llm_call_count",
+        "agent_llm_call_count",
+        "api_call_count",
+        "prompt_tokens",
+        "completion_tokens",
+        "total_tokens",
+        "agent_total_tokens",
+        "estimated_cost",
+        "standardized_estimated_cost",
+        "actual_cost",
+        "called_tool_count",
+        "planned_agent_count",
+        "successful_tool_call_count",
+        "latency_ms",
+    )
+    result: Dict[str, Any] = {
+        "scenario_count": len(groups),
+        "target_turn_count": sum(1 for item in target_rows if item),
+    }
+    for metric in metrics:
+        result[f"scenario_total_{metric}_mean"] = _mean_num(
+            item.get(metric) for item in total_rows if item.get(metric) is not None
+        )
+        result[f"target_increment_{metric}_mean"] = _mean_num(
+            item.get(metric) for item in target_rows if item.get(metric) is not None
+        )
+    return result
+
+
+def _aggregate_scenario_cost(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    return {
+        metric: _sum_metric(rows, metric)
+        for metric in (
+            "llm_call_count",
+            "agent_llm_call_count",
+            "api_call_count",
+            "prompt_tokens",
+            "completion_tokens",
+            "total_tokens",
+            "agent_total_tokens",
+            "estimated_cost",
+            "standardized_estimated_cost",
+            "actual_cost",
+            "called_tool_count",
+            "planned_agent_count",
+            "successful_tool_call_count",
+            "latency_ms",
+        )
+    }
+
+
+def _aggregate_target_increment_cost(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+    targets = [row for row in rows if _is_quality_evaluation_row(row)]
+    if not targets:
+        return {}
+    return _aggregate_scenario_cost(targets)
+
+
+def _sum_metric(rows: List[Dict[str, Any]], metric: str) -> Optional[float]:
+    values = [_metric_number(row, metric) for row in rows]
+    clean = [value for value in values if value is not None]
+    return None if not clean else _round4(sum(clean))
+
+
+def _metric_number(row: Dict[str, Any], metric: str) -> Optional[float]:
+    if metric == "latency_ms":
+        return _number(row.get("latency_ms") if row.get("latency_ms") is not None else row.get("latency"))
+    metrics = row.get("metrics") if isinstance(row.get("metrics"), dict) else {}
+    value = _number(metrics.get(metric))
+    if value is not None:
+        return value
+    audit_metrics = _nested(row, "run_audit", "metrics")
+    if isinstance(audit_metrics, dict):
+        return _number(audit_metrics.get(metric))
+    return None
+
+
 def _aggregate_repeated_cases(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     groups: Dict[str, List[Dict[str, Any]]] = {}
     for row in rows:
-        groups.setdefault(str(row.get("case_id") or ""), []).append(row)
+        groups.setdefault(_evaluation_unit_id(row), []).append(row)
     return [_aggregate_case_group(group) for _, group in sorted(groups.items())]
 
 
 def _aggregate_case_group(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
     base = dict(rows[0])
+    base["evaluation_unit_id"] = _evaluation_unit_id(base)
     base["repeat_count"] = len(rows)
     base["repeat_indices"] = [row.get("repeat_index") for row in rows]
     base["latency_ms"] = _mean_num(row.get("latency_ms") for row in rows)
@@ -1418,6 +1674,12 @@ def _num(value: Any) -> float:
     return float(value) if isinstance(value, (int, float)) else 0.0
 
 
+def _bool(value: Any) -> bool:
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes", "on"}
+    return bool(value)
+
+
 def _number(value: Any) -> Optional[float]:
     if isinstance(value, bool):
         return 1.0 if value else 0.0
@@ -1452,7 +1714,7 @@ def _round4(value: float) -> float:
 
 
 def _pair_key(row: Dict[str, Any]) -> tuple[str]:
-    return (str(row.get("case_id") or ""),)
+    return (_evaluation_unit_id(row),)
 
 
 def _best_set(actual: List[str], accepted: List[List[str]]) -> Optional[List[str]]:
@@ -1623,6 +1885,37 @@ def _trace_cost(trace: Dict[str, Any]) -> Optional[float]:
                 if value is not None:
                     values.append(value)
     return None if not values else _round4(sum(values))
+
+
+def _trace_standardized_cost(trace: Dict[str, Any]) -> Optional[float]:
+    values = []
+    for call_type in ("llm_calls", "api_calls"):
+        for call in trace.get(call_type) or []:
+            if isinstance(call, dict):
+                value = _first_float(
+                    call.get("standardized_estimated_cost"),
+                    call.get("standardized_estimated_cost_cny"),
+                    call.get("estimated_cost"),
+                    call.get("estimated_cost_cny"),
+                )
+                if value is not None:
+                    values.append(value)
+    return None if not values else _round4(sum(values))
+
+
+def _trace_actual_cost(trace: Dict[str, Any]) -> Optional[float]:
+    values = []
+    saw_actual_field = False
+    for call_type in ("llm_calls", "api_calls"):
+        for call in trace.get(call_type) or []:
+            if isinstance(call, dict) and (
+                "actual_cost" in call or "actual_cost_cny" in call
+            ):
+                saw_actual_field = True
+                value = _first_float(call.get("actual_cost"), call.get("actual_cost_cny"))
+                if value is not None:
+                    values.append(value)
+    return None if not saw_actual_field or not values else _round4(sum(values))
 
 
 def _has_failed_tool_evidence(output: Dict[str, Any]) -> bool:

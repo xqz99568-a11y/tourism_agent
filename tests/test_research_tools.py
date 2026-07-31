@@ -10,7 +10,10 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import app.core.experiment_runner as experiment_runner_module
-from app.core.experiment_runner import ExperimentRunner
+from app.core.experiment_runner import (
+    RESEARCH_AGENT_DECISION_SCHEMA_VERSION,
+    ExperimentRunner,
+)
 from app.core.fixed_data import get_fixed_tourism_data
 from app.core.goal_state_scheduler import DECISION_SCHEMA_VERSION, TICKET_SCHEMA_VERSION
 from app.core.llm.client import ToolCall
@@ -25,6 +28,75 @@ from app.tools.research_tools import (
     build_research_tool_catalog,
     generation_tools,
 )
+
+
+class _AgentJSONLLM:
+    async def chat(self, messages, tools=None):
+        payload = self._agent_payload(messages)
+        content = self._agent_decision_content(payload) if payload else "tool based answer"
+        return SimpleNamespace(content=content, tool_calls=[], usage={"total_tokens": 1})
+
+    def _agent_payload(self, messages):
+        try:
+            payload = json.loads(messages[-1].content)
+        except (json.JSONDecodeError, TypeError, AttributeError, IndexError):
+            return {}
+        return payload if isinstance(payload, dict) and payload.get("agent_name") else {}
+
+    def _agent_decision_content(self, payload):
+        agent_name = str(payload.get("agent_name") or "")
+        tool_evidence = payload.get("tool_evidence") if isinstance(payload.get("tool_evidence"), dict) else {}
+        attractions = self._attractions(tool_evidence)
+        selected_ids = [str(item.get("poi_id")) for item in attractions[:4] if item.get("poi_id")]
+        task_slots = payload.get("task_slots") if isinstance(payload.get("task_slots"), dict) else {}
+        days = int(task_slots.get("duration_days") or 2)
+
+        if agent_name == "attraction":
+            decisions = {"selected_poi_ids": selected_ids, "ranking_reason": "test evidence order"}
+        elif agent_name == "weather":
+            decisions = {"risk_days": [], "adjustment_required": False}
+        elif agent_name == "itinerary":
+            decisions = {
+                "daily_itinerary": [
+                    {
+                        "day": day,
+                        "attraction_poi_ids": selected_ids[(day - 1) * 2 : day * 2] or selected_ids[:1],
+                        "notes": f"test itinerary day {day}",
+                    }
+                    for day in range(1, days + 1)
+                ]
+            }
+        elif agent_name == "budget":
+            budget_data = self._tool_data(tool_evidence.get("budget_calculator"))
+            decisions = {
+                "feasibility": "feasible",
+                "budget_notes": "test budget decision",
+                "recommended_total": budget_data.get("total"),
+            }
+        else:
+            decisions = {}
+        return json.dumps(
+            {
+                "schema_version": RESEARCH_AGENT_DECISION_SCHEMA_VERSION,
+                "agent_name": agent_name,
+                "summary": f"{agent_name} test decision",
+                "decisions": decisions,
+                "risks": [],
+                "confidence": 1.0,
+            },
+            ensure_ascii=False,
+        )
+
+    def _tool_data(self, result):
+        if not isinstance(result, dict):
+            return {}
+        data = result.get("data")
+        return data if isinstance(data, dict) else {}
+
+    def _attractions(self, tool_evidence):
+        data = self._tool_data(tool_evidence.get("poi_search"))
+        attractions = data.get("attractions") if isinstance(data, dict) else []
+        return [item for item in attractions or [] if isinstance(item, dict)]
 
 
 def test_unified_research_tool_catalog_names_are_frozen() -> None:
@@ -320,12 +392,16 @@ def test_m3_uses_goal_state_scheduler_for_plan_selection() -> None:
     full_plan = runner._select_adaptive_research_plan(
         {
             "case_id": "full-plan",
-            "user_input": "帮我规划杭州两天旅游",
+            "user_input": (
+                "请为两人规划杭州2天旅游，2026-08-01出发，"
+                "预算5000元，需要景点、天气和预算。"
+            ),
             "slots": {
                 "destination": "杭州",
                 "duration": 2,
                 "num_travelers": 2,
                 "start_date": "2026-08-01",
+                "budget": 5000,
             },
             "constraints": [],
         }
@@ -350,6 +426,7 @@ def test_m3_uses_goal_state_scheduler_for_plan_selection() -> None:
     assert full_plan["agents"] == ["attraction", "weather", "itinerary", "budget"]
     assert full_plan["tools"] == list(GENERATION_TOOL_NAMES)
     assert full_plan["scheduler"]["ticket"]["schema_version"] == TICKET_SCHEMA_VERSION
+    assert full_plan["scheduler"]["ticket"]["task_type"] == "trip_planning"
     assert full_plan["scheduler"]["decision"]["schema_version"] == DECISION_SCHEMA_VERSION
 
     assert attraction_plan["agents"] == ["attraction"]
@@ -395,7 +472,33 @@ def test_constraint_checker_runs_after_method_output(tmp_path: Path) -> None:
 def test_m0_llm_direct_has_zero_tool_calls(tmp_path: Path) -> None:
     class FakeLLM:
         async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="direct answer", tool_calls=[], usage={"total_tokens": 1})
+            return SimpleNamespace(
+                content=json.dumps(
+                    {
+                        "schema_version": "ctp-experiment-output-v1",
+                        "case_id": "m0-zero-tools",
+                        "method": "llm_direct",
+                        "task_type": "trip_planning",
+                        "planned_agents": [],
+                        "used_agents": [],
+                        "planned_tools": [],
+                        "called_tools": [],
+                        "tool_results": {},
+                        "attractions": [{"name": "西湖"}],
+                        "trip_days": 2,
+                        "daily_itinerary": [{"day": 1, "attractions": [{"name": "西湖"}]}],
+                        "budget": {"total": 1000},
+                        "weather": {"condition": "sunny"},
+                        "weather_adjustments": [],
+                        "execution_status": "completed",
+                        "final_answer": "direct answer",
+                        "metadata": {"structured_by_llm": True},
+                    },
+                    ensure_ascii=False,
+                ),
+                tool_calls=[],
+                usage={"total_tokens": 1},
+            )
 
     runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
     result = runner.run(
@@ -403,6 +506,14 @@ def test_m0_llm_direct_has_zero_tool_calls(tmp_path: Path) -> None:
         method="llm_direct",
     )
 
+    assert result["raw_output"]["schema_version"] == "ctp-experiment-output-v1"
+    assert result["raw_output"]["method"] == "llm_direct"
+    assert result["raw_output"]["planned_agents"] == []
+    assert result["raw_output"]["used_agents"] == []
+    assert result["raw_output"]["planned_tools"] == []
+    assert result["raw_output"]["tool_results"] == {}
+    assert result["raw_output"]["final_answer"] == "direct answer"
+    assert result["output"]["tool_results"] == {}
     assert result["trace"]["tool_call_count"] == 0
     assert result["trace"]["tool_calls"] == []
     assert result["trace"]["executed_tools"] == []
@@ -436,6 +547,9 @@ def test_invalid_json_tool_arguments_are_recorded_as_failed_tool_calls(tmp_path:
     assert result["output"]["execution_status"] == "failed"
     assert result["trace"]["tool_calls"][0]["tool_name"] == "poi_search"
     assert result["trace"]["tool_calls"][0]["success"] is False
+    assert result["raw_output"]["execution_status"] == "failed"
+    assert result["raw_output"]["tool_results"]["poi_search"]["status"] == "failed"
+    assert result["raw_output"]["tool_results"]["poi_search"]["error"]["code"] == "invalid_tool_arguments"
 
 
 def test_failed_tool_call_marks_method_output_and_result_failed(tmp_path: Path) -> None:
@@ -471,17 +585,15 @@ def test_failed_tool_call_marks_method_output_and_result_failed(tmp_path: Path) 
     assert result["output"]["called_tools"][0]["success"] is False
     assert result["output"]["execution_status"] == "failed"
     assert result["status"] == "failed"
+    assert result["raw_output"]["tool_results"]["budget_calculator"]["status"] == "failed"
+    assert result["output"]["tool_results"]["budget_calculator"]["status"] == "failed"
 
 
 def test_real_m2_and_m3_use_same_unified_tool_results(tmp_path: Path) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     case = {
         "case_id": "m2-m3-tools",
-        "user_input": "帮我规划杭州两天旅游",
+        "user_input": "帮我规划杭州两天2人旅游，2026-08-01出发",
         "slots": {
             "destination": "杭州",
             "duration": 2,
@@ -513,11 +625,7 @@ def test_real_m2_and_m3_use_same_unified_tool_results(tmp_path: Path) -> None:
 
 
 def test_real_m3_executes_only_goal_state_selected_tools(tmp_path: Path) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     result = runner.run(
         {
             "case_id": "m3-attractions-only",
@@ -537,15 +645,11 @@ def test_real_m3_executes_only_goal_state_selected_tools(tmp_path: Path) -> None
 
 
 def test_real_m3_reuses_previous_attractions_when_duration_changes(tmp_path: Path) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     first = runner.run(
         {
             "case_id": "m3-turn1-full",
-            "user_input": "帮我规划杭州两天旅游",
+            "user_input": "帮我规划杭州两天2人旅游，2026-08-01出发",
             "slots": {
                 "destination": "杭州",
                 "duration": 2,
@@ -633,15 +737,11 @@ def test_real_m3_reuses_previous_attractions_when_duration_changes(tmp_path: Pat
 
 
 def test_real_m3_reuses_all_results_for_identical_followup(tmp_path: Path) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     first = runner.run(
         {
             "case_id": "m3-identical-turn1",
-            "user_input": "帮我规划桂林两天旅游",
+            "user_input": "帮我规划桂林两天2人旅游，2026-08-01出发",
             "slots": {
                 "destination": "桂林",
                 "duration": 2,
@@ -698,11 +798,7 @@ def test_real_m3_reuses_all_results_for_identical_followup(tmp_path: Path) -> No
 def test_m3_does_not_count_available_markers_without_artifacts_as_call_savings(
     tmp_path: Path,
 ) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     result = runner.run(
         {
             "case_id": "m3-marker-only-history",
@@ -748,10 +844,6 @@ def test_m3_stops_downstream_agents_after_upstream_tool_failure(
     tmp_path: Path,
     monkeypatch,
 ) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
     class FailingPOITool(ResearchPOISearchTool):
         async def execute(self, **kwargs):
             payload = {
@@ -772,11 +864,11 @@ def test_m3_stops_downstream_agents_after_upstream_tool_failure(
         lambda: [FailingPOITool(), ResearchWeatherTool(), ResearchBudgetCalculatorTool()],
     )
 
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     result = runner.run(
         {
             "case_id": "m3-upstream-poi-failure",
-            "user_input": "plan a two day Hangzhou trip",
+            "user_input": "plan a two day Hangzhou trip on 2026-08-01 for two people",
             "slots": {
                 "destination": "hangzhou",
                 "duration": 2,
@@ -810,7 +902,7 @@ def test_m3_metrics_survive_llm_answer_timeout_via_trace_scheduler(
     result = runner.run(
         {
             "case_id": "m3-timeout-keeps-scheduler-metrics",
-            "user_input": "plan a two day Hangzhou trip",
+            "user_input": "plan a two day Hangzhou trip on 2026-08-01 for two people",
             "slots": {
                 "destination": "hangzhou",
                 "duration": 2,
@@ -831,11 +923,7 @@ def test_m3_metrics_survive_llm_answer_timeout_via_trace_scheduler(
 
 
 def test_experiment_session_id_is_isolated_by_repeat_index(tmp_path: Path) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     case = {
         "case_id": "repeat-session-isolation",
         "user_input": "recommend attractions in Hangzhou",
@@ -851,11 +939,7 @@ def test_experiment_session_id_is_isolated_by_repeat_index(tmp_path: Path) -> No
 
 
 def test_experiment_session_id_is_isolated_by_run_id(tmp_path: Path) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     case = {
         "case_id": "run-session-isolation",
         "user_input": "recommend attractions in Hangzhou",
@@ -883,15 +967,11 @@ def test_experiment_session_id_is_isolated_by_run_id(tmp_path: Path) -> None:
 def test_real_m3_rejects_reuse_when_previous_tool_input_fingerprint_mismatches(
     tmp_path: Path,
 ) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     beijing = runner.run(
         {
             "case_id": "m3-wrong-fingerprint-source",
-            "user_input": "帮我规划北京两天旅游",
+            "user_input": "帮我规划北京两天2人旅游，2026-08-01出发",
             "slots": {
                 "destination": "beijing",
                 "duration": 2,
@@ -937,11 +1017,7 @@ def test_real_m3_rejects_reuse_when_previous_tool_input_fingerprint_mismatches(
 
 
 def test_real_m3_rejects_failed_previous_tool_result_for_reuse(tmp_path: Path) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     failed_poi = {
         "schema_version": "research_tool_result_v1",
         "tool_name": "poi_search",
@@ -990,15 +1066,11 @@ def test_real_m3_rejects_failed_previous_tool_result_for_reuse(tmp_path: Path) -
 def test_fixed_m2_and_adaptive_m3_receive_same_previous_slots_for_followup(
     tmp_path: Path,
 ) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     first = runner.run(
         {
             "case_id": "fair-turn1",
-            "user_input": "帮我规划杭州两天旅游",
+            "user_input": "帮我规划杭州两天2人旅游，2026-08-01出发",
             "slots": {
                 "destination": "hangzhou",
                 "duration": 2,
@@ -1036,15 +1108,11 @@ def test_fixed_m2_and_adaptive_m3_receive_same_previous_slots_for_followup(
 def test_m3_general_chat_followup_has_zero_m2_reference_savings_and_trace_scheduler(
     tmp_path: Path,
 ) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     first = runner.run(
         {
             "case_id": "chat-savings-turn1",
-            "user_input": "帮我规划杭州两天旅游",
+            "user_input": "帮我规划杭州两天2人旅游，2026-08-01出发",
             "slots": {
                 "destination": "hangzhou",
                 "duration": 2,
@@ -1083,11 +1151,7 @@ def test_m3_general_chat_followup_has_zero_m2_reference_savings_and_trace_schedu
 def test_single_capability_and_clarification_do_not_create_fake_itinerary_fingerprints(
     tmp_path: Path,
 ) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
 
     weather = runner.run(
         {
@@ -1136,7 +1200,7 @@ def test_m3_clarification_outputs_clarification_without_agents_or_fake_results(
     result = runner.run(
         {
             "case_id": "clarification-no-destination",
-            "user_input": "plan a 3 day trip for two people",
+            "user_input": "plan a 3 day trip on 2026-08-01 for two people",
             "slots": {
                 "start_date": "2026-08-01",
                 "duration": 3,
@@ -1167,11 +1231,7 @@ def test_m3_clarification_outputs_clarification_without_agents_or_fake_results(
 def test_m3_budget_query_with_only_weather_history_replans_attraction_before_budget(
     tmp_path: Path,
 ) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     first = runner.run(
         {
             "case_id": "budget-after-weather-turn1",
@@ -1188,7 +1248,7 @@ def test_m3_budget_query_with_only_weather_history_replans_attraction_before_bud
     second = runner.run(
         {
             "case_id": "budget-after-weather-turn2",
-            "user_input": "how much will the budget cost for four people",
+            "user_input": "how much will attraction tickets and admission cost for four people",
             "slots": {"people_count": 4},
             "previous_state": first,
         },
@@ -1207,18 +1267,45 @@ def test_m3_budget_query_with_only_weather_history_replans_attraction_before_bud
     assert set(scheduler["result_fingerprints"]) == {"attraction", "budget"}
 
 
+def test_m3_rough_budget_query_without_ticket_terms_uses_budget_only(
+    tmp_path: Path,
+) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
+    result = runner.run(
+        {
+            "case_id": "rough-budget-only",
+            "user_input": "rough budget estimate for a two day Hangzhou trip for two people",
+            "slots": {
+                "destination": "hangzhou",
+                "duration": 2,
+                "people_count": 2,
+            },
+        },
+        method="adaptive_multi_agent",
+    )
+
+    scheduler = result["output"]["metadata"]["adaptive_scheduler"]
+    assert scheduler["ticket"]["task_type"] == "budget_query"
+    assert scheduler["ticket"]["dependency_policy"] == {
+        "budget_scope": "rough_budget_without_ticket_dependency",
+        "requires_attraction_evidence": False,
+    }
+    assert scheduler["decision"]["planned_agents"] == ["budget"]
+    assert scheduler["decision"]["planned_tools"] == ["budget_calculator"]
+    assert result["trace"]["executed_tools"] == ["budget_calculator"]
+    assert "poi_search" not in result["raw_output"]["tool_results"]
+    assert result["raw_output"]["tool_results"]["budget_calculator"]["input"]["attractions"] == []
+    assert result["output"]["execution_status"] == "completed"
+
+
 def test_fixed_m2_can_continue_from_its_own_previous_state(
     tmp_path: Path,
 ) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     first = runner.run(
         {
             "case_id": "m2-own-state-turn1",
-            "user_input": "plan a two day Hangzhou trip",
+            "user_input": "plan a two day Hangzhou trip on 2026-08-01 for two people",
             "slots": {
                 "destination": "hangzhou",
                 "duration": 2,
@@ -1247,6 +1334,83 @@ def test_fixed_m2_can_continue_from_its_own_previous_state(
     assert second["raw_output"]["tool_results"]["weather_query"]["input"]["days"] == 3
     assert second["raw_output"]["tool_results"]["budget_calculator"]["input"]["days"] == 3
     assert second["output"]["execution_status"] == "completed"
+
+
+def test_m3_weather_adjustment_output_includes_affected_day_index(
+    tmp_path: Path,
+) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
+    first = runner.run(
+        {
+            "case_id": "weather-adjust-day-turn1",
+            "user_input": "plan a two day Hangzhou trip on 2026-08-01 for two people with attractions weather and budget",
+            "slots": {
+                "destination": "hangzhou",
+                "duration": 2,
+                "people_count": 2,
+                "start_date": "2026-08-01",
+                "budget": 5000,
+            },
+        },
+        method="adaptive_multi_agent",
+    )
+
+    second = runner.run(
+        {
+            "case_id": "weather-adjust-day-turn2",
+            "user_input": "The second day becomes rain. Adjust the itinerary for rainy weather.",
+            "previous_state": first,
+            "weather_change": {"scenario_type": "rain", "affected_days": [2]},
+        },
+        method="adaptive_multi_agent",
+    )
+
+    scheduler = second["output"]["metadata"]["adaptive_scheduler"]
+    assert scheduler["ticket"]["task_type"] == "weather_adjustment"
+    assert scheduler["decision"]["planned_agents"] == ["weather", "itinerary"]
+    assert any(
+        item.get("day") == 2 and item.get("day_index") == 2
+        for item in second["output"]["weather_adjustments"]
+    )
+
+
+def test_research_answer_organizer_prompt_does_not_expose_method_name(
+    tmp_path: Path,
+) -> None:
+    class CapturingLLM(_AgentJSONLLM):
+        def __init__(self) -> None:
+            self.calls = []
+
+        async def chat(self, messages, tools=None):
+            self.calls.append(messages)
+            return await super().chat(messages, tools=tools)
+
+    llm = CapturingLLM()
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=lambda: llm)
+    runner.run(
+        {
+            "case_id": "organizer-method-hidden",
+            "user_input": "plan a two day Hangzhou trip on 2026-08-01 for two people with attractions weather and budget",
+            "slots": {
+                "destination": "hangzhou",
+                "duration": 2,
+                "people_count": 2,
+                "start_date": "2026-08-01",
+                "budget": 5000,
+            },
+        },
+        method="fixed_multi_agent",
+    )
+
+    final_prompts = [
+        str(getattr(message, "content", "") or "")
+        for messages in llm.calls
+        for message in messages
+        if "planned_agents" in str(getattr(message, "content", "") or "")
+        and "weather_adjustments" in str(getattr(message, "content", "") or "")
+    ]
+    assert final_prompts
+    assert all('"method": "fixed_multi_agent"' not in prompt for prompt in final_prompts)
 
 
 def test_beijing_accommodation_sources_do_not_reference_wrong_xian_source() -> None:

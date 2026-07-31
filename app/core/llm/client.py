@@ -5,6 +5,8 @@ LLM 客户端模块
 from __future__ import annotations
 
 import asyncio
+import hashlib
+import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
@@ -815,6 +817,38 @@ class LLMManager:
             total += len(str(getattr(message, "content", "") or ""))
         return total
 
+    def _prompt_hash(self, messages: List[LLMMessage], tools: Optional[List[ToolDefinition]]) -> str:
+        payload = {
+            "messages": [
+                message.to_dict() if hasattr(message, "to_dict") else str(message)
+                for message in messages
+            ],
+            "tools": [
+                tool.to_dict() if hasattr(tool, "to_dict") else str(tool)
+                for tool in (tools or [])
+            ],
+        }
+        text = json.dumps(payload, ensure_ascii=False, sort_keys=True, default=str)
+        return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+    def _prompt_version(self, messages: List[LLMMessage]) -> str:
+        versions: list[str] = []
+        for message in messages:
+            content = str(getattr(message, "content", "") or "")
+            try:
+                parsed = json.loads(content)
+            except json.JSONDecodeError:
+                parsed = None
+            if isinstance(parsed, dict) and parsed.get("prompt_version"):
+                versions.append(str(parsed["prompt_version"]))
+            for marker in (
+                "ctp-structured-llm-output-prompts-v1",
+                "ctp-research-agent-prompts-v1",
+            ):
+                if marker in content and marker not in versions:
+                    versions.append(marker)
+        return "+".join(versions) if versions else "unversioned"
+
     def _client_model_name(self, client: BaseLLMClient) -> str:
         return str(getattr(client, "model", settings.llm.model) or settings.llm.model)
 
@@ -879,6 +913,8 @@ async def _traced_llm_manager_chat(
         message_count=len(messages),
         message_chars=self._estimate_message_chars(messages),
         tool_count=len(tools or []),
+        prompt_version=self._prompt_version(messages),
+        prompt_hash=self._prompt_hash(messages, tools),
     )
     if is_experiment_strict_mode() and isinstance(client, MockLLMClient):
         error = RuntimeError("EXPERIMENT_STRICT_MODE forbids Mock LLM client")
@@ -963,6 +999,8 @@ async def _traced_llm_manager_stream(
         message_count=len(messages),
         message_chars=self._estimate_message_chars(messages),
         tool_count=len(tools or []),
+        prompt_version=self._prompt_version(messages),
+        prompt_hash=self._prompt_hash(messages, tools),
     )
     chunk_count = 0
     output_chars = 0

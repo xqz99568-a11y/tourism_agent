@@ -518,6 +518,46 @@ class _FailingClient(BaseLLMClient):
         return [[0.0] for _ in texts]
 
 
+def test_llm_trace_records_cost_snapshot_and_prompt_hash(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+    monkeypatch.setenv("LLM_PRICE_INPUT_PER_1K", "0.01")
+    monkeypatch.setenv("LLM_PRICE_OUTPUT_PER_1K", "0.02")
+    monkeypatch.setenv("LLM_PRICE_SNAPSHOT_DATE", "2026-07-30")
+    monkeypatch.setenv("LLM_PRICE_SOURCE_URL", "unit-test-price-snapshot")
+
+    manager = LLMManager.__new__(LLMManager)
+    manager._client = _FakeStreamClient()
+
+    async def run_call() -> None:
+        with request_trace("cost-request", "cost-session"):
+            await manager.chat(
+                [
+                    LLMMessage(
+                        role="user",
+                        content='{"prompt_version": "unit-cost-prompt-v1", "question": "ping"}',
+                    )
+                ]
+            )
+
+    asyncio.run(run_call())
+
+    call = _trace_records(tmp_path)[0]["llm_calls"][0]
+    assert call["prompt_version"] == "unit-cost-prompt-v1"
+    assert len(call["prompt_hash"]) == 64
+    assert call["estimated_cost"] == 0.00003
+    assert call["standardized_estimated_cost"] == 0.00003
+    assert call["actual_cost"] is None
+    assert call["actual_cost_status"] == "not_reported_by_provider"
+    assert call["input_token_unit_price"] == 0.01
+    assert call["output_token_unit_price"] == 0.02
+    assert call["price_snapshot_date"] == "2026-07-30"
+    assert call["price_source_url"] == "unit-test-price-snapshot"
+
+
 class _TraceAgent(BaseAgent):
     def __init__(self, name: str, behavior: str = "success", timeout_seconds: float = 1.0):
         super().__init__(

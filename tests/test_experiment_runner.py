@@ -11,7 +11,11 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.core.experiment_runner import ExperimentRunner
+from app.core.experiment_runner import (
+    RESEARCH_AGENT_DECISION_SCHEMA_VERSION,
+    RESEARCH_AGENT_OUTPUT_SCHEMA_VERSION,
+    ExperimentRunner,
+)
 from app.core.fixed_data import (
     CANONICAL_JSON_SHA256_STRATEGY,
     FIXED_DATA_EXPECTED_COMBINED_SHA256,
@@ -68,7 +72,11 @@ def test_runner_runs_same_case_through_four_methods_and_exports_csv(
     )
 
     results = runner.run_benchmark(benchmark_path)
-    expected_methods = runner._ordered_methods_for_benchmark(list(ExperimentRunner.METHODS))
+    expected_methods = runner._ordered_methods_for_case(
+        list(ExperimentRunner.METHODS),
+        case_id="case001",
+        repeat_index=runner.repeat_index,
+    )
 
     assert [(item["case_id"], item["method"]) for item in results] == [
         ("case001", method) for method in expected_methods
@@ -102,6 +110,71 @@ def test_runner_runs_same_case_through_four_methods_and_exports_csv(
     summary = json.loads((csv_path.parent / "evaluation_summary.json").read_text(encoding="utf-8"))
     assert summary["schema_version"] == EVALUATION_SUMMARY_SCHEMA_VERSION
     assert summary["result_count"] == 4
+
+
+def test_benchmark_method_order_is_seeded_independently_per_case(
+    tmp_path: Path,
+) -> None:
+    async def fake_handler(case):
+        return f"output for {case['case_id']}"
+
+    runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces",
+        output_dir=tmp_path / "results",
+        method_handlers={method: fake_handler for method in ExperimentRunner.METHODS},
+        method_order_seed=20260718,
+    )
+    methods = list(ExperimentRunner.METHODS)
+    candidate_ids = [f"case{i:03d}" for i in range(1, 20)]
+    first_case, second_case = next(
+        (left, right)
+        for left in candidate_ids
+        for right in candidate_ids
+        if left != right
+        and runner._ordered_methods_for_case(
+            methods,
+            case_id=left,
+            repeat_index=runner.repeat_index,
+        )
+        != runner._ordered_methods_for_case(
+            methods,
+            case_id=right,
+            repeat_index=runner.repeat_index,
+        )
+    )
+    benchmark = {
+        "cases": [
+            {"case_id": first_case, "user_input": "hello"},
+            {"case_id": second_case, "user_input": "hello again"},
+        ]
+    }
+    benchmark_path = tmp_path / "benchmark.json"
+    benchmark_path.write_text(json.dumps(benchmark, ensure_ascii=False), encoding="utf-8")
+
+    results = runner.run_benchmark(benchmark_path)
+    expected = [
+        *[
+            (first_case, method)
+            for method in runner._ordered_methods_for_case(
+                methods,
+                case_id=first_case,
+                repeat_index=runner.repeat_index,
+            )
+        ],
+        *[
+            (second_case, method)
+            for method in runner._ordered_methods_for_case(
+                methods,
+                case_id=second_case,
+                repeat_index=runner.repeat_index,
+            )
+        ],
+    ]
+
+    assert [(item["case_id"], item["method"]) for item in results] == expected
+    assert [method for case_id, method in expected if case_id == first_case] != [
+        method for case_id, method in expected if case_id == second_case
+    ]
 
 
 def test_experiment_manifest_dataset_hash_ignores_json_formatting(tmp_path: Path) -> None:
@@ -154,8 +227,31 @@ def test_llm_baselines_do_not_write_expected_intent_or_route_to_end_to_end_trace
 ) -> None:
     class FakeLLM:
         async def chat(self, messages, tools=None):
+            method = "single_agent" if tools else "llm_direct"
             return SimpleNamespace(
-                content="baseline output",
+                content=json.dumps(
+                    {
+                        "schema_version": "ctp-experiment-output-v1",
+                        "case_id": "case001",
+                        "method": method,
+                        "task_type": "trip_planning",
+                        "planned_agents": ["single_agent"] if method == "single_agent" else [],
+                        "used_agents": ["single_agent"] if method == "single_agent" else [],
+                        "planned_tools": [],
+                        "called_tools": [],
+                        "tool_results": {},
+                        "attractions": [],
+                        "trip_days": 3,
+                        "daily_itinerary": [],
+                        "budget": None,
+                        "weather": None,
+                        "weather_adjustments": [],
+                        "execution_status": "completed",
+                        "final_answer": "baseline output",
+                        "metadata": {"structured_by_llm": True},
+                    },
+                    ensure_ascii=False,
+                ),
                 tool_calls=[],
                 usage={"total_tokens": 1},
             )
@@ -192,7 +288,29 @@ def test_oracle_slots_mode_marks_trace_and_may_use_gold_intent_route_and_slots(
     class FakeLLM:
         async def chat(self, messages, tools=None):
             return SimpleNamespace(
-                content="oracle output",
+                content=json.dumps(
+                    {
+                        "schema_version": "ctp-experiment-output-v1",
+                        "case_id": "case001",
+                        "method": "llm_direct",
+                        "task_type": "trip_planning",
+                        "planned_agents": [],
+                        "used_agents": [],
+                        "planned_tools": [],
+                        "called_tools": [],
+                        "tool_results": {},
+                        "attractions": [],
+                        "trip_days": 3,
+                        "daily_itinerary": [],
+                        "budget": None,
+                        "weather": None,
+                        "weather_adjustments": [],
+                        "execution_status": "completed",
+                        "final_answer": "oracle output",
+                        "metadata": {"structured_by_llm": True},
+                    },
+                    ensure_ascii=False,
+                ),
                 tool_calls=[],
                 usage={"total_tokens": 1},
             )
@@ -250,7 +368,29 @@ def test_single_agent_uses_tourism_tools_and_separates_planned_from_executed(
                     usage={"total_tokens": 10},
                 )
             return SimpleNamespace(
-                content="tool-backed plan",
+                content=json.dumps(
+                    {
+                        "schema_version": "ctp-experiment-output-v1",
+                        "case_id": "single-tools",
+                        "method": "single_agent",
+                        "task_type": "trip_planning",
+                        "planned_agents": ["single_agent"],
+                        "used_agents": ["single_agent"],
+                        "planned_tools": [],
+                        "called_tools": [],
+                        "tool_results": {},
+                        "attractions": [{"name": "West Lake"}],
+                        "trip_days": 3,
+                        "daily_itinerary": [{"day": 1, "attractions": [{"name": "West Lake"}]}],
+                        "budget": {"total": 2400},
+                        "weather": None,
+                        "weather_adjustments": [],
+                        "execution_status": "completed",
+                        "final_answer": "tool-backed plan",
+                        "metadata": {"structured_by_llm": True},
+                    },
+                    ensure_ascii=False,
+                ),
                 tool_calls=[],
                 usage={"total_tokens": 20},
             )
@@ -271,7 +411,23 @@ def test_single_agent_uses_tourism_tools_and_separates_planned_from_executed(
 
     assert result["output"]["schema_version"] == "ctp-experiment-output-v1"
     assert result["output"]["final_answer"] == "tool-backed plan"
-    assert result["raw_output"] == "tool-backed plan"
+    assert result["raw_output"]["schema_version"] == "ctp-experiment-output-v1"
+    assert result["raw_output"]["method"] == "single_agent"
+    assert result["raw_output"]["planned_agents"] == ["single_agent"]
+    assert result["raw_output"]["used_agents"] == ["single_agent"]
+    assert result["raw_output"]["planned_tools"] == ["budget_calculator"]
+    assert result["raw_output"]["final_answer"] == "tool-backed plan"
+    assert result["raw_output"]["raw_output"]["final_answer"] == "tool-backed plan"
+    assert result["raw_output"]["daily_itinerary"] == [{"day": 1, "attractions": [{"name": "West Lake"}]}]
+    assert result["raw_output"]["budget"] == {"total": 2400}
+    budget_result = result["raw_output"]["tool_results"]["budget_calculator"]
+    assert budget_result["schema_version"] == "research_tool_result_v1"
+    assert budget_result["tool_name"] == "budget_calculator"
+    assert budget_result["status"] == "success"
+    assert budget_result["input"]["city"] == "Hangzhou"
+    assert budget_result["input"]["days"] == 3
+    assert budget_result["input"]["people_count"] == 2
+    assert result["output"]["tool_results"] == result["raw_output"]["tool_results"]
     assert len(fake_llm.calls) == 2
     assert {tool.name for tool in fake_llm.calls[0][1]} == {
         "poi_search",
@@ -292,6 +448,8 @@ def test_single_agent_uses_tourism_tools_and_separates_planned_from_executed(
     assert trace["executed_tools"] == ["budget_calculator"]
     assert trace["tool_calls"][0]["tool_name"] == "budget_calculator"
     assert trace["tool_calls"][0]["status"] == "completed"
+    assert result["output"]["called_tools"][0]["tool_name"] == "budget_calculator"
+    assert result["output"]["called_tools"][0]["status"] == "completed"
 
 
 def test_runner_loads_default_benchmark_shape(tmp_path: Path) -> None:
@@ -318,6 +476,33 @@ def test_runner_loads_default_benchmark_shape(tmp_path: Path) -> None:
 
     assert cases[0]["case_id"] == "case001"
     assert cases[0]["user_input"] == "帮我规划杭州3天旅游"
+
+
+def test_runner_loads_case_file_that_contains_dataset_document(tmp_path: Path) -> None:
+    cases_path = tmp_path / "cases_doc.json"
+    cases_path.write_text(
+        json.dumps(
+            {
+                "schema_version": "ctp-benchmark-v1",
+                "cases": [
+                    {"case_id": "doc_case_001", "user_input": "Plan a Hangzhou trip."},
+                    {"case_id": "doc_case_002", "user_input": "Check Beijing weather."},
+                ],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    benchmark_path = tmp_path / "benchmark.json"
+    benchmark_path.write_text(
+        json.dumps({"case_files": [cases_path.name]}, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces")
+    cases = runner.load_benchmark(benchmark_path)
+
+    assert [case["case_id"] for case in cases] == ["doc_case_001", "doc_case_002"]
 
 
 def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
@@ -418,6 +603,12 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     assert manifest["repeats"] == 2
     assert manifest["model_config_name"] == "offline-static"
     assert manifest["method_order_seed"] == runner.method_order_seed
+    assert manifest["prompt_versions"]["structured_llm_output"] == "ctp-structured-llm-output-prompts-v1"
+    assert manifest["prompt_versions"]["research_agent"] == "ctp-research-agent-prompts-v1"
+    assert manifest["costing"]["schema_version"] == "ctp-llm-costing-v1"
+    assert manifest["costing"]["price_snapshot"]["pricing_mode"] == "mock_zero_cost"
+    assert manifest["costing"]["input_token_unit_price"] == 0.0
+    assert manifest["costing"]["output_token_unit_price"] == 0.0
     assert manifest["offline_data"]["snapshot"]["hash_strategy"] == CANONICAL_JSON_SHA256_STRATEGY
     assert manifest["offline_data"]["snapshot"]["combined_sha256"] == FIXED_DATA_EXPECTED_COMBINED_SHA256
     assert manifest["evaluation"]["schema_version"] == EVALUATION_SCHEMA_VERSION
@@ -434,7 +625,12 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     paper_tables = (run_output_dir / "paper_tables.md").read_text(encoding="utf-8")
     assert "Method-level results" in paper_tables
     assert "Paired M3 vs M2 statistics" in paper_tables
-    assert len(list(csv.DictReader((run_output_dir / "benchmark_results.csv").open(encoding="utf-8-sig")))) == 16
+    csv_rows = list(csv.DictReader((run_output_dir / "benchmark_results.csv").open(encoding="utf-8-sig")))
+    assert len(csv_rows) == 16
+    assert "standardized_estimated_cost" in csv_rows[0]
+    assert "actual_cost" in csv_rows[0]
+    assert "audit_standardized_estimated_cost" in csv_rows[0]
+    assert "audit_actual_cost" in csv_rows[0]
 
 
 def test_phase1_offline_acceptance_script_checks_sixteen_runs(
@@ -465,15 +661,12 @@ def test_phase1_offline_acceptance_script_checks_sixteen_runs(
 def test_real_runner_passes_successful_tool_results_to_constraint_checker(
     tmp_path: Path,
 ) -> None:
-    class FakeLLM:
-        async def chat(self, messages, tools=None):
-            return SimpleNamespace(content="tool based answer", tool_calls=[], usage={"total_tokens": 1})
-
-    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    fake_llm = _CountingResearchLLM()
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=lambda: fake_llm)
     result = runner.run(
         {
             "case_id": "runner-tool-evidence-success",
-            "user_input": "Plan a two-day Hangzhou trip with budget 10000",
+            "user_input": "Plan a two-day Hangzhou trip on 2026-08-01 for two people with budget 10000",
             "slots": {
                 "destination": "hangzhou",
                 "duration": 2,
@@ -494,6 +687,297 @@ def test_real_runner_passes_successful_tool_results_to_constraint_checker(
     assert checks["tool_evidence"]["status"] == "passed"
     assert checks["tool_evidence"]["details"]["required_tools"] == list(GENERATION_TOOL_NAMES)
     assert checks["tool_evidence"]["details"]["missing_or_failed"] == []
+
+
+class _CountingResearchLLM:
+    def __init__(self) -> None:
+        self.calls = []
+
+    async def chat(self, messages, tools=None):
+        agent_name = "final"
+        try:
+            payload = json.loads(messages[-1].content)
+        except (json.JSONDecodeError, TypeError, AttributeError):
+            payload = {}
+        if isinstance(payload, dict) and payload.get("agent_name"):
+            agent_name = str(payload["agent_name"])
+        self.calls.append(
+            {
+                "agent_name": agent_name,
+                "messages": list(messages),
+                "tools": list(tools or []),
+            }
+        )
+        prompt_tokens = {
+            "attraction": 11,
+            "weather": 13,
+            "itinerary": 17,
+            "budget": 19,
+            "final": 23,
+        }[agent_name]
+        completion_tokens = 3
+        content = (
+            self._agent_decision_content(agent_name, payload)
+            if agent_name != "final"
+            else "final llm output"
+        )
+        return SimpleNamespace(
+            content=content,
+            tool_calls=[],
+            usage={
+                "prompt_tokens": prompt_tokens,
+                "completion_tokens": completion_tokens,
+                "total_tokens": prompt_tokens + completion_tokens,
+            },
+        )
+
+    def _agent_decision_content(self, agent_name: str, payload: dict) -> str:
+        tool_evidence = payload.get("tool_evidence") if isinstance(payload, dict) else {}
+        tool_evidence = tool_evidence if isinstance(tool_evidence, dict) else {}
+        attractions = self._attractions(tool_evidence)
+        selected_ids = [item["poi_id"] for item in attractions[:4] if item.get("poi_id")]
+        days = int((payload.get("task_slots") or {}).get("duration_days") or 2)
+
+        if agent_name == "attraction":
+            decisions = {"selected_poi_ids": selected_ids, "ranking_reason": "test order"}
+        elif agent_name == "weather":
+            decisions = {"risk_days": [], "adjustment_required": False}
+        elif agent_name == "itinerary":
+            decisions = {
+                "daily_itinerary": [
+                    {
+                        "day": day,
+                        "attraction_poi_ids": selected_ids[(day - 1) * 2 : day * 2] or selected_ids[:1],
+                        "notes": f"test itinerary day {day}",
+                    }
+                    for day in range(1, days + 1)
+                ]
+            }
+        elif agent_name == "budget":
+            budget = self._tool_data(tool_evidence.get("budget_calculator"))
+            decisions = {
+                "feasibility": "feasible",
+                "budget_notes": "test budget decision",
+                "recommended_total": budget.get("total"),
+            }
+        else:
+            decisions = {}
+        return json.dumps(
+            {
+                "schema_version": RESEARCH_AGENT_DECISION_SCHEMA_VERSION,
+                "agent_name": agent_name,
+                "summary": f"{agent_name} test decision",
+                "decisions": decisions,
+                "risks": [],
+                "confidence": 1.0,
+            },
+            ensure_ascii=False,
+        )
+
+    def _tool_data(self, result):
+        if not isinstance(result, dict):
+            return {}
+        data = result.get("data")
+        return data if isinstance(data, dict) else {}
+
+    def _attractions(self, tool_evidence):
+        data = self._tool_data(tool_evidence.get("poi_search"))
+        attractions = data.get("attractions") if isinstance(data, dict) else []
+        return [item for item in attractions or [] if isinstance(item, dict)]
+
+
+def test_m2_runs_four_business_agent_llm_steps_and_records_agent_tokens(
+    tmp_path: Path,
+) -> None:
+    fake_llm = _CountingResearchLLM()
+    runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces",
+        llm_factory=lambda: fake_llm,
+    )
+
+    result = runner.run(
+        {
+            "case_id": "m2-agent-llm",
+            "user_input": "Plan a two-day Hangzhou trip on 2026-08-01 for two people.",
+            "slots": {
+                "destination": "hangzhou",
+                "duration": 2,
+                "people_count": 2,
+                "start_date": "2026-08-01",
+            },
+        },
+        method="fixed_multi_agent",
+    )
+
+    assert [call["agent_name"] for call in fake_llm.calls] == [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget",
+        "final",
+    ]
+    assert all(not call["tools"] for call in fake_llm.calls)
+
+    agent_outputs = result["output"]["agent_outputs"]
+    assert set(agent_outputs) == {"attraction", "weather", "itinerary", "budget"}
+    for agent_name, output in agent_outputs.items():
+        assert output["schema_version"] == RESEARCH_AGENT_OUTPUT_SCHEMA_VERSION
+        assert output["agent_name"] == agent_name
+        assert output["status"] == "completed"
+        assert output["reused"] is False
+        assert output["llm_call_count"] == 1
+        assert output["total_tokens"] is not None
+        assert output["decision_schema_version"] == RESEARCH_AGENT_DECISION_SCHEMA_VERSION
+        assert output["decision_parse_status"] == "passed"
+        assert output["decision_validation_status"] == "passed"
+        assert output["decision_errors"] == []
+
+    assert result["output"]["attractions"][0]["agent_decision_source"] == "attraction"
+    assert result["output"]["attractions"][0]["agent_selected"] is True
+    assert all(
+        day["agent_decision_source"] == "itinerary"
+        for day in result["output"]["daily_itinerary"]
+    )
+    assert result["output"]["daily_itinerary"][0]["notes"] == "test itinerary day 1"
+    assert result["output"]["weather"]["agent_weather_decision"]["source"] == "weather"
+    assert result["output"]["budget"]["agent_budget_decision"]["feasibility"] == "feasible"
+    assert result["output"]["metadata"]["agent_decision_schema_version"] == (
+        RESEARCH_AGENT_DECISION_SCHEMA_VERSION
+    )
+    assert result["output"]["metadata"]["agent_decision_audit"]["itinerary"] == {
+        "status": "completed",
+        "reused": False,
+        "decision_parse_status": "passed",
+        "decision_validation_status": "passed",
+        "decision_error_count": 0,
+        "has_applicable_decision": True,
+    }
+
+    agent_runs = result["trace"]["agent_runs"]
+    assert [run["agent_name"] for run in agent_runs] == [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget",
+    ]
+    assert all(run["llm_call_count"] == 1 for run in agent_runs)
+    assert [run["prompt_tokens"] for run in agent_runs] == [11, 13, 17, 19]
+    assert [run["completion_tokens"] for run in agent_runs] == [3, 3, 3, 3]
+    assert result["metrics"]["agent_llm_call_count"] == 4
+    assert result["metrics"]["agent_prompt_tokens"] == 60.0
+    assert result["metrics"]["agent_completion_tokens"] == 12.0
+    assert result["metrics"]["agent_total_tokens"] == 72.0
+
+
+def test_m3_reuse_skips_reused_agent_llm_step(
+    tmp_path: Path,
+) -> None:
+    fake_llm = _CountingResearchLLM()
+    runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces",
+        llm_factory=lambda: fake_llm,
+    )
+    first = runner.run(
+        {
+            "case_id": "m3-agent-llm-turn1",
+            "user_input": "Plan a two-day Hangzhou trip on 2026-08-01 for two people.",
+            "slots": {
+                "destination": "hangzhou",
+                "duration": 2,
+                "people_count": 2,
+                "start_date": "2026-08-01",
+            },
+        },
+        method="adaptive_multi_agent",
+    )
+    first_call_count = len(fake_llm.calls)
+
+    second = runner.run(
+        {
+            "case_id": "m3-agent-llm-turn2",
+            "user_input": "Change the trip to three days and keep other conditions unchanged.",
+            "slots": {"duration": 3},
+            "previous_state": first,
+        },
+        method="adaptive_multi_agent",
+    )
+
+    assert [call["agent_name"] for call in fake_llm.calls[:first_call_count]] == [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget",
+        "final",
+    ]
+    assert [call["agent_name"] for call in fake_llm.calls[first_call_count:]] == [
+        "weather",
+        "itinerary",
+        "budget",
+        "final",
+    ]
+    assert "attraction" not in [
+        call["agent_name"] for call in fake_llm.calls[first_call_count:]
+    ]
+
+    scheduler = second["output"]["metadata"]["adaptive_scheduler"]
+    assert scheduler["decision"]["reused_agents"] == ["attraction"]
+    assert scheduler["reuse_execution"]["reused_agent_results"] == ["attraction"]
+
+    agent_outputs = second["output"]["agent_outputs"]
+    assert agent_outputs["attraction"]["status"] == "reused"
+    assert agent_outputs["attraction"]["reused"] is True
+    assert agent_outputs["attraction"]["llm_call_count"] == 0
+    assert agent_outputs["attraction"]["usage"] == {}
+    assert set(agent_outputs) == {"attraction", "weather", "itinerary", "budget"}
+    assert [run["agent_name"] for run in second["trace"]["agent_runs"]] == [
+        "weather",
+        "itinerary",
+        "budget",
+    ]
+    assert second["metrics"]["agent_llm_call_count"] == 3
+    assert second["metrics"]["agent_prompt_tokens"] == 49.0
+    assert second["metrics"]["agent_completion_tokens"] == 9.0
+    assert second["metrics"]["agent_total_tokens"] == 58.0
+
+
+def test_business_agent_invalid_json_marks_method_failed(tmp_path: Path) -> None:
+    class InvalidAgentLLM:
+        async def chat(self, messages, tools=None):
+            return SimpleNamespace(
+                content="not json",
+                tool_calls=[],
+                usage={
+                    "prompt_tokens": 5,
+                    "completion_tokens": 2,
+                    "total_tokens": 7,
+                },
+            )
+
+    runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces",
+        llm_factory=InvalidAgentLLM,
+    )
+
+    result = runner.run(
+        {
+            "case_id": "m2-invalid-agent-json",
+            "user_input": "Plan a two-day Hangzhou trip on 2026-08-01 for two people.",
+            "slots": {
+                "destination": "hangzhou",
+                "duration": 2,
+                "people_count": 2,
+                "start_date": "2026-08-01",
+            },
+        },
+        method="fixed_multi_agent",
+    )
+
+    attraction_output = result["output"]["agent_outputs"]["attraction"]
+    assert attraction_output["status"] == "failed"
+    assert attraction_output["decision_parse_status"] == "failed"
+    assert "not strict JSON" in attraction_output["error"]
+    assert result["output"]["execution_status"] == "failed"
+    assert result["status"] == "failed"
 
 
 def test_real_runner_constraint_checker_fails_when_tool_evidence_missing(

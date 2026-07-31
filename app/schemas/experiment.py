@@ -34,6 +34,7 @@ class ExperimentMethodOutput(BaseModel):
     planned_tools: List[str] = Field(default_factory=list)
     called_tools: List[ExperimentToolCallSummary] = Field(default_factory=list)
     tool_results: Dict[str, Any] = Field(default_factory=dict)
+    agent_outputs: Dict[str, Any] = Field(default_factory=dict)
     attractions: List[Dict[str, Any]] = Field(default_factory=list)
     trip_days: Optional[int] = None
     daily_itinerary: List[Dict[str, Any]] = Field(default_factory=list)
