@@ -21,7 +21,7 @@
 |---|---:|---:|---:|---:|
 | infrastructure_errors | 4 | 4 | 0 | 0 |
 | experiment_implementation_errors | 4 | 4 | 0 | 0 |
-| method_real_failures | 2 | 2 | 0 | 0 |
+| method_real_failures | 3 | 3 | 0 | 0 |
 
 ## 问题清单与修改对照
 
@@ -48,6 +48,7 @@
 | ID | 状态 | 严重度 | 问题 | 修改说明 | 修改后证据 | 回归/诊断测试 |
 |---|---|---|---|---|---|---|
 | METHOD-001 | `fixed` | `critical` | M3 在真实 smoke 质量评价中存在整类任务系统性失败。 | 本任务不美化结果；新增按任务类型、规则、失败原因的诊断报告，把 M3 真实失败显式列入后续修正入口。 | M3 quality_unit_count=8，failed=0，failure_rate=0.0，systemic_failure=False，dev_stsr=1.0，dev_hcsr=1.0，m2_dev_hcsr=1.0，formal_run_blocked=False。 | tests/test_day7_fix_report.py::test_day7_fix_report_classifies_m3_systemic_failures, tests/test_day7_fix_report.py::test_day7_fix_report_keeps_method_open_when_dev_quality_is_low |
+| METHOD-002 | `fixed` | `high` | M3 失败集中在任务类型/执行状态/最终答案一致性与工具证据规则。 | 报告从 evaluation_failed_rule_ids 和输出失败原因中抽取 Top 规则，形成可落地的修正入口。 | M3 top_failed_rules=none；top_failure_reasons=none；readiness_blocking_reasons=none；quality_recovered=True。 | tests/test_day7_fix_report.py::test_day7_fix_report_classifies_m3_systemic_failures, tests/test_day7_fix_report.py::test_day7_fix_report_keeps_method_open_when_dev_quality_is_low |
 | METHOD-003 | `fixed` | `medium` | M3 的 Agent 决策存在程序性补全；必须在论文中披露，并设置无补全消融。 | 新增 agent_decision_assistance_analysis，逐 scope、逐方法统计 LLM 有效决策、deterministic normalizer、reused/synthetic 决策和 programmatic_decision_rate。 | M3 programmatic_decision_count=37 / 64，rate=0.5781，ablation_required=False，ablation_status=passed。 | tests/test_day7_fix_report.py::test_day7_fix_report_discloses_programmatic_agent_decisions |
 
 ## M3 是否存在整类任务系统性失败

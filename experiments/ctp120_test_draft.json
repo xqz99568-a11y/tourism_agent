@@ -818,6 +818,14 @@
             "poi_search"
           ]
         ],
+        "hard_constraints": {
+          "destination": "beijing",
+          "min_attractions": 2,
+          "max_attractions": 2,
+          "preferences": [
+            "history_culture"
+          ]
+        },
         "preferences": [
           "history_culture"
         ],
@@ -848,6 +856,14 @@
             "poi_search"
           ]
         ],
+        "hard_constraints": {
+          "destination": "hangzhou",
+          "min_attractions": 3,
+          "max_attractions": 3,
+          "preferences": [
+            "nature"
+          ]
+        },
         "preferences": [
           "nature"
         ],
@@ -878,6 +894,15 @@
             "poi_search"
           ]
         ],
+        "hard_constraints": {
+          "destination": "xian",
+          "min_attractions": 2,
+          "max_attractions": 2,
+          "preferences": [
+            "indoor",
+            "history_culture"
+          ]
+        },
         "preferences": [
           "indoor",
           "history_culture"
@@ -890,7 +915,7 @@
     },
     {
       "case_id": "ctp_test_024_shenzhen_attractions",
-      "user_input": "帮我做一个深圳亲子友好景点小清单，数量控制在3个；这次只要景点推荐，不要扩展成完整旅行方案。请注意步行强度，请用分点方式说清楚。",
+      "user_input": "帮我做一个深圳亲子友好景点小清单，请推荐3个景点；这次只要景点推荐，不要扩展成完整旅行方案。请注意步行强度，请用分点方式说清楚。",
       "expected": {
         "task_type": "attraction_recommendation",
         "destination": "shenzhen",
@@ -909,6 +934,14 @@
             "poi_search"
           ]
         ],
+        "hard_constraints": {
+          "destination": "shenzhen",
+          "min_attractions": 3,
+          "max_attractions": 3,
+          "preferences": [
+            "family"
+          ]
+        },
         "preferences": [
           "family"
         ],
@@ -939,6 +972,14 @@
             "poi_search"
           ]
         ],
+        "hard_constraints": {
+          "destination": "guilin",
+          "min_attractions": 2,
+          "max_attractions": 2,
+          "preferences": [
+            "nature"
+          ]
+        },
         "preferences": [
           "nature"
         ],
@@ -969,6 +1010,11 @@
             "poi_search"
           ]
         ],
+        "hard_constraints": {
+          "destination": "beijing",
+          "min_attractions": 3,
+          "max_attractions": 3
+        },
         "forbidden_tools": [
           "weather_query",
           "budget_calculator"
@@ -996,6 +1042,11 @@
             "poi_search"
           ]
         ],
+        "hard_constraints": {
+          "destination": "hangzhou",
+          "min_attractions": 2,
+          "max_attractions": 2
+        },
         "forbidden_tools": [
           "weather_query",
           "budget_calculator"
@@ -1023,6 +1074,14 @@
             "poi_search"
           ]
         ],
+        "hard_constraints": {
+          "destination": "xian",
+          "min_attractions": 3,
+          "max_attractions": 3,
+          "preferences": [
+            "indoor"
+          ]
+        },
         "preferences": [
           "indoor"
         ],
@@ -1034,7 +1093,7 @@
     },
     {
       "case_id": "ctp_test_029_shenzhen_attractions",
-      "user_input": "帮我做一个深圳摄影打卡景点小清单，数量控制在2个；这次只要景点推荐，不要扩展成完整旅行方案。我希望保留一点机动时间，请用分点方式说清楚。",
+      "user_input": "帮我做一个深圳摄影打卡景点小清单，请推荐2个景点；这次只要景点推荐，不要扩展成完整旅行方案。我希望保留一点机动时间，请用分点方式说清楚。",
       "expected": {
         "task_type": "attraction_recommendation",
         "destination": "shenzhen",
@@ -1053,6 +1112,11 @@
             "poi_search"
           ]
         ],
+        "hard_constraints": {
+          "destination": "shenzhen",
+          "min_attractions": 2,
+          "max_attractions": 2
+        },
         "forbidden_tools": [
           "weather_query",
           "budget_calculator"
@@ -1080,6 +1144,14 @@
             "poi_search"
           ]
         ],
+        "hard_constraints": {
+          "destination": "guilin",
+          "min_attractions": 3,
+          "max_attractions": 3,
+          "preferences": [
+            "history_culture"
+          ]
+        },
         "preferences": [
           "history_culture"
         ],
@@ -1717,10 +1789,21 @@
                 "weather",
                 "itinerary",
                 "budget"
+              ],
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
+                "weather_query",
+                "budget_calculator"
+              ],
+              [
+                "poi_search",
                 "weather_query",
                 "budget_calculator"
               ]
@@ -1734,9 +1817,7 @@
               "max_pois_per_day": 2,
               "budget_limit": 5200
             },
-            "forbidden_tools": [
-              "poi_search"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -2091,10 +2172,21 @@
                 "weather",
                 "itinerary",
                 "budget"
+              ],
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
+                "weather_query",
+                "budget_calculator"
+              ],
+              [
+                "poi_search",
                 "weather_query",
                 "budget_calculator"
               ]
@@ -2108,9 +2200,7 @@
               "max_pois_per_day": 2,
               "budget_limit": 5840
             },
-            "forbidden_tools": [
-              "poi_search"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -2465,10 +2555,21 @@
                 "weather",
                 "itinerary",
                 "budget"
+              ],
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
+                "weather_query",
+                "budget_calculator"
+              ],
+              [
+                "poi_search",
                 "weather_query",
                 "budget_calculator"
               ]
@@ -2482,9 +2583,7 @@
               "max_pois_per_day": 2,
               "budget_limit": 6480
             },
-            "forbidden_tools": [
-              "poi_search"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -2839,10 +2938,21 @@
                 "weather",
                 "itinerary",
                 "budget"
+              ],
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
+                "weather_query",
+                "budget_calculator"
+              ],
+              [
+                "poi_search",
                 "weather_query",
                 "budget_calculator"
               ]
@@ -2856,9 +2966,7 @@
               "max_pois_per_day": 2,
               "budget_limit": 7120
             },
-            "forbidden_tools": [
-              "poi_search"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -3213,10 +3321,21 @@
                 "weather",
                 "itinerary",
                 "budget"
+              ],
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
+                "weather_query",
+                "budget_calculator"
+              ],
+              [
+                "poi_search",
                 "weather_query",
                 "budget_calculator"
               ]
@@ -3230,9 +3349,7 @@
               "max_pois_per_day": 2,
               "budget_limit": 7760
             },
-            "forbidden_tools": [
-              "poi_search"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -3589,17 +3706,31 @@
               "budget_amount"
             ],
             "required_tools": [
+              "poi_search",
               "weather_query"
             ],
             "accepted_agent_sets": [
               [
                 "weather",
+                "attraction",
                 "itinerary"
+              ],
+              [
+                "weather",
+                "attraction",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
-                "weather_query"
+                "weather_query",
+                "poi_search"
+              ],
+              [
+                "weather_query",
+                "poi_search",
+                "budget_calculator"
               ]
             ],
             "weather_change": {
@@ -3616,10 +3747,7 @@
               "budget_limit": 5600,
               "weather_adjustment_required": true
             },
-            "forbidden_tools": [
-              "poi_search",
-              "budget_calculator"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -3694,17 +3822,31 @@
               "budget_amount"
             ],
             "required_tools": [
+              "poi_search",
               "weather_query"
             ],
             "accepted_agent_sets": [
               [
                 "weather",
+                "attraction",
                 "itinerary"
+              ],
+              [
+                "weather",
+                "attraction",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
-                "weather_query"
+                "weather_query",
+                "poi_search"
+              ],
+              [
+                "weather_query",
+                "poi_search",
+                "budget_calculator"
               ]
             ],
             "weather_change": {
@@ -3721,10 +3863,7 @@
               "budget_limit": 5770,
               "weather_adjustment_required": true
             },
-            "forbidden_tools": [
-              "poi_search",
-              "budget_calculator"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -3799,17 +3938,31 @@
               "budget_amount"
             ],
             "required_tools": [
+              "poi_search",
               "weather_query"
             ],
             "accepted_agent_sets": [
               [
                 "weather",
+                "attraction",
                 "itinerary"
+              ],
+              [
+                "weather",
+                "attraction",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
-                "weather_query"
+                "weather_query",
+                "poi_search"
+              ],
+              [
+                "weather_query",
+                "poi_search",
+                "budget_calculator"
               ]
             ],
             "weather_change": {
@@ -3826,10 +3979,7 @@
               "budget_limit": 5940,
               "weather_adjustment_required": true
             },
-            "forbidden_tools": [
-              "poi_search",
-              "budget_calculator"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -3904,17 +4054,31 @@
               "budget_amount"
             ],
             "required_tools": [
+              "poi_search",
               "weather_query"
             ],
             "accepted_agent_sets": [
               [
                 "weather",
+                "attraction",
                 "itinerary"
+              ],
+              [
+                "weather",
+                "attraction",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
-                "weather_query"
+                "weather_query",
+                "poi_search"
+              ],
+              [
+                "weather_query",
+                "poi_search",
+                "budget_calculator"
               ]
             ],
             "weather_change": {
@@ -3931,10 +4095,7 @@
               "budget_limit": 6110,
               "weather_adjustment_required": true
             },
-            "forbidden_tools": [
-              "poi_search",
-              "budget_calculator"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -4009,17 +4170,31 @@
               "budget_amount"
             ],
             "required_tools": [
+              "poi_search",
               "weather_query"
             ],
             "accepted_agent_sets": [
               [
                 "weather",
+                "attraction",
                 "itinerary"
+              ],
+              [
+                "weather",
+                "attraction",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
-                "weather_query"
+                "weather_query",
+                "poi_search"
+              ],
+              [
+                "weather_query",
+                "poi_search",
+                "budget_calculator"
               ]
             ],
             "weather_change": {
@@ -4036,10 +4211,7 @@
               "budget_limit": 6280,
               "weather_adjustment_required": true
             },
-            "forbidden_tools": [
-              "poi_search",
-              "budget_calculator"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -4114,17 +4286,31 @@
               "budget_amount"
             ],
             "required_tools": [
+              "poi_search",
               "weather_query"
             ],
             "accepted_agent_sets": [
               [
                 "weather",
+                "attraction",
                 "itinerary"
+              ],
+              [
+                "weather",
+                "attraction",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
-                "weather_query"
+                "weather_query",
+                "poi_search"
+              ],
+              [
+                "weather_query",
+                "poi_search",
+                "budget_calculator"
               ]
             ],
             "weather_change": {
@@ -4141,10 +4327,7 @@
               "budget_limit": 6450,
               "weather_adjustment_required": true
             },
-            "forbidden_tools": [
-              "poi_search",
-              "budget_calculator"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -4219,17 +4402,31 @@
               "budget_amount"
             ],
             "required_tools": [
+              "poi_search",
               "weather_query"
             ],
             "accepted_agent_sets": [
               [
                 "weather",
+                "attraction",
                 "itinerary"
+              ],
+              [
+                "weather",
+                "attraction",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
-                "weather_query"
+                "weather_query",
+                "poi_search"
+              ],
+              [
+                "weather_query",
+                "poi_search",
+                "budget_calculator"
               ]
             ],
             "weather_change": {
@@ -4246,10 +4443,7 @@
               "budget_limit": 6620,
               "weather_adjustment_required": true
             },
-            "forbidden_tools": [
-              "poi_search",
-              "budget_calculator"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -4324,17 +4518,31 @@
               "budget_amount"
             ],
             "required_tools": [
+              "poi_search",
               "weather_query"
             ],
             "accepted_agent_sets": [
               [
                 "weather",
+                "attraction",
                 "itinerary"
+              ],
+              [
+                "weather",
+                "attraction",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
-                "weather_query"
+                "weather_query",
+                "poi_search"
+              ],
+              [
+                "weather_query",
+                "poi_search",
+                "budget_calculator"
               ]
             ],
             "weather_change": {
@@ -4351,10 +4559,7 @@
               "budget_limit": 6790,
               "weather_adjustment_required": true
             },
-            "forbidden_tools": [
-              "poi_search",
-              "budget_calculator"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -4429,17 +4634,31 @@
               "budget_amount"
             ],
             "required_tools": [
+              "poi_search",
               "weather_query"
             ],
             "accepted_agent_sets": [
               [
                 "weather",
+                "attraction",
                 "itinerary"
+              ],
+              [
+                "weather",
+                "attraction",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
-                "weather_query"
+                "weather_query",
+                "poi_search"
+              ],
+              [
+                "weather_query",
+                "poi_search",
+                "budget_calculator"
               ]
             ],
             "weather_change": {
@@ -4456,10 +4675,7 @@
               "budget_limit": 6960,
               "weather_adjustment_required": true
             },
-            "forbidden_tools": [
-              "poi_search",
-              "budget_calculator"
-            ]
+            "forbidden_tools": []
           }
         }
       ]
@@ -4534,17 +4750,31 @@
               "budget_amount"
             ],
             "required_tools": [
+              "poi_search",
               "weather_query"
             ],
             "accepted_agent_sets": [
               [
                 "weather",
+                "attraction",
                 "itinerary"
+              ],
+              [
+                "weather",
+                "attraction",
+                "itinerary",
+                "budget"
               ]
             ],
             "accepted_tool_sets": [
               [
-                "weather_query"
+                "weather_query",
+                "poi_search"
+              ],
+              [
+                "weather_query",
+                "poi_search",
+                "budget_calculator"
               ]
             ],
             "weather_change": {
@@ -4561,10 +4791,7 @@
               "budget_limit": 7130,
               "weather_adjustment_required": true
             },
-            "forbidden_tools": [
-              "poi_search",
-              "budget_calculator"
-            ]
+            "forbidden_tools": []
           }
         }
       ]

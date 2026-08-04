@@ -509,7 +509,7 @@ def _attraction_user_input(
         f"只帮我挑{city}{attraction_count}个{theme}类景点，按推荐理由列出即可；不要天气、路线和预算，也不要生成完整行程。",
         f"我现在只想看{city}的{theme}景点，请选{attraction_count}个并说明为什么值得去；先别安排日程、天气或费用。",
         f"请从{city}里筛{attraction_count}个偏{theme}的点位，给出简短理由就好，不需要路线、天气预报和预算估算。",
-        f"帮我做一个{city}{theme}景点小清单，数量控制在{attraction_count}个；这次只要景点推荐，不要扩展成完整旅行方案。",
+        f"帮我做一个{city}{theme}景点小清单，请推荐{attraction_count}个景点；这次只要景点推荐，不要扩展成完整旅行方案。",
         f"如果只看{theme}方向，{city}有哪些{attraction_count}个点比较合适？请按理由排序，不用查天气和算钱。",
     )
     return _with_context(variants[offset % len(variants)], case_no)
@@ -648,9 +648,15 @@ def _attraction_cases(*, start_index: int, count: int) -> list[dict[str, Any]]:
             "required_tools": ["poi_search"],
             "accepted_agent_sets": [["attraction"]],
             "accepted_tool_sets": [["poi_search"]],
+            "hard_constraints": {
+                "destination": city_id,
+                "min_attractions": attraction_count,
+                "max_attractions": attraction_count,
+            },
         }
         if preferences:
             expected["preferences"] = preferences
+            expected["hard_constraints"]["preferences"] = preferences
         cases.append(
             {
                 "case_id": f"ctp_test_{case_no:03d}_{city_id}_attractions",
@@ -874,9 +880,15 @@ def _weather_adjustment_cases(*, start_index: int, count: int) -> list[dict[str,
                                 "people_count",
                                 "budget_amount",
                             ],
-                            "required_tools": ["weather_query"],
-                            "accepted_agent_sets": [["weather", "itinerary"]],
-                            "accepted_tool_sets": [["weather_query"]],
+                            "required_tools": ["weather_query", "poi_search"],
+                            "accepted_agent_sets": [
+                                ["weather", "attraction", "itinerary"],
+                                ["weather", "attraction", "itinerary", "budget"],
+                            ],
+                            "accepted_tool_sets": [
+                                ["weather_query", "poi_search"],
+                                ["weather_query", "poi_search", "budget_calculator"],
+                            ],
                             "weather_change": {
                                 "scenario_type": scenario_type,
                                 "affected_days": [affected_day],
@@ -889,6 +901,7 @@ def _weather_adjustment_cases(*, start_index: int, count: int) -> list[dict[str,
                                 "budget_limit": budget,
                                 "weather_adjustment_required": True,
                             },
+                            "forbidden_tools": [],
                         },
                     },
                 ],
@@ -985,18 +998,28 @@ def _partial_turn(
             f"我想把{city}旅行延长到{new_duration}天，其他条件不要动：2026年10月{day}日走，{people}个人，预算{budget}元。",
             f"{city}计划的日期和人数预算都不变，仍是2026年10月{day}日出发、{people}个人、{budget}元；只把行程改成{new_duration}天。",
         )
+        expected = _partial_expected(
+            city_id=city_id,
+            day=day,
+            duration=new_duration,
+            people=people,
+            budget=budget,
+            changed_slots=["duration_days"],
+            agents=["weather", "itinerary", "budget"],
+            tools=["weather_query", "budget_calculator"],
+        )
+        expected["accepted_agent_sets"] = [
+            ["weather", "itinerary", "budget"],
+            ["attraction", "weather", "itinerary", "budget"],
+        ]
+        expected["accepted_tool_sets"] = [
+            ["weather_query", "budget_calculator"],
+            ["poi_search", "weather_query", "budget_calculator"],
+        ]
+        expected["forbidden_tools"] = []
         return (
             _with_context(variants[case_no % len(variants)], case_no + 100),
-            _partial_expected(
-                city_id=city_id,
-                day=day,
-                duration=new_duration,
-                people=people,
-                budget=budget,
-                changed_slots=["duration_days"],
-                agents=["weather", "itinerary", "budget"],
-                tools=["weather_query", "budget_calculator"],
-            ),
+            expected,
         )
     if change_kind == 1:
         new_people = people + 1

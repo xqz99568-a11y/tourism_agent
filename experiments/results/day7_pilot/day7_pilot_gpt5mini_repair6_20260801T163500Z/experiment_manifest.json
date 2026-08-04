@@ -845,8 +845,8 @@
         "deferred": 0
       },
       "method_real_failures": {
-        "total": 2,
-        "fixed": 2,
+        "total": 3,
+        "fixed": 3,
         "open": 0,
         "deferred": 0
       }

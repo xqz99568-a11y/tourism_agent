@@ -128,6 +128,41 @@ def test_day6_benchmark_quality_blocks_missing_gold_bad_tools_and_chat_scope() -
     assert "general_chat must use empty accepted_tool_sets" in errors
 
 
+def test_day6_benchmark_quality_flags_unannotated_extra_core_slots() -> None:
+    document = {
+        "schema_version": "ctp-benchmark-v1",
+        "dataset_id": "extra-core-slot",
+        "annotation_policy": {"slot_gold_consistency_required": True},
+        "cases": [
+            {
+                "case_id": "extra_people_count",
+                "user_input": "3个人想在深圳只挑2个亲子景点，不要天气、路线和预算。",
+                "expected": {
+                    "task_type": "attraction_recommendation",
+                    "destination": "shenzhen",
+                    "min_attractions": 2,
+                    "max_attractions": 2,
+                    "preferences": ["family"],
+                    "required_tools": ["poi_search"],
+                    "accepted_agent_sets": [["attraction"]],
+                    "accepted_tool_sets": [["poi_search"]],
+                    "forbidden_tools": ["weather_query", "budget_calculator"],
+                },
+            }
+        ],
+    }
+
+    report = build_benchmark_dataset_quality_report(
+        document=document,
+        cases=document["cases"],
+        strict_formal=True,
+    )
+
+    errors = "\n".join(report["errors"])
+    assert report["status"] == "failed"
+    assert "parsed visible slot 'people_count'=3 is not declared in gold slots" in errors
+
+
 def test_day6_formal_preflight_includes_benchmark_quality_gate(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,

@@ -73,6 +73,13 @@ DEFAULT_PILOT_RESULTS_ROOT = Path("experiments") / "results" / "day7_pilot"
 DEFAULT_DEV_RESULTS_ROOT = Path("experiments") / "results" / "day7_dev"
 DEFAULT_ACCEPTANCE_ROOT = Path("experiments") / "results" / "day7_acceptance"
 DEFAULT_DOCS_ACCEPTANCE_REPORT_PATH = Path("docs") / DAY7_ACCEPTANCE_REPORT_MD_NAME
+AUDITED_REVIEW_PARSE_SLOT_KEYS = {
+    "destination",
+    "start_date",
+    "duration_days",
+    "people_count",
+    "budget_amount",
+}
 DEFAULT_METHODS = (
     "llm_direct",
     "single_agent",
@@ -150,6 +157,11 @@ BLOCKING_HUMAN_DECISIONS = {
     "需修改",
 }
 DEFAULT_DAY7_FREEZE_TAG_NAME = "day7-acceptance-20260801"
+REQUIRED_METHOD_REAL_FAILURE_ISSUE_IDS = (
+    "METHOD-001",
+    "METHOD-002",
+    "METHOD-003",
+)
 
 
 def build_day7_acceptance_pack(
@@ -581,6 +593,9 @@ def render_day7_acceptance_report(pack: Mapping[str, Any]) -> str:
         "",
         f"- fix_report_status: `{fix.get('status')}`",
         f"- method_open_issue_count: `{fix.get('method_open_issue_count')}`",
+        f"- required_method_issue_statuses: `{fix.get('required_method_issue_statuses')}`",
+        f"- missing_required_method_issue_ids: `{fix.get('missing_required_method_issue_ids')}`",
+        f"- non_fixed_required_method_issue_ids: `{fix.get('non_fixed_required_method_issue_ids')}`",
         f"- m3_systemic_failure: `{fix.get('m3_systemic_failure')}`",
         f"- m3_method_formal_run_blocked: `{fix.get('m3_method_formal_run_blocked')}`",
         f"- m3_programmatic_decision_count: `{fix.get('m3_programmatic_decision_count')}` / `{fix.get('m3_agent_decision_output_count')}`",
@@ -1175,6 +1190,17 @@ def _day7_evidence_summary(
     issue_counts = _dict(fix.get("issue_counts"))
     open_issue_counts = _issue_status_counts(issue_counts, "open")
     deferred_issue_counts = _issue_status_counts(issue_counts, "deferred")
+    required_method_issue_statuses = _required_method_issue_statuses(fix)
+    missing_required_method_issue_ids = [
+        issue_id
+        for issue_id in REQUIRED_METHOD_REAL_FAILURE_ISSUE_IDS
+        if required_method_issue_statuses.get(issue_id) is None
+    ]
+    non_fixed_required_method_issue_ids = [
+        issue_id
+        for issue_id in REQUIRED_METHOD_REAL_FAILURE_ISSUE_IDS
+        if required_method_issue_statuses.get(issue_id) != "fixed"
+    ]
     m3_analysis = _dict(
         fix.get("m3_systemic_failure_analysis") or fix.get("m3_systemic_analysis")
     )
@@ -1292,6 +1318,12 @@ def _day7_evidence_summary(
                 "method_real_failures",
                 "open",
             ),
+            "required_method_issue_ids": list(REQUIRED_METHOD_REAL_FAILURE_ISSUE_IDS),
+            "required_method_issue_statuses": required_method_issue_statuses,
+            "missing_required_method_issue_ids": missing_required_method_issue_ids,
+            "non_fixed_required_method_issue_ids": non_fixed_required_method_issue_ids,
+            "required_method_issues_present": not missing_required_method_issue_ids,
+            "required_method_issues_fixed": not non_fixed_required_method_issue_ids,
             "m3_systemic_failure": m3_analysis.get("systemic_failure"),
             "m3_method_formal_run_blocked": _nested(
                 fix,
@@ -1569,6 +1601,18 @@ def _acceptance_decision(
             "method_open_issue_count",
         )
         == 0,
+        "method_required_issue_ids_present": _nested(
+            evidence,
+            "fix_report",
+            "required_method_issues_present",
+        )
+        is True,
+        "method_required_issue_ids_fixed": _nested(
+            evidence,
+            "fix_report",
+            "required_method_issues_fixed",
+        )
+        is True,
         "m3_systemic_failure_closed": _nested(
             evidence,
             "fix_report",
@@ -1966,6 +2010,23 @@ def _issue_status_counts(issue_counts: Mapping[str, Any], field: str) -> Dict[st
     return counts
 
 
+def _required_method_issue_statuses(fix_report: Mapping[str, Any]) -> Dict[str, str | None]:
+    issues = _dict(fix_report.get("issues")).get("method_real_failures")
+    observed: Dict[str, str] = {}
+    if isinstance(issues, list):
+        for issue in issues:
+            if not isinstance(issue, Mapping):
+                continue
+            issue_id = issue.get("issue_id")
+            status = issue.get("status")
+            if isinstance(issue_id, str) and isinstance(status, str):
+                observed[issue_id] = status
+    return {
+        issue_id: observed.get(issue_id)
+        for issue_id in REQUIRED_METHOD_REAL_FAILURE_ISSUE_IDS
+    }
+
+
 def _formal_run_blocked(payload: Any) -> bool | None:
     values: List[bool] = []
 
@@ -1995,6 +2056,7 @@ def _git_snapshot(*, freeze_tag_name: str | None = None) -> Dict[str, Any]:
     tag_name = (
         freeze_tag_name
         or os.environ.get("DAY7_ACCEPTANCE_FREEZE_TAG")
+        or _head_day7_acceptance_tag()
         or DEFAULT_DAY7_FREEZE_TAG_NAME
     )
     tag_commit = _git(["rev-parse", "--verify", f"refs/tags/{tag_name}^{{}}"])
@@ -2019,6 +2081,12 @@ def _git_snapshot(*, freeze_tag_name: str | None = None) -> Dict[str, Any]:
             f"git tag -a {tag_name} -m \"Day7 acceptance evidence freeze\"",
         ],
     }
+
+
+def _head_day7_acceptance_tag() -> str:
+    tags = _git(["tag", "--points-at", "HEAD", "--list", "day7-acceptance-*"])
+    candidates = sorted(line.strip() for line in tags.splitlines() if line.strip())
+    return candidates[-1] if candidates else ""
 
 
 def _git(args: Sequence[str]) -> str:
@@ -2052,12 +2120,14 @@ def _latest_run_dir(root: Path, *, required_file: str) -> Path:
 
 def _slot_subset_matches(gold_slots: Mapping[str, Any], parsed_slots: Mapping[str, Any]) -> bool:
     if not gold_slots:
-        return True
+        return not (set(parsed_slots) & AUDITED_REVIEW_PARSE_SLOT_KEYS)
     for key, expected in gold_slots.items():
         if key not in parsed_slots:
             return False
         if not _review_slot_values_equal(parsed_slots.get(key), expected):
             return False
+    if (set(parsed_slots) & AUDITED_REVIEW_PARSE_SLOT_KEYS) - set(gold_slots):
+        return False
     return True
 
 

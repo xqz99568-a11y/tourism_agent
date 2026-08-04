@@ -72,6 +72,30 @@ def test_visible_request_parser_supports_common_chinese_and_english_slots() -> N
     assert followup["duration_days"] == 3
 
 
+def test_visible_request_parser_does_not_turn_family_preference_into_people_count() -> None:
+    slots = parse_visible_request_slots(
+        "帮我做一个深圳亲子友好景点小清单，请推荐3个景点；只要景点推荐。"
+    )
+
+    assert slots["destination"] == "shenzhen"
+    assert "people_count" not in slots
+    assert slots["traveler_group"] == "family"
+    assert slots["preferences"] == ["family"]
+
+
+def test_visible_request_parser_ignores_non_travel_avoidance_phrasing() -> None:
+    slots = parse_visible_request_slots(
+        "我想把西安旅行延长到3天，其他条件不要动：2026年10月20日走，2个人，预算7120元。"
+        "请尽量避免信息堆得太满。"
+    )
+
+    assert slots["destination"] == "xian"
+    assert slots["duration_days"] == 3
+    assert slots["people_count"] == 2
+    assert slots["budget_amount"] == 7120
+    assert "special_requirements" not in slots
+
+
 def test_builtin_m2_m3_use_parsed_method_input_not_gold_slots(tmp_path: Path) -> None:
     class SpyLLM:
         def __init__(self) -> None:

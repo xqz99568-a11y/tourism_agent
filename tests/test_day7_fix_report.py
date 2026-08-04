@@ -67,6 +67,7 @@ def test_day7_fix_report_marks_m3_non_systemic_when_quality_passes(tmp_path: Pat
     assert report["status"] == "completed"
     assert report["m3_systemic_failure_analysis"]["systemic_failure"] is False
     assert report["issues"]["method_real_failures"][0]["status"] == "fixed"
+    assert _issue_status(report["issues"]["method_real_failures"], "METHOD-002") == "fixed"
     assert report["issue_counts"]["infrastructure_errors"]["fixed"] >= 3
     assert report["issue_counts"]["experiment_implementation_errors"]["fixed"] >= 4
 

@@ -1,0 +1,79 @@
+{
+  "schema_version": "ctp-day7-artifact-sha256-v1",
+  "run_id": "day7_acceptance_label_fix_20260804",
+  "hash_strategy": "sha256_raw_file_bytes_post_write_v1",
+  "generated_at": "2026-08-04T14:08:45.606518+00:00",
+  "files": [
+    {
+      "key": "annotation_review_json",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_label_fix_20260804/day7_annotation_review_round1.json",
+      "exists": true,
+      "size_bytes": 205537,
+      "sha256": "7d4d6fcfd44d0c20d114dbf956aaa7ff31ce8530e49deb9eb3256336deb72b23"
+    },
+    {
+      "key": "annotation_review_csv",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_label_fix_20260804/day7_annotation_review_round1.csv",
+      "exists": true,
+      "size_bytes": 109306,
+      "sha256": "21da76a5c6b662dad48f0e2695e57c488671c43a67828aea90ef2abd60b0e63d"
+    },
+    {
+      "key": "case_review_table_md",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_label_fix_20260804/day7_case_review_table.md",
+      "exists": true,
+      "size_bytes": 17269,
+      "sha256": "9994d99eca2104ddd782a37dc153f134868ebeac42d089db43f06993931edcf0"
+    },
+    {
+      "key": "cross_dataset_leakage_json",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_label_fix_20260804/day7_cross_dataset_leakage_report.json",
+      "exists": true,
+      "size_bytes": 684,
+      "sha256": "663c64d0d365c12aeaded3e9f91e436cba7cfa7d707eb365d4d2bb0da7cd9f1c"
+    },
+    {
+      "key": "cross_dataset_leakage_md",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_label_fix_20260804/day7_cross_dataset_leakage_report.md",
+      "exists": true,
+      "size_bytes": 319,
+      "sha256": "a83ce2f2fb2bcf585228a5c89e2760041745ad189be428a34e6f24b27006054e"
+    },
+    {
+      "key": "offline_feasibility_json",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_label_fix_20260804/day7_offline_feasibility_report.json",
+      "exists": true,
+      "size_bytes": 61565,
+      "sha256": "1b863d7ff397d0d8347504295d49a7da24ae4278529f9b983cc68cebef4e73d1"
+    },
+    {
+      "key": "offline_feasibility_md",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_label_fix_20260804/day7_offline_feasibility_report.md",
+      "exists": true,
+      "size_bytes": 520,
+      "sha256": "a944b13576c55d6acca6a5a3cdc4da426f767dc0b1ae8092a210d3a2ca5ca04f"
+    },
+    {
+      "key": "acceptance_report_md",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_label_fix_20260804/Day7_acceptance_report.md",
+      "exists": true,
+      "size_bytes": 7549,
+      "sha256": "b8ed7a0063a909f673d89efec1edc87f7f4929b8b6accb7a3086608a03455df7"
+    },
+    {
+      "key": "day7_delivery_pack_json",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_label_fix_20260804/day7_delivery_pack.json",
+      "exists": true,
+      "size_bytes": 20955,
+      "sha256": "639f0b893b61343f89e5c089fa63fbcec27a0a34f4fb902d8fd40063f97268a8"
+    },
+    {
+      "key": "day7_delivery_report_md",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_label_fix_20260804/day7_delivery_report.md",
+      "exists": true,
+      "size_bytes": 1425,
+      "sha256": "4727efe0e5f50f9bb069f7e8ebd939de468cd2cc17b89d142b67ddd1930ad524"
+    }
+  ],
+  "self_hash_note": "day7_artifact_sha256.json does not include its own SHA-256 to avoid self-referential hash drift."
+}

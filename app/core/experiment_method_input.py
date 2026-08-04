@@ -333,8 +333,6 @@ def _parse_people_count(text: str) -> int | None:
     lowered = text.casefold()
     if any(term in lowered for term in ("情侣", "夫妻", "couple")):
         return 2
-    if any(term in lowered for term in ("亲子", "家庭", "family")):
-        return 3
     return None
 
 
@@ -355,8 +353,6 @@ def _parse_people_count_chinese_terms(text: str) -> int | None:
     lowered = text.casefold()
     if any(term in lowered for term in ("情侣", "夫妻", "双人")):
         return 2
-    if any(term in lowered for term in ("亲子", "家庭", "带娃", "孩子")):
-        return 3
     return None
 
 
@@ -374,8 +370,6 @@ def _parse_people_count_chinese_terms_ascii(text: str) -> int | None:
     lowered = text.casefold()
     if any(term in lowered for term in ("\u60c5\u4fa3", "\u592b\u59bb", "\u53cc\u4eba")):
         return 2
-    if any(term in lowered for term in ("\u4eb2\u5b50", "\u5bb6\u5ead", "\u5e26\u5a03", "\u5b69\u5b50")):
-        return 3
     return None
 
 
@@ -485,13 +479,32 @@ def _parse_special_requirements(text: str) -> list[str]:
         requirements.append("low_intensity")
     if any(term in lowered for term in ("室内", "馆内", "indoor")):
         requirements.append("indoor_preferred")
-    if any(term in lowered for term in ("不要", "避开", "避免", "avoid")):
-        requirements.append("avoidance_constraint")
     if any(term in lowered for term in ("少走路", "轻松", "low intensity", "less walking")):
         requirements.append("low_intensity")
     if any(term in lowered for term in ("室内", "indoor")):
         requirements.append("indoor_preferred")
-    if any(term in lowered for term in ("不要", "避开", "avoid")):
+    travel_avoidance_terms = (
+        "避开拥挤",
+        "避开人流",
+        "避开高峰",
+        "避开排队",
+        "避开户外",
+        "避免拥挤",
+        "避免人流",
+        "避免高峰",
+        "避免排队",
+        "避免户外",
+        "避免暴晒",
+        "不想走太多",
+        "不要太赶",
+        "avoid crowds",
+        "avoid crowded",
+        "avoid queues",
+        "avoid outdoor",
+        "avoid heat",
+        "not too rushed",
+    )
+    if any(term in lowered for term in travel_avoidance_terms):
         requirements.append("avoidance_constraint")
     return requirements
 

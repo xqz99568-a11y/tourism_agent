@@ -1,6 +1,6 @@
 {
   "schema_version": "ctp-day7-fix-report-v1",
-  "created_at": "2026-08-04T07:34:03.487502+00:00",
+  "created_at": "2026-08-04T10:36:03.862898+00:00",
   "status": "completed",
   "run_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z",
   "run": {
@@ -48,8 +48,8 @@
       "deferred": 0
     },
     "method_real_failures": {
-      "total": 2,
-      "fixed": 2,
+      "total": 3,
+      "fixed": 3,
       "open": 0,
       "deferred": 0
     }
@@ -509,6 +509,112 @@
         ],
         "paper_risk": "该问题未关闭前，不能用当前 pilot 支撑 M3 优于 M2 的论文结论。",
         "next_action": "Day8 优先修 M3 输出结构、任务类型稳定性、工具证据和多轮状态复用。"
+      },
+      {
+        "issue_id": "METHOD-002",
+        "category": "method_real_failure",
+        "severity": "high",
+        "status": "fixed",
+        "summary": "M3 失败集中在任务类型/执行状态/最终答案一致性与工具证据规则。",
+        "before_run": "只有总体 STSR 或 HCSR 时，看不出是调度错、工具证据错，还是最终结构化输出错。",
+        "modification": "报告从 evaluation_failed_rule_ids 和输出失败原因中抽取 Top 规则，形成可落地的修正入口。",
+        "after_run": "M3 top_failed_rules=none；top_failure_reasons=none；readiness_blocking_reasons=none；quality_recovered=True。",
+        "evidence": {
+          "top_failed_rules": [],
+          "top_failure_reasons": [],
+          "task_type_breakdown": [
+            {
+              "task_type": "attraction_recommendation",
+              "total": 1,
+              "failed": 0,
+              "failure_rate": 0.0,
+              "status_counts": {
+                "completed": 1
+              },
+              "top_failed_rules": []
+            },
+            {
+              "task_type": "budget_query",
+              "total": 1,
+              "failed": 0,
+              "failure_rate": 0.0,
+              "status_counts": {
+                "completed": 1
+              },
+              "top_failed_rules": []
+            },
+            {
+              "task_type": "clarification",
+              "total": 1,
+              "failed": 0,
+              "failure_rate": 0.0,
+              "status_counts": {
+                "clarification": 1
+              },
+              "top_failed_rules": []
+            },
+            {
+              "task_type": "general_chat",
+              "total": 1,
+              "failed": 0,
+              "failure_rate": 0.0,
+              "status_counts": {
+                "completed": 1
+              },
+              "top_failed_rules": []
+            },
+            {
+              "task_type": "partial_replan",
+              "total": 1,
+              "failed": 0,
+              "failure_rate": 0.0,
+              "status_counts": {
+                "completed": 1
+              },
+              "top_failed_rules": []
+            },
+            {
+              "task_type": "trip_planning",
+              "total": 1,
+              "failed": 0,
+              "failure_rate": 0.0,
+              "status_counts": {
+                "completed": 1
+              },
+              "top_failed_rules": []
+            },
+            {
+              "task_type": "weather_adjustment",
+              "total": 1,
+              "failed": 0,
+              "failure_rate": 0.0,
+              "status_counts": {
+                "completed": 1
+              },
+              "top_failed_rules": []
+            },
+            {
+              "task_type": "weather_query",
+              "total": 1,
+              "failed": 0,
+              "failure_rate": 0.0,
+              "status_counts": {
+                "completed": 1
+              },
+              "top_failed_rules": []
+            }
+          ],
+          "development_top_failed_rules": [],
+          "development_agent_set_exact_match_mean": 1.0,
+          "development_tool_set_exact_match_mean": 1.0,
+          "blocking_reasons": []
+        },
+        "regression_tests": [
+          "tests/test_day7_fix_report.py::test_day7_fix_report_classifies_m3_systemic_failures",
+          "tests/test_day7_fix_report.py::test_day7_fix_report_keeps_method_open_when_dev_quality_is_low"
+        ],
+        "paper_risk": "如果直接扩跑 100+ 案例，会把同一类错误复制成大规模失败，浪费免费 API 额度。",
+        "next_action": "先做小规模回归：每修一类规则，跑 8 条 smoke；通过后再扩展正式集。"
       },
       {
         "issue_id": "METHOD-003",

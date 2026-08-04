@@ -11,10 +11,14 @@ if str(ROOT) not in sys.path:
 from app.core.day7_acceptance_review import (  # noqa: E402
     DAY7_ACCEPTANCE_REVIEW_SCHEMA_VERSION,
     DAY7_STAGE_DELIVERY_PACK_SCHEMA_VERSION,
+    _acceptance_decision,
+    _git_snapshot,
     _m3_ablation_evidence_from_fix,
+    _slot_subset_matches,
     build_day7_acceptance_pack,
     write_day7_acceptance_pack,
 )
+import app.core.day7_acceptance_review as acceptance_review  # noqa: E402
 
 
 EXPECTED_CURRENT_BLOCKERS = {
@@ -24,10 +28,36 @@ EXPECTED_CURRENT_BLOCKERS = {
     "git_freeze_tag_matches_head",
     "git_worktree_clean_at_acceptance",
 }
+FINAL_PILOT_RUN_DIR = (
+    "experiments/results/day7_pilot/"
+    "day7_pilot_gpt5mini_repair6_20260801T163500Z"
+)
+FINAL_DEV_RUN_DIR = (
+    "experiments/results/day7_dev/"
+    "day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST"
+)
 
 
-def test_day7_acceptance_pack_builds_first_round_review_from_current_evidence() -> None:
-    pack = build_day7_acceptance_pack(run_id="day7-acceptance-unit")
+def test_day7_annotation_parse_match_rejects_extra_core_slots() -> None:
+    assert _slot_subset_matches(
+        {"destination": "shenzhen", "preferences": ["family"]},
+        {"destination": "shenzhen", "preferences": ["family"], "people_count": 3},
+    ) is False
+    assert _slot_subset_matches(
+        {"destination": "shenzhen", "preferences": ["family"]},
+        {"destination": "shenzhen", "preferences": ["family"], "traveler_group": "family"},
+    ) is True
+
+
+def test_day7_acceptance_pack_builds_first_round_review_from_current_evidence(
+    monkeypatch,
+) -> None:
+    _patch_git_snapshot(monkeypatch, freeze_created=False, dirty=True)
+    pack = build_day7_acceptance_pack(
+        pilot_run_dir=FINAL_PILOT_RUN_DIR,
+        dev_run_dir=FINAL_DEV_RUN_DIR,
+        run_id="day7-acceptance-unit",
+    )
 
     assert pack["schema_version"] == DAY7_ACCEPTANCE_REVIEW_SCHEMA_VERSION
     assert pack["acceptance"]["status"] == "blocked"
@@ -71,6 +101,13 @@ def test_day7_acceptance_pack_builds_first_round_review_from_current_evidence() 
     )
     assert pack["day7_evidence"]["cost_forecast"]["rerun_required"] is False
     assert pack["day7_evidence"]["fix_report"]["method_open_issue_count"] == 0
+    assert pack["day7_evidence"]["fix_report"]["required_method_issue_statuses"] == {
+        "METHOD-001": "fixed",
+        "METHOD-002": "fixed",
+        "METHOD-003": "fixed",
+    }
+    assert pack["day7_evidence"]["fix_report"]["required_method_issues_present"] is True
+    assert pack["day7_evidence"]["fix_report"]["required_method_issues_fixed"] is True
     assert pack["day7_evidence"]["fix_report"]["m3_systemic_failure"] is False
     assert pack["day7_evidence"]["fix_report"]["m3_method_formal_run_blocked"] is False
     assert pack["day7_evidence"]["fix_report"]["agent_decision_ablation_required"] is False
@@ -99,9 +136,15 @@ def test_day7_acceptance_pack_builds_first_round_review_from_current_evidence() 
 
 
 def test_day7_acceptance_overlayed_human_review_clears_manual_blockers(
+    monkeypatch,
     tmp_path: Path,
 ) -> None:
-    prefill_pack = build_day7_acceptance_pack(run_id="day7-acceptance-prefill-unit")
+    _patch_git_snapshot(monkeypatch, freeze_created=False, dirty=True)
+    prefill_pack = build_day7_acceptance_pack(
+        pilot_run_dir=FINAL_PILOT_RUN_DIR,
+        dev_run_dir=FINAL_DEV_RUN_DIR,
+        run_id="day7-acceptance-prefill-unit",
+    )
     rows = []
     for row in prefill_pack["annotation_review"]["rows"]:
         notes = ""
@@ -124,6 +167,8 @@ def test_day7_acceptance_overlayed_human_review_clears_manual_blockers(
 
     pack = build_day7_acceptance_pack(
         annotation_review_path=review_path,
+        pilot_run_dir=FINAL_PILOT_RUN_DIR,
+        dev_run_dir=FINAL_DEV_RUN_DIR,
         run_id="day7-acceptance-human-overlay-unit",
     )
 
@@ -206,6 +251,70 @@ def test_day7_acceptance_blocks_open_method_issue_report() -> None:
     assert "formal_run_unblocked_by_issue_report" in pack["acceptance"]["failed_checks"]
 
 
+def test_day7_acceptance_requires_all_required_method_issue_ids() -> None:
+    decision = _acceptance_decision(
+        quality_report={"status": "passed", "dataset": {"scenario_case_count": 30}},
+        leakage_report={"status": "passed"},
+        feasibility_report={"status": "passed"},
+        benchmark_preflight={
+            "status": "passed",
+            "run": {"expected_raw_run_count": 520},
+        },
+        evidence={
+            "quota_gate": {"status": "passed"},
+            "benchmark_manifest": {"case_files": ["ctp120_test_draft.json"]},
+            "pilot_run": {"status": "passed"},
+            "development_run": {
+                "status": "passed",
+                "runtime_matches_day7_max_tokens_protocol": True,
+                "completion_token_cap_hit_rate_below_limit": True,
+                "empty_and_token_capped_call_count": 0,
+            },
+            "cost_forecast": {"status": "passed"},
+            "fix_report": {
+                "status": "completed",
+                "method_open_issue_count": 0,
+                "required_method_issue_statuses": {
+                    "METHOD-001": "fixed",
+                    "METHOD-002": None,
+                    "METHOD-003": "fixed",
+                },
+                "required_method_issues_present": False,
+                "required_method_issues_fixed": False,
+                "m3_systemic_failure": False,
+                "m3_method_formal_run_blocked": False,
+                "m3_programmatic_decision_rate": 0.0,
+                "agent_decision_ablation_required": False,
+                "formal_run_blocked": False,
+            },
+            "m3_ablation": {"hash_consistent": True},
+        },
+        annotation_rows=[{}] * 130,
+        annotation_summary={
+            "human_review_completed": True,
+            "pending_human_confirmation_count": 0,
+            "unresolved_machine_attention_count": 0,
+            "rejected_or_needs_revision_count": 0,
+            "source_error_count": 0,
+        },
+        case_rows=[{}] * 100,
+        git_snapshot={
+            "freeze_object_created": True,
+            "freeze_matches_head": True,
+            "worktree_dirty": False,
+        },
+        expected_case_count=100,
+        expected_turn_count=130,
+        expected_scenario_case_count=30,
+        required_method_count=4,
+    )
+
+    assert decision["status"] == "blocked"
+    assert "method_real_failures_closed" not in decision["failed_checks"]
+    assert "method_required_issue_ids_present" in decision["failed_checks"]
+    assert "method_required_issue_ids_fixed" in decision["failed_checks"]
+
+
 def test_m3_ablation_evidence_detects_stale_manifest_hash(tmp_path: Path) -> None:
     run_dir = tmp_path / "m3-ablation-stale"
     run_dir.mkdir()
@@ -269,13 +378,19 @@ def test_m3_ablation_evidence_detects_stale_manifest_hash(tmp_path: Path) -> Non
     assert "gate_manifest_sha256_matches_current_manifest" in evidence["failed_checks"]
 
 
-def test_write_day7_acceptance_pack_exports_required_artifacts(tmp_path: Path) -> None:
+def test_write_day7_acceptance_pack_exports_required_artifacts(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    _patch_git_snapshot(monkeypatch, freeze_created=False, dirty=True)
     output_dir = tmp_path / "day7_acceptance"
     docs_report = tmp_path / "Day7_acceptance_report.md"
 
     payload = write_day7_acceptance_pack(
         output_dir=output_dir,
         docs_report_path=docs_report,
+        pilot_run_dir=FINAL_PILOT_RUN_DIR,
+        dev_run_dir=FINAL_DEV_RUN_DIR,
         run_id="day7-acceptance-write-unit",
     )
 
@@ -316,6 +431,58 @@ def test_write_day7_acceptance_pack_exports_required_artifacts(tmp_path: Path) -
     assert "human_review_completed" in report
     assert "machine_needs_attention_count" in report
     assert "day7_annotation_review_round1.csv" in report
+
+
+def test_git_snapshot_uses_day7_tag_on_current_head_when_freeze_tag_is_omitted(
+    monkeypatch,
+) -> None:
+    def fake_git(args):
+        if args == ["rev-parse", "HEAD"]:
+            return "abc123"
+        if args == ["rev-parse", "--short", "HEAD"]:
+            return "abc123"
+        if args == ["branch", "--show-current"]:
+            return "master"
+        if args == ["status", "--short"]:
+            return ""
+        if args == ["tag", "--points-at", "HEAD", "--list", "day7-acceptance-*"]:
+            return "day7-acceptance-20260804"
+        if args == ["rev-parse", "--verify", "refs/tags/day7-acceptance-20260804^{}"]:
+            return "abc123"
+        return ""
+
+    monkeypatch.setattr(acceptance_review, "_git", fake_git)
+
+    snapshot = _git_snapshot()
+
+    assert snapshot["freeze_tag_name"] == "day7-acceptance-20260804"
+    assert snapshot["freeze_object_created"] is True
+    assert snapshot["freeze_matches_head"] is True
+    assert snapshot["worktree_dirty"] is False
+
+
+def _patch_git_snapshot(monkeypatch, *, freeze_created: bool, dirty: bool) -> None:
+    head = "day7-test-head"
+    tag_commit = head if freeze_created else None
+    monkeypatch.setattr(
+        acceptance_review,
+        "_git_snapshot",
+        lambda *, freeze_tag_name=None: {
+            "head_commit": head,
+            "head_short": head[:7],
+            "branch": "test-branch",
+            "worktree_dirty": dirty,
+            "changed_file_count": 1 if dirty else 0,
+            "status_sample": [" M test-file"] if dirty else [],
+            "freeze_object_created": freeze_created,
+            "freeze_tag_name": freeze_tag_name or "day7-acceptance-test",
+            "freeze_tag_commit": tag_commit,
+            "freeze_matches_head": freeze_created,
+            "freeze_mode": "git_tag" if freeze_created else "snapshot_only",
+            "recommended_tag_name": freeze_tag_name or "day7-acceptance-test",
+            "recommended_commands": [],
+        },
+    )
 
 
 def _broken_test_draft_with_machine_attention(tmp_path: Path) -> Path:

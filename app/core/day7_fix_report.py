@@ -686,38 +686,38 @@ def _method_failure_issues(
             next_action="Day8 优先修 M3 输出结构、任务类型稳定性、工具证据和多轮状态复用。",
         )
     ]
-    if m3_quality_open:
-        issues.append(
-            _issue(
-                issue_id="METHOD-002",
-                category="method_real_failure",
-                severity="high",
-                status="open",
-                summary="M3 失败集中在任务类型/执行状态/最终答案一致性与工具证据规则。",
-                before_run="只有总体 STSR 或 HCSR 时，看不出是调度错、工具证据错，还是最终结构化输出错。",
-                modification="报告从 evaluation_failed_rule_ids 和输出失败原因中抽取 Top 规则，形成可落地的修正入口。",
-                after_run=(
-                    f"M3 top_failed_rules={m3_rules or 'none'}；"
-                    f"top_failure_reasons={m3_reasons or 'none'}；"
-                    f"readiness_blocking_reasons={readiness_reasons or 'none'}。"
-                ),
-                evidence={
-                    "top_failed_rules": m3_analysis.get("top_failed_rules"),
-                    "top_failure_reasons": m3_analysis.get("top_failure_reasons"),
-                    "task_type_breakdown": m3_analysis.get("task_type_breakdown"),
-                    "development_top_failed_rules": dev.get("top_failed_rules"),
-                    "development_agent_set_exact_match_mean": dev.get("agent_set_exact_match_mean"),
-                    "development_tool_set_exact_match_mean": dev.get("tool_set_exact_match_mean"),
-                    "blocking_reasons": m3_method_readiness.get("blocking_reasons"),
-                },
-                regression_tests=[
-                    "tests/test_day7_fix_report.py::test_day7_fix_report_classifies_m3_systemic_failures",
-                    "tests/test_day7_fix_report.py::test_day7_fix_report_keeps_method_open_when_dev_quality_is_low",
-                ],
-                paper_risk="如果直接扩跑 100+ 案例，会把同一类错误复制成大规模失败，浪费免费 API 额度。",
-                next_action="先做小规模回归：每修一类规则，跑 8 条 smoke；通过后再扩展正式集。",
-            )
+    issues.append(
+        _issue(
+            issue_id="METHOD-002",
+            category="method_real_failure",
+            severity="high",
+            status="open" if m3_quality_open else "fixed",
+            summary="M3 失败集中在任务类型/执行状态/最终答案一致性与工具证据规则。",
+            before_run="只有总体 STSR 或 HCSR 时，看不出是调度错、工具证据错，还是最终结构化输出错。",
+            modification="报告从 evaluation_failed_rule_ids 和输出失败原因中抽取 Top 规则，形成可落地的修正入口。",
+            after_run=(
+                f"M3 top_failed_rules={m3_rules or 'none'}；"
+                f"top_failure_reasons={m3_reasons or 'none'}；"
+                f"readiness_blocking_reasons={readiness_reasons or 'none'}；"
+                f"quality_recovered={not m3_quality_open}。"
+            ),
+            evidence={
+                "top_failed_rules": m3_analysis.get("top_failed_rules"),
+                "top_failure_reasons": m3_analysis.get("top_failure_reasons"),
+                "task_type_breakdown": m3_analysis.get("task_type_breakdown"),
+                "development_top_failed_rules": dev.get("top_failed_rules"),
+                "development_agent_set_exact_match_mean": dev.get("agent_set_exact_match_mean"),
+                "development_tool_set_exact_match_mean": dev.get("tool_set_exact_match_mean"),
+                "blocking_reasons": m3_method_readiness.get("blocking_reasons"),
+            },
+            regression_tests=[
+                "tests/test_day7_fix_report.py::test_day7_fix_report_classifies_m3_systemic_failures",
+                "tests/test_day7_fix_report.py::test_day7_fix_report_keeps_method_open_when_dev_quality_is_low",
+            ],
+            paper_risk="如果直接扩跑 100+ 案例，会把同一类错误复制成大规模失败，浪费免费 API 额度。",
+            next_action="先做小规模回归：每修一类规则，跑 8 条 smoke；通过后再扩展正式集。",
         )
+    )
     issues.append(
         _issue(
             issue_id="METHOD-003",

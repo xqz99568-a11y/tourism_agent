@@ -18,6 +18,7 @@ from app.core.day7_test_draft import (
     build_ctp120_test_draft_document,
     build_day7_test_draft_gate,
 )
+from app.core.experiment_method_input import parse_visible_request_slots
 from app.core.formal_experiment_preflight import (
     build_formal_preflight_report,
     load_benchmark_document,
@@ -73,6 +74,54 @@ def test_generated_day7_test_draft_matches_protocol_and_quality_gate() -> None:
     )
     assert gate["offline_feasibility"]["status"] == "passed"
     assert gate["offline_feasibility"]["checked_tourism_unit_count"] == 110
+
+
+def test_day7_test_draft_review_fix_gold_policies_are_encoded() -> None:
+    document = build_ctp120_test_draft_document()
+    cases = {case["case_id"]: case for case in document["cases"]}
+
+    attraction_case = cases["ctp_test_024_shenzhen_attractions"]
+    attraction_expected = attraction_case["expected"]
+    attraction_slots = parse_visible_request_slots(attraction_case["user_input"])
+    assert "people_count" not in attraction_slots
+    assert attraction_expected["hard_constraints"] == {
+        "destination": "shenzhen",
+        "min_attractions": 3,
+        "max_attractions": 3,
+        "preferences": ["family"],
+    }
+
+    for case_id in (
+        "ctp_test_051_beijing_partial_replan",
+        "ctp_test_055_guilin_partial_replan",
+        "ctp_test_059_shenzhen_partial_replan",
+        "ctp_test_063_xian_partial_replan",
+        "ctp_test_067_hangzhou_partial_replan",
+    ):
+        expected = cases[case_id]["turns"][1]["expected"]
+        assert expected["accepted_agent_sets"] == [
+            ["weather", "itinerary", "budget"],
+            ["attraction", "weather", "itinerary", "budget"],
+        ]
+        assert expected["accepted_tool_sets"] == [
+            ["weather_query", "budget_calculator"],
+            ["poi_search", "weather_query", "budget_calculator"],
+        ]
+        assert expected["forbidden_tools"] == []
+
+    for index in range(71, 81):
+        case_id = next(case_id for case_id in cases if case_id.startswith(f"ctp_test_{index:03d}_"))
+        expected = cases[case_id]["turns"][1]["expected"]
+        assert set(expected["required_tools"]) == {"weather_query", "poi_search"}
+        assert expected["accepted_agent_sets"] == [
+            ["weather", "attraction", "itinerary"],
+            ["weather", "attraction", "itinerary", "budget"],
+        ]
+        assert expected["accepted_tool_sets"] == [
+            ["weather_query", "poi_search"],
+            ["weather_query", "poi_search", "budget_calculator"],
+        ]
+        assert expected["forbidden_tools"] == []
 
 
 def test_committed_day7_test_draft_files_are_current_and_pass_gate() -> None:

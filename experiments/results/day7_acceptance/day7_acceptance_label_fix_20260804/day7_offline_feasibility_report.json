@@ -1,0 +1,2082 @@
+{
+  "schema_version": "ctp-day7-offline-feasibility-review-v1",
+  "status": "passed",
+  "quality_status": "passed",
+  "saved_report_status": "passed",
+  "unit_count": 130,
+  "checked_tourism_unit_count": 110,
+  "passed_tourism_unit_count": 110,
+  "failed_tourism_unit_count": 0,
+  "city_unit_distribution": {
+    "beijing": 22,
+    "guilin": 22,
+    "hangzhou": 22,
+    "shenzhen": 22,
+    "xian": 22
+  },
+  "task_unit_distribution": {
+    "attraction_recommendation": 10,
+    "budget_query": 10,
+    "partial_replan": 20,
+    "trip_planning": 50,
+    "weather_adjustment": 10,
+    "weather_query": 10
+  },
+  "fixed_data_snapshot": {
+    "valid": true,
+    "schema_version": "fixed_data_manifest_v2",
+    "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+    "file_count": 25,
+    "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+    "city_ids": [
+      "beijing",
+      "hangzhou",
+      "xian",
+      "shenzhen",
+      "guilin"
+    ]
+  },
+  "rows": [
+    {
+      "label": "ctp_test_001_beijing_full_plan",
+      "case_id": "ctp_test_001_beijing_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_002_hangzhou_full_plan",
+      "case_id": "ctp_test_002_hangzhou_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_003_xian_full_plan",
+      "case_id": "ctp_test_003_xian_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 4,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_004_shenzhen_full_plan",
+      "case_id": "ctp_test_004_shenzhen_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_005_guilin_full_plan",
+      "case_id": "ctp_test_005_guilin_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_006_beijing_full_plan",
+      "case_id": "ctp_test_006_beijing_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 4,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_007_hangzhou_full_plan",
+      "case_id": "ctp_test_007_hangzhou_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_008_xian_full_plan",
+      "case_id": "ctp_test_008_xian_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_009_shenzhen_full_plan",
+      "case_id": "ctp_test_009_shenzhen_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 4,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_010_guilin_full_plan",
+      "case_id": "ctp_test_010_guilin_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_011_beijing_full_plan",
+      "case_id": "ctp_test_011_beijing_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_012_hangzhou_full_plan",
+      "case_id": "ctp_test_012_hangzhou_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 4,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_013_xian_full_plan",
+      "case_id": "ctp_test_013_xian_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_014_shenzhen_full_plan",
+      "case_id": "ctp_test_014_shenzhen_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_015_guilin_full_plan",
+      "case_id": "ctp_test_015_guilin_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 4,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_016_beijing_full_plan",
+      "case_id": "ctp_test_016_beijing_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_017_hangzhou_full_plan",
+      "case_id": "ctp_test_017_hangzhou_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_018_xian_full_plan",
+      "case_id": "ctp_test_018_xian_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 4,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_019_shenzhen_full_plan",
+      "case_id": "ctp_test_019_shenzhen_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_020_guilin_full_plan",
+      "case_id": "ctp_test_020_guilin_full_plan",
+      "turn_id": "",
+      "task_type": "trip_planning",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_021_beijing_attractions",
+      "case_id": "ctp_test_021_beijing_attractions",
+      "turn_id": "",
+      "task_type": "attraction_recommendation",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": null,
+        "min_attractions": 2,
+        "max_attractions": 2,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_022_hangzhou_attractions",
+      "case_id": "ctp_test_022_hangzhou_attractions",
+      "turn_id": "",
+      "task_type": "attraction_recommendation",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": null,
+        "min_attractions": 3,
+        "max_attractions": 3,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_023_xian_attractions",
+      "case_id": "ctp_test_023_xian_attractions",
+      "turn_id": "",
+      "task_type": "attraction_recommendation",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": null,
+        "min_attractions": 2,
+        "max_attractions": 2,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_024_shenzhen_attractions",
+      "case_id": "ctp_test_024_shenzhen_attractions",
+      "turn_id": "",
+      "task_type": "attraction_recommendation",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": null,
+        "min_attractions": 3,
+        "max_attractions": 3,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_025_guilin_attractions",
+      "case_id": "ctp_test_025_guilin_attractions",
+      "turn_id": "",
+      "task_type": "attraction_recommendation",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": null,
+        "min_attractions": 2,
+        "max_attractions": 2,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_026_beijing_attractions",
+      "case_id": "ctp_test_026_beijing_attractions",
+      "turn_id": "",
+      "task_type": "attraction_recommendation",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": null,
+        "min_attractions": 3,
+        "max_attractions": 3,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_027_hangzhou_attractions",
+      "case_id": "ctp_test_027_hangzhou_attractions",
+      "turn_id": "",
+      "task_type": "attraction_recommendation",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": null,
+        "min_attractions": 2,
+        "max_attractions": 2,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_028_xian_attractions",
+      "case_id": "ctp_test_028_xian_attractions",
+      "turn_id": "",
+      "task_type": "attraction_recommendation",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": null,
+        "min_attractions": 3,
+        "max_attractions": 3,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_029_shenzhen_attractions",
+      "case_id": "ctp_test_029_shenzhen_attractions",
+      "turn_id": "",
+      "task_type": "attraction_recommendation",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": null,
+        "min_attractions": 2,
+        "max_attractions": 2,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_030_guilin_attractions",
+      "case_id": "ctp_test_030_guilin_attractions",
+      "turn_id": "",
+      "task_type": "attraction_recommendation",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": null,
+        "min_attractions": 3,
+        "max_attractions": 3,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_031_beijing_weather_only",
+      "case_id": "ctp_test_031_beijing_weather_only",
+      "turn_id": "",
+      "task_type": "weather_query",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_032_hangzhou_weather_only",
+      "case_id": "ctp_test_032_hangzhou_weather_only",
+      "turn_id": "",
+      "task_type": "weather_query",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_033_xian_weather_only",
+      "case_id": "ctp_test_033_xian_weather_only",
+      "turn_id": "",
+      "task_type": "weather_query",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 4,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_034_shenzhen_weather_only",
+      "case_id": "ctp_test_034_shenzhen_weather_only",
+      "turn_id": "",
+      "task_type": "weather_query",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_035_guilin_weather_only",
+      "case_id": "ctp_test_035_guilin_weather_only",
+      "turn_id": "",
+      "task_type": "weather_query",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_036_beijing_weather_only",
+      "case_id": "ctp_test_036_beijing_weather_only",
+      "turn_id": "",
+      "task_type": "weather_query",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 4,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_037_hangzhou_weather_only",
+      "case_id": "ctp_test_037_hangzhou_weather_only",
+      "turn_id": "",
+      "task_type": "weather_query",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_038_xian_weather_only",
+      "case_id": "ctp_test_038_xian_weather_only",
+      "turn_id": "",
+      "task_type": "weather_query",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_039_shenzhen_weather_only",
+      "case_id": "ctp_test_039_shenzhen_weather_only",
+      "turn_id": "",
+      "task_type": "weather_query",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 4,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_040_guilin_weather_only",
+      "case_id": "ctp_test_040_guilin_weather_only",
+      "turn_id": "",
+      "task_type": "weather_query",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_041_beijing_budget_only",
+      "case_id": "ctp_test_041_beijing_budget_only",
+      "turn_id": "",
+      "task_type": "budget_query",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_042_hangzhou_budget_only",
+      "case_id": "ctp_test_042_hangzhou_budget_only",
+      "turn_id": "",
+      "task_type": "budget_query",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_043_xian_budget_only",
+      "case_id": "ctp_test_043_xian_budget_only",
+      "turn_id": "",
+      "task_type": "budget_query",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 4,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_044_shenzhen_budget_only",
+      "case_id": "ctp_test_044_shenzhen_budget_only",
+      "turn_id": "",
+      "task_type": "budget_query",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_045_guilin_budget_only",
+      "case_id": "ctp_test_045_guilin_budget_only",
+      "turn_id": "",
+      "task_type": "budget_query",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_046_beijing_budget_only",
+      "case_id": "ctp_test_046_beijing_budget_only",
+      "turn_id": "",
+      "task_type": "budget_query",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 4,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_047_hangzhou_budget_only",
+      "case_id": "ctp_test_047_hangzhou_budget_only",
+      "turn_id": "",
+      "task_type": "budget_query",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_048_xian_budget_only",
+      "case_id": "ctp_test_048_xian_budget_only",
+      "turn_id": "",
+      "task_type": "budget_query",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_049_shenzhen_budget_only",
+      "case_id": "ctp_test_049_shenzhen_budget_only",
+      "turn_id": "",
+      "task_type": "budget_query",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 4,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_050_guilin_budget_only",
+      "case_id": "ctp_test_050_guilin_budget_only",
+      "turn_id": "",
+      "task_type": "budget_query",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null
+      }
+    },
+    {
+      "label": "ctp_test_051_beijing_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_051_beijing_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_051_beijing_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_051_beijing_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_052_hangzhou_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_052_hangzhou_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_052_hangzhou_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_052_hangzhou_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_053_xian_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_053_xian_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_053_xian_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_053_xian_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_054_shenzhen_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_054_shenzhen_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_054_shenzhen_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_054_shenzhen_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_055_guilin_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_055_guilin_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_055_guilin_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_055_guilin_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_056_beijing_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_056_beijing_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_056_beijing_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_056_beijing_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_057_hangzhou_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_057_hangzhou_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_057_hangzhou_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_057_hangzhou_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_058_xian_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_058_xian_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_058_xian_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_058_xian_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_059_shenzhen_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_059_shenzhen_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_059_shenzhen_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_059_shenzhen_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_060_guilin_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_060_guilin_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_060_guilin_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_060_guilin_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_061_beijing_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_061_beijing_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_061_beijing_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_061_beijing_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_062_hangzhou_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_062_hangzhou_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_062_hangzhou_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_062_hangzhou_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_063_xian_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_063_xian_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_063_xian_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_063_xian_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_064_shenzhen_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_064_shenzhen_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_064_shenzhen_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_064_shenzhen_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_065_guilin_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_065_guilin_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_065_guilin_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_065_guilin_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_066_beijing_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_066_beijing_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_066_beijing_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_066_beijing_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_067_hangzhou_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_067_hangzhou_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_067_hangzhou_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_067_hangzhou_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_068_xian_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_068_xian_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_068_xian_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_068_xian_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_069_shenzhen_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_069_shenzhen_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_069_shenzhen_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_069_shenzhen_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_070_guilin_partial_replan/t1_full_plan",
+      "case_id": "ctp_test_070_guilin_partial_replan",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_070_guilin_partial_replan/t2_partial_change",
+      "case_id": "ctp_test_070_guilin_partial_replan",
+      "turn_id": "t2_partial_change",
+      "task_type": "partial_replan",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": null,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_071_beijing_weather_adjustment/t1_full_plan",
+      "case_id": "ctp_test_071_beijing_weather_adjustment",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_071_beijing_weather_adjustment/t2_weather_change",
+      "case_id": "ctp_test_071_beijing_weather_adjustment",
+      "turn_id": "t2_weather_change",
+      "task_type": "weather_adjustment",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null,
+        "weather_change": {
+          "scenario_type": "rain",
+          "affected_days": [
+            1
+          ]
+        }
+      }
+    },
+    {
+      "label": "ctp_test_072_hangzhou_weather_adjustment/t1_full_plan",
+      "case_id": "ctp_test_072_hangzhou_weather_adjustment",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_072_hangzhou_weather_adjustment/t2_weather_change",
+      "case_id": "ctp_test_072_hangzhou_weather_adjustment",
+      "turn_id": "t2_weather_change",
+      "task_type": "weather_adjustment",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null,
+        "weather_change": {
+          "scenario_type": "high_temperature",
+          "affected_days": [
+            2
+          ]
+        }
+      }
+    },
+    {
+      "label": "ctp_test_073_xian_weather_adjustment/t1_full_plan",
+      "case_id": "ctp_test_073_xian_weather_adjustment",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_073_xian_weather_adjustment/t2_weather_change",
+      "case_id": "ctp_test_073_xian_weather_adjustment",
+      "turn_id": "t2_weather_change",
+      "task_type": "weather_adjustment",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null,
+        "weather_change": {
+          "scenario_type": "low_temperature",
+          "affected_days": [
+            1
+          ]
+        }
+      }
+    },
+    {
+      "label": "ctp_test_074_shenzhen_weather_adjustment/t1_full_plan",
+      "case_id": "ctp_test_074_shenzhen_weather_adjustment",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_074_shenzhen_weather_adjustment/t2_weather_change",
+      "case_id": "ctp_test_074_shenzhen_weather_adjustment",
+      "turn_id": "t2_weather_change",
+      "task_type": "weather_adjustment",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null,
+        "weather_change": {
+          "scenario_type": "rain",
+          "affected_days": [
+            2
+          ]
+        }
+      }
+    },
+    {
+      "label": "ctp_test_075_guilin_weather_adjustment/t1_full_plan",
+      "case_id": "ctp_test_075_guilin_weather_adjustment",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_075_guilin_weather_adjustment/t2_weather_change",
+      "case_id": "ctp_test_075_guilin_weather_adjustment",
+      "turn_id": "t2_weather_change",
+      "task_type": "weather_adjustment",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null,
+        "weather_change": {
+          "scenario_type": "high_temperature",
+          "affected_days": [
+            1
+          ]
+        }
+      }
+    },
+    {
+      "label": "ctp_test_076_beijing_weather_adjustment/t1_full_plan",
+      "case_id": "ctp_test_076_beijing_weather_adjustment",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_076_beijing_weather_adjustment/t2_weather_change",
+      "case_id": "ctp_test_076_beijing_weather_adjustment",
+      "turn_id": "t2_weather_change",
+      "task_type": "weather_adjustment",
+      "city_id": "beijing",
+      "status": "passed",
+      "checks": {
+        "city_id": "beijing",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null,
+        "weather_change": {
+          "scenario_type": "rain",
+          "affected_days": [
+            1
+          ]
+        }
+      }
+    },
+    {
+      "label": "ctp_test_077_hangzhou_weather_adjustment/t1_full_plan",
+      "case_id": "ctp_test_077_hangzhou_weather_adjustment",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_077_hangzhou_weather_adjustment/t2_weather_change",
+      "case_id": "ctp_test_077_hangzhou_weather_adjustment",
+      "turn_id": "t2_weather_change",
+      "task_type": "weather_adjustment",
+      "city_id": "hangzhou",
+      "status": "passed",
+      "checks": {
+        "city_id": "hangzhou",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null,
+        "weather_change": {
+          "scenario_type": "high_temperature",
+          "affected_days": [
+            2
+          ]
+        }
+      }
+    },
+    {
+      "label": "ctp_test_078_xian_weather_adjustment/t1_full_plan",
+      "case_id": "ctp_test_078_xian_weather_adjustment",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_078_xian_weather_adjustment/t2_weather_change",
+      "case_id": "ctp_test_078_xian_weather_adjustment",
+      "turn_id": "t2_weather_change",
+      "task_type": "weather_adjustment",
+      "city_id": "xian",
+      "status": "passed",
+      "checks": {
+        "city_id": "xian",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null,
+        "weather_change": {
+          "scenario_type": "low_temperature",
+          "affected_days": [
+            1
+          ]
+        }
+      }
+    },
+    {
+      "label": "ctp_test_079_shenzhen_weather_adjustment/t1_full_plan",
+      "case_id": "ctp_test_079_shenzhen_weather_adjustment",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": 3,
+        "max_attractions": 4,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_079_shenzhen_weather_adjustment/t2_weather_change",
+      "case_id": "ctp_test_079_shenzhen_weather_adjustment",
+      "turn_id": "t2_weather_change",
+      "task_type": "weather_adjustment",
+      "city_id": "shenzhen",
+      "status": "passed",
+      "checks": {
+        "city_id": "shenzhen",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 2,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null,
+        "weather_change": {
+          "scenario_type": "rain",
+          "affected_days": [
+            2
+          ]
+        }
+      }
+    },
+    {
+      "label": "ctp_test_080_guilin_weather_adjustment/t1_full_plan",
+      "case_id": "ctp_test_080_guilin_weather_adjustment",
+      "turn_id": "t1_full_plan",
+      "task_type": "trip_planning",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": 3,
+        "max_attractions": 6,
+        "max_pois_per_day": 2
+      }
+    },
+    {
+      "label": "ctp_test_080_guilin_weather_adjustment/t2_weather_change",
+      "case_id": "ctp_test_080_guilin_weather_adjustment",
+      "turn_id": "t2_weather_change",
+      "task_type": "weather_adjustment",
+      "city_id": "guilin",
+      "status": "passed",
+      "checks": {
+        "city_id": "guilin",
+        "poi_count": 30,
+        "weather_scenario_count": 5,
+        "max_weather_days": 5,
+        "duration_days": 3,
+        "min_attractions": null,
+        "max_attractions": null,
+        "max_pois_per_day": null,
+        "weather_change": {
+          "scenario_type": "high_temperature",
+          "affected_days": [
+            1
+          ]
+        }
+      }
+    }
+  ],
+  "failed_units": []
+}

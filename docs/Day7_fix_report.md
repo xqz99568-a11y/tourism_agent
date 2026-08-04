@@ -47,7 +47,7 @@ experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/
 
 - 基础设施错误：4/4 fixed，0 open；
 - 实验实现错误：4/4 fixed，0 open；
-- 方法真实失败：2/2 fixed，0 open；
+- 方法真实失败：3/3 fixed，0 open；
 - `failed_checks=[]`；
 - `m3_systemic_failure=false`；
 - `m3_method_formal_run_blocked=false`；

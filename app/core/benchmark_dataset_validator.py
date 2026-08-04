@@ -58,6 +58,13 @@ TASK_REQUIRED_AGENTS = {
     "budget_query": {"budget"},
     "weather_adjustment": {"weather", "itinerary"},
 }
+AUDITED_PARSE_SLOT_KEYS = {
+    "destination",
+    "start_date",
+    "duration_days",
+    "people_count",
+    "budget_amount",
+}
 HARD_CONSTRAINT_KEYS = {
     "duration_days",
     "duration",
@@ -98,6 +105,12 @@ def build_benchmark_dataset_quality_report(
     warnings: list[str] = []
     raw_cases = [case for case in cases if isinstance(case, Mapping)]
     units = _flatten_units(raw_cases)
+    document_mapping = document if isinstance(document, Mapping) else {}
+    annotation_policy = document_mapping.get("annotation_policy")
+    audit_extra_core_slots = bool(
+        isinstance(annotation_policy, Mapping)
+        and annotation_policy.get("slot_gold_consistency_required")
+    )
     comparison_units = {
         str(split_name): _flatten_units(
             [case for case in split_cases if isinstance(case, Mapping)]
@@ -176,6 +189,7 @@ def build_benchmark_dataset_quality_report(
             unit,
             task_types=task_types,
             strict_formal=strict_formal,
+            audit_extra_core_slots=audit_extra_core_slots,
             errors=errors,
             warnings=warnings,
         )
@@ -227,6 +241,7 @@ def build_benchmark_dataset_quality_report(
             "required_tool_sets": True,
             "fixed_offline_city_only": True,
             "parse_gold_consistency_required": True,
+            "extra_core_slot_consistency_required": audit_extra_core_slots,
             "changed_slot_evidence_required": True,
             "preserved_slot_consistency_required": True,
             "cross_split_duplicate_check": bool(comparison_units),
@@ -287,6 +302,7 @@ def _validate_unit(
     *,
     task_types: set[str],
     strict_formal: bool,
+    audit_extra_core_slots: bool,
     errors: list[str],
     warnings: list[str],
 ) -> dict[str, Any]:
@@ -363,6 +379,7 @@ def _validate_unit(
         gold_slots=gold_slots,
         label=label,
         strict_formal=strict_formal,
+        audit_extra_core_slots=audit_extra_core_slots,
         errors=errors,
         warnings=warnings,
     )
@@ -585,6 +602,7 @@ def _validate_parse_gold_consistency(
     gold_slots: Mapping[str, Any],
     label: str,
     strict_formal: bool,
+    audit_extra_core_slots: bool,
     errors: list[str],
     warnings: list[str],
 ) -> None:
@@ -605,6 +623,15 @@ def _validate_parse_gold_consistency(
                 errors,
                 warnings,
             )
+    if not audit_extra_core_slots:
+        return
+    for slot in sorted((set(visible_slots) & AUDITED_PARSE_SLOT_KEYS) - set(gold_slots)):
+        _label_issue(
+            f"{label}: parsed visible slot '{slot}'={visible_slots[slot]!r} is not declared in gold slots",
+            strict_formal,
+            errors,
+            warnings,
+        )
 
 
 def _validate_slot_change_labels(
