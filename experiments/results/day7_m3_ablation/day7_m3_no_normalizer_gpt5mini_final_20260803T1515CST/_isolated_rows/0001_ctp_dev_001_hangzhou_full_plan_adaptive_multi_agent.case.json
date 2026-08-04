@@ -1,0 +1,38 @@
+{
+  "case_id": "ctp_dev_001_hangzhou_full_plan",
+  "user_input": "请为杭州规划一个2026年8月1日出发的两天情侣旅行，共2人，预算5000元，需要景点、天气、每日行程和预算。",
+  "expected": {
+    "task_type": "trip_planning",
+    "required_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ],
+    "accepted_agent_sets": [
+      [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ]
+    ],
+    "hard_constraints": {
+      "destination": "hangzhou",
+      "start_date": "2026-08-01",
+      "duration_days": 2,
+      "people_count": 2,
+      "min_attractions": 3,
+      "max_attractions": 4,
+      "max_pois_per_day": 2,
+      "budget_limit": 5000,
+      "traveler_group": "couple"
+    }
+  }
+}

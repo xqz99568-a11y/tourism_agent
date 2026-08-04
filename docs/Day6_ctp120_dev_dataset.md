@@ -5,7 +5,7 @@
 ## 文件分工
 
 - `experiments/ctp120_dev.json`：20 条开发集，当前主要实验调试使用。
-- `experiments/benchmark.json`：benchmark 索引文件，当前指向 `ctp120_dev.json`。
+- `experiments/benchmark.json`：benchmark 索引文件，Day 7 小任务七后已指向正式测试集草稿 `ctp120_test_draft.json`；开发集仍由 Day7 开发集脚本显式读取 `ctp120_dev.json`。
 - `experiments/benchmark_test.json`：8 条 smoke 集，用于快速检查链路和字段格式。
 
 ## 开发集覆盖
@@ -35,8 +35,8 @@
 
 ```powershell
 python experiments/validate_benchmark_dataset.py --benchmark experiments/ctp120_dev.json --expected-cases 20
-python experiments/validate_benchmark_dataset.py --benchmark experiments/benchmark.json --expected-cases 20
-python experiments/run_formal_experiment.py --benchmark experiments/benchmark.json --expected-cases 20 --preflight-only --skip-llm-config-check
+python experiments/validate_benchmark_dataset.py --benchmark experiments/benchmark.json --expected-cases 100
+python experiments/run_formal_experiment.py --benchmark experiments/benchmark.json --expected-cases 100 --preflight-only --skip-llm-config-check
 ```
 
-如果后续扩展到正式论文结果集，应复制当前字段口径，增加到 100-120 条，并把 `benchmark.json` 指向冻结后的正式数据文件。
+如果需要继续复现 20 条开发集，请直接使用 `experiments/ctp120_dev.json` 或 `experiments/run_day7_dev_experiment.py`；不要再把开发集结果当作正式测试集结论。

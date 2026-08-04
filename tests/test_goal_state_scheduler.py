@@ -14,6 +14,7 @@ from app.core.goal_state_scheduler import (
     normalize_slots,
     schedule_goal_state_ticket,
 )
+from app.core.experiment_method_input import parse_visible_request_slots
 
 
 def _successful_previous_state(
@@ -148,6 +149,40 @@ def test_complete_plan_with_attractions_weather_and_budget_beats_weather_query()
     ]
 
 
+def test_complete_plan_wording_with_budget_still_routes_to_full_plan() -> None:
+    user_input = "我们一家3口想在2026年8月5日去西安玩两天，偏历史文化和亲子体验，预算6000元，请给完整旅行计划。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots=parse_visible_request_slots(user_input),
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "trip_planning"
+    assert decision.planned_agents == ["attraction", "weather", "itinerary", "budget"]
+    assert decision.planned_tools == [
+        "poi_search",
+        "weather_query",
+        "budget_calculator",
+    ]
+
+
+def test_landmark_route_weather_budget_wording_routes_to_full_plan() -> None:
+    user_input = "请安排深圳2026年8月7日出发的两天城市地标游，2个成人，预算7000元，同时给天气、路线和预算估算。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots=parse_visible_request_slots(user_input),
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "trip_planning"
+    assert decision.planned_agents == ["attraction", "weather", "itinerary", "budget"]
+    assert decision.planned_tools == [
+        "poi_search",
+        "weather_query",
+        "budget_calculator",
+    ]
+
+
 def test_clear_weather_only_request_still_routes_to_weather_agent() -> None:
     ticket = build_goal_state_ticket(
         user_input="帮我查一下西安 2026-08-10 开始两天的天气风险。",
@@ -162,6 +197,54 @@ def test_clear_weather_only_request_still_routes_to_weather_agent() -> None:
     assert ticket.task_type == "weather_query"
     assert decision.planned_agents == ["weather"]
     assert decision.planned_tools == ["weather_query"]
+
+
+def test_chinese_weather_only_with_negated_route_poi_budget_stays_weather_query() -> None:
+    user_input = "帮我只看深圳2026年8月11日起两天的天气，别做路线、景点或预算。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots=parse_visible_request_slots(user_input),
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "weather_query"
+    assert ticket.clarification_required is False
+    assert decision.planned_agents == ["weather"]
+    assert decision.planned_tools == ["weather_query"]
+
+
+def test_rough_budget_with_negated_ticket_dependency_uses_budget_only() -> None:
+    user_input = "请只粗略估算桂林2026年8月12日出发三天2人游是否能控制在4500元内，不要计算具体景点门票。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots=parse_visible_request_slots(user_input),
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "budget_query"
+    assert ticket.dependency_policy == {
+        "budget_scope": "rough_budget_without_ticket_dependency",
+        "requires_attraction_evidence": False,
+    }
+    assert decision.planned_agents == ["budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+
+
+def test_chinese_capability_question_and_goodnight_are_general_chat() -> None:
+    for user_input in (
+        "你好，我只是想了解这个旅游助手能做什么，暂时不要制定旅行计划。",
+        "谢谢，今天不需要景点、天气、路线或预算，我只是来道个晚安。",
+    ):
+        ticket = build_goal_state_ticket(
+            user_input=user_input,
+            current_slots=parse_visible_request_slots(user_input),
+        )
+        decision = schedule_goal_state_ticket(ticket)
+
+        assert ticket.task_type == "general_chat"
+        assert ticket.clarification_required is False
+        assert decision.planned_agents == []
+        assert decision.planned_tools == []
 
 
 def test_goal_state_ticket_merges_previous_state_when_current_turn_only_has_changes() -> None:
@@ -315,6 +398,191 @@ def test_greeting_that_negates_travel_planning_is_general_chat() -> None:
     assert ticket.clarification_required is False
     assert decision.planned_agents == []
     assert decision.planned_tools == []
+
+
+def test_chinese_negated_tourism_terms_stay_general_chat() -> None:
+    user_input = "你好，我只是测试一下对话，不需要任何旅行规划、景点、天气或预算。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots=parse_visible_request_slots(user_input),
+        previous_state=None,
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "general_chat"
+    assert ticket.clarification_required is False
+    assert decision.planned_agents == []
+    assert decision.planned_tools == []
+
+
+def test_chinese_attraction_only_request_ignores_negated_full_plan_terms() -> None:
+    user_input = "只帮我挑深圳2个适合室内参观的景点，不要天气、行程和预算。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots=parse_visible_request_slots(user_input),
+        previous_state=None,
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "attraction_recommendation"
+    assert ticket.clarification_required is False
+    assert decision.planned_agents == ["attraction"]
+    assert decision.planned_tools == ["poi_search"]
+
+
+def test_chinese_attraction_only_request_ignores_negated_complete_itinerary_phrase() -> None:
+    user_input = "只推荐桂林3个自然山水类景点，不要生成完整行程、天气报告或预算。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots={
+            "destination": "guilin",
+            "preferences": ["nature"],
+            "special_requirements": ["avoidance_constraint"],
+        },
+        previous_state=None,
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "attraction_recommendation"
+    assert ticket.clarification_required is False
+    assert ticket.missing_slots == []
+    assert decision.planned_agents == ["attraction"]
+    assert decision.planned_tools == ["poi_search"]
+
+
+def test_chinese_budget_only_request_ignores_negated_poi_and_itinerary_terms() -> None:
+    user_input = "只估算杭州2026年8月8日出发的三天2人游，预算4600元是否够用，不要生成景点清单。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots=parse_visible_request_slots(user_input),
+        previous_state=None,
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "budget_query"
+    assert ticket.clarification_required is False
+    assert decision.planned_agents == ["budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+
+
+def test_chinese_explicit_clarification_uses_user_named_missing_slots() -> None:
+    user_input = "我想去桂林玩，但没说出发日期、旅行天数和预算，请先向我确认缺失信息。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots=parse_visible_request_slots(user_input),
+        previous_state=None,
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "clarification"
+    assert ticket.clarification_fields == [
+        "start_date",
+        "duration_days",
+        "budget_amount",
+    ]
+    assert decision.planned_agents == []
+    assert decision.planned_tools == []
+
+
+def test_chinese_clarification_handles_not_yet_decided_budget_fields() -> None:
+    user_input = "我想去北京旅游，但还没确定出发日期、玩几天和预算，请先问我需要补充什么。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots={"destination": "beijing"},
+        previous_state=None,
+    )
+    decision = schedule_goal_state_ticket(ticket)
+
+    assert ticket.task_type == "clarification"
+    assert ticket.clarification_fields == [
+        "start_date",
+        "duration_days",
+        "budget_amount",
+    ]
+    assert decision.planned_agents == []
+    assert decision.planned_tools == []
+
+
+def test_chinese_rain_change_routes_to_weather_adjustment_without_budget_recompute() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "destination": "beijing",
+            "start_date": "2026-08-18",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 6600,
+        }
+    )
+    user_input = "北京第1天有雨，只调整第一天，2026年8月18日、两天、2个人和6600元预算都不变。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots=parse_visible_request_slots(user_input),
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "weather_adjustment"
+    assert ticket.changed_slots == ["weather_scenario"]
+    assert decision.planned_agents == ["weather", "itinerary"]
+    assert decision.planned_tools == ["weather_query"]
+    assert decision.reused_agents == ["attraction"]
+    assert "budget" not in decision.invalidated_agents
+
+
+def test_high_temperature_adjustment_reuses_attraction_without_budget_recompute() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "destination": "shenzhen",
+            "start_date": "2026-08-21",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 7200,
+        }
+    )
+    user_input = "深圳第1天变成高温，请把户外活动调到凉爽时段或室内备选，2026年8月21日、两天、2个人和7200元预算不变。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots={
+            "weather_scenario": "high_temperature",
+            "preferences": ["nature", "indoor"],
+            "special_requirements": ["indoor_preferred"],
+        },
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "weather_adjustment"
+    assert decision.planned_agents == ["weather", "itinerary"]
+    assert decision.planned_tools == ["weather_query"]
+    assert decision.reused_agents == ["attraction"]
+    assert "budget" not in decision.planned_agents
+    assert "budget" not in decision.invalidated_agents
+
+
+def test_identical_chinese_previous_turn_reuses_all_results() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "destination": "hangzhou",
+            "start_date": "2026-08-23",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5100,
+            "preferences": ["history_culture"],
+        }
+    )
+    user_input = "完全按上一轮杭州文化游再给一次，不改变2026年8月23日、两天、2个人和5100元预算。"
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots={},
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "partial_replan"
+    assert ticket.goal_change_type == "identical_request"
+    assert decision.planned_agents == []
+    assert decision.planned_tools == []
+    assert decision.reused_agents == ["attraction", "weather", "itinerary", "budget"]
 
 
 def test_weather_only_with_negated_itinerary_is_weather_query() -> None:
@@ -613,6 +881,31 @@ def test_previous_fingerprint_extra_conditions_do_not_match_missing_current_slot
         current_slots=current_slots,
         previous_state=budget_state,
     )
+
+
+def test_weather_adjustment_does_not_recompute_budget_when_budget_fingerprint_is_noisy() -> None:
+    slots = {
+        "destination": "beijing",
+        "start_date": "2026-08-18",
+        "duration_days": 2,
+        "people_count": 2,
+        "budget_amount": 6600,
+    }
+    previous_state = _successful_previous_state(slots)
+    previous_state["tool_results"]["budget_calculator"]["input"]["spending_level"] = "luxury"
+
+    ticket = build_goal_state_ticket(
+        user_input="北京第1天有雨，只调整第一天，日期、天数、人数和预算都不变。",
+        current_slots={"weather_scenario": "rain"},
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "weather_adjustment"
+    assert decision.planned_agents == ["weather", "itinerary"]
+    assert decision.planned_tools == ["weather_query"]
+    assert decision.reused_agents == ["attraction"]
+    assert "budget" not in decision.invalidated_agents
 
 
 def test_empty_preferences_and_none_budget_are_explicit_slot_changes() -> None:

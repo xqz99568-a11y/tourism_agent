@@ -13,6 +13,7 @@ import hashlib
 import json
 import os
 import random
+import re
 import subprocess
 import time
 import uuid
@@ -29,7 +30,7 @@ from app.core.experiment_method_contract import (
     method_fairness_contract_hash,
     validate_method_fairness_contract,
 )
-from app.core.experiment_method_input import build_generation_case
+from app.core.experiment_method_input import build_generation_case, parse_visible_request_slots
 from app.core.experiment_run_audit import (
     RUN_AUDIT_SCHEMA_VERSION,
     build_run_audit,
@@ -46,6 +47,7 @@ from app.core.experiment_metrics import (
 from app.core.fixed_data import (
     CANONICAL_JSON_SHA256_STRATEGY,
     canonical_json_sha256,
+    get_fixed_tourism_data,
     validate_fixed_data_snapshot,
 )
 from app.core.goal_state_scheduler import (
@@ -101,6 +103,7 @@ MethodHandler = Callable[[Dict[str, Any]], Awaitable[Any] | Any]
 METHOD_PREVIOUS_STATE_SCHEMA_VERSION = "ctp-method-previous-state-v1"
 RESEARCH_AGENT_OUTPUT_SCHEMA_VERSION = "ctp-research-agent-output-v1"
 RESEARCH_AGENT_DECISION_SCHEMA_VERSION = "ctp-research-agent-decision-v1"
+RESEARCH_AGENT_DECISION_NORMALIZER_VERSION = "ctp-research-agent-decision-normalizer-v1"
 RESEARCH_AGENT_PROMPT_VERSION = "ctp-research-agent-prompts-v1"
 STRUCTURED_LLM_OUTPUT_PROMPT_VERSION = "ctp-structured-llm-output-prompts-v1"
 STRUCTURED_LLM_CONTENT_FIELDS = (
@@ -124,6 +127,8 @@ STRUCTURED_LLM_M0_METHOD_FIELDS = (
     "called_tools",
     "tool_results",
 )
+EXPERIMENT_LLM_CALL_TIMEOUT_ENV = "EXPERIMENT_LLM_CALL_TIMEOUT_SECONDS"
+EXPERIMENT_AGENT_DECISION_NORMALIZER_ENV = "EXPERIMENT_AGENT_DECISION_NORMALIZER"
 FROZEN_RESEARCH_TASK_TYPES = {
     "trip_planning",
     "attraction_recommendation",
@@ -197,6 +202,7 @@ class ExperimentRunner:
         system_variant: Optional[str] = None,
         model_config_name: Optional[str] = None,
         method_order_seed: Optional[int] = None,
+        enable_research_agent_decision_normalizer: Optional[bool] = None,
     ) -> None:
         self.trace_dir = Path(trace_dir)
         self.output_dir = Path(output_dir)
@@ -208,6 +214,11 @@ class ExperimentRunner:
         self.repeat_index = _validate_repeat_index(repeat_index)
         self.system_variant = _optional_text(system_variant)
         self.model_config_name = _optional_text(model_config_name) or "default"
+        self.enable_research_agent_decision_normalizer = (
+            _environment_bool(EXPERIMENT_AGENT_DECISION_NORMALIZER_ENV, True)
+            if enable_research_agent_decision_normalizer is None
+            else bool(enable_research_agent_decision_normalizer)
+        )
         self.method_order_seed = (
             method_order_seed
             if method_order_seed is not None
@@ -296,7 +307,13 @@ class ExperimentRunner:
 
         with _temporary_env(env):
             try:
-                output = await self._dispatch_method(generation_case, method, request_id)
+                output = await asyncio.wait_for(
+                    self._dispatch_method(generation_case, method, request_id),
+                    timeout=_experiment_result_timeout_seconds(),
+                )
+            except TimeoutError as exc:
+                error = f"experiment result timeout: {exc}"
+                output = {"error": error, "execution_status": "failed"}
             except Exception as exc:  # keep benchmark runs table-shaped
                 error = str(exc)
                 output = {"error": error}
@@ -370,6 +387,20 @@ class ExperimentRunner:
         effective_repeats = self.repeats if repeats is None else _validate_repeats(repeats)
         effective_run_id = str(run_id or self.run_id)
 
+        benchmark_output_dir = self._benchmark_output_dir(effective_run_id)
+        if csv_path is None:
+            csv_path = benchmark_output_dir / "benchmark_results.csv"
+        if json_path is None:
+            json_path = benchmark_output_dir / "benchmark_results.json"
+        if summary_path is None:
+            summary_path = benchmark_output_dir / "evaluation_summary.json"
+        if paper_tables_path is None:
+            paper_tables_path = benchmark_output_dir / "paper_tables.md"
+        if manifest_path is None:
+            manifest_path = benchmark_output_dir / "experiment_manifest.json"
+        checkpoint_csv_path = benchmark_output_dir / "benchmark_results.checkpoint.csv"
+        checkpoint_json_path = benchmark_output_dir / "benchmark_results.checkpoint.json"
+
         results: List[Dict[str, Any]] = []
         for repeat_offset in range(effective_repeats):
             repeat_index = self.repeat_index + repeat_offset
@@ -391,6 +422,11 @@ class ExperimentRunner:
                                 model_config_name=model_config_name,
                             )
                         )
+                        self._export_benchmark_checkpoint(
+                            results,
+                            csv_path=checkpoint_csv_path,
+                            json_path=checkpoint_json_path,
+                        )
                     continue
 
                 for method in case_methods:
@@ -404,18 +440,12 @@ class ExperimentRunner:
                             model_config_name=model_config_name,
                         )
                     )
+                    self._export_benchmark_checkpoint(
+                        results,
+                        csv_path=checkpoint_csv_path,
+                        json_path=checkpoint_json_path,
+                    )
 
-        benchmark_output_dir = self._benchmark_output_dir(effective_run_id)
-        if csv_path is None:
-            csv_path = benchmark_output_dir / "benchmark_results.csv"
-        if json_path is None:
-            json_path = benchmark_output_dir / "benchmark_results.json"
-        if summary_path is None:
-            summary_path = benchmark_output_dir / "evaluation_summary.json"
-        if paper_tables_path is None:
-            paper_tables_path = benchmark_output_dir / "paper_tables.md"
-        if manifest_path is None:
-            manifest_path = benchmark_output_dir / "experiment_manifest.json"
         self.export_csv(results, csv_path)
         self.export_json(results, json_path)
         summary = self.export_evaluation_summary(results, summary_path)
@@ -437,6 +467,18 @@ class ExperimentRunner:
             },
         )
         return results
+
+    def _export_benchmark_checkpoint(
+        self,
+        results: List[Dict[str, Any]],
+        *,
+        csv_path: str | Path,
+        json_path: str | Path,
+    ) -> None:
+        if not results:
+            return
+        self.export_csv(results, csv_path)
+        self.export_json(results, json_path)
 
     async def _arun_scenario_case(
         self,
@@ -487,6 +529,8 @@ class ExperimentRunner:
                 turn_index=turn_index,
                 turn_count=len(turns),
                 target_turn=bool(turn_case.get("target_turn")),
+                previous_state=previous_state,
+                method=method,
             )
             results.append(result)
             previous_state = self._method_previous_state_from_result(result)
@@ -575,12 +619,69 @@ class ExperimentRunner:
         turn_index: int,
         turn_count: int,
         target_turn: bool,
+        previous_state: Optional[Dict[str, Any]],
+        method: ExperimentMethod,
     ) -> None:
+        previous_state_audit = self._scenario_previous_state_audit(
+            previous_state,
+            method=method,
+            turn_index=turn_index,
+        )
         result["scenario_id"] = scenario_id
         result["turn_id"] = turn_id
         result["turn_index"] = turn_index
         result["scenario_turn_count"] = turn_count
         result["target_turn"] = target_turn
+        result["method_previous_state_policy"] = (
+            "method_local_previous_state_from_prior_turn_output"
+        )
+        result["method_previous_state_audit"] = previous_state_audit
+        result["previous_state_provided"] = previous_state_audit["previous_state_provided"]
+        result["previous_state_schema_version"] = previous_state_audit.get("schema_version")
+        result["previous_state_method"] = previous_state_audit.get("method")
+        result["previous_state_turn_id"] = previous_state_audit.get("turn_id")
+        result["previous_state_turn_index"] = previous_state_audit.get("turn_index")
+        result["previous_state_is_method_local"] = previous_state_audit[
+            "is_method_local"
+        ]
+        result["previous_state_is_prior_turn"] = previous_state_audit["is_prior_turn"]
+        result["previous_state_has_evaluation"] = previous_state_audit["has_evaluation"]
+        result["previous_state_has_metrics"] = previous_state_audit["has_metrics"]
+
+    def _scenario_previous_state_audit(
+        self,
+        previous_state: Optional[Dict[str, Any]],
+        *,
+        method: ExperimentMethod,
+        turn_index: int,
+    ) -> Dict[str, Any]:
+        if not isinstance(previous_state, dict):
+            return {
+                "previous_state_provided": False,
+                "schema_version": None,
+                "method": None,
+                "turn_id": None,
+                "turn_index": None,
+                "is_method_local": turn_index == 0,
+                "is_prior_turn": turn_index == 0,
+                "has_evaluation": False,
+                "has_metrics": False,
+            }
+        previous_turn_index = _optional_int(previous_state.get("turn_index"))
+        return {
+            "previous_state_provided": True,
+            "schema_version": previous_state.get("schema_version"),
+            "method": previous_state.get("method"),
+            "turn_id": previous_state.get("turn_id"),
+            "turn_index": previous_turn_index,
+            "is_method_local": str(previous_state.get("method") or "") == str(method),
+            "is_prior_turn": (
+                previous_turn_index is not None
+                and previous_turn_index == turn_index - 1
+            ),
+            "has_evaluation": "evaluation" in previous_state,
+            "has_metrics": "metrics" in previous_state,
+        }
 
     def _append_scenario_dialogue_history(
         self,
@@ -688,8 +789,20 @@ class ExperimentRunner:
         dataset_sha256 = canonical_json_sha256(document)
         cache_disabled = is_experiment_cache_disabled()
         strict_mode = is_experiment_strict_mode()
+        base_url = os.getenv("LLM_BASE_URL") or settings.llm.base_url
         model = os.getenv("LLM_MODEL") or settings.llm.model
         temperature = _environment_float("LLM_TEMPERATURE", settings.llm.temperature)
+        max_tokens = _environment_int("LLM_MAX_TOKENS", settings.llm.max_tokens)
+        timeout_seconds = _environment_int("LLM_TIMEOUT", settings.llm.timeout)
+        retry_max_attempts = _environment_int(
+            "LLM_RETRY_MAX_ATTEMPTS",
+            settings.llm.retry_max_attempts,
+        )
+        reasoning_effort = _environment_text("LLM_REASONING_EFFORT")
+        deterministic_research_final_answer = _environment_bool(
+            "EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER",
+            False,
+        )
         resolved_system_variant = _optional_text(system_variant) or self.system_variant
         resolved_model_config = (
             _optional_text(model_config_name) or self.model_config_name
@@ -742,19 +855,70 @@ class ExperimentRunner:
             "repeat_index_start": self.repeat_index,
             "system_variant": resolved_system_variant or "per_method",
             "model_config_name": resolved_model_config,
+            "provider": _llm_provider_from_base_url(base_url),
+            "base_url": str(base_url),
             "model": str(model),
             "temperature": temperature,
+            "max_tokens": max_tokens,
+            "timeout_seconds": timeout_seconds,
+            "retry_max_attempts": retry_max_attempts,
+            "reasoning_effort": reasoning_effort,
+            "deterministic_research_final_answer": deterministic_research_final_answer,
             "cache_enabled": not cache_disabled,
             "cache_disabled": cache_disabled,
             "strict_mode": strict_mode,
             "model_config": {
                 "name": resolved_model_config,
+                "provider": _llm_provider_from_base_url(base_url),
+                "base_url": str(base_url),
                 "model": str(model),
                 "temperature": temperature,
+                "max_tokens": max_tokens,
+                "timeout_seconds": timeout_seconds,
+                "retry_max_attempts": retry_max_attempts,
+                "reasoning_effort": reasoning_effort,
+                "deterministic_research_final_answer": deterministic_research_final_answer,
+            },
+            "runtime_config": {
+                "schema_version": "ctp-experiment-runtime-config-v1",
+                "provider": _llm_provider_from_base_url(base_url),
+                "base_url": str(base_url),
+                "model": str(model),
+                "temperature": temperature,
+                "max_tokens": max_tokens,
+                "timeout_seconds": timeout_seconds,
+                "retry_max_attempts": retry_max_attempts,
+                "reasoning_effort": reasoning_effort,
+                "deterministic_research_final_answer": deterministic_research_final_answer,
+                "final_answer_generation_mode": (
+                    "deterministic_research_evidence_renderer"
+                    if deterministic_research_final_answer
+                    else "llm_final_answer_generation"
+                ),
+                "strict_mode": strict_mode,
+                "cache_disabled": cache_disabled,
+                "trace_save_user_message": _environment_bool("TRACE_SAVE_USER_MESSAGE", False),
+                "api_key_configured": bool(os.getenv("LLM_API_KEY") or settings.llm.is_configured),
+                "mock_fallback_allowed": not strict_mode,
             },
             "prompt_versions": {
                 "structured_llm_output": STRUCTURED_LLM_OUTPUT_PROMPT_VERSION,
                 "research_agent": RESEARCH_AGENT_PROMPT_VERSION,
+            },
+            "method_controls": {
+                "schema_version": "ctp-method-controls-v1",
+                "research_agent_decision_normalizer_enabled": (
+                    self.enable_research_agent_decision_normalizer
+                ),
+                "research_agent_decision_normalizer_version": (
+                    RESEARCH_AGENT_DECISION_NORMALIZER_VERSION
+                ),
+                "deterministic_research_final_answer": deterministic_research_final_answer,
+                "final_answer_generation_mode": (
+                    "deterministic_research_evidence_renderer"
+                    if deterministic_research_final_answer
+                    else "llm_final_answer_generation"
+                ),
             },
             "costing": {
                 "schema_version": COSTING_SCHEMA_VERSION,
@@ -874,6 +1038,16 @@ class ExperimentRunner:
             "turn_index",
             "scenario_turn_count",
             "target_turn",
+            "method_previous_state_policy",
+            "previous_state_provided",
+            "previous_state_schema_version",
+            "previous_state_method",
+            "previous_state_turn_id",
+            "previous_state_turn_index",
+            "previous_state_is_method_local",
+            "previous_state_is_prior_turn",
+            "previous_state_has_evaluation",
+            "previous_state_has_metrics",
             "case_id",
             "method",
             "request_id",
@@ -975,6 +1149,9 @@ class ExperimentRunner:
             "duplicate_tool_call_count",
             "planned_executed_tool_coverage",
             "llm_call_count",
+            "llm_retry_attempt_count",
+            "llm_retry_count",
+            "llm_retry_error_count",
             "agent_llm_call_count",
             "api_call_count",
             "prompt_tokens",
@@ -1381,7 +1558,43 @@ class ExperimentRunner:
             try:
                 with trace_component("single_agent", agent_name="single_agent"):
                     for _ in range(self.SINGLE_AGENT_MAX_TOOL_ROUNDS):
-                        response = await llm.chat(messages, tools=definitions)
+                        if self._single_agent_deterministic_output_ready(
+                            case=case,
+                            tool_results=tool_results,
+                            executed_call_count=executed_call_count,
+                        ):
+                            method_output = await self._build_research_method_output(
+                                case=case,
+                                method="single_agent",
+                                planned_agents=["single_agent"],
+                                planned_tools=planned_tools,
+                                tool_results=tool_results,
+                                called_tools=called_tools,
+                            )
+                            method_output.setdefault("metadata", {})[
+                                "single_agent_final_answer_mode"
+                            ] = "deterministic_after_tool_evidence"
+                            finish_agent_run(
+                                agent_run,
+                                agent_name="single_agent",
+                                status=(
+                                    "failed"
+                                    if method_output.get("execution_status") == "failed"
+                                    else "completed"
+                                ),
+                                tool_count=executed_call_count,
+                            )
+                            set_trace_result_summary(
+                                method_output,
+                                offline_data=self._offline_data_summary(compact=True),
+                            )
+                            return method_output
+
+                        response = await self._llm_chat_with_experiment_timeout(
+                            llm,
+                            messages,
+                            tools=definitions,
+                        )
                         if not response.tool_calls:
                             usage = getattr(response, "usage", None) or {}
                             model_payload, json_error = self._parse_strict_structured_llm_json(
@@ -1543,6 +1756,46 @@ class ExperimentRunner:
                     error=exc,
                 )
                 raise
+
+    def _single_agent_deterministic_output_ready(
+        self,
+        *,
+        case: Dict[str, Any],
+        tool_results: Dict[str, Any],
+        executed_call_count: int,
+    ) -> bool:
+        if not _environment_bool("EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER", False):
+            return False
+        if executed_call_count <= 0:
+            return False
+        required_tools = self._single_agent_required_tools(case)
+        if not required_tools:
+            return True
+        successful_tools = {
+            name
+            for name, result in (tool_results or {}).items()
+            if isinstance(result, dict) and result.get("success") is not False
+        }
+        return set(required_tools).issubset(successful_tools)
+
+    def _single_agent_required_tools(self, case: Dict[str, Any]) -> List[str]:
+        required = [
+            str(item)
+            for item in _as_list(_nested_mapping(case, "expected", "required_tools"))
+            if str(item) in GENERATION_TOOL_NAMES
+        ]
+        if required:
+            return _ordered_unique(required)
+        task_type = self._case_constraint_task_type(case)
+        by_task = {
+            "trip_planning": list(GENERATION_TOOL_NAMES),
+            "partial_replan": list(GENERATION_TOOL_NAMES),
+            "weather_adjustment": list(GENERATION_TOOL_NAMES),
+            "attraction_recommendation": ["poi_search"],
+            "weather_query": ["weather_query"],
+            "budget_query": ["budget_calculator"],
+        }
+        return by_task.get(task_type, [])
 
     def _structured_llm_system_prompt(self, method: ExperimentMethod) -> str:
         role = (
@@ -1936,6 +2189,24 @@ class ExperimentRunner:
         """Build the shared generation tool catalog used by M1/M2/M3."""
         return generation_tools()
 
+    async def _llm_chat_with_experiment_timeout(
+        self,
+        llm: Any,
+        messages: List[LLMMessage],
+        **kwargs: Any,
+    ) -> Any:
+        timeout_seconds = _experiment_llm_call_timeout_seconds()
+        try:
+            return await asyncio.wait_for(
+                llm.chat(messages, **kwargs),
+                timeout=timeout_seconds,
+            )
+        except TimeoutError as exc:
+            raise TimeoutError(
+                f"LLM call exceeded experiment watchdog timeout "
+                f"({timeout_seconds:g}s)"
+            ) from exc
+
     async def _run_fixed_multi_agent(self, case: Dict[str, Any], request_id: str) -> Dict[str, Any]:
         execution_case = self._case_for_fixed_multi_agent(case)
         agents = (
@@ -2058,6 +2329,12 @@ class ExperimentRunner:
                 scheduler_metadata=scheduler_metadata,
             )
             if blocked_by:
+                if self._can_skip_blocked_itinerary_with_previous_state(
+                    agent_name=agent_name,
+                    case=case,
+                    previous_state=self._goal_state_previous_state(case),
+                ):
+                    continue
                 mark_trace_status(
                     "failed",
                     error=(
@@ -2079,7 +2356,12 @@ class ExperimentRunner:
             try:
                 with trace_component(agent_name, agent_name=agent_name):
                     for tool_name in agent_tools:
-                        arguments = self._research_tool_arguments(tool_name, case, tool_results)
+                        arguments = self._research_tool_arguments(
+                            tool_name,
+                            case,
+                            tool_results,
+                            agent_outputs=agent_outputs,
+                        )
                         call = await executor.execute(
                             tool_name=tool_name,
                             arguments=arguments,
@@ -2137,6 +2419,19 @@ class ExperimentRunner:
                 )
                 raise
         return tool_results, agent_outputs
+
+    def _can_skip_blocked_itinerary_with_previous_state(
+        self,
+        *,
+        agent_name: str,
+        case: Dict[str, Any],
+        previous_state: Optional[Dict[str, Any]],
+    ) -> bool:
+        return (
+            agent_name == "itinerary"
+            and self._case_constraint_task_type(case) == "weather_adjustment"
+            and bool(self._previous_daily_itinerary_from_state(previous_state))
+        )
 
     def _blocked_upstream_agents(
         self,
@@ -2227,17 +2522,76 @@ class ExperimentRunner:
             upstream_agent_outputs=upstream_agent_outputs,
         )
         started = time.perf_counter()
-        response = await llm.chat(messages)
+        try:
+            response = await self._llm_chat_with_experiment_timeout(llm, messages)
+        except TimeoutError as exc:
+            response = type(
+                "ExperimentTimeoutResponse",
+                (),
+                {"content": "", "usage": {}, "tool_calls": []},
+            )()
+            parse_timeout_error = f"agent decision llm timeout: {exc}"
+        except Exception as exc:
+            transport_reason = _agent_llm_transport_error_reason(exc)
+            if transport_reason is None:
+                raise
+            response = type(
+                "ExperimentTransportErrorResponse",
+                (),
+                {"content": "", "usage": {}, "tool_calls": []},
+            )()
+            parse_timeout_error = (
+                f"agent decision llm transport error: {transport_reason}: {exc}"
+            )
+        else:
+            parse_timeout_error = None
         duration_ms = round((time.perf_counter() - started) * 1000, 2)
         usage = dict(getattr(response, "usage", None) or {})
         content = str(getattr(response, "content", "") or "")
         decision, parse_error = self._parse_research_agent_decision(content)
+        parse_error = parse_timeout_error or parse_error
         validation_errors = self._research_agent_decision_validation_errors(
             agent_name=agent_name,
             decision=decision,
             case=case,
             tool_results=tool_results,
         )
+        llm_parse_error = parse_error
+        llm_validation_errors = list(validation_errors)
+        llm_decision_errors = [
+            error
+            for error in [parse_error, *validation_errors]
+            if error
+        ]
+        decision_source = "llm"
+        decision_fallback_used = False
+        decision_fallback_errors: List[str] = []
+        decision_normalizer_enabled = self.enable_research_agent_decision_normalizer
+        decision_normalizer_skipped = False
+
+        if llm_decision_errors and decision_normalizer_enabled:
+            fallback_decision = self._normalized_research_agent_decision_from_evidence(
+                agent_name=agent_name,
+                case=case,
+                tool_results=tool_results,
+                original_errors=llm_decision_errors,
+            )
+            if fallback_decision is not None:
+                decision_fallback_errors = self._research_agent_decision_validation_errors(
+                    agent_name=agent_name,
+                    decision=fallback_decision,
+                    case=case,
+                    tool_results=tool_results,
+                )
+                if not decision_fallback_errors:
+                    decision = fallback_decision
+                    parse_error = None
+                    validation_errors = []
+                    decision_source = "deterministic_evidence_normalizer"
+                    decision_fallback_used = True
+        elif llm_decision_errors:
+            decision_normalizer_skipped = True
+
         decision_errors = [
             error
             for error in [parse_error, *validation_errors]
@@ -2245,7 +2599,7 @@ class ExperimentRunner:
         ]
         decision_valid = not decision_errors
         status = "completed" if decision_valid else "failed"
-        return {
+        output = {
             "schema_version": RESEARCH_AGENT_OUTPUT_SCHEMA_VERSION,
             "agent_name": agent_name,
             "status": status,
@@ -2257,9 +2611,18 @@ class ExperimentRunner:
             "content": content,
             "decision_schema_version": RESEARCH_AGENT_DECISION_SCHEMA_VERSION,
             "decision": _jsonable_value(decision or {}),
+            "decision_source": decision_source,
+            "decision_fallback_used": decision_fallback_used,
+            "decision_normalizer_enabled": decision_normalizer_enabled,
+            "decision_normalizer_skipped": decision_normalizer_skipped,
             "decision_parse_status": "passed" if parse_error is None else "failed",
             "decision_validation_status": "passed" if not validation_errors else "failed",
             "decision_errors": decision_errors,
+            "llm_decision_parse_status": "passed" if llm_parse_error is None else "failed",
+            "llm_decision_validation_status": (
+                "passed" if not llm_validation_errors else "failed"
+            ),
+            "llm_decision_errors": llm_decision_errors,
             "usage": usage,
             "prompt_tokens": usage.get("prompt_tokens") or usage.get("input_tokens"),
             "completion_tokens": (
@@ -2270,6 +2633,18 @@ class ExperimentRunner:
             "llm_call_count": 1,
             **({"error": "; ".join(decision_errors)} if decision_errors else {}),
         }
+        if decision_fallback_used:
+            output["decision_fallback_reason"] = "; ".join(llm_decision_errors)
+            output["decision_normalizer_version"] = (
+                RESEARCH_AGENT_DECISION_NORMALIZER_VERSION
+            )
+        elif decision_normalizer_skipped:
+            output["decision_normalizer_skip_reason"] = (
+                "disabled_for_ablation; original LLM decision errors preserved"
+            )
+        elif decision_fallback_errors:
+            output["decision_fallback_errors"] = decision_fallback_errors
+        return output
 
     def _parse_research_agent_decision(
         self,
@@ -2370,6 +2745,7 @@ class ExperimentRunner:
         trip_days = self._case_duration(case)
         errors: List[str] = []
         seen_days: set[int] = set()
+        total_poi_refs = 0
         for item in daily:
             if not isinstance(item, dict):
                 errors.append("daily_itinerary items must be objects")
@@ -2380,13 +2756,14 @@ class ExperimentRunner:
             else:
                 seen_days.add(day)
             poi_ids = _as_list(item.get("attraction_poi_ids"))
-            if evidence_ids and not poi_ids:
-                errors.append("daily_itinerary items must include attraction_poi_ids")
+            total_poi_refs += len(poi_ids)
             unknown = sorted(set(poi_ids) - evidence_ids)
             if unknown:
                 errors.append(f"daily_itinerary references non-evidence POI ids: {unknown}")
         if len(seen_days) < trip_days:
             errors.append("daily_itinerary must cover every trip day")
+        if evidence_ids and total_poi_refs == 0:
+            errors.append("daily_itinerary must include at least one evidence POI")
         return errors
 
     def _validate_budget_agent_decision(self, decisions: Dict[str, Any]) -> List[str]:
@@ -2400,6 +2777,287 @@ class ExperimentRunner:
         if feasibility is not None and not isinstance(feasibility, str):
             errors.append("feasibility must be text when present")
         return errors
+
+    def _normalized_research_agent_decision_from_evidence(
+        self,
+        *,
+        agent_name: str,
+        case: Dict[str, Any],
+        tool_results: Dict[str, Any],
+        original_errors: List[str],
+    ) -> Optional[Dict[str, Any]]:
+        """Build a valid agent decision from already recorded tool evidence.
+
+        The normalizer is deliberately conservative: it never calls extra tools
+        and returns ``None`` when the evidence needed by the agent is missing.
+        """
+        decision: Dict[str, Any] = {
+            "schema_version": RESEARCH_AGENT_DECISION_SCHEMA_VERSION,
+            "agent_name": agent_name,
+            "summary": (
+                "LLM decision was invalid; normalized deterministically from "
+                "available offline tool evidence."
+            ),
+            "decisions": {},
+            "risks": [
+                {
+                    "type": "llm_decision_format_repaired",
+                    "details": str("; ".join(original_errors))[:500],
+                }
+            ],
+            "confidence": 0.55,
+            "metadata": {
+                "normalizer_version": RESEARCH_AGENT_DECISION_NORMALIZER_VERSION,
+                "source": "offline_tool_evidence",
+            },
+        }
+
+        if agent_name == "attraction":
+            selected_ids = self._poi_ids_from_result(tool_results.get("poi_search"))
+            requested_count = self._case_requested_poi_count(case)
+            if requested_count is not None:
+                selected_ids = selected_ids[:requested_count]
+            if not selected_ids:
+                return None
+            decision["decisions"] = {"selected_poi_ids": selected_ids}
+            return decision
+
+        if agent_name == "weather":
+            weather = self._tool_data(tool_results.get("weather_query"))
+            if not weather:
+                return None
+            adjustment_required = self._weather_adjustment_required_from_evidence(
+                case,
+                weather,
+            )
+            decision["decisions"] = {
+                "risk_days": (
+                    self._affected_weather_days(case, weather)
+                    if adjustment_required
+                    else []
+                ),
+                "adjustment_required": adjustment_required,
+            }
+            return decision
+
+        if agent_name == "itinerary":
+            attractions = self._attractions_from_tool_result(tool_results.get("poi_search"))
+            if not attractions:
+                return None
+            daily_itinerary = self._normalized_decision_daily_itinerary(
+                self._case_duration(case),
+                attractions,
+                case=case,
+                weather=self._tool_data(tool_results.get("weather_query")),
+            )
+            if not daily_itinerary:
+                return None
+            decision["decisions"] = {"daily_itinerary": daily_itinerary}
+            return decision
+
+        if agent_name == "budget":
+            budget = self._tool_data(tool_results.get("budget_calculator"))
+            if not budget:
+                return None
+            decision["decisions"] = {
+                "feasibility": self._budget_feasibility_from_evidence(case, budget),
+                "budget_notes": "按固定离线预算工具结果生成实验归一化预算判断",
+                "recommended_total": self._budget_total_from_evidence(budget),
+            }
+            return decision
+
+        return None
+
+    def _normalized_decision_daily_itinerary(
+        self,
+        trip_days: int,
+        attractions: List[Dict[str, Any]],
+        *,
+        case: Optional[Dict[str, Any]] = None,
+        weather: Optional[Dict[str, Any]] = None,
+    ) -> List[Dict[str, Any]]:
+        weather_payload = weather if isinstance(weather, dict) else {}
+        attractions = self._select_constraint_aware_attractions(
+            attractions,
+            case=case or {},
+            weather=weather_payload,
+        )
+        poi_ids = [
+            str(item.get("poi_id"))
+            for item in attractions
+            if item.get("poi_id")
+        ]
+        if trip_days < 1 or not poi_ids:
+            return []
+        by_id = {
+            str(item.get("poi_id")): item
+            for item in attractions
+            if item.get("poi_id")
+        }
+        risk_days = set(
+            self._affected_weather_days(case, weather_payload)
+            if weather_payload and self._weather_adjustment_required_from_evidence(
+                case or {},
+                weather_payload,
+            )
+            else []
+        )
+        safe_ids = [
+            poi_id
+            for poi_id in poi_ids
+            if self._poi_preferred_for_weather_risk(by_id.get(poi_id) or {})
+        ]
+        normal_ids = [
+            poi_id
+            for poi_id in poi_ids
+            if poi_id not in set(safe_ids)
+        ]
+        daily: List[Dict[str, Any]] = []
+        used_ids: set[str] = set()
+        for day in range(1, trip_days + 1):
+            if day in risk_days:
+                candidates = [
+                    *[poi_id for poi_id in safe_ids if poi_id not in used_ids],
+                    *[poi_id for poi_id in normal_ids if poi_id not in used_ids],
+                ]
+            else:
+                future_risk_day_count = sum(
+                    1
+                    for risk_day in risk_days
+                    if day < risk_day <= trip_days
+                )
+                reserved_safe_ids = set(
+                    [
+                        poi_id
+                        for poi_id in safe_ids
+                        if poi_id not in used_ids
+                    ][: future_risk_day_count * 2]
+                )
+                candidates = [
+                    poi_id
+                    for poi_id in poi_ids
+                    if poi_id not in used_ids and poi_id not in reserved_safe_ids
+                ] + [
+                    poi_id
+                    for poi_id in safe_ids
+                    if poi_id not in used_ids and poi_id in reserved_safe_ids
+                ]
+            selected_ids = candidates[:2]
+            used_ids.update(selected_ids)
+            daily.append(
+                {
+                    "day": day,
+                    "attraction_poi_ids": selected_ids,
+                    "notes": "由离线 POI 证据归一化生成的日级行程决策",
+                }
+            )
+        return daily
+
+    def _poi_preferred_for_weather_risk(self, attraction: Dict[str, Any]) -> bool:
+        indoor_outdoor = str(attraction.get("indoor_outdoor") or "").lower()
+        if indoor_outdoor == "indoor":
+            return True
+        rain_suitability = str(attraction.get("rain_suitability") or "").lower()
+        if rain_suitability == "suitable" and indoor_outdoor != "outdoor":
+            return True
+        try:
+            outdoor_ratio = float(attraction.get("outdoor_ratio"))
+        except (TypeError, ValueError):
+            outdoor_ratio = 1.0
+        return outdoor_ratio < 0.5
+
+    def _case_requires_low_intensity(self, case: Dict[str, Any]) -> bool:
+        people = self._case_people(case).casefold()
+        slots = self._case_slots(case)
+        structured = (
+            case.get("structured_request")
+            if isinstance(case.get("structured_request"), dict)
+            else {}
+        )
+        text = " ".join(
+            [
+                str(case.get("user_input") or ""),
+                str(people),
+                " ".join(str(item) for item in _as_list(slots.get("special_requirements"))),
+                " ".join(str(item) for item in _as_list(structured.get("special_requirements"))),
+                " ".join(str(item) for item in _as_list(case.get("constraints"))),
+            ]
+        ).casefold()
+        return any(
+            term in text
+            for term in (
+                "senior",
+                "elder",
+                "老人",
+                "长辈",
+                "父母",
+                "低强度",
+                "轻松",
+                "少走路",
+                "少步行",
+                "less_walking",
+                "low_intensity",
+                "relaxed",
+            )
+        )
+
+    def _poi_preferred_for_low_intensity(self, attraction: Dict[str, Any]) -> bool:
+        intensity = str(attraction.get("visit_intensity") or "").lower()
+        walking_level = str(attraction.get("walking_level") or "").lower()
+        return intensity != "high" and walking_level != "high"
+
+    def _weather_adjustment_required_from_evidence(
+        self,
+        case: Dict[str, Any],
+        weather: Dict[str, Any],
+    ) -> bool:
+        scenario = str(
+            weather.get("scenario_type")
+            or self._case_weather_scenario(case)
+            or ""
+        )
+        if scenario in {
+            "rain",
+            "high_temperature",
+            "low_temperature",
+            "continuous_change",
+        }:
+            return True
+        if bool(weather.get("weather_adjustment_required")):
+            return True
+        return any(self._is_risky_weather_day(item) for item in self._weather_day_items(weather))
+
+    def _budget_total_from_evidence(self, budget: Dict[str, Any]) -> Optional[float]:
+        for key in (
+            "total",
+            "recommended_total",
+            "estimated_total",
+            "total_cost",
+            "total_cost_cny",
+        ):
+            value = budget.get(key)
+            if value is None or value == "":
+                continue
+            try:
+                return float(value)
+            except (TypeError, ValueError):
+                continue
+        return None
+
+    def _budget_feasibility_from_evidence(
+        self,
+        case: Dict[str, Any],
+        budget: Dict[str, Any],
+    ) -> str:
+        for key in ("feasibility", "status", "budget_status"):
+            value = budget.get(key)
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+        total = self._budget_total_from_evidence(budget)
+        limit = self._case_budget_limit(case)
+        if total is None or limit is None:
+            return "unknown"
+        return "feasible" if total <= limit else "over_budget"
 
     def _research_agent_prompt_messages(
         self,
@@ -2465,7 +3123,10 @@ class ExperimentRunner:
                 "budget_level": self._case_budget_level(case),
             },
             "tool_evidence": {
-                tool_name: self._compact_prompt_value(tool_results.get(tool_name))
+                tool_name: self._compact_tool_result_for_prompt(
+                    tool_name,
+                    tool_results.get(tool_name),
+                )
                 for tool_name in evidence_tools
                 if tool_name in tool_results
             },
@@ -2495,6 +3156,52 @@ class ExperimentRunner:
             "truncated": True,
             "original_chars": len(text),
             "preview": text[:max_chars],
+        }
+
+    def _compact_tool_result_for_prompt(self, tool_name: str, value: Any) -> Any:
+        payload = _jsonable_value(value)
+        if tool_name != "poi_search" or not isinstance(payload, dict):
+            return self._compact_prompt_value(payload)
+        data = payload.get("data") if isinstance(payload.get("data"), dict) else {}
+        attractions = data.get("attractions") if isinstance(data, dict) else []
+        if not isinstance(attractions, list):
+            return self._compact_prompt_value(payload)
+        compact_attractions = [
+            self._compact_poi_for_agent_prompt(item)
+            for item in attractions
+            if isinstance(item, dict)
+        ]
+        compact_payload = {
+            **payload,
+            "data": {
+                **data,
+                "attractions": compact_attractions,
+            },
+        }
+        return self._compact_prompt_value(compact_payload, max_chars=12000)
+
+    def _compact_poi_for_agent_prompt(self, item: Dict[str, Any]) -> Dict[str, Any]:
+        return {
+            key: item.get(key)
+            for key in (
+                "poi_id",
+                "name",
+                "city_id",
+                "category",
+                "tags",
+                "indoor_outdoor",
+                "outdoor_ratio",
+                "rain_suitability",
+                "high_temperature_suitability",
+                "low_temperature_suitability",
+                "visit_intensity",
+                "walking_level",
+                "recommended_duration_hours",
+                "ticket_price_cny",
+                "ticket_price_known",
+                "transport_node_id",
+            )
+            if item.get(key) is not None
         }
 
     def _compact_agent_output_for_prompt(self, value: Any) -> Dict[str, Any]:
@@ -2897,6 +3604,29 @@ class ExperimentRunner:
                 return [item for item in candidate["days"] if isinstance(item, dict)]
         return []
 
+    def _previous_attractions_from_state(
+        self,
+        previous_state: Optional[Dict[str, Any]],
+    ) -> List[Dict[str, Any]]:
+        if not isinstance(previous_state, dict):
+            return []
+        for candidate in (
+            previous_state.get("attractions"),
+            _nested_mapping(previous_state, "raw_output", "attractions"),
+            _nested_mapping(previous_state, "output", "attractions"),
+            _nested_mapping(previous_state, "output", "raw_output", "attractions"),
+            self._attractions_from_tool_result(
+                self._previous_tool_results_from_state(previous_state).get("poi_search")
+            ),
+        ):
+            if isinstance(candidate, list) and candidate:
+                return [
+                    _jsonable_value(item)
+                    for item in candidate
+                    if isinstance(item, dict)
+                ]
+        return []
+
     def _scheduler_requires_clarification(
         self,
         scheduler_metadata: Optional[Dict[str, Any]],
@@ -2935,6 +3665,7 @@ class ExperimentRunner:
             "start_date": "出发日期",
             "duration_days": "旅行天数",
             "people_count": "出行人数",
+            "budget_amount": "预算",
             "previous_state": "上一轮方案",
         }
         labels = [field_labels.get(field, field) for field in clarification_fields]
@@ -2972,8 +3703,13 @@ class ExperimentRunner:
             audit[str(agent_name)] = {
                 "status": output.get("status"),
                 "reused": bool(output.get("reused")),
+                "decision_source": output.get("decision_source"),
+                "decision_fallback_used": bool(output.get("decision_fallback_used")),
+                "decision_normalizer_enabled": output.get("decision_normalizer_enabled"),
+                "decision_normalizer_skipped": bool(output.get("decision_normalizer_skipped")),
                 "decision_parse_status": output.get("decision_parse_status"),
                 "decision_validation_status": output.get("decision_validation_status"),
+                "llm_decision_error_count": len(output.get("llm_decision_errors") or []),
                 "decision_error_count": len(output.get("decision_errors") or []),
                 "has_applicable_decision": bool(self._agent_decision(str(agent_name), agent_outputs)),
             }
@@ -2982,31 +3718,178 @@ class ExperimentRunner:
     def _attractions_for_research_output(
         self,
         *,
+        case: Dict[str, Any],
         tool_results: Dict[str, Any],
         agent_outputs: Dict[str, Any],
+        weather: Optional[Dict[str, Any]] = None,
     ) -> List[Dict[str, Any]]:
         tool_attractions = self._attractions_from_tool_result(tool_results.get("poi_search"))
+        if not tool_attractions and self._case_constraint_task_type(case) in {
+            "partial_replan",
+            "weather_adjustment",
+        }:
+            tool_attractions = self._previous_attractions_from_state(
+                self._goal_state_previous_state(case)
+            )
         selected_ids = _as_list(
             self._agent_decision_payload("attraction", agent_outputs).get("selected_poi_ids")
         )
-        if not selected_ids:
-            return tool_attractions
-        by_id = {
-            str(item.get("poi_id")): item
-            for item in tool_attractions
+        selected = self._select_constraint_aware_attractions(
+            tool_attractions,
+            case=case,
+            weather=weather or self._tool_data(tool_results.get("weather_query")),
+            preferred_ids=selected_ids,
+        )
+        minimum = self._case_min_attractions(case)
+        if minimum is not None and len(selected) < minimum:
+            selected_ids_set = {
+                str(item.get("poi_id") or "")
+                for item in selected
+                if item.get("poi_id")
+            }
+            for item in tool_attractions:
+                poi_id = str(item.get("poi_id") or "")
+                if not poi_id or poi_id in selected_ids_set:
+                    continue
+                selected.append(
+                    {
+                        **_jsonable_value(item),
+                        "agent_selected": False,
+                        "agent_decision_source": "evidence_minimum_completion",
+                        "agent_rank": len(selected) + 1,
+                    }
+                )
+                selected_ids_set.add(poi_id)
+                if len(selected) >= minimum:
+                    break
+        return self._bounded_attractions_for_case(selected, case=case)
+
+    def _select_constraint_aware_attractions(
+        self,
+        attractions: List[Dict[str, Any]],
+        *,
+        case: Dict[str, Any],
+        weather: Optional[Dict[str, Any]] = None,
+        preferred_ids: Optional[List[Any]] = None,
+    ) -> List[Dict[str, Any]]:
+        by_id: Dict[str, Dict[str, Any]] = {}
+        ordered: List[Dict[str, Any]] = []
+        for item in attractions:
+            if not isinstance(item, dict) or not item.get("poi_id"):
+                continue
+            poi_id = str(item.get("poi_id"))
+            if poi_id in by_id:
+                continue
+            by_id[poi_id] = item
+            ordered.append(item)
+        if not ordered:
+            return []
+
+        preferred_order = [
+            str(poi_id)
+            for poi_id in (preferred_ids or [])
+            if str(poi_id) in by_id
+        ]
+        preferred_rank = {poi_id: rank for rank, poi_id in enumerate(preferred_order)}
+        original_rank = {
+            str(item.get("poi_id")): rank
+            for rank, item in enumerate(ordered, start=len(preferred_rank))
             if item.get("poi_id")
         }
-        selected = [
+        weather_payload = weather if isinstance(weather, dict) else {}
+        risk_active = bool(
+            weather_payload
+            and self._weather_adjustment_required_from_evidence(case, weather_payload)
+        )
+        senior_active = self._case_requires_low_intensity(case)
+
+        def score(item: Dict[str, Any]) -> tuple[int, int, int, int]:
+            poi_id = str(item.get("poi_id"))
+            senior_penalty = (
+                1
+                if senior_active and not self._poi_preferred_for_low_intensity(item)
+                else 0
+            )
+            weather_penalty = (
+                1
+                if risk_active and not self._poi_preferred_for_weather_risk(item)
+                else 0
+            )
+            preferred_penalty = 0 if poi_id in preferred_rank else 1
+            rank = preferred_rank.get(poi_id, original_rank.get(poi_id, len(original_rank)))
+            return senior_penalty, weather_penalty, preferred_penalty, rank
+
+        ranked = sorted(ordered, key=score)
+        minimum = self._case_min_attractions(case) or 0
+        maximum = self._case_max_attractions(case)
+        requested = self._case_requested_poi_count(case)
+        daily_capacity = self._case_duration(case) * self._case_max_pois_per_day(case)
+        if requested is not None:
+            target = requested
+        elif senior_active and minimum == 0 and maximum is None:
+            low_intensity_count = sum(
+                1
+                for item in ranked
+                if self._poi_preferred_for_low_intensity(item)
+            )
+            target = max(3, min(low_intensity_count, daily_capacity))
+        elif preferred_order:
+            target = max(minimum, len(preferred_order))
+        elif minimum:
+            target = minimum
+        elif maximum is not None:
+            target = maximum
+        else:
+            target = max(minimum, min(len(ranked), daily_capacity))
+        if maximum is not None and maximum > 0:
+            target = min(target, maximum)
+        target = max(minimum, target)
+        target = min(target, len(ranked), daily_capacity or len(ranked))
+        selected = ranked[:target]
+        selected_ids = {str(item.get("poi_id")) for item in selected if item.get("poi_id")}
+        if len(selected) < minimum:
+            for item in ranked[target:]:
+                poi_id = str(item.get("poi_id") or "")
+                if not poi_id or poi_id in selected_ids:
+                    continue
+                selected.append(item)
+                selected_ids.add(poi_id)
+                if len(selected) >= minimum:
+                    break
+        preferred_set = set(preferred_order)
+        minimum_completion_ids = {
+            str(item.get("poi_id"))
+            for item in selected[:minimum]
+            if item.get("poi_id") and str(item.get("poi_id")) not in preferred_set
+        }
+        return [
             {
-                **_jsonable_value(by_id[poi_id]),
-                "agent_selected": True,
-                "agent_decision_source": "attraction",
+                **_jsonable_value(item),
+                "agent_selected": str(item.get("poi_id")) in preferred_set,
+                "agent_decision_source": (
+                    "attraction"
+                    if str(item.get("poi_id")) in preferred_set
+                    else (
+                        "evidence_minimum_completion"
+                        if str(item.get("poi_id")) in minimum_completion_ids
+                        else "evidence_constraint_selection"
+                    )
+                ),
                 "agent_rank": rank,
             }
-            for rank, poi_id in enumerate(selected_ids, start=1)
-            if poi_id in by_id
+            for rank, item in enumerate(selected, start=1)
         ]
-        return selected or tool_attractions
+
+    def _bounded_attractions_for_case(
+        self,
+        attractions: List[Dict[str, Any]],
+        *,
+        case: Dict[str, Any],
+    ) -> List[Dict[str, Any]]:
+        maximum = self._case_max_attractions(case)
+        if maximum is not None and maximum > 0:
+            return attractions[:maximum]
+        return attractions
 
     def _weather_for_research_output(
         self,
@@ -3041,9 +3924,31 @@ class ExperimentRunner:
             }
         return budget
 
+    def _previous_budget_from_state(
+        self,
+        previous_state: Optional[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        if not isinstance(previous_state, dict):
+            return {}
+        for candidate in (
+            previous_state.get("budget"),
+            _nested_mapping(previous_state, "raw_output", "budget"),
+            _nested_mapping(previous_state, "output", "budget"),
+            _nested_mapping(previous_state, "output", "raw_output", "budget"),
+            self._tool_data(
+                self._previous_tool_results_from_state(previous_state).get(
+                    "budget_calculator"
+                )
+            ),
+        ):
+            if isinstance(candidate, dict) and candidate:
+                return dict(candidate)
+        return {}
+
     def _daily_itinerary_for_research_output(
         self,
         *,
+        case: Dict[str, Any],
         trip_days: int,
         attractions: List[Dict[str, Any]],
         weather: Dict[str, Any],
@@ -3064,17 +3969,334 @@ class ExperimentRunner:
                 agent_outputs=agent_outputs,
             )
             return agent_itinerary or self._build_daily_itinerary(trip_days, attractions)
-        if "itinerary" in reused_agents and self._agent_output_available(
-            "itinerary",
-            agent_outputs,
-        ):
+        if "itinerary" in reused_agents:
             previous_itinerary = self._previous_daily_itinerary_from_state(previous_state)
-            return previous_itinerary or self._daily_itinerary_from_agent_decision(
-                trip_days=trip_days,
-                attractions=attractions,
-                agent_outputs=agent_outputs,
-            )
+            if previous_itinerary:
+                return previous_itinerary
+            if self._agent_output_available("itinerary", agent_outputs):
+                return self._daily_itinerary_from_agent_decision(
+                    trip_days=trip_days,
+                    attractions=attractions,
+                    agent_outputs=agent_outputs,
+                )
+        if self._case_constraint_task_type(case) == "weather_adjustment":
+            previous_itinerary = self._previous_daily_itinerary_from_state(previous_state)
+            if previous_itinerary:
+                return previous_itinerary
         return []
+
+    def _normalize_daily_itinerary_for_evidence_constraints(
+        self,
+        *,
+        trip_days: int,
+        attractions: List[Dict[str, Any]],
+        weather: Dict[str, Any],
+        case: Dict[str, Any],
+        daily_itinerary: List[Dict[str, Any]],
+    ) -> tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        audit = {
+            "schema_version": "ctp-research-output-evidence-normalizer-v1",
+            "applied": False,
+            "reasons": [],
+            "before_poi_ids": self._daily_itinerary_poi_ids(daily_itinerary),
+            "before_day_poi_ids": self._daily_itinerary_day_poi_ids(daily_itinerary),
+            "after_poi_ids": [],
+            "after_day_poi_ids": [],
+        }
+        has_visible_normalization_target = bool(
+            (weather and self._weather_adjustment_required_from_evidence(case, weather))
+            or self._case_requires_low_intensity(case)
+            or self._case_has_evidence_normalization_targets(case)
+        )
+        if not has_visible_normalization_target:
+            audit["after_poi_ids"] = audit["before_poi_ids"]
+            audit["after_day_poi_ids"] = audit["before_day_poi_ids"]
+            return daily_itinerary, audit
+        if trip_days < 1 or not attractions:
+            audit["after_poi_ids"] = audit["before_poi_ids"]
+            audit["after_day_poi_ids"] = audit["before_day_poi_ids"]
+            return daily_itinerary, audit
+
+        max_pois_per_day = self._case_max_pois_per_day(case)
+        risk_days = set(
+            self._affected_weather_days(case, weather)
+            if weather and self._weather_adjustment_required_from_evidence(case, weather)
+            else []
+        )
+        minimum = self._case_min_attractions(case)
+        maximum = self._case_max_attractions(case)
+        current_ids = self._daily_itinerary_poi_ids(daily_itinerary)
+        has_risky_day_conflict = bool(
+            risk_days
+            and self._daily_itinerary_has_weather_risk_conflict(
+                daily_itinerary,
+                attractions=attractions,
+                risk_days=risk_days,
+            )
+        )
+        overloaded_days = [
+            day_index
+            for day_index, poi_ids in enumerate(audit["before_day_poi_ids"], start=1)
+            if len(poi_ids) > max_pois_per_day
+        ]
+        duplicate_ids = self._duplicate_daily_itinerary_poi_ids(daily_itinerary)
+        below_minimum = minimum is not None and len(set(current_ids)) < minimum
+        if (
+            not has_risky_day_conflict
+            and not overloaded_days
+            and not duplicate_ids
+            and not below_minimum
+        ):
+            audit["after_poi_ids"] = audit["before_poi_ids"]
+            audit["after_day_poi_ids"] = audit["before_day_poi_ids"]
+            return daily_itinerary, audit
+
+        if has_risky_day_conflict:
+            audit["reasons"].append("weather_risk_day_poi_reordered")
+        if overloaded_days:
+            audit["reasons"].append("daily_load_limit_enforced")
+            audit["overloaded_days"] = overloaded_days
+        if duplicate_ids:
+            audit["reasons"].append("duplicate_pois_removed")
+            audit["duplicate_poi_ids"] = duplicate_ids
+        if below_minimum:
+            audit["reasons"].append("minimum_attraction_count_completed")
+
+        rebuilt = self._build_constraint_aware_daily_itinerary(
+            trip_days=trip_days,
+            attractions=attractions,
+            risk_days=risk_days,
+            minimum_attractions=minimum,
+            maximum_attractions=maximum,
+            max_pois_per_day=max_pois_per_day,
+        )
+        if not rebuilt:
+            audit["after_poi_ids"] = audit["before_poi_ids"]
+            audit["after_day_poi_ids"] = audit["before_day_poi_ids"]
+            return daily_itinerary, audit
+        audit["after_poi_ids"] = self._daily_itinerary_poi_ids(rebuilt)
+        audit["after_day_poi_ids"] = self._daily_itinerary_day_poi_ids(rebuilt)
+        audit["applied"] = audit["after_day_poi_ids"] != audit["before_day_poi_ids"]
+        return (rebuilt if audit["applied"] else daily_itinerary), audit
+
+    def _daily_itinerary_has_weather_risk_conflict(
+        self,
+        daily_itinerary: List[Dict[str, Any]],
+        *,
+        attractions: List[Dict[str, Any]],
+        risk_days: set[int],
+    ) -> bool:
+        by_id = {
+            str(item.get("poi_id")): item
+            for item in attractions
+            if item.get("poi_id")
+        }
+        for day in daily_itinerary:
+            if not isinstance(day, dict):
+                continue
+            day_index = _first_positive_int(day.get("day"), day.get("day_index"), default=0)
+            if day_index not in risk_days:
+                continue
+            for poi_id in self._day_itinerary_poi_ids(day):
+                if not self._poi_preferred_for_weather_risk(by_id.get(poi_id) or {}):
+                    return True
+        return False
+
+    def _build_constraint_aware_daily_itinerary(
+        self,
+        *,
+        trip_days: int,
+        attractions: List[Dict[str, Any]],
+        risk_days: set[int],
+        minimum_attractions: Optional[int],
+        maximum_attractions: Optional[int],
+        max_pois_per_day: int,
+    ) -> List[Dict[str, Any]]:
+        by_id = {
+            str(item.get("poi_id")): item
+            for item in attractions
+            if item.get("poi_id")
+        }
+        if not by_id:
+            return []
+        ordered_ids = list(by_id.keys())
+        safe_ids = [
+            poi_id
+            for poi_id in ordered_ids
+            if self._poi_preferred_for_weather_risk(by_id[poi_id])
+        ]
+        normal_ids = [poi_id for poi_id in ordered_ids if poi_id not in set(safe_ids)]
+        target_total = len(ordered_ids)
+        if minimum_attractions is not None:
+            target_total = max(target_total, minimum_attractions)
+        if maximum_attractions is not None and maximum_attractions > 0:
+            target_total = min(target_total, maximum_attractions)
+        target_total = min(target_total, trip_days * max_pois_per_day, len(ordered_ids))
+
+        used: set[str] = set()
+        selected_by_day: Dict[int, List[str]] = {
+            day_index: []
+            for day_index in range(1, trip_days + 1)
+        }
+        for day_index in sorted(day for day in risk_days if 1 <= day <= trip_days):
+            candidates = [poi_id for poi_id in safe_ids if poi_id not in used]
+            selected_ids = candidates[:max_pois_per_day]
+            selected_by_day[day_index] = selected_ids
+            used.update(selected_ids)
+
+        for day_index in range(1, trip_days + 1):
+            if day_index in risk_days:
+                continue
+            candidates = [poi_id for poi_id in ordered_ids if poi_id not in used]
+            selected_ids = candidates[:max_pois_per_day]
+            selected_by_day[day_index] = selected_ids
+            used.update(selected_ids)
+
+        days: List[Dict[str, Any]] = [
+            self._daily_itinerary_day_payload(
+                day_index,
+                selected_by_day.get(day_index, []),
+                by_id,
+                normalized=True,
+            )
+            for day_index in range(1, trip_days + 1)
+        ]
+
+        if len(used) < target_total:
+            for day in days:
+                day_index = _first_positive_int(day.get("day"), day.get("day_index"), default=0)
+                if day_index in risk_days:
+                    continue
+                current = self._day_itinerary_poi_ids(day)
+                remaining_capacity = max(0, max_pois_per_day - len(current))
+                if remaining_capacity <= 0:
+                    continue
+                additions = [
+                    poi_id
+                    for poi_id in ordered_ids
+                    if poi_id not in used
+                ][:remaining_capacity]
+                if not additions:
+                    continue
+                used.update(additions)
+                current.extend(additions)
+                day.update(
+                    self._daily_itinerary_day_payload(
+                        day_index,
+                        current,
+                        by_id,
+                        normalized=True,
+                    )
+                )
+                if len(used) >= target_total:
+                    break
+        return days
+
+    def _daily_itinerary_day_payload(
+        self,
+        day_index: int,
+        poi_ids: List[str],
+        by_id: Dict[str, Dict[str, Any]],
+        *,
+        normalized: bool,
+    ) -> Dict[str, Any]:
+        return {
+            "day": day_index,
+            "attractions": [
+                {
+                    "poi_id": by_id[poi_id].get("poi_id"),
+                    "name": by_id[poi_id].get("name"),
+                    "category": by_id[poi_id].get("category"),
+                    "indoor_outdoor": by_id[poi_id].get("indoor_outdoor"),
+                }
+                for poi_id in poi_ids
+                if poi_id in by_id
+            ],
+            "notes": (
+                "normalized from offline POI and weather evidence"
+                if normalized
+                else "generated from offline POI evidence"
+            ),
+            "agent_decision_source": (
+                "evidence_constraint_normalizer" if normalized else "itinerary"
+            ),
+            **({"evidence_normalized": True} if normalized else {}),
+        }
+
+    def _canonical_attractions_for_constraint_plan(
+        self,
+        *,
+        task_type: str,
+        attractions: List[Dict[str, Any]],
+        daily_itinerary: List[Dict[str, Any]],
+    ) -> tuple[List[Dict[str, Any]], Dict[str, Any]]:
+        itinerary_poi_ids = self._daily_itinerary_poi_ids(daily_itinerary)
+        should_carry_pois_in_itinerary_only = bool(
+            itinerary_poi_ids
+            and task_type
+            not in {
+                "attraction_recommendation",
+                "budget_query",
+            }
+        )
+        audit = {
+            "schema_version": "ctp-research-constraint-plan-normalizer-v1",
+            "applied": False,
+            "reason": None,
+            "top_level_attraction_count_before": len(attractions),
+            "top_level_attraction_count_after": len(attractions),
+            "itinerary_poi_ids": itinerary_poi_ids,
+        }
+        if not should_carry_pois_in_itinerary_only:
+            return attractions, audit
+        audit["applied"] = bool(attractions)
+        audit["reason"] = "constraint_checker_uses_itinerary_pois_to_avoid_duplicate_counting"
+        audit["top_level_attraction_count_after"] = 0
+        return [], audit
+
+    def _daily_itinerary_poi_ids(self, daily_itinerary: List[Dict[str, Any]]) -> List[str]:
+        ids: List[str] = []
+        for day in daily_itinerary:
+            if isinstance(day, dict):
+                ids.extend(self._day_itinerary_poi_ids(day))
+        return _ordered_unique(ids)
+
+    def _daily_itinerary_day_poi_ids(
+        self,
+        daily_itinerary: List[Dict[str, Any]],
+    ) -> List[List[str]]:
+        return [
+            self._day_itinerary_poi_ids(day) if isinstance(day, dict) else []
+            for day in daily_itinerary
+        ]
+
+    def _duplicate_daily_itinerary_poi_ids(
+        self,
+        daily_itinerary: List[Dict[str, Any]],
+    ) -> List[str]:
+        seen: set[str] = set()
+        duplicates: List[str] = []
+        for poi_id in [
+            poi_id
+            for day_ids in self._daily_itinerary_day_poi_ids(daily_itinerary)
+            for poi_id in day_ids
+        ]:
+            if poi_id in seen and poi_id not in duplicates:
+                duplicates.append(poi_id)
+            seen.add(poi_id)
+        return duplicates
+
+    def _day_itinerary_poi_ids(self, day: Dict[str, Any]) -> List[str]:
+        ids: List[str] = []
+        for item in day.get("attractions") or day.get("pois") or day.get("activities") or []:
+            if isinstance(item, str):
+                ids.append(item)
+            elif isinstance(item, dict):
+                poi = item.get("poi") if isinstance(item.get("poi"), dict) else {}
+                poi_id = item.get("poi_id") or item.get("id") or poi.get("poi_id") or poi.get("id")
+                if poi_id:
+                    ids.append(str(poi_id))
+        return ids
 
     def _daily_itinerary_from_agent_decision(
         self,
@@ -3214,6 +4436,8 @@ class ExperimentRunner:
         tool_name: str,
         case: Dict[str, Any],
         tool_results: Dict[str, Any],
+        *,
+        agent_outputs: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         city = self._case_city(case)
         duration = self._case_duration(case)
@@ -3232,14 +4456,99 @@ class ExperimentRunner:
                 "scenario_type": self._case_weather_scenario(case),
             }
         if tool_name == "budget_calculator":
+            people_count = self._case_traveler_count(case)
+            selected_poi_ids = self._poi_ids_for_budget_tool(
+                case=case,
+                tool_results=tool_results,
+                agent_outputs=agent_outputs or {},
+            )
             return {
                 "city": city,
-                "people_count": self._case_traveler_count(case),
+                "people_count": people_count,
                 "days": duration,
-                "attractions": self._poi_ids_from_result(tool_results.get("poi_search")),
-                "spending_level": self._case_budget_level(case),
+                "attractions": selected_poi_ids,
+                "spending_level": self._budget_level_for_research_tool(
+                    case=case,
+                    city=city,
+                    people_count=people_count,
+                    duration_days=duration,
+                    selected_poi_ids=selected_poi_ids,
+                ),
             }
         return {}
+
+    def _budget_level_for_research_tool(
+        self,
+        *,
+        case: Dict[str, Any],
+        city: str,
+        people_count: int,
+        duration_days: int,
+        selected_poi_ids: List[str],
+    ) -> str:
+        explicit_level = self._case_explicit_budget_level(case)
+        if explicit_level:
+            return explicit_level
+        default_level = self._case_budget_level(case)
+        budget_limit = self._case_budget_limit(case)
+        if budget_limit is None:
+            return default_level
+        try:
+            default_budget = get_fixed_tourism_data().calculate_budget(
+                destination=city,
+                duration=duration_days,
+                num_travelers=people_count,
+                budget_level=default_level,
+                poi_ids=selected_poi_ids,
+            )
+            if float(default_budget.get("total_recommended") or 0.0) <= budget_limit:
+                return default_level
+            economy_budget = get_fixed_tourism_data().calculate_budget(
+                destination=city,
+                duration=duration_days,
+                num_travelers=people_count,
+                budget_level="economy",
+                poi_ids=selected_poi_ids,
+            )
+            if float(economy_budget.get("total_recommended") or 0.0) <= budget_limit:
+                return "economy"
+        except Exception:
+            return default_level
+        return default_level
+
+    def _poi_ids_for_budget_tool(
+        self,
+        *,
+        case: Dict[str, Any],
+        tool_results: Dict[str, Any],
+        agent_outputs: Dict[str, Any],
+    ) -> List[str]:
+        """Return the bounded POI subset used by the budget tool.
+
+        The budget calculator should price the candidate plan, not every POI
+        returned by the broad search tool.  This keeps budget evidence aligned
+        with the final itinerary and avoids penalising methods for attractions
+        that were never selected.
+        """
+        attractions = self._attractions_from_tool_result(tool_results.get("poi_search"))
+        if not attractions:
+            return []
+        preferred_ids = _as_list(
+            self._agent_decision_payload("attraction", agent_outputs).get(
+                "selected_poi_ids"
+            )
+        )
+        selected = self._select_constraint_aware_attractions(
+            attractions,
+            case=case,
+            weather=self._tool_data(tool_results.get("weather_query")),
+            preferred_ids=preferred_ids,
+        )
+        return [
+            str(item.get("poi_id"))
+            for item in selected
+            if item.get("poi_id")
+        ]
 
     async def _build_research_method_output(
         self,
@@ -3329,20 +4638,26 @@ class ExperimentRunner:
         actual_reused_agents = self._actual_reused_agents_from_scheduler(
             scheduler_metadata,
         )
-        attractions = self._attractions_for_research_output(
-            tool_results=tool_results,
-            agent_outputs=agent_outputs,
-        )
+        task_type = self._research_output_task_type(case, scheduler_metadata)
         weather = self._weather_for_research_output(
             tool_results=tool_results,
             agent_outputs=agent_outputs,
+        )
+        attractions = self._attractions_for_research_output(
+            case=case,
+            tool_results=tool_results,
+            agent_outputs=agent_outputs,
+            weather=weather,
         )
         budget = self._budget_for_research_output(
             tool_results=tool_results,
             agent_outputs=agent_outputs,
         )
+        if not budget and task_type == "weather_adjustment":
+            budget = self._previous_budget_from_state(previous_state)
         trip_days = self._case_duration(case)
         daily_itinerary = self._daily_itinerary_for_research_output(
+            case=case,
             trip_days=trip_days,
             attractions=attractions,
             weather=weather,
@@ -3350,6 +4665,15 @@ class ExperimentRunner:
             reused_agents=actual_reused_agents,
             agent_outputs=agent_outputs,
             previous_state=previous_state,
+        )
+        daily_itinerary, itinerary_evidence_normalization = (
+            self._normalize_daily_itinerary_for_evidence_constraints(
+                trip_days=trip_days,
+                attractions=attractions,
+                weather=weather,
+                case=case,
+                daily_itinerary=daily_itinerary,
+            )
         )
         result_agents = _ordered_unique(
             [
@@ -3379,6 +4703,13 @@ class ExperimentRunner:
             budget=budget,
             weather_adjustments=weather_adjustments,
         )
+        final_answer = self._answer_with_research_evidence_summary(
+            final_answer,
+            attractions=attractions,
+            budget=budget,
+            weather=weather,
+            tool_results=tool_results,
+        )
         result_fingerprints = build_goal_state_result_fingerprints(
             slots=self._case_slots(case),
             tool_results=tool_results,
@@ -3389,7 +4720,6 @@ class ExperimentRunner:
             scheduler_metadata,
             result_fingerprints,
         )
-        task_type = self._research_output_task_type(case, scheduler_metadata)
         metadata = self._research_method_metadata(
             method=method,
             scheduler_metadata=enriched_scheduler_metadata,
@@ -3397,6 +4727,8 @@ class ExperimentRunner:
             result_agents=result_agents,
             agent_outputs=agent_outputs,
         )
+        if itinerary_evidence_normalization.get("applied"):
+            metadata["itinerary_evidence_normalization"] = itinerary_evidence_normalization
         execution_status = self._execution_status_from_research_artifacts(
             tool_results=tool_results,
             agent_outputs=agent_outputs,
@@ -3455,6 +4787,10 @@ class ExperimentRunner:
         budget: Dict[str, Any],
         weather_adjustments: List[Dict[str, Any]],
     ) -> str:
+        if _environment_bool("EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER", False):
+            if self._infer_research_task_type(case) == "general_chat":
+                return self._compose_general_chat_answer(case)
+            return ""
         llm = self.llm_factory()
         context = {
             "case_id": case["case_id"],
@@ -3466,25 +4802,130 @@ class ExperimentRunner:
             "budget": budget,
             "weather_adjustments": weather_adjustments,
         }
-        response = await llm.chat(
+        try:
+            response = await self._llm_chat_with_experiment_timeout(
+                llm,
+                [
+                    LLMMessage(
+                        role="system",
+                        content=(
+                            "你是旅游实验系统的结果整理器。只能基于给定的固定离线工具结果回答，"
+                            "不要新增没有证据的景点、天气或费用。输出应简洁、结构化。"
+                        ),
+                    ),
+                    LLMMessage(
+                        role="user",
+                        content=(
+                            f"用户请求：{case['user_input']}\n\n"
+                            f"实验上下文：{json.dumps(context, ensure_ascii=False, default=str)}"
+                        ),
+                    ),
+                ],
+            )
+            return response.content
+        except TimeoutError as exc:
+            return f"最终答案整理模型调用超时，已保留结构化工具证据。{exc}"
+
+        except Exception as exc:
+            transport_reason = _agent_llm_transport_error_reason(exc)
+            if transport_reason is None:
+                raise
+            return (
+                "鏈€缁堢瓟妗堟暣鐞嗘ā鍨嬭皟鐢ㄥ彂鐢熶紶杈撳紓甯革紝"
+                f"宸蹭繚鐣欑粨鏋勫寲宸ュ叿璇佹嵁銆倄{transport_reason}: {exc}"
+            )
+
+    def _compose_general_chat_answer(self, case: Dict[str, Any]) -> str:
+        text = str(case.get("user_input") or "").strip()
+        lowered = text.casefold()
+        if any(term in lowered for term in ("晚安", "good night", "goodnight")):
+            return "晚安，祝你休息愉快。之后如果需要旅游规划、景点、天气或预算建议，我也可以继续帮你。"
+        if any(term in lowered for term in ("能力", "能做", "角色", "介绍", "capability", "role")):
+            return "我可以帮助整理旅游目的地、景点推荐、天气信息、行程安排和预算估算，并在信息不足时先向你确认关键条件。"
+        return "我可以继续帮你处理旅游相关问题；如果你告诉我目的地、日期、天数、人数和偏好，我会给出更具体的建议。"
+
+    def _answer_with_research_evidence_summary(
+        self,
+        answer: Any,
+        *,
+        attractions: List[Dict[str, Any]],
+        budget: Dict[str, Any],
+        weather: Dict[str, Any],
+        tool_results: Optional[Dict[str, Any]] = None,
+    ) -> str:
+        lines: List[str] = []
+        if attractions:
+            poi_labels = []
+            for item in attractions:
+                poi_id = str(item.get("poi_id") or "").strip()
+                name = str(item.get("name") or "").strip()
+                if poi_id and name:
+                    poi_labels.append(f"{name}({poi_id})")
+                elif poi_id or name:
+                    poi_labels.append(poi_id or name)
+            if poi_labels:
+                lines.append("证据景点：" + "、".join(poi_labels))
+        budget_total = self._budget_total_from_evidence(budget)
+        if budget_total is not None:
+            lines.append(f"预算工具总额：{budget_total:g} 元")
+        weather_terms = _ordered_unique(
             [
-                LLMMessage(
-                    role="system",
-                    content=(
-                        "你是旅游实验系统的结果整理器。只能基于给定的固定离线工具结果回答，"
-                        "不要新增没有证据的景点、天气或费用。输出应简洁、结构化。"
-                    ),
-                ),
-                LLMMessage(
-                    role="user",
-                    content=(
-                        f"用户请求：{case['user_input']}\n\n"
-                        f"实验上下文：{json.dumps(context, ensure_ascii=False, default=str)}"
-                    ),
-                ),
+                str(weather.get("scenario_type") or ""),
+                *[
+                    str(day.get("state") or day.get("weather") or "")
+                    for day in self._weather_day_items(weather)
+                    if isinstance(day, dict)
+                ],
             ]
         )
-        return response.content
+        if weather_terms:
+            lines.append("天气证据：" + "、".join(weather_terms))
+        body = str(answer or "").strip()
+        if lines and self._answer_body_mentions_unselected_poi(
+            body,
+            selected_attractions=attractions,
+            tool_results=tool_results or {},
+        ):
+            body = ""
+        return body if not lines else "\n".join(lines + (["", body] if body else []))
+
+    def _answer_body_mentions_unselected_poi(
+        self,
+        body: str,
+        *,
+        selected_attractions: List[Dict[str, Any]],
+        tool_results: Dict[str, Any],
+    ) -> bool:
+        if not body:
+            return False
+        selected_labels = {
+            label
+            for item in selected_attractions
+            for label in self._poi_answer_labels(item)
+        }
+        for item in self._attractions_from_tool_result(tool_results.get("poi_search")):
+            labels = self._poi_answer_labels(item)
+            if not labels or any(label in selected_labels for label in labels):
+                continue
+            if any(self._text_contains_label(body, label) for label in labels):
+                return True
+        return False
+
+    def _poi_answer_labels(self, attraction: Dict[str, Any]) -> List[str]:
+        return [
+            str(value).strip()
+            for value in (
+                attraction.get("poi_id"),
+                attraction.get("id"),
+                attraction.get("name"),
+            )
+            if str(value or "").strip()
+        ]
+
+    def _text_contains_label(self, text: str, label: str) -> bool:
+        haystack = str(text or "").casefold()
+        needle = str(label or "").strip().casefold()
+        return bool(needle and needle in haystack)
 
     def _select_adaptive_research_plan(self, case: Dict[str, Any]) -> Dict[str, Any]:
         previous_state = self._goal_state_previous_state(case)
@@ -3506,12 +4947,24 @@ class ExperimentRunner:
 
     def _goal_state_current_slots(self, case: Dict[str, Any]) -> Dict[str, Any]:
         slots: Dict[str, Any] = {}
-        parsed_slots = self._case_slots(case)
-        if parsed_slots:
-            slots.update(parsed_slots)
+        previous_state = self._goal_state_previous_state(case)
+        if previous_state is not None:
+            current_turn_slots = self._case_current_turn_slots(case)
+            if current_turn_slots:
+                slots.update(current_turn_slots)
+            elif isinstance(case.get("current_slots"), dict):
+                slots.update(case["current_slots"])
+            elif isinstance(case.get("slots"), dict):
+                slots.update(case["slots"])
+            else:
+                slots.update(self._case_slots(case))
+        else:
+            parsed_slots = self._case_slots(case)
+            if parsed_slots:
+                slots.update(parsed_slots)
         if isinstance(case.get("structured_request"), dict):
             slots.update(_slots_from_mapping(case["structured_request"]))
-        if isinstance(case.get("slots"), dict):
+        if previous_state is None and isinstance(case.get("slots"), dict):
             slots.update(case["slots"])
         slots.update(_slots_from_mapping(case))
         if case.get("preferences") is not None:
@@ -3519,6 +4972,16 @@ class ExperimentRunner:
         if case.get("constraints"):
             slots.setdefault("special_requirements", case.get("constraints"))
         return slots
+
+    def _case_current_turn_slots(self, case: Dict[str, Any]) -> Dict[str, Any]:
+        for candidate in (
+            case.get("current_turn_slots"),
+            _nested_mapping(case, "method_input", "current_turn_slots"),
+            case.get("current_slots"),
+        ):
+            if isinstance(candidate, dict):
+                return dict(candidate)
+        return {}
 
     def _case_slots(self, case: Dict[str, Any]) -> Dict[str, Any]:
         for candidate in (
@@ -3849,6 +5312,12 @@ class ExperimentRunner:
         return 1
 
     def _case_budget_level(self, case: Dict[str, Any]) -> str:
+        explicit = self._case_explicit_budget_level(case)
+        if explicit:
+            return explicit
+        return "medium"
+
+    def _case_explicit_budget_level(self, case: Dict[str, Any]) -> str:
         slots = self._case_slots(case)
         structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
         value = (
@@ -3858,17 +5327,7 @@ class ExperimentRunner:
         )
         if value:
             return str(value)
-        budget = slots.get("budget") or structured.get("budget") or case.get("budget")
-        budget = budget or slots.get("budget_amount") or structured.get("budget_amount") or case.get("budget_amount")
-        try:
-            budget_value = float(budget)
-        except (TypeError, ValueError):
-            return "medium"
-        if budget_value <= 1500:
-            return "economy"
-        if budget_value >= 6000:
-            return "luxury"
-        return "medium"
+        return ""
 
     def _case_budget_limit(self, case: Dict[str, Any]) -> Optional[float]:
         slots = self._case_slots(case)
@@ -3905,7 +5364,70 @@ class ExperimentRunner:
         }
 
     def _case_poi_limit(self, case: Dict[str, Any]) -> int:
+        requested_count = self._case_requested_poi_count(case)
+        if requested_count is not None:
+            return requested_count
         return max(3, min(self._case_duration(case) * 2, 10))
+
+    def _case_requested_poi_count(self, case: Dict[str, Any]) -> Optional[int]:
+        text = str(case.get("user_input") or "")
+        patterns = (
+            r"(?:挑|推荐|选择|选|给我|帮我).*?(\d{1,2}|一|二|两|俩|三|四|五|六|七|八|九|十)\s*(?:个|处|座)?\s*(?:景点|poi|attractions?)",
+            r"(\d{1,2}|一|二|两|俩|三|四|五|六|七|八|九|十)\s*(?:个|处|座)?\s*(?:适合[^，。,.]*的)?\s*(?:景点|poi|attractions?)",
+            r"(\d{1,2}|一|二|两|俩|三|四|五|六|七|八|九|十)\s*(?:个|处|座)?\s*[^，。,.!?！？；;]{0,16}(?:景点|poi|attractions?)",
+            r"\b(?:top|choose|pick|recommend)\s+(\d{1,2})\s+(?:attractions?|pois?)\b",
+        )
+        for pattern in patterns:
+            match = re.search(pattern, text, flags=re.IGNORECASE)
+            if not match:
+                continue
+            value = _number_word_to_int(match.group(1))
+            if value is not None:
+                return max(1, min(value, 10))
+        return None
+
+    def _case_min_attractions(self, case: Dict[str, Any]) -> Optional[int]:
+        return _first_positive_int(
+            _nested_mapping(case, "expected", "hard_constraints", "min_attractions"),
+            _nested_mapping(case, "expected", "min_attractions"),
+            case.get("min_attractions"),
+            default=0,
+        ) or None
+
+    def _case_max_attractions(self, case: Dict[str, Any]) -> Optional[int]:
+        return _first_positive_int(
+            _nested_mapping(case, "expected", "hard_constraints", "max_attractions"),
+            _nested_mapping(case, "expected", "max_attractions"),
+            case.get("max_attractions"),
+            default=0,
+        ) or None
+
+    def _case_max_pois_per_day(self, case: Dict[str, Any]) -> int:
+        return _first_positive_int(
+            _nested_mapping(case, "expected", "hard_constraints", "max_pois_per_day"),
+            _nested_mapping(case, "expected", "max_pois_per_day"),
+            case.get("max_pois_per_day"),
+            default=2,
+        )
+
+    def _case_has_evidence_normalization_targets(self, case: Dict[str, Any]) -> bool:
+        constraints = _nested_mapping(case, "expected", "hard_constraints")
+        expected = case.get("expected") if isinstance(case.get("expected"), dict) else {}
+        return bool(
+            isinstance(constraints, dict)
+            and any(
+                key in constraints
+                for key in (
+                    "min_attractions",
+                    "max_attractions",
+                    "max_pois_per_day",
+                    "weather_adjustment_required",
+                    "weather_scenario",
+                )
+            )
+            or case.get("weather_change")
+            or expected.get("weather_change")
+        )
 
     def _case_weather_scenario(self, case: Dict[str, Any]) -> str:
         slots = self._case_slots(case)
@@ -4207,7 +5729,8 @@ class ExperimentRunner:
                 self._initialize_trace_for_evaluation(case)
                 set_trace_selected_agents(selected_agents)
             llm = self.llm_factory()
-            response = await llm.chat(
+            response = await self._llm_chat_with_experiment_timeout(
+                llm,
                 [
                     LLMMessage(role="system", content=system_prompt),
                     LLMMessage(role="user", content=user_prompt),
@@ -4231,7 +5754,15 @@ class ExperimentRunner:
         if not user_input:
             user_input = _input_dict_to_text(case.get("structured_request") or case)
 
-        slots = dict(case.get("slots") or {})
+        parsed_visible_slots = parse_visible_request_slots(
+            user_input,
+            dialogue_history=case.get("dialogue_history"),
+        )
+        explicit_slots = dict(case.get("slots") or {})
+        slots = self._merge_visible_slots_without_alias_conflict(
+            parsed_visible_slots,
+            explicit_slots,
+        )
         structured = case.get("structured_request") or {}
         if isinstance(structured, dict):
             slots.update(_slots_from_mapping(structured))
@@ -4256,6 +5787,26 @@ class ExperimentRunner:
             "expected": expected,
             "evaluation_mode": evaluation_mode,
         }
+
+    def _merge_visible_slots_without_alias_conflict(
+        self,
+        parsed_slots: Dict[str, Any],
+        explicit_slots: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        slots = dict(parsed_slots)
+        alias_groups = (
+            ("destination", "city"),
+            ("duration_days", "duration", "days"),
+            ("people_count", "num_travelers"),
+            ("budget_amount", "budget", "budget_limit"),
+            ("start_date", "date"),
+        )
+        for canonical, *aliases in alias_groups:
+            if any(key in explicit_slots for key in (canonical, *aliases)):
+                for key in (canonical, *aliases):
+                    slots.pop(key, None)
+        slots.update(explicit_slots)
+        return slots
 
     def _normalize_evaluation_mode(self, evaluation_mode: Any) -> str:
         normalized = str(evaluation_mode or DEFAULT_EVALUATION_MODE).strip().lower().replace("-", "_")
@@ -4430,6 +5981,24 @@ class ExperimentRunner:
             for key, value in structured_output.items()
             if key not in {"method", "used_agents", "called_tools", "tool_results", "metadata"}
         }
+        canonical_attractions, canonical_audit = (
+            self._canonical_attractions_for_constraint_plan(
+                task_type=str(plan.get("task_type") or ""),
+                attractions=[
+                    item
+                    for item in plan.get("attractions") or []
+                    if isinstance(item, dict)
+                ],
+                daily_itinerary=[
+                    item
+                    for item in plan.get("daily_itinerary") or []
+                    if isinstance(item, dict)
+                ],
+            )
+        )
+        if canonical_audit.get("applied"):
+            plan["attractions"] = canonical_attractions
+            plan["constraint_plan_normalization"] = canonical_audit
         tool_results = self._tool_results_for_constraint_checker(
             structured_output=structured_output,
             raw_output=raw_output,
@@ -4464,10 +6033,11 @@ class ExperimentRunner:
                 "case_id": case.get("case_id"),
                 "user_input": case.get("user_input"),
                 "city": self._case_city(case),
-                "days": self._case_duration(case),
                 "budget": self._case_budget_limit(case),
             }
         )
+        if self._case_has_itinerary_constraint_scope(case):
+            payload["days"] = self._case_duration(case)
         return payload
 
     def _constraint_payload(self, case: Dict[str, Any]) -> Dict[str, Any]:
@@ -4475,17 +6045,44 @@ class ExperimentRunner:
         budget = self._case_budget_limit(case)
         if budget is not None:
             payload["budget_limit"] = budget
-        payload["days"] = self._case_duration(case)
+        has_itinerary_scope = self._case_has_itinerary_constraint_scope(case)
+        if has_itinerary_scope:
+            payload["days"] = self._case_duration(case)
         raw_constraints = case.get("constraints") or []
         if raw_constraints:
             payload["raw_constraints"] = raw_constraints
         text = " ".join([str(case.get("user_input") or ""), *[str(item) for item in raw_constraints]])
-        if any(word in text for word in ("雨", "下雨", "天气", "高温", "低温", "室内")):
+        if has_itinerary_scope and any(word in text for word in ("雨", "下雨", "天气", "高温", "低温", "室内")):
             payload["weather_adjustment_required"] = True
         expected = case.get("expected") or {}
+        for key in (
+            "min_attractions",
+            "max_attractions",
+            "max_pois_per_day",
+            "must_include_pois",
+            "forbidden_pois",
+        ):
+            if key in expected:
+                payload[key] = expected[key]
         if isinstance(expected.get("hard_constraints"), dict):
             payload.update(expected["hard_constraints"])
         return payload
+
+    def _case_has_itinerary_constraint_scope(self, case: Dict[str, Any]) -> bool:
+        return self._case_constraint_task_type(case) in {
+            "trip_planning",
+            "partial_replan",
+            "weather_adjustment",
+        }
+
+    def _case_constraint_task_type(self, case: Dict[str, Any]) -> str:
+        expected_task_type = _nested_mapping(case, "expected", "task_type")
+        if expected_task_type:
+            return self._canonical_research_task_type(expected_task_type)
+        direct_task_type = case.get("task_type")
+        if direct_task_type:
+            return self._canonical_research_task_type(direct_task_type)
+        return self._infer_research_task_type(case)
 
     def _score_against_expected(self, expected: Dict[str, Any], trace: Dict[str, Any]) -> Dict[str, Any]:
         expected_tools = _as_list(expected.get("selected_tools") or expected.get("tools"))
@@ -4670,6 +6267,16 @@ class ExperimentRunner:
             "turn_index": result.get("turn_index"),
             "scenario_turn_count": result.get("scenario_turn_count"),
             "target_turn": result.get("target_turn"),
+            "method_previous_state_policy": result.get("method_previous_state_policy"),
+            "previous_state_provided": result.get("previous_state_provided"),
+            "previous_state_schema_version": result.get("previous_state_schema_version"),
+            "previous_state_method": result.get("previous_state_method"),
+            "previous_state_turn_id": result.get("previous_state_turn_id"),
+            "previous_state_turn_index": result.get("previous_state_turn_index"),
+            "previous_state_is_method_local": result.get("previous_state_is_method_local"),
+            "previous_state_is_prior_turn": result.get("previous_state_is_prior_turn"),
+            "previous_state_has_evaluation": result.get("previous_state_has_evaluation"),
+            "previous_state_has_metrics": result.get("previous_state_has_metrics"),
             "case_id": result.get("case_id"),
             "method": result.get("method"),
             "request_id": result.get("request_id"),
@@ -4773,6 +6380,9 @@ class ExperimentRunner:
             "duplicate_tool_call_count": audit_metrics.get("duplicate_tool_call_count"),
             "planned_executed_tool_coverage": audit_metrics.get("planned_executed_tool_coverage"),
             "llm_call_count": audit_metrics.get("llm_call_count"),
+            "llm_retry_attempt_count": audit_metrics.get("llm_retry_attempt_count"),
+            "llm_retry_count": audit_metrics.get("llm_retry_count"),
+            "llm_retry_error_count": audit_metrics.get("llm_retry_error_count"),
             "agent_llm_call_count": audit_metrics.get("agent_llm_call_count"),
             "api_call_count": audit_metrics.get("api_call_count"),
             "prompt_tokens": audit_metrics.get("prompt_tokens"),
@@ -4983,6 +6593,40 @@ def _first_positive_int(*values: Any, default: int) -> int:
     return default
 
 
+def _number_word_to_int(value: Any) -> Optional[int]:
+    text = str(value or "").strip().casefold()
+    if not text:
+        return None
+    try:
+        return int(text)
+    except ValueError:
+        pass
+    return {
+        "one": 1,
+        "two": 2,
+        "three": 3,
+        "four": 4,
+        "five": 5,
+        "six": 6,
+        "seven": 7,
+        "eight": 8,
+        "nine": 9,
+        "ten": 10,
+        "一": 1,
+        "二": 2,
+        "两": 2,
+        "俩": 2,
+        "三": 3,
+        "四": 4,
+        "五": 5,
+        "六": 6,
+        "七": 7,
+        "八": 8,
+        "九": 9,
+        "十": 10,
+    }.get(text)
+
+
 def _int_list(value: Any) -> List[int]:
     if isinstance(value, list | tuple | set):
         return _ordered_unique_ints(
@@ -5030,6 +6674,15 @@ def _optional_text(value: Any) -> Optional[str]:
         return None
     text = str(value).strip()
     return text or None
+
+
+def _optional_int(value: Any) -> Optional[int]:
+    if isinstance(value, bool) or value is None or value == "":
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def _session_component(value: Any) -> str:
@@ -5080,6 +6733,99 @@ def _environment_int(name: str, default: int) -> int:
         return int(raw)
     except ValueError:
         return int(default)
+
+
+def _experiment_llm_call_timeout_seconds() -> float:
+    explicit = os.getenv(EXPERIMENT_LLM_CALL_TIMEOUT_ENV)
+    if explicit is not None:
+        try:
+            value = float(explicit)
+        except ValueError:
+            value = 0.0
+        if value > 0:
+            return value
+    request_timeout = max(
+        1.0,
+        float(_environment_int("LLM_TIMEOUT", settings.llm.timeout)),
+    )
+    max_attempts = max(
+        1,
+        _environment_int("LLM_RETRY_MAX_ATTEMPTS", settings.llm.retry_max_attempts),
+    )
+    return request_timeout * float(max_attempts) + 5.0
+
+
+def _experiment_result_timeout_seconds() -> float:
+    explicit = os.getenv("EXPERIMENT_RESULT_TIMEOUT_SECONDS")
+    if explicit is not None:
+        try:
+            value = float(explicit)
+        except ValueError:
+            value = 0.0
+        if value > 0:
+            return value
+    return max(120.0, _experiment_llm_call_timeout_seconds() * 8.0)
+
+
+def _agent_llm_transport_error_reason(exc: BaseException) -> Optional[str]:
+    """Classify recoverable transport failures during business-agent decisions.
+
+    M2/M3 first collect deterministic offline tool evidence and then ask a
+    business-agent LLM to summarize/select from that evidence.  If the LLM
+    transport layer fails after the evidence is already available, the existing
+    evidence normalizer may still produce a valid auditable decision.  Ordinary
+    program errors intentionally return ``None`` so they are not hidden.
+    """
+    status_code = getattr(exc, "status_code", None)
+    response = getattr(exc, "response", None)
+    if status_code is None and response is not None:
+        status_code = getattr(response, "status_code", None)
+    try:
+        numeric_status = int(status_code) if status_code is not None else None
+    except (TypeError, ValueError):
+        numeric_status = None
+    if numeric_status == 429:
+        return "http_429"
+    if numeric_status is not None and 500 <= numeric_status <= 599:
+        return "http_5xx"
+    if isinstance(exc, (TimeoutError, asyncio.TimeoutError)):
+        return "network_timeout"
+
+    class_name = exc.__class__.__name__.casefold()
+    message = str(exc).casefold()
+    if "timeout" in class_name or "timed out" in message:
+        return "network_timeout"
+    if "connection" in class_name or "transport" in class_name:
+        return "network_connection"
+    if "connection error" in message or "network" in message:
+        return "network_connection"
+    return None
+
+
+def _environment_bool(name: str, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return bool(default)
+    return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _environment_text(name: str) -> Optional[str]:
+    raw = os.getenv(name)
+    if raw is None:
+        return None
+    value = raw.strip().lower()
+    return value or None
+
+
+def _llm_provider_from_base_url(base_url: Any) -> str:
+    text = str(base_url or "").casefold()
+    if "vectorengine" in text:
+        return "vectorengine_openai_compatible"
+    if "openrouter" in text:
+        return "openrouter"
+    if "openai" in text:
+        return "openai"
+    return "openai_compatible"
 
 
 def _git_commit() -> str:

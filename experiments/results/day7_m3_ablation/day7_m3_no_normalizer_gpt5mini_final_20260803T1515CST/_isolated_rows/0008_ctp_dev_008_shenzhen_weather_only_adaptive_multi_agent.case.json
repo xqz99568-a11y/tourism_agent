@@ -1,0 +1,23 @@
+{
+  "case_id": "ctp_dev_008_shenzhen_weather_only",
+  "user_input": "帮我只看深圳2026年8月11日起两天的天气，别做路线、景点或预算。",
+  "expected": {
+    "task_type": "weather_query",
+    "destination": "shenzhen",
+    "start_date": "2026-08-11",
+    "duration_days": 2,
+    "required_tools": [
+      "weather_query"
+    ],
+    "accepted_agent_sets": [
+      [
+        "weather"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "weather_query"
+      ]
+    ]
+  }
+}

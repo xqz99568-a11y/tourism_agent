@@ -5,6 +5,7 @@ LLM 管理器 (简化版)
 from __future__ import annotations
 
 import hashlib
+import os
 import time
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
@@ -26,6 +27,14 @@ from .client import (
     BaseLLMClient,
     OpenRouterClient,
     MockLLMClient,
+    _retry_audit,
+    _retry_result_from_policy,
+    _runtime_llm_max_tokens,
+    _runtime_llm_reasoning_effort,
+    _runtime_llm_retry_max_attempts_for_client,
+    _runtime_llm_temperature,
+    _runtime_llm_timeout_for_client,
+    _runtime_options,
 )
 
 logger = get_logger(__name__)
@@ -117,13 +126,13 @@ class EnhancedLLMManager:
     def _initialize_client(self) -> None:
         """初始化客户端"""
         strict_mode = is_experiment_strict_mode()
-        if settings.llm.is_configured:
+        llm_configured = bool(os.getenv("LLM_API_KEY") or settings.llm.is_configured)
+        if llm_configured:
             try:
                 self._client = OpenRouterClient(
-                    api_key=settings.llm.api_key,
-                    base_url=settings.llm.base_url,
-                    model=settings.llm.model,
-                    timeout=settings.llm.timeout,
+                    api_key=os.getenv("LLM_API_KEY") or settings.llm.api_key,
+                    base_url=os.getenv("LLM_BASE_URL") or settings.llm.base_url,
+                    model=os.getenv("LLM_MODEL") or settings.llm.model,
                 )
                 self._using_mock = False
                 logger.info(f"LLM 客户端已初始化: {settings.llm.model}")
@@ -221,6 +230,31 @@ def _manager_client_provider_name(client: Optional[BaseLLMClient]) -> Optional[s
     return client.__class__.__name__.replace("Client", "").lower() or None
 
 
+def _manager_request_options(
+    client: Optional[BaseLLMClient],
+    kwargs: Dict[str, Any],
+    tools: Optional[List[ToolDefinition]],
+    *,
+    streaming: bool,
+) -> Dict[str, Any]:
+    return _runtime_options(
+        model=_manager_client_model_name(client),
+        base_url=getattr(client, "base_url", ""),
+        temperature=_runtime_llm_temperature(kwargs.get("temperature")),
+        max_tokens=_runtime_llm_max_tokens(kwargs.get("max_tokens")),
+        timeout_seconds=_runtime_llm_timeout_for_client(client, kwargs.get("timeout")),
+        reasoning_effort=_runtime_llm_reasoning_effort(kwargs.get("reasoning_effort")),
+        tool_count=len(tools or []),
+        tool_choice="auto" if tools else None,
+        streaming=streaming,
+    )
+
+
+def _manager_retry_policy(client: Optional[BaseLLMClient]) -> Dict[str, Any]:
+    max_attempts = _runtime_llm_retry_max_attempts_for_client(client)
+    return _retry_audit(max_attempts=max_attempts, attempts=[])
+
+
 async def _traced_enhanced_llm_chat(
     self: EnhancedLLMManager,
     messages: List[LLMMessage],
@@ -231,6 +265,8 @@ async def _traced_enhanced_llm_chat(
     start_time = time.time()
     self.metrics.total_calls += 1
     client = self._client
+    request_options = _manager_request_options(client, kwargs, tools, streaming=False)
+    retry_policy = _manager_retry_policy(client)
 
     if is_experiment_strict_mode() and (self._using_mock or isinstance(client, MockLLMClient)):
         trace_call = start_llm_call(
@@ -242,6 +278,8 @@ async def _traced_enhanced_llm_chat(
             message_count=len(messages),
             message_chars=_estimate_message_chars(messages),
             tool_count=len(tools or []),
+            request_options=request_options,
+            retry_policy=retry_policy,
         )
         error = RuntimeError("EXPERIMENT_STRICT_MODE forbids Mock LLM client")
         finish_llm_call(
@@ -252,6 +290,8 @@ async def _traced_enhanced_llm_chat(
             error=error,
             mock=True,
             fallback=False,
+            request_options=request_options,
+            retry=retry_policy,
         )
         self.metrics.failed_calls += 1
         self.metrics.total_latency_ms += (time.time() - start_time) * 1000
@@ -273,6 +313,8 @@ async def _traced_enhanced_llm_chat(
                 message_count=len(messages),
                 message_chars=_estimate_message_chars(messages),
                 tool_count=0,
+                request_options=request_options,
+                retry_policy=retry_policy,
             )
             finish_llm_call(
                 trace_call,
@@ -286,6 +328,8 @@ async def _traced_enhanced_llm_chat(
                 cached_source_usage=cached.usage,
                 output_chars=len(str(cached.content or "")),
                 chunk_count=0,
+                request_options=request_options,
+                retry=_retry_result_from_policy(retry_policy, success=True),
             )
             return cached
 
@@ -298,10 +342,14 @@ async def _traced_enhanced_llm_chat(
         message_count=len(messages),
         message_chars=_estimate_message_chars(messages),
         tool_count=len(tools or []),
+        request_options=request_options,
+        retry_policy=retry_policy,
     )
 
     try:
         response = await client.chat(messages, tools, **kwargs)
+        response_metadata = getattr(response, "metadata", None)
+        response_metadata = response_metadata if isinstance(response_metadata, dict) else {}
         self.metrics.successful_calls += 1
         self.metrics.total_latency_ms += (time.time() - start_time) * 1000
         finish_llm_call(
@@ -313,6 +361,9 @@ async def _traced_enhanced_llm_chat(
             mock=self._using_mock,
             fallback=False,
             output_chars=len(str(response.content or "")),
+            request_options=response_metadata.get("request_options") or request_options,
+            retry=response_metadata.get("retry")
+            or _retry_result_from_policy(retry_policy, success=True),
         )
 
         if cache_allowed and self._cache and not tools:
@@ -324,6 +375,13 @@ async def _traced_enhanced_llm_chat(
 
         if not self._using_mock and not is_experiment_strict_mode():
             logger.info("灏濊瘯浣跨敤 Mock 瀹㈡埛绔?..")
+            mock_request_options = _manager_request_options(
+                self._mock_client,
+                kwargs,
+                tools,
+                streaming=False,
+            )
+            mock_retry_policy = _manager_retry_policy(self._mock_client)
             try:
                 response = await self._mock_client.chat(messages, tools, **kwargs)
                 self.metrics.successful_calls += 1
@@ -337,6 +395,8 @@ async def _traced_enhanced_llm_chat(
                     mock=True,
                     fallback=True,
                     output_chars=len(str(response.content or "")),
+                    request_options=mock_request_options,
+                    retry=_retry_result_from_policy(mock_retry_policy, success=True),
                 )
                 return response
             except Exception as mock_error:
@@ -349,6 +409,12 @@ async def _traced_enhanced_llm_chat(
                     error=mock_error,
                     mock=True,
                     fallback=True,
+                    request_options=mock_request_options,
+                    retry=_retry_result_from_policy(
+                        mock_retry_policy,
+                        success=False,
+                        error=mock_error,
+                    ),
                 )
                 self.metrics.failed_calls += 1
                 self.metrics.total_latency_ms += (time.time() - start_time) * 1000
@@ -356,6 +422,8 @@ async def _traced_enhanced_llm_chat(
 
         self.metrics.failed_calls += 1
         self.metrics.total_latency_ms += (time.time() - start_time) * 1000
+        error_metadata = getattr(exc, "llm_audit_metadata", None)
+        error_metadata = error_metadata if isinstance(error_metadata, dict) else {}
         finish_llm_call(
             trace_call,
             provider=_manager_client_provider_name(client),
@@ -364,6 +432,9 @@ async def _traced_enhanced_llm_chat(
             error=exc,
             mock=self._using_mock,
             fallback=False,
+            request_options=error_metadata.get("request_options") or request_options,
+            retry=error_metadata.get("retry")
+            or _retry_result_from_policy(retry_policy, success=False, error=exc),
         )
         raise
 
@@ -375,6 +446,8 @@ async def _traced_enhanced_llm_stream(
     **kwargs,
 ):
     client = self._client
+    request_options = _manager_request_options(client, kwargs, tools, streaming=True)
+    retry_policy = _manager_retry_policy(client)
     trace_call = start_llm_call(
         provider=_manager_client_provider_name(client),
         model=_manager_client_model_name(client),
@@ -384,6 +457,8 @@ async def _traced_enhanced_llm_stream(
         message_count=len(messages),
         message_chars=_estimate_message_chars(messages),
         tool_count=len(tools or []),
+        request_options=request_options,
+        retry_policy=retry_policy,
     )
     chunk_count = 0
     output_chars = 0
@@ -399,6 +474,8 @@ async def _traced_enhanced_llm_stream(
             fallback=False,
             output_chars=0,
             chunk_count=0,
+            request_options=request_options,
+            retry=retry_policy,
         )
         raise error
     try:
@@ -419,6 +496,8 @@ async def _traced_enhanced_llm_stream(
             fallback=False,
             output_chars=output_chars,
             chunk_count=chunk_count,
+            request_options=request_options,
+            retry=_retry_result_from_policy(retry_policy, success=False, error=exc),
         )
         raise
     else:
@@ -431,6 +510,8 @@ async def _traced_enhanced_llm_stream(
             fallback=False,
             output_chars=output_chars,
             chunk_count=chunk_count,
+            request_options=request_options,
+            retry=_retry_result_from_policy(retry_policy, success=True),
         )
 
 

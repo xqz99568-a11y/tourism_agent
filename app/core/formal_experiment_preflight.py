@@ -25,10 +25,17 @@ from app.core.fixed_data import (
     canonical_json_sha256,
     validate_fixed_data_snapshot,
 )
+from app.core.llm.client import LLM_REASONING_EFFORT_ENV, SUPPORTED_REASONING_EFFORTS
 
 
 FORMAL_PREFLIGHT_SCHEMA_VERSION = "ctp-formal-preflight-v1"
 DEFAULT_FORMAL_METHOD_ORDER_SEED = 20260718
+FORMAL_RETRY_MAX_ATTEMPTS = 3
+FORMAL_GPT5_REASONING_EFFORT = "minimal"
+FORMAL_MIN_MAX_TOKENS = 4096
+FORMAL_DETERMINISTIC_RESEARCH_FINAL_ANSWER_ENV = (
+    "EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER"
+)
 FORMAL_RESULT_FILES = (
     "benchmark_results.csv",
     "benchmark_results.json",
@@ -91,11 +98,13 @@ def build_formal_preflight_report(
         )
 
     _validate_cases(cases, errors=errors, warnings=warnings, strict_formal=strict_formal)
+    comparison_splits = _load_benchmark_comparison_splits(benchmark_file, document, errors)
     dataset_quality_report = build_benchmark_dataset_quality_report(
         document=document,
         cases=cases,
         expected_case_count=expected_case_count,
         strict_formal=strict_formal,
+        comparison_splits=comparison_splits,
     )
     errors.extend(
         f"benchmark_quality: {error}"
@@ -191,6 +200,34 @@ def load_benchmark_document(path: str | Path) -> tuple[Any, list[dict[str, Any]]
             cases.extend(_cases_from_loaded_case_file(loaded))
         return document, cases
     raise ValueError("unsupported benchmark format; expected list, cases, or case_files")
+
+
+def _load_benchmark_comparison_splits(
+    benchmark_file: Path,
+    document: Any,
+    errors: list[str],
+) -> dict[str, list[dict[str, Any]]]:
+    if not isinstance(document, Mapping) or not isinstance(document.get("comparison_files"), list):
+        return {}
+    comparison_splits: dict[str, list[dict[str, Any]]] = {}
+    for file_name in document["comparison_files"]:
+        comparison_path = benchmark_file.parent / str(file_name)
+        try:
+            comparison_document, comparison_cases = load_benchmark_document(comparison_path)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            errors.append(f"benchmark comparison file is invalid: {comparison_path}: {exc}")
+            continue
+        comparison_splits[_comparison_split_name(comparison_path, comparison_document)] = comparison_cases
+    return comparison_splits
+
+
+def _comparison_split_name(path: Path, document: Any) -> str:
+    if isinstance(document, Mapping):
+        for key in ("split", "dataset_id"):
+            value = str(document.get(key) or "").strip()
+            if value:
+                return value
+    return path.stem
 
 
 def _cases_from_loaded_case_file(value: Any) -> list[dict[str, Any]]:
@@ -384,7 +421,18 @@ def _environment_report(
         "EXPERIMENT_DISABLE_CACHE": _env_bool("EXPERIMENT_DISABLE_CACHE"),
         "TRACE_SAVE_USER_MESSAGE": _env_bool("TRACE_SAVE_USER_MESSAGE"),
         "LLM_MODEL": os.getenv("LLM_MODEL") or settings.llm.model,
+        "LLM_BASE_URL": os.getenv("LLM_BASE_URL") or settings.llm.base_url,
         "LLM_TEMPERATURE": _env_float("LLM_TEMPERATURE", settings.llm.temperature),
+        "LLM_MAX_TOKENS": _env_int("LLM_MAX_TOKENS", settings.llm.max_tokens),
+        "LLM_TIMEOUT": _env_int("LLM_TIMEOUT", settings.llm.timeout),
+        "LLM_RETRY_MAX_ATTEMPTS": _env_int(
+            "LLM_RETRY_MAX_ATTEMPTS",
+            settings.llm.retry_max_attempts,
+        ),
+        LLM_REASONING_EFFORT_ENV: _env_text(LLM_REASONING_EFFORT_ENV),
+        FORMAL_DETERMINISTIC_RESEARCH_FINAL_ANSWER_ENV: _env_bool(
+            FORMAL_DETERMINISTIC_RESEARCH_FINAL_ANSWER_ENV
+        ),
         "LLM_CONFIGURED": _llm_configured(),
         "OLLAMA_CONFIGURED": bool(os.getenv("OLLAMA_MODEL") or os.getenv("OLLAMA_BASE_URL")),
     }
@@ -395,8 +443,41 @@ def _environment_report(
             errors.append("EXPERIMENT_DISABLE_CACHE must be true for formal runs")
         if env["TRACE_SAVE_USER_MESSAGE"] is True:
             errors.append("TRACE_SAVE_USER_MESSAGE must not be true for formal runs")
+        if env[FORMAL_DETERMINISTIC_RESEARCH_FINAL_ANSWER_ENV] is not True:
+            errors.append(
+                f"{FORMAL_DETERMINISTIC_RESEARCH_FINAL_ANSWER_ENV} must be true "
+                "for formal runs to match the frozen Day 7 development protocol"
+            )
         if env["LLM_TEMPERATURE"] is None:
             errors.append("LLM_TEMPERATURE must be numeric for formal runs")
+        elif float(env["LLM_TEMPERATURE"]) != 0.0:
+            errors.append("LLM_TEMPERATURE must be 0 for formal runs")
+        if env["LLM_MAX_TOKENS"] is None or int(env["LLM_MAX_TOKENS"]) < FORMAL_MIN_MAX_TOKENS:
+            errors.append(
+                f"LLM_MAX_TOKENS must be an integer >= {FORMAL_MIN_MAX_TOKENS} "
+                "for formal runs"
+            )
+        if env["LLM_TIMEOUT"] is None or int(env["LLM_TIMEOUT"]) < 1:
+            errors.append("LLM_TIMEOUT must be a positive integer for formal runs")
+        if env["LLM_RETRY_MAX_ATTEMPTS"] is None:
+            errors.append("LLM_RETRY_MAX_ATTEMPTS must be numeric for formal runs")
+        elif int(env["LLM_RETRY_MAX_ATTEMPTS"]) != FORMAL_RETRY_MAX_ATTEMPTS:
+            errors.append(
+                "LLM_RETRY_MAX_ATTEMPTS must be 3 for formal runs "
+                "(initial request plus at most two retries)"
+            )
+        reasoning_effort = env[LLM_REASONING_EFFORT_ENV]
+        if reasoning_effort is not None and reasoning_effort not in SUPPORTED_REASONING_EFFORTS:
+            errors.append(
+                f"{LLM_REASONING_EFFORT_ENV} must be one of "
+                f"{', '.join(sorted(SUPPORTED_REASONING_EFFORTS))}"
+            )
+        if _model_requires_minimal_reasoning_effort(env["LLM_MODEL"]):
+            if reasoning_effort != FORMAL_GPT5_REASONING_EFFORT:
+                errors.append(
+                    f"{LLM_REASONING_EFFORT_ENV} must be "
+                    f"{FORMAL_GPT5_REASONING_EFFORT} for gpt-5 formal runs"
+                )
     if require_llm_config and not env["LLM_CONFIGURED"] and not env["OLLAMA_CONFIGURED"]:
         errors.append(
             "no LLM runtime configured; set LLM_API_KEY/LLM_BASE_URL/LLM_MODEL "
@@ -475,6 +556,28 @@ def _env_float(name: str, default: float) -> float | None:
         return float(raw)
     except ValueError:
         return None
+
+
+def _env_int(name: str, default: int) -> int | None:
+    raw = os.getenv(name)
+    if raw is None:
+        return int(default)
+    try:
+        return int(raw)
+    except ValueError:
+        return None
+
+
+def _env_text(name: str) -> str | None:
+    raw = os.getenv(name)
+    if raw is None:
+        return None
+    value = raw.strip().lower()
+    return value or None
+
+
+def _model_requires_minimal_reasoning_effort(model: Any) -> bool:
+    return str(model or "").strip().lower().startswith("gpt-5")
 
 
 def _llm_configured() -> bool:

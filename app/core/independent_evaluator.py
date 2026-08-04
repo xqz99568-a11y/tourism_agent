@@ -24,6 +24,19 @@ DEFAULT_RULE_CATALOG_PATH = (
 _FAILED_STATUSES = {"failed", "error", "timeout"}
 _ALLOWED_EXECUTION_STATUSES = set(EXPERIMENT_EXECUTION_STATUSES)
 _OK_TOOL_RESULT_STATUSES = {"success", "no_result"}
+_CITY_VALUE_ALIASES = {
+    "\u5317\u4eac": "beijing",
+    "beijing": "beijing",
+    "\u676d\u5dde": "hangzhou",
+    "hangzhou": "hangzhou",
+    "\u897f\u5b89": "xian",
+    "xian": "xian",
+    "xi'an": "xian",
+    "\u6df1\u5733": "shenzhen",
+    "shenzhen": "shenzhen",
+    "\u6842\u6797": "guilin",
+    "guilin": "guilin",
+}
 _CONSTRAINT_RULES = {
     "H_POI_GROUNDED": "poi_existence",
     "H_RAIN_SUITABILITY": "rain_attraction_suitability",
@@ -494,6 +507,24 @@ def _check(
         actual = _first_float(budget.get("total"), budget.get("total_recommended"), budget.get("estimated_total"), budget.get("per_person"))
         if limit is None:
             return "na", {"limit": limit, "actual": actual}
+        if _norm(output.get("task_type")) == "budget_query" and actual is not None and actual > limit:
+            answer = str(output.get("final_answer") or "").lower()
+            infeasible_terms = (
+                "不足",
+                "不够",
+                "超出",
+                "超预算",
+                "不可行",
+                "over_budget",
+                "not enough",
+                "insufficient",
+            )
+            if any(term in answer for term in infeasible_terms):
+                return "passed", {
+                    "limit": limit,
+                    "actual": actual,
+                    "budget_query_feasibility": "over_budget_reported",
+                }
         return "passed" if actual is not None and actual <= limit else "failed", {"limit": limit, "actual": actual}
     if rule_id in _CONSTRAINT_RULES:
         check = _constraint_checks(output).get(_CONSTRAINT_RULES[rule_id])
@@ -868,6 +899,7 @@ def _clarification_answer_mentions(output: Dict[str, Any], field: str) -> bool:
         "duration_days": ["duration_days", "duration", "days", "how many days", "几天", "天数", "时长"],
         "destination": ["destination", "city", "where", "目的地", "城市", "去哪"],
         "budget": ["budget", "cost", "费用", "预算", "多少钱"],
+        "budget_amount": ["budget_amount", "budget", "cost", "费用", "预算", "多少钱"],
         "people_count": ["people", "traveler", "人数", "几个人"],
     }
     terms = aliases.get(_norm(field), [str(field).lower(), str(field).replace("_", " ").lower()])
@@ -931,8 +963,14 @@ def _answer_contains(answer: str, term: Any) -> bool:
 
 def _answer_contains_number(answer: str, value: float) -> bool:
     rounded = _round4(value)
-    candidates = {str(int(rounded)) if float(rounded).is_integer() else str(rounded), str(rounded)}
-    return any(item in answer for item in candidates)
+    candidates = {
+        str(int(rounded)) if float(rounded).is_integer() else str(rounded),
+        str(rounded),
+        f"{rounded:,.4f}".rstrip("0").rstrip("."),
+        f"{rounded:,.2f}",
+    }
+    normalized_answer = answer.replace(",", "")
+    return any(item in answer or item.replace(",", "") in normalized_answer for item in candidates)
 
 
 def _budget_total(value: Any) -> Optional[float]:
@@ -1055,12 +1093,43 @@ def _slot_actual(output: Dict[str, Any], slot: str) -> Any:
         return _first_existing(output.get("trip_days"), len(output.get("daily_itinerary") or []) or None, budget.get("days"), budget_data.get("days"), budget_input.get("days"), weather_input.get("days"), len(weather_data.get("daily_weather") or []) or None)
     if slot in {"people_count", "num_travelers", "people"}:
         return _first_existing(budget.get("people_count"), budget_data.get("people_count"), budget_input.get("people_count"), budget_input.get("num_travelers"), poi_data.get("people"), poi_input.get("people"))
+    if slot in {"budget_amount", "budget_limit", "max_budget", "budget"}:
+        return _first_existing(
+            _nested(output, "metadata", "goal_state_slots", "budget_amount"),
+            _nested(output, "metadata", "scheduler", "ticket", "current_slots", "budget_amount"),
+            budget.get("budget_amount"),
+            budget.get("budget_limit"),
+            budget.get("max_budget"),
+            budget_data.get("budget_amount"),
+            budget_data.get("budget_limit"),
+            budget_input.get("budget_amount"),
+            budget_input.get("budget_limit"),
+        )
     if slot in {"budget_level", "spending_level"}:
         return _first_existing(budget.get("spending_level"), budget.get("budget_level"), budget_data.get("spending_level"), budget_input.get("spending_level"), budget_input.get("budget_level"))
     if slot in {"preferences", "preference"}:
-        return _first_existing(poi_data.get("preferences"), poi_input.get("preferences"))
+        return _first_existing(
+            _nested(output, "metadata", "goal_state_slots", "preferences"),
+            _nested(output, "metadata", "scheduler", "ticket", "current_slots", "preferences"),
+            poi_data.get("preferences"),
+            poi_input.get("preferences"),
+        )
     if slot in {"traveler_group", "people_type"}:
-        return _first_existing(poi_data.get("people"), poi_input.get("people"))
+        return _first_existing(
+            _nested(output, "metadata", "goal_state_slots", "traveler_group"),
+            _nested(output, "metadata", "scheduler", "ticket", "current_slots", "traveler_group"),
+            poi_data.get("traveler_group"),
+            poi_input.get("traveler_group"),
+            poi_data.get("people"),
+            poi_input.get("people"),
+        )
+    if slot in {"special_requirements", "requirements"}:
+        return _first_existing(
+            _nested(output, "metadata", "goal_state_slots", "special_requirements"),
+            _nested(output, "metadata", "scheduler", "ticket", "current_slots", "special_requirements"),
+            poi_data.get("special_requirements"),
+            poi_input.get("special_requirements"),
+        )
     if slot in {"weather_scenario", "scenario_type"}:
         return _first_existing(weather.get("scenario_type"), weather.get("weather_type"), weather_data.get("scenario_type"), weather_data.get("requested_scenario_type"), weather_input.get("scenario_type"), weather_input.get("weather_scenario"))
     return _MISSING
@@ -1076,9 +1145,14 @@ def _slot_from_mapping(mapping: Dict[str, Any], slot: str) -> Any:
         "duration": ("duration", "duration_days", "days", "trip_days"),
         "days": ("days", "duration_days", "duration", "trip_days"),
         "people_count": ("people_count", "num_travelers", "people"),
+        "budget_amount": ("budget_amount", "budget_limit", "max_budget", "budget"),
+        "budget": ("budget", "budget_amount", "budget_limit", "max_budget"),
+        "budget_limit": ("budget_limit", "budget_amount", "max_budget", "budget"),
+        "max_budget": ("max_budget", "budget_limit", "budget_amount", "budget"),
         "budget_level": ("budget_level", "spending_level"),
         "preferences": ("preferences", "preference"),
         "traveler_group": ("traveler_group", "people_type", "people"),
+        "special_requirements": ("special_requirements", "requirements"),
         "weather_scenario": ("weather_scenario", "scenario_type"),
     }
     for key in aliases.get(slot, (slot,)):
@@ -1982,12 +2056,54 @@ def _first_float(*values: Any) -> Optional[float]:
 
 
 def _contains_rain(value: Any) -> bool:
-    text = str(value).lower()
-    return "rain" in text or "雨" in text
+    return bool(_rainy_day_indexes(value))
+
+
+def _rainy_day_indexes(value: Any) -> List[int]:
+    weather = value if isinstance(value, dict) else {}
+    rainy_days: List[int] = []
+    for index, day in enumerate(weather.get("daily_weather") or [], start=1):
+        if not isinstance(day, dict):
+            continue
+        if _weather_day_has_rain(day):
+            day_index = _first_int(day.get("day_index"), day.get("day"), index)
+            if day_index is not None:
+                rainy_days.append(day_index)
+    if rainy_days:
+        seen: set[int] = set()
+        unique_days: List[int] = []
+        for day in rainy_days:
+            if day in seen:
+                continue
+            seen.add(day)
+            unique_days.append(day)
+        return unique_days
+    scenario = str(
+        weather.get("scenario_type")
+        or weather.get("requested_scenario_type")
+        or ""
+    ).lower()
+    if scenario == "rain" or "雨" in scenario:
+        days = len(weather.get("daily_weather") or []) or 1
+        return list(range(1, days + 1))
+    return []
+
+
+def _weather_day_has_rain(day: Dict[str, Any]) -> bool:
+    labels = [
+        str(day.get(key) or "").lower()
+        for key in ("state", "condition", "weather", "scenario_type", "weather_type")
+    ]
+    labels.extend(str(item or "").lower() for item in day.get("risk_tags") or [])
+    if any(label == "rain" or "rainy" in label or "雨" in label for label in labels):
+        return True
+    precipitation = _first_float(day.get("precipitation_mm"))
+    return precipitation is not None and precipitation > 0
 
 
 def _norm(value: Any) -> str:
-    return str(value or "").strip().lower()
+    normalized = str(value or "").strip().lower()
+    return _CITY_VALUE_ALIASES.get(normalized, normalized)
 
 
 def _ratio(numerator: int, denominator: int) -> Optional[float]:

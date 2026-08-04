@@ -1,0 +1,44 @@
+{
+  "case_id": "ctp_dev_015_hangzhou_people_change",
+  "case_type": "multi_turn",
+  "description": "杭州完整规划后，只修改人数并重新计算预算。",
+  "turn_id": "t1_full_plan",
+  "target_turn": false,
+  "user_input": "先为2个人规划2026年8月13日出发的杭州两天游，预算5200元，要有景点、天气、行程和预算。",
+  "expected": {
+    "task_type": "trip_planning",
+    "required_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ],
+    "accepted_agent_sets": [
+      [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ]
+    ],
+    "hard_constraints": {
+      "destination": "hangzhou",
+      "start_date": "2026-08-13",
+      "duration_days": 2,
+      "people_count": 2,
+      "min_attractions": 3,
+      "max_pois_per_day": 2,
+      "budget_limit": 5200
+    }
+  },
+  "scenario_id": "ctp_dev_015_hangzhou_people_change",
+  "turn_index": 0,
+  "scenario_turn_count": 2,
+  "dialogue_history": []
+}

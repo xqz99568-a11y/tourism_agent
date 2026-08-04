@@ -1,0 +1,23 @@
+{
+  "schema_version": "ctp-day7-cross-dataset-leakage-v1",
+  "status": "passed",
+  "dataset_path": "experiments/ctp120_test_draft.json",
+  "checked_comparison_splits": [
+    "development",
+    "smoke"
+  ],
+  "counts": {
+    "internal_duplicate_count": 0,
+    "cross_split_duplicate_count": 0,
+    "near_duplicate_count": 0
+  },
+  "internal_duplicates": [],
+  "cross_split_duplicates": [],
+  "near_duplicates": [],
+  "policy": {
+    "exact_duplicate_blocking": true,
+    "near_duplicate_blocking": true,
+    "gold_visible_to_generation_allowed": false
+  },
+  "interpretation": "未发现测试集内部重复、跨开发/烟雾集重复或高度近似泄漏。"
+}

@@ -1,0 +1,25 @@
+{
+  "case_id": "ctp_dev_009_guilin_rough_budget",
+  "user_input": "请只粗略估算桂林2026年8月12日出发三天2人游是否能控制在4500元内，不要计算具体景点门票。",
+  "expected": {
+    "task_type": "budget_query",
+    "destination": "guilin",
+    "start_date": "2026-08-12",
+    "duration_days": 3,
+    "people_count": 2,
+    "budget_limit": 4500,
+    "required_tools": [
+      "budget_calculator"
+    ],
+    "accepted_agent_sets": [
+      [
+        "budget"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "budget_calculator"
+      ]
+    ]
+  }
+}

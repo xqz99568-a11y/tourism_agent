@@ -1,0 +1,28 @@
+{
+  "case_id": "ctp_dev_006_beijing_indoor_attractions",
+  "user_input": "北京如果遇到雨天，请只给我2个室内或博物馆类备选景点，不要行程和预算。",
+  "expected": {
+    "task_type": "attraction_recommendation",
+    "destination": "beijing",
+    "preferences": [
+      "indoor",
+      "history_culture"
+    ],
+    "weather_scenario": "rain",
+    "min_attractions": 2,
+    "max_attractions": 2,
+    "required_tools": [
+      "poi_search"
+    ],
+    "accepted_agent_sets": [
+      [
+        "attraction"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "poi_search"
+      ]
+    ]
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "schema_version": "ctp-day7-m3-no-decision-normalizer-ablation-v1",
+  "created_at": "2026-08-04T07:33:40.976970+00:00",
+  "status": "passed",
+  "run_dir": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST",
+  "run_id": "day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST",
+  "controlled_change": {
+    "name": "M3-no-decision-normalizer",
+    "method": "adaptive_multi_agent",
+    "decision_normalizer_enabled": false,
+    "description": "Disable deterministic research-agent decision normalization and preserve invalid/empty LLM Agent decisions as failures."
+  },
+  "expected": {
+    "method": "adaptive_multi_agent",
+    "turn_count": 26,
+    "max_tokens": 4096
+  },
+  "actual": {
+    "result_count": 26,
+    "method_counts": {
+      "adaptive_multi_agent": 26
+    },
+    "trace_count": 26,
+    "summary_raw_run_count": 26,
+    "gate_status": "passed"
+  },
+  "summary": {
+    "ablation_closed": true,
+    "agent_decision_output_count": 52,
+    "deterministic_normalizer_count": 0,
+    "normalizer_skipped_count": 21,
+    "invalid_llm_decision_count": 21,
+    "llm_valid_decision_count": 31,
+    "normalizer_enabled_true_count": 0,
+    "llm_call_count": 52,
+    "runtime_max_tokens_values": [
+      4096
+    ]
+  },
+  "agent_decision_audit": {
+    "agent_decision_output_count": 52,
+    "llm_valid_decision_count": 31,
+    "deterministic_normalizer_count": 0,
+    "normalizer_skipped_count": 21,
+    "invalid_llm_decision_count": 21,
+    "normalizer_enabled_true_count": 0,
+    "by_agent": {
+      "attraction": {
+        "total": 17,
+        "llm_valid": 9,
+        "normalizer_skipped": 8,
+        "invalid_llm": 8
+      },
+      "budget": {
+        "total": 11,
+        "llm_valid": 10,
+        "normalizer_skipped": 1,
+        "invalid_llm": 1
+      },
+      "itinerary": {
+        "total": 7,
+        "normalizer_skipped": 7,
+        "invalid_llm": 7
+      },
+      "weather": {
+        "total": 17,
+        "llm_valid": 12,
+        "normalizer_skipped": 5,
+        "invalid_llm": 5
+      }
+    }
+  },
+  "trace_audit": {
+    "llm_call_count": 52,
+    "max_tokens_values": [
+      4096
+    ],
+    "runtime_max_tokens_matches_protocol": true,
+    "mock_llm_call_count": 0,
+    "fallback_llm_call_count": 0,
+    "cache_hit_count": 0
+  },
+  "checks": {
+    "run_dir_exists": true,
+    "core_artifacts_saved": true,
+    "single_expected_method_recorded": true,
+    "result_count_matches_expected_turns": true,
+    "method_count_matches_expected_turns": true,
+    "no_unexpected_methods": true,
+    "trace_count_matches_expected_turns": true,
+    "manifest_decision_normalizer_disabled": true,
+    "agent_outputs_do_not_enable_normalizer": true,
+    "deterministic_normalizer_not_used": true,
+    "normalizer_skip_audit_present": true,
+    "runtime_max_tokens_matches_protocol": true,
+    "no_mock_llm": true,
+    "no_llm_fallback": true,
+    "no_cache_hit": true
+  },
+  "failed_checks": [],
+  "artifact_paths": {
+    "benchmark_results_json": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/benchmark_results.json",
+    "benchmark_results_csv": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/benchmark_results.csv",
+    "evaluation_summary": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/evaluation_summary.json",
+    "manifest": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/experiment_manifest.json",
+    "day7_dev_gate": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/day7_dev_gate.json",
+    "ablation_report_json": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/day7_m3_no_decision_normalizer_ablation.json",
+    "ablation_report_md": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/day7_m3_no_decision_normalizer_ablation.md"
+  },
+  "paper_use_policy": {
+    "allowed_uses": [
+      "ablation evidence for deterministic Agent decision normalization",
+      "diagnosing how much M3 depends on programmatic decision repair"
+    ],
+    "forbidden_uses": [
+      "replacing the four-method development run",
+      "claiming final paper performance from the development split"
+    ]
+  }
+}

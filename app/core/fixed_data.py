@@ -601,7 +601,10 @@ class FixedTourismData:
         coordinate = location.get("coordinate") or {}
         classification = item.get("classification") or {}
         transport = item.get("transport") or {}
-        duration = ((item.get("visit_profile") or {}).get("duration_hours") or {}).get("recommended")
+        environment = item.get("environment") or {}
+        weather_suitability = environment.get("weather_suitability") or {}
+        visit_profile = item.get("visit_profile") or {}
+        duration = (visit_profile.get("duration_hours") or {}).get("recommended")
         ticket = self._ticket_amount(item)
         formatted = {
             "id": item.get("id"),
@@ -623,7 +626,14 @@ class FixedTourismData:
             "open_time": (item.get("opening_hours") or {}).get("display_text"),
             "recommended_duration": duration,
             "visit_duration_hours": duration,
-            "indoor_outdoor": (item.get("environment") or {}).get("type"),
+            "indoor_outdoor": environment.get("type"),
+            "outdoor_ratio": environment.get("outdoor_ratio"),
+            "weather_suitability": dict(weather_suitability),
+            "rain_suitability": weather_suitability.get("rain"),
+            "high_temperature_suitability": weather_suitability.get("high_temperature"),
+            "low_temperature_suitability": weather_suitability.get("low_temperature"),
+            "visit_intensity": visit_profile.get("intensity"),
+            "walking_level": visit_profile.get("walking_level"),
             "description": item.get("description"),
             "matrix_node_id": transport.get("matrix_node_id") or location.get("transport_node_id"),
             "transport_node_id": location.get("transport_node_id"),

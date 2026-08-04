@@ -72,6 +72,9 @@ def test_real_api_smoke_writes_trace_token_latency_and_cost_reports(
     assert payload["connectivity_gate"]["connection_verified"] is True
     assert payload["connectivity_gate"]["checks"]["response_content_received"] is True
     assert payload["connectivity_gate"]["checks"]["finish_reason_not_length"] is True
+    assert payload["connectivity_gate"]["checks"]["temperature_zero_recorded"] is True
+    assert payload["connectivity_gate"]["checks"]["reasoning_effort_recorded"] is True
+    assert payload["connectivity_gate"]["checks"]["retry_policy_recorded"] is True
     for key in (
         "api_response",
         "result",
@@ -92,6 +95,12 @@ def test_real_api_smoke_writes_trace_token_latency_and_cost_reports(
     assert call["provider"] == "vectorengine_openai_compatible"
     assert call["prompt_version"] == "ctp-real-api-smoke-prompt-v1"
     assert len(call["prompt_hash"]) == 64
+    assert call["temperature"] == 0.0
+    assert call["max_tokens"] == 128
+    assert call["timeout_seconds"] == 30
+    assert call["retry_max_attempts"] == 3
+    assert call["reasoning_effort"] == "minimal"
+    assert call["retry_attempt_count"] == 1
     assert call["estimated_cost"] == 0.0016
     assert call["standardized_estimated_cost"] == 0.0016
     assert call["actual_cost"] is None
@@ -109,6 +118,10 @@ def test_real_api_smoke_writes_trace_token_latency_and_cost_reports(
     assert api_response["response_received"] is True
     assert api_response["content_received"] is True
     assert api_response["content_preview"] == '{"ok": true, "message": "pong"}'
+    assert api_response["runtime_config"]["temperature"] == 0.0
+    assert api_response["request_options"]["max_tokens"] == 128
+    assert api_response["request_options"]["reasoning_effort"] == "minimal"
+    assert api_response["retry"]["attempt_count"] == 1
     assert token_report["total_tokens"] == 120.0
     assert latency_report["llm_call_count"] == 1
     assert latency_report["llm_total_duration_ms"] is not None
@@ -117,6 +130,9 @@ def test_real_api_smoke_writes_trace_token_latency_and_cost_reports(
     assert cost_report["price_snapshots"][0]["price_source_url"] == "https://api.vectorengine.ai/pricing"
     assert price_snapshot["price_source_url"] == "https://api.vectorengine.ai/pricing"
     assert manifest["api_key_configured"] is True
+    assert manifest["runtime_config"]["temperature"] == 0.0
+    assert manifest["runtime_config"]["retry_max_attempts"] == 3
+    assert manifest["runtime_config"]["reasoning_effort"] == "minimal"
     assert manifest["connectivity_gate"]["status"] == "passed"
     assert manifest["reports"]["api_response"] == payload["api_response"]
     assert manifest["reports"]["price_snapshot"] == payload["price_snapshot"]

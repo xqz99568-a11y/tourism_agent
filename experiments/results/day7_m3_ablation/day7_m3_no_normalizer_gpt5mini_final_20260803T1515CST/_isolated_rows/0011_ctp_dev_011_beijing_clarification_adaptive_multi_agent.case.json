@@ -1,0 +1,24 @@
+{
+  "case_id": "ctp_dev_011_beijing_clarification",
+  "user_input": "我想去北京旅游，但还没确定出发日期、玩几天和预算，请先问我需要补充什么。",
+  "expected": {
+    "task_type": "clarification",
+    "destination": "beijing",
+    "missing_slots": [
+      "start_date",
+      "duration_days",
+      "budget_amount"
+    ],
+    "accepted_agent_sets": [
+      []
+    ],
+    "accepted_tool_sets": [
+      []
+    ],
+    "forbidden_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ]
+  }
+}

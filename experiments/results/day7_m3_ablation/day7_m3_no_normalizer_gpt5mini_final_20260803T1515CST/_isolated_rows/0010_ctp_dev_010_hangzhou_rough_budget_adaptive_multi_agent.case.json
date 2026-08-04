@@ -1,0 +1,25 @@
+{
+  "case_id": "ctp_dev_010_hangzhou_rough_budget",
+  "user_input": "只判断杭州2026年8月14日出发的两天3人游，预算4000元够不够，不要推荐景点。",
+  "expected": {
+    "task_type": "budget_query",
+    "destination": "hangzhou",
+    "start_date": "2026-08-14",
+    "duration_days": 2,
+    "people_count": 3,
+    "budget_limit": 4000,
+    "required_tools": [
+      "budget_calculator"
+    ],
+    "accepted_agent_sets": [
+      [
+        "budget"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "budget_calculator"
+      ]
+    ]
+  }
+}

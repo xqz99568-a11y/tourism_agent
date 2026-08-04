@@ -1,0 +1,861 @@
+{
+  "schema_version": "ctp-paper-analysis-v1",
+  "created_at": "2026-08-01T16:38:50.798576+00:00",
+  "run_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z",
+  "profile": "pilot",
+  "readiness": {
+    "status": "analysis_only",
+    "profile": "pilot",
+    "paper_claims_allowed": false,
+    "failed_checks": [],
+    "checks": {
+      "run_dir_exists": true,
+      "required_artifacts_exist": true,
+      "summary_schema_valid": true,
+      "manifest_present": true,
+      "csv_row_count_matches_results": true,
+      "result_count_matches_expected": true,
+      "required_methods_present": true,
+      "m3_m2_pairs_present": true,
+      "minimum_case_count_met": true,
+      "strict_runtime_recorded": true,
+      "cache_disabled_recorded": true,
+      "llm_calls_recorded": true,
+      "no_mock_llm": true,
+      "no_llm_fallback": true,
+      "user_message_not_persisted": true,
+      "day7_pilot_gate_passed": true
+    },
+    "required_methods": [
+      "adaptive_multi_agent",
+      "fixed_multi_agent",
+      "llm_direct",
+      "single_agent"
+    ],
+    "missing_methods": [],
+    "min_cases": 1,
+    "independent_case_count": 8,
+    "expected_result_count": 40,
+    "actual_result_count": 40,
+    "interpretation": "Pilot evidence is complete enough for debugging, not for paper conclusions."
+  },
+  "run": {
+    "run_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z",
+    "run_id": "day7_pilot_gpt5mini_repair6_20260801T163500Z",
+    "dataset_id": "ctp_smoke_test_day7_pilot",
+    "dataset_version": "2026-07-31-zh",
+    "method_count": 4,
+    "methods": [
+      "adaptive_multi_agent",
+      "fixed_multi_agent",
+      "llm_direct",
+      "single_agent"
+    ],
+    "raw_result_count": 40,
+    "csv_row_count": 40,
+    "summary_raw_run_count": 40,
+    "independent_case_count": 8,
+    "paired_m3_m2_count": 8,
+    "trace_count": 40,
+    "llm_call_count": 98,
+    "strict_mode": true,
+    "cache_disabled": true,
+    "model_config_name": "day7-pilot-real",
+    "model": "gpt-5-mini"
+  },
+  "method_comparison": [
+    {
+      "method": "llm_direct",
+      "label": "M0 Direct LLM",
+      "case_count": 8,
+      "raw_run_count": 8,
+      "stsr": 0.125,
+      "evaluation_hcsr": 0.3148,
+      "agent_selection_f1": 0.25,
+      "tool_selection_f1": 0.25,
+      "llm_call_count": 1.0,
+      "agent_call_count": 0.0,
+      "called_tool_count": 0.0,
+      "tool_call_count": 0.0,
+      "total_tokens": 2921.5,
+      "standardized_estimated_cost": 0.0,
+      "latency_ms": 12168.3063
+    },
+    {
+      "method": "single_agent",
+      "label": "M1 Single Agent",
+      "case_count": 8,
+      "raw_run_count": 8,
+      "stsr": 0.125,
+      "evaluation_hcsr": 0.5926,
+      "agent_selection_f1": 0.0,
+      "tool_selection_f1": 0.5,
+      "llm_call_count": 1.5,
+      "agent_call_count": 1.0,
+      "called_tool_count": 0.5,
+      "tool_call_count": 0.5,
+      "total_tokens": 5610.0,
+      "standardized_estimated_cost": 0.0,
+      "latency_ms": 17676.0775
+    },
+    {
+      "method": "fixed_multi_agent",
+      "label": "M2 Fixed Multi-Agent",
+      "case_count": 8,
+      "raw_run_count": 8,
+      "stsr": 0.375,
+      "evaluation_hcsr": 0.9583,
+      "agent_selection_f1": 0.7155,
+      "tool_selection_f1": 0.725,
+      "llm_call_count": 3.875,
+      "agent_call_count": 3.0,
+      "called_tool_count": 2.25,
+      "tool_call_count": 2.25,
+      "total_tokens": 17222.25,
+      "standardized_estimated_cost": 0.0,
+      "latency_ms": 35130.5412
+    },
+    {
+      "method": "adaptive_multi_agent",
+      "label": "M3 Proposed",
+      "case_count": 8,
+      "raw_run_count": 8,
+      "stsr": 1.0,
+      "evaluation_hcsr": 1.0,
+      "agent_selection_f1": 1.0,
+      "tool_selection_f1": 1.0,
+      "llm_call_count": 2.375,
+      "agent_call_count": 1.5,
+      "called_tool_count": 1.125,
+      "tool_call_count": 1.125,
+      "total_tokens": 10112.25,
+      "standardized_estimated_cost": 0.0,
+      "latency_ms": 23548.2225
+    }
+  ],
+  "m3_vs_m2": {
+    "comparison": "adaptive_multi_agent_vs_fixed_multi_agent",
+    "pair_count": 8,
+    "metrics": {
+      "stsr": {
+        "pair_count": 8,
+        "m3_mean": 1.0,
+        "m2_mean": 0.375,
+        "delta_mean": 0.625,
+        "delta_median": 1.0,
+        "delta_iqr": [
+          0.0,
+          1.0
+        ],
+        "delta_ci_95": [
+          0.25,
+          0.875
+        ],
+        "p_value": 0.0625,
+        "test": "McNemar",
+        "relative_saving_rate": null
+      },
+      "evaluation_hcsr": {
+        "pair_count": 6,
+        "m3_mean": 1.0,
+        "m2_mean": 0.9583,
+        "delta_mean": 0.0417,
+        "delta_median": 0.0,
+        "delta_iqr": [
+          0.0,
+          0.0
+        ],
+        "delta_ci_95": [
+          0.0,
+          0.125
+        ],
+        "p_value": 1.0,
+        "test": "Wilcoxon",
+        "relative_saving_rate": null
+      },
+      "agent_selection_f1": {
+        "pair_count": 8,
+        "m3_mean": 1.0,
+        "m2_mean": 0.7155,
+        "delta_mean": 0.2845,
+        "delta_median": 0.2381,
+        "delta_iqr": [
+          0.0,
+          0.6
+        ],
+        "delta_ci_95": [
+          0.1107,
+          0.4583
+        ],
+        "p_value": 0.0625,
+        "test": "Wilcoxon",
+        "relative_saving_rate": null
+      },
+      "tool_selection_f1": {
+        "pair_count": 8,
+        "m3_mean": 1.0,
+        "m2_mean": 0.725,
+        "delta_mean": 0.275,
+        "delta_median": 0.35,
+        "delta_iqr": [
+          0.0,
+          0.5
+        ],
+        "delta_ci_95": [
+          0.125,
+          0.4375
+        ],
+        "p_value": 0.0625,
+        "test": "Wilcoxon",
+        "relative_saving_rate": null
+      },
+      "llm_call_count": {
+        "pair_count": 8,
+        "m3_mean": 2.375,
+        "m2_mean": 3.875,
+        "delta_mean": -1.5,
+        "delta_median": -1.5,
+        "delta_iqr": [
+          -3.0,
+          0.0
+        ],
+        "delta_ci_95": [
+          -2.375,
+          -0.625
+        ],
+        "p_value": 0.0625,
+        "test": "Wilcoxon",
+        "relative_saving_rate": 0.3871
+      },
+      "agent_call_count": {
+        "pair_count": 8,
+        "m3_mean": 1.5,
+        "m2_mean": 3.0,
+        "delta_mean": -1.5,
+        "delta_median": -1.5,
+        "delta_iqr": [
+          -3.0,
+          0.0
+        ],
+        "delta_ci_95": [
+          -2.375,
+          -0.625
+        ],
+        "p_value": 0.0625,
+        "test": "Wilcoxon",
+        "relative_saving_rate": 0.5
+      },
+      "tool_call_count": {
+        "pair_count": 8,
+        "m3_mean": 1.125,
+        "m2_mean": 2.25,
+        "delta_mean": -1.125,
+        "delta_median": -1.5,
+        "delta_iqr": [
+          -2.0,
+          0.0
+        ],
+        "delta_ci_95": [
+          -1.75,
+          -0.5
+        ],
+        "p_value": 0.0625,
+        "test": "Wilcoxon",
+        "relative_saving_rate": 0.5
+      },
+      "total_tokens": {
+        "pair_count": 8,
+        "m3_mean": 10112.25,
+        "m2_mean": 17222.25,
+        "delta_mean": -7110.0,
+        "delta_median": -6831.5,
+        "delta_iqr": [
+          -13885.0,
+          0.0
+        ],
+        "delta_ci_95": [
+          -12489.5906,
+          -1907.4063
+        ],
+        "p_value": 0.0625,
+        "test": "Wilcoxon",
+        "relative_saving_rate": 0.4128
+      },
+      "standardized_estimated_cost": {
+        "pair_count": 7,
+        "m3_mean": 0.0,
+        "m2_mean": 0.0,
+        "delta_mean": 0.0,
+        "delta_median": 0.0,
+        "delta_iqr": [
+          0.0,
+          0.0
+        ],
+        "delta_ci_95": [
+          0.0,
+          0.0
+        ],
+        "p_value": 1.0,
+        "test": "Wilcoxon",
+        "relative_saving_rate": null
+      },
+      "latency_ms": {
+        "pair_count": 8,
+        "m3_mean": 23548.2225,
+        "m2_mean": 35130.5413,
+        "delta_mean": -11582.3188,
+        "delta_median": -7373.66,
+        "delta_iqr": [
+          -20468.29,
+          -184.14
+        ],
+        "delta_ci_95": [
+          -21064.0696,
+          -2670.2898
+        ],
+        "p_value": 0.0547,
+        "test": "Wilcoxon",
+        "relative_saving_rate": 0.3297
+      }
+    },
+    "interpretation": "Negative deltas on resource metrics mean M3 uses less resource than M2. Relative saving is computed as (M2 mean - M3 mean) / M2 mean."
+  },
+  "failure_analysis": {
+    "methods": {
+      "llm_direct": {
+        "failed_case_count": 7,
+        "sample_failed_cases": [
+          {
+            "case_id": "smoke_xian_full_plan",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "G_FINAL_ANSWER_CONSISTENT",
+              "H_BUDGET_LIMIT",
+              "H_POI_GROUNDED",
+              "H_WEATHER_EVIDENCE",
+              "H_BUDGET_EVIDENCE",
+              "H_TOOL_EVIDENCE",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "trip_planning"
+          },
+          {
+            "case_id": "smoke_shenzhen_attractions",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "G_FINAL_ANSWER_CONSISTENT",
+              "H_POI_GROUNDED",
+              "H_TOOL_EVIDENCE",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "attraction_recommendation"
+          },
+          {
+            "case_id": "smoke_beijing_weather",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "H_WEATHER_EVIDENCE",
+              "H_TOOL_EVIDENCE",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "weather_query"
+          },
+          {
+            "case_id": "smoke_hangzhou_budget",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "G_EXECUTION_STATUS_VALID",
+              "H_BUDGET_LIMIT",
+              "H_BUDGET_EVIDENCE",
+              "H_TOOL_EVIDENCE",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "budget_query"
+          },
+          {
+            "case_id": "smoke_guilin_clarification",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "G_FINAL_ANSWER_CONSISTENT",
+              "T_CLARIFICATION_MISSING_FIELDS"
+            ],
+            "stsr": false,
+            "task_type": "clarification"
+          },
+          {
+            "case_id": "smoke_hangzhou_duration_change",
+            "turn_id": "t2_extend_duration",
+            "failed_rule_ids": [
+              "G_FINAL_ANSWER_CONSISTENT",
+              "H_BUDGET_LIMIT",
+              "H_POI_GROUNDED",
+              "H_WEATHER_EVIDENCE",
+              "H_BUDGET_EVIDENCE",
+              "H_TOOL_EVIDENCE",
+              "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+              "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "partial_replan"
+          },
+          {
+            "case_id": "smoke_beijing_rain_adjustment",
+            "turn_id": "t2_rain_day1",
+            "failed_rule_ids": [
+              "G_FINAL_ANSWER_CONSISTENT",
+              "H_POI_GROUNDED",
+              "H_WEATHER_EVIDENCE",
+              "H_TOOL_EVIDENCE",
+              "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+              "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "weather_adjustment"
+          }
+        ],
+        "top_failed_rules": [
+          {
+            "id": "H_TOOL_EVIDENCE",
+            "count": 6
+          },
+          {
+            "id": "S_AGENT_SET_MATCH",
+            "count": 6
+          },
+          {
+            "id": "S_TOOL_SET_MATCH",
+            "count": 6
+          },
+          {
+            "id": "G_FINAL_ANSWER_CONSISTENT",
+            "count": 5
+          },
+          {
+            "id": "H_POI_GROUNDED",
+            "count": 4
+          },
+          {
+            "id": "H_WEATHER_EVIDENCE",
+            "count": 4
+          },
+          {
+            "id": "H_BUDGET_EVIDENCE",
+            "count": 3
+          },
+          {
+            "id": "H_BUDGET_LIMIT",
+            "count": 3
+          },
+          {
+            "id": "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+            "count": 1
+          },
+          {
+            "id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+            "count": 1
+          }
+        ],
+        "top_tool_failure_types": []
+      },
+      "single_agent": {
+        "failed_case_count": 8,
+        "sample_failed_cases": [
+          {
+            "case_id": "smoke_xian_full_plan",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "G_EXECUTION_STATUS_VALID",
+              "G_FINAL_ANSWER_CONSISTENT",
+              "S_AGENT_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "trip_planning"
+          },
+          {
+            "case_id": "smoke_shenzhen_attractions",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "H_POI_GROUNDED",
+              "H_TOOL_EVIDENCE",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "attraction_recommendation"
+          },
+          {
+            "case_id": "smoke_beijing_weather",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "S_AGENT_SET_MATCH"
+            ],
+            "stsr": true,
+            "task_type": "weather_query"
+          },
+          {
+            "case_id": "smoke_hangzhou_budget",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "G_EXECUTION_STATUS_VALID",
+              "H_BUDGET_LIMIT",
+              "H_BUDGET_EVIDENCE",
+              "H_TOOL_EVIDENCE",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "budget_query"
+          },
+          {
+            "case_id": "smoke_guilin_clarification",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "G_FINAL_ANSWER_CONSISTENT",
+              "T_CLARIFICATION_MISSING_FIELDS",
+              "T_CLARIFICATION_NO_PREMATURE_PLAN",
+              "S_AGENT_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "clarification"
+          },
+          {
+            "case_id": "smoke_hangzhou_duration_change",
+            "turn_id": "t2_extend_duration",
+            "failed_rule_ids": [
+              "G_FINAL_ANSWER_CONSISTENT",
+              "H_BUDGET_LIMIT",
+              "H_WEATHER_EVIDENCE",
+              "H_BUDGET_EVIDENCE",
+              "H_TOOL_EVIDENCE",
+              "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+              "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "partial_replan"
+          },
+          {
+            "case_id": "smoke_beijing_rain_adjustment",
+            "turn_id": "t2_rain_day1",
+            "failed_rule_ids": [
+              "G_FINAL_ANSWER_CONSISTENT",
+              "H_POI_GROUNDED",
+              "H_WEATHER_EVIDENCE",
+              "H_TOOL_EVIDENCE",
+              "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+              "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "weather_adjustment"
+          },
+          {
+            "case_id": "smoke_general_chat",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "T_GENERAL_CHAT_NO_BUSINESS_EXECUTION",
+              "S_AGENT_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "general_chat"
+          }
+        ],
+        "top_failed_rules": [
+          {
+            "id": "S_AGENT_SET_MATCH",
+            "count": 8
+          },
+          {
+            "id": "G_FINAL_ANSWER_CONSISTENT",
+            "count": 4
+          },
+          {
+            "id": "H_TOOL_EVIDENCE",
+            "count": 4
+          },
+          {
+            "id": "S_TOOL_SET_MATCH",
+            "count": 4
+          },
+          {
+            "id": "H_POI_GROUNDED",
+            "count": 2
+          },
+          {
+            "id": "H_WEATHER_EVIDENCE",
+            "count": 2
+          },
+          {
+            "id": "G_EXECUTION_STATUS_VALID",
+            "count": 2
+          },
+          {
+            "id": "H_BUDGET_EVIDENCE",
+            "count": 2
+          },
+          {
+            "id": "H_BUDGET_LIMIT",
+            "count": 2
+          },
+          {
+            "id": "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+            "count": 1
+          }
+        ],
+        "top_tool_failure_types": []
+      },
+      "fixed_multi_agent": {
+        "failed_case_count": 6,
+        "sample_failed_cases": [
+          {
+            "case_id": "smoke_shenzhen_attractions",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "T_ATTRACTION_SINGLE_SCOPE",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "attraction_recommendation"
+          },
+          {
+            "case_id": "smoke_beijing_weather",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "T_WEATHER_SINGLE_SCOPE",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "weather_query"
+          },
+          {
+            "case_id": "smoke_hangzhou_budget",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "H_BUDGET_LIMIT",
+              "T_BUDGET_SINGLE_SCOPE",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "budget_query"
+          },
+          {
+            "case_id": "smoke_guilin_clarification",
+            "turn_id": null,
+            "failed_rule_ids": [
+              "G_FINAL_ANSWER_CONSISTENT",
+              "T_CLARIFICATION_MISSING_FIELDS"
+            ],
+            "stsr": false,
+            "task_type": "clarification"
+          },
+          {
+            "case_id": "smoke_hangzhou_duration_change",
+            "turn_id": "t2_extend_duration",
+            "failed_rule_ids": [
+              "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+              "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": false,
+            "task_type": "partial_replan"
+          },
+          {
+            "case_id": "smoke_beijing_rain_adjustment",
+            "turn_id": "t2_rain_day1",
+            "failed_rule_ids": [
+              "S_AGENT_SET_MATCH",
+              "S_TOOL_SET_MATCH"
+            ],
+            "stsr": true,
+            "task_type": "weather_adjustment"
+          }
+        ],
+        "top_failed_rules": [
+          {
+            "id": "S_AGENT_SET_MATCH",
+            "count": 5
+          },
+          {
+            "id": "S_TOOL_SET_MATCH",
+            "count": 5
+          },
+          {
+            "id": "T_WEATHER_SINGLE_SCOPE",
+            "count": 1
+          },
+          {
+            "id": "G_FINAL_ANSWER_CONSISTENT",
+            "count": 1
+          },
+          {
+            "id": "T_CLARIFICATION_MISSING_FIELDS",
+            "count": 1
+          },
+          {
+            "id": "H_BUDGET_LIMIT",
+            "count": 1
+          },
+          {
+            "id": "T_BUDGET_SINGLE_SCOPE",
+            "count": 1
+          },
+          {
+            "id": "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+            "count": 1
+          },
+          {
+            "id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+            "count": 1
+          },
+          {
+            "id": "T_ATTRACTION_SINGLE_SCOPE",
+            "count": 1
+          }
+        ],
+        "top_tool_failure_types": []
+      },
+      "adaptive_multi_agent": {
+        "failed_case_count": 0,
+        "sample_failed_cases": [],
+        "top_failed_rules": [],
+        "top_tool_failure_types": []
+      }
+    },
+    "total_failed_case_count": 21,
+    "failure_count_by_rule": [
+      {
+        "id": "S_AGENT_SET_MATCH",
+        "count": 19
+      },
+      {
+        "id": "S_TOOL_SET_MATCH",
+        "count": 15
+      },
+      {
+        "id": "G_FINAL_ANSWER_CONSISTENT",
+        "count": 10
+      },
+      {
+        "id": "H_TOOL_EVIDENCE",
+        "count": 10
+      },
+      {
+        "id": "H_BUDGET_LIMIT",
+        "count": 6
+      },
+      {
+        "id": "H_POI_GROUNDED",
+        "count": 6
+      },
+      {
+        "id": "H_WEATHER_EVIDENCE",
+        "count": 6
+      },
+      {
+        "id": "H_BUDGET_EVIDENCE",
+        "count": 5
+      },
+      {
+        "id": "G_EXECUTION_STATUS_VALID",
+        "count": 3
+      },
+      {
+        "id": "T_CLARIFICATION_MISSING_FIELDS",
+        "count": 3
+      },
+      {
+        "id": "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+        "count": 3
+      },
+      {
+        "id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+        "count": 3
+      },
+      {
+        "id": "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+        "count": 2
+      },
+      {
+        "id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+        "count": 2
+      },
+      {
+        "id": "T_CLARIFICATION_NO_PREMATURE_PLAN",
+        "count": 1
+      },
+      {
+        "id": "T_GENERAL_CHAT_NO_BUSINESS_EXECUTION",
+        "count": 1
+      },
+      {
+        "id": "T_ATTRACTION_SINGLE_SCOPE",
+        "count": 1
+      },
+      {
+        "id": "T_WEATHER_SINGLE_SCOPE",
+        "count": 1
+      },
+      {
+        "id": "T_BUDGET_SINGLE_SCOPE",
+        "count": 1
+      }
+    ]
+  },
+  "trace_summary": {
+    "trace_count": 40,
+    "llm_call_count": 98,
+    "mock_llm_call_count": 0,
+    "fallback_llm_call_count": 0,
+    "retry_attempt_count": 99.0,
+    "retry_count": 1.0,
+    "prompt_tokens": 301769.0,
+    "completion_tokens": 117733.0,
+    "total_tokens": 419502.0,
+    "estimated_cost": 0.0,
+    "standardized_estimated_cost": 0.0,
+    "actual_cost": null
+  },
+  "artifact_paths": {
+    "summary": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/evaluation_summary.json",
+    "json": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/benchmark_results.json",
+    "manifest": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/experiment_manifest.json",
+    "csv": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/benchmark_results.csv",
+    "paper_tables": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/paper_tables.md",
+    "day7_gate": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/day7_pilot_gate.json",
+    "trace_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/traces",
+    "run_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z",
+    "paper_analysis_json": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/paper_analysis.json",
+    "paper_analysis_md": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/paper_analysis.md"
+  },
+  "paper_use_policy": {
+    "summary": "Pilot analysis may be used to debug the pipeline, but must not be reported as final academic evidence.",
+    "allowed_uses": [
+      "pipeline verification",
+      "artifact completeness inspection",
+      "small-sample failure diagnosis"
+    ],
+    "forbidden_uses": [
+      "formal paper conclusion",
+      "claiming model superiority",
+      "reporting pilot scores as final experiment results"
+    ]
+  }
+}

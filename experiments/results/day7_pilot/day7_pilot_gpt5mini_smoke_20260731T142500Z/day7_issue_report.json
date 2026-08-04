@@ -1,0 +1,1601 @@
+{
+  "schema_version": "ctp-day7-fix-report-v1",
+  "created_at": "2026-08-01T04:42:16.625665+00:00",
+  "status": "completed",
+  "run_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z",
+  "run": {
+    "run_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z",
+    "run_id": "day7_pilot_gpt5mini_smoke_20260731T142500Z",
+    "dataset_id": "ctp_smoke_test_day7_pilot",
+    "dataset_version": "2026-07-31-zh",
+    "pilot_gate_status": "passed",
+    "raw_result_count": 40,
+    "quality_result_count": 32,
+    "summary_quality_result_count": 32,
+    "trace_count": 40,
+    "llm_call_count": 69,
+    "case_count": 8,
+    "total_turn_count": 10,
+    "expected_result_count": 40,
+    "model": "gpt-5-mini",
+    "temperature": 0.0,
+    "max_tokens": 1024,
+    "timeout_seconds": 60,
+    "retry_max_attempts": 3
+  },
+  "checks": {
+    "run_dir_exists": true,
+    "core_artifacts_loaded": true,
+    "pilot_gate_loaded": true,
+    "three_issue_categories_present": true,
+    "each_issue_has_modification": true,
+    "each_issue_has_before_after": true,
+    "each_issue_has_regression_or_diagnostic_test": true,
+    "m3_systemic_analysis_present": true
+  },
+  "failed_checks": [],
+  "issue_counts": {
+    "infrastructure_errors": {
+      "total": 4,
+      "fixed": 4,
+      "open": 0,
+      "deferred": 0
+    },
+    "experiment_implementation_errors": {
+      "total": 4,
+      "fixed": 4,
+      "open": 0,
+      "deferred": 0
+    },
+    "method_real_failures": {
+      "total": 2,
+      "fixed": 0,
+      "open": 2,
+      "deferred": 0
+    }
+  },
+  "issues": {
+    "infrastructure_errors": [
+      {
+        "issue_id": "INFRA-001",
+        "category": "infrastructure_error",
+        "severity": "high",
+        "status": "fixed",
+        "summary": "报告参数和真实 LLM 请求参数曾可能不一致。",
+        "before_run": "配置模块先加载 settings.temperature=0.2 / timeout=90，pilot/preflight 后置写入环境变量，可能导致 manifest 写 0/60 但 API 实际用 0.2/90。",
+        "modification": "运行时参数改为每次请求解析并写入 request_options，temperature=0 不再被当成空值；trace、manifest、preflight 使用同一套冻结参数。",
+        "after_run": "当前 pilot manifest: model=gpt-5-mini, temperature=0.0, timeout=60, max_tokens=1024; LLM 调用参数不一致数=0。",
+        "evidence": {
+          "manifest_runtime": {
+            "model": "gpt-5-mini",
+            "temperature": 0.0,
+            "max_tokens": 1024,
+            "timeout_seconds": 60,
+            "retry_max_attempts": 3
+          },
+          "llm_call_count": 69,
+          "mismatch_count": 0,
+          "mismatches": [],
+          "consistent_with_manifest": true,
+          "request_option_values": {
+            "max_tokens": [
+              "1024"
+            ],
+            "model": [
+              "gpt-5-mini"
+            ],
+            "retry_max_attempts": [
+              "3"
+            ],
+            "temperature": [
+              "0.0"
+            ],
+            "timeout_seconds": [
+              "60"
+            ]
+          },
+          "retry_max_attempts_values": [
+            "3"
+          ]
+        },
+        "regression_tests": [
+          "tests/test_tracing.py::test_openrouter_client_preserves_zero_temperature_and_records_retry_metadata",
+          "tests/test_tracing.py::test_openrouter_client_uses_runtime_env_after_settings_loaded",
+          "tests/test_day6_formal_run_preflight.py::test_day6_formal_preflight_rejects_nonzero_temperature"
+        ],
+        "paper_risk": "如果不修，论文中的温度、超时和成本/时延统计不可复现。",
+        "next_action": "正式实验继续使用 manifest 与 trace 的运行参数一致性作为硬门禁。"
+      },
+      {
+        "issue_id": "INFRA-002",
+        "category": "infrastructure_error",
+        "severity": "high",
+        "status": "fixed",
+        "summary": "重试范围曾过宽，并且 SDK 内部重试可能形成隐藏调用。",
+        "before_run": "客户端会对所有异常重试，OpenAI SDK 自身也可能自动重试；协议要求只允许 429、5xx 和网络超时，且初次请求+最多额外两次重试。",
+        "modification": "禁用 SDK 内部重试；自定义重试限制在 HTTP 429、HTTP 5xx、网络超时；最大尝试次数统一为 3，并完整写入 retry audit。",
+        "after_run": "当前 pilot retry_max_attempts=3，trace 记录 retry_count=1.0，LLM 调用数=69。",
+        "evidence": {
+          "manifest_retry_max_attempts": 3,
+          "trace_retry_count": 1.0,
+          "retry_values_in_calls": [
+            "3"
+          ]
+        },
+        "regression_tests": [
+          "tests/test_tracing.py::test_openrouter_client_preserves_zero_temperature_and_records_retry_metadata",
+          "tests/test_tracing.py::test_openrouter_client_does_not_retry_non_protocol_errors"
+        ],
+        "paper_risk": "如果不修，真实 API 调用次数、Token、成本和失败率都会被隐藏重试污染。",
+        "next_action": "正式实验不允许绕过自定义 retry audit。"
+      },
+      {
+        "issue_id": "INFRA-003",
+        "category": "infrastructure_error",
+        "severity": "medium",
+        "status": "fixed",
+        "summary": "严格模式下 Mock fallback 可能污染真实实验证据。",
+        "before_run": "旧链路存在真实 API 不可用时隐式退回 Mock 的风险。",
+        "modification": "严格模式阻止 Mock fallback，pilot gate 检查所有 LLM 调用均非 mock、非 fallback。",
+        "after_run": "当前 pilot mock_llm_call_count=0，fallback_llm_call_count=0。",
+        "evidence": {
+          "mock_llm_call_count": 0,
+          "fallback_llm_call_count": 0,
+          "strict_mode": true
+        },
+        "regression_tests": [
+          "tests/test_tracing.py::test_strict_mode_rejects_already_initialized_mock_client",
+          "tests/test_tracing.py::test_mock_fallback_and_strict_mode_are_recorded",
+          "tests/test_day7_pilot.py::test_day7_pilot_runs_subset_and_writes_gate_report"
+        ],
+        "paper_risk": "如果不修，论文可能把 Mock 结果误报为真实模型结果。",
+        "next_action": "正式实验继续保持 EXPERIMENT_STRICT_MODE=true。"
+      },
+      {
+        "issue_id": "INFRA-004",
+        "category": "infrastructure_error",
+        "severity": "medium",
+        "status": "fixed",
+        "summary": "Day7 pilot 初次真实运行暴露过 LLM 客户端局部 import 导致的运行时错误。",
+        "before_run": "LLMManager 初始化中局部 import os 造成作用域遮蔽，真实 pilot 未能进入有效 LLM 调用。",
+        "modification": "移除局部 import，复用模块级 os 导入，使真实 API 初始化路径恢复。",
+        "after_run": "当前 pilot 已产生 69 次真实 LLM 调用，result_error_count=0。",
+        "evidence": {
+          "llm_call_count": 69,
+          "result_error_count": 0
+        },
+        "regression_tests": [
+          "tests/test_day6_real_api_smoke.py::test_real_api_smoke_writes_trace_token_latency_and_cost_reports",
+          "tests/test_day7_pilot.py::test_day7_pilot_runs_subset_and_writes_gate_report"
+        ],
+        "paper_risk": "如果不修，无法产生真实 pilot 的请求级 trace 证据。",
+        "next_action": "保持真实运行前先执行 preflight，再执行小规模 pilot。"
+      }
+    ],
+    "experiment_implementation_errors": [
+      {
+        "issue_id": "EXP-001",
+        "category": "experiment_implementation_error",
+        "severity": "high",
+        "status": "fixed",
+        "summary": "数据解析门禁曾只展示解析结果，不检查解析值是否等于金标。",
+        "before_run": "“改成3人”案例会被解析成上一轮 2 人，旧验证器仍显示 passed。",
+        "modification": "新增自然语言解析值与金标一致性检查；changed_slots 新值必须出现在当前话语中；preserved_slots 必须保持上一轮状态。",
+        "after_run": "ctp120_dev 与 benchmark_test 均通过中文解析门禁；people_count 当前轮覆盖历史值。",
+        "evidence": {
+          "dataset_version": "2026-07-31-zh",
+          "quality_result_count": 32
+        },
+        "regression_tests": [
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_prefers_current_turn_value_over_history_for_people_change",
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_blocks_parse_gold_mismatch_for_changed_slot",
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_requires_changed_slot_value_in_current_utterance",
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_blocks_preserved_slot_conflict"
+        ],
+        "paper_risk": "如果不修，正式实验的多轮任务标签不可信，M3 的状态复用评价会失真。",
+        "next_action": "扩展到 100-150 例时继续使用同一 validator 作为数据入库门禁。"
+      },
+      {
+        "issue_id": "EXP-002",
+        "category": "experiment_implementation_error",
+        "severity": "high",
+        "status": "fixed",
+        "summary": "开发集、烟雾集、正式测试集曾缺少重复、近似重复和中文口径检查。",
+        "before_run": "烟雾集和开发集之间存在完全相同输入，且旧数据主要为英文。",
+        "modification": "开发集和烟雾集切换为中文口径；新增跨 split 重复/近似重复、中文输入、离线可行性门禁。",
+        "after_run": "benchmark_test 当前作为 8 个顶层案例、10 个实际轮次的中文 smoke 草稿，不再使用旧英文重复输入。",
+        "evidence": {
+          "pilot_case_count": 8,
+          "pilot_turn_count": 10,
+          "selected_case_ids": [
+            "smoke_xian_full_plan",
+            "smoke_shenzhen_attractions",
+            "smoke_beijing_weather",
+            "smoke_hangzhou_budget",
+            "smoke_guilin_clarification",
+            "smoke_hangzhou_duration_change",
+            "smoke_beijing_rain_adjustment",
+            "smoke_general_chat"
+          ]
+        },
+        "regression_tests": [
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_blocks_cross_split_duplicate_and_near_duplicate",
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_blocks_non_chinese_visible_inputs",
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_blocks_offline_infeasible_constraints",
+          "tests/test_day6_benchmark_dataset_quality.py::test_benchmark_test_smoke_dataset_has_strict_gold_labels"
+        ],
+        "paper_risk": "如果不修，测试集可能泄漏开发集样本，论文实验会被认为不独立。",
+        "next_action": "正式测试集冻结前必须再次运行跨 split 检查。"
+      },
+      {
+        "issue_id": "EXP-003",
+        "category": "experiment_implementation_error",
+        "severity": "medium",
+        "status": "fixed",
+        "summary": "Day7 pilot 默认规模曾不是完整 8 条 smoke 链路。",
+        "before_run": "pilot 默认只抽 3 个案例，无法得到协议要求的 8 个顶层案例、10 个轮次、4 种方法、40 条结果。",
+        "modification": "DEFAULT_MAX_CASES 调整为 8；gate 校验 case_count、turn_count、result_count、trace_count。",
+        "after_run": "当前 pilot case_count=8，turn_count=10，expected_result_count=40，actual_result_count=40。",
+        "evidence": {
+          "pilot_structure": {
+            "case_count": 8,
+            "single_turn_case_count": 6,
+            "scenario_case_count": 2,
+            "total_turn_count": 10,
+            "selected_case_ids": [
+              "smoke_xian_full_plan",
+              "smoke_shenzhen_attractions",
+              "smoke_beijing_weather",
+              "smoke_hangzhou_budget",
+              "smoke_guilin_clarification",
+              "smoke_hangzhou_duration_change",
+              "smoke_beijing_rain_adjustment",
+              "smoke_general_chat"
+            ],
+            "method_count": 4,
+            "repeats": 1,
+            "expected_trace_count": 40,
+            "actual_trace_file_count": 40,
+            "loaded_trace_count": 40
+          },
+          "expected_result_count": 40,
+          "actual_result_count": 40
+        },
+        "regression_tests": [
+          "tests/test_day7_pilot.py::test_day7_pilot_default_scope_matches_full_smoke_set",
+          "tests/test_day7_pilot.py::test_day7_pilot_runs_subset_and_writes_gate_report"
+        ],
+        "paper_risk": "如果不修，pilot 不能覆盖完整 smoke 协议，后续问题清单不充分。",
+        "next_action": "正式实验不使用 pilot 规模；pilot 只作扩跑前健康检查。"
+      },
+      {
+        "issue_id": "EXP-004",
+        "category": "experiment_implementation_error",
+        "severity": "medium",
+        "status": "fixed",
+        "summary": "pilot gate 曾容易把证据完整性和方法质量混在一起。",
+        "before_run": "方法失败或无业务 Agent 的澄清/闲聊轮次可能导致证据 gate 被误判失败。",
+        "modification": "pilot gate 只硬检查证据完整性、真实运行参数、无 Mock/fallback；方法质量作为诊断字段输出。",
+        "after_run": "当前 pilot gate=passed；result_status_counts={'failed': 32, 'clarification': 6, 'completed': 2}；quality_gated=False。",
+        "evidence": {
+          "pilot_gate_status": "passed",
+          "quality_policy": {
+            "quality_threshold_enforced": false,
+            "reason": "Day 7 pilot checks evidence completeness and runtime auditability. Task quality metrics are reported but do not gate the pilot."
+          },
+          "result_status_summary": {
+            "status_counts": {
+              "failed": 32,
+              "clarification": 6,
+              "completed": 2
+            },
+            "error_count": 0,
+            "quality_gated": false,
+            "note": "Pilot gates evidence completeness and runtime auditability. Method failures are reported here for diagnosis but are not hard-gated."
+          }
+        },
+        "regression_tests": [
+          "tests/test_day7_pilot.py::test_day7_pilot_runs_subset_and_writes_gate_report"
+        ],
+        "paper_risk": "如果不修，真实方法失败会被误当成基础设施失败，问题定位混乱。",
+        "next_action": "正式实验 gate 与质量阈值仍需分层：先证据有效，再谈方法指标。"
+      }
+    ],
+    "method_real_failures": [
+      {
+        "issue_id": "METHOD-001",
+        "category": "method_real_failure",
+        "severity": "critical",
+        "status": "open",
+        "summary": "M3 在真实 smoke 质量评价中存在整类任务系统性失败。",
+        "before_run": "Day7 之前没有真实 smoke 结果，无法判断 M3 是否只是脚手架可跑，还是方法真的可用。",
+        "modification": "本任务不美化结果；新增按任务类型、规则、失败原因的诊断报告，把 M3 真实失败显式列入后续修正入口。",
+        "after_run": "M3 quality_unit_count=8，failed=8，failure_rate=1.0，systemic_failure=True。",
+        "evidence": {
+          "method": "adaptive_multi_agent",
+          "label": "M3 Proposed",
+          "quality_unit_count": 8,
+          "failed_quality_unit_count": 8,
+          "failure_rate": 1.0,
+          "status_counts": {
+            "failed": 5,
+            "clarification": 3
+          },
+          "affected_task_type_count": 8,
+          "systemic_task_types": [
+            "attraction_recommendation",
+            "budget_query",
+            "clarification",
+            "general_chat",
+            "partial_replan",
+            "trip_planning",
+            "weather_adjustment",
+            "weather_query"
+          ],
+          "systemic_failure": true,
+          "top_failed_rules": [
+            {
+              "id": "G_EXECUTION_STATUS_VALID",
+              "count": 5
+            },
+            {
+              "id": "G_FINAL_ANSWER_CONSISTENT",
+              "count": 5
+            },
+            {
+              "id": "H_TOOL_EVIDENCE",
+              "count": 5
+            },
+            {
+              "id": "S_TOOL_SET_MATCH",
+              "count": 5
+            },
+            {
+              "id": "G_TASK_TYPE_MATCH",
+              "count": 5
+            },
+            {
+              "id": "S_AGENT_SET_MATCH",
+              "count": 4
+            },
+            {
+              "id": "H_DAILY_LOAD_LIMIT",
+              "count": 2
+            },
+            {
+              "id": "H_BUDGET_LIMIT",
+              "count": 2
+            },
+            {
+              "id": "H_BUDGET_EVIDENCE",
+              "count": 2
+            },
+            {
+              "id": "S_PLANNED_ACTUAL_TOOL_CONSISTENCY",
+              "count": 2
+            }
+          ],
+          "top_failure_reasons": [
+            {
+              "id": "agent decision output is empty or not text",
+              "count": 7
+            }
+          ],
+          "task_type_breakdown": [
+            {
+              "task_type": "attraction_recommendation",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "clarification": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_TASK_TYPE_MATCH",
+                  "count": 1
+                },
+                {
+                  "id": "H_ATTRACTION_COUNT_BOUNDS",
+                  "count": 1
+                },
+                {
+                  "id": "H_TOOL_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "T_ATTRACTION_SINGLE_SCOPE",
+                  "count": 1
+                },
+                {
+                  "id": "S_AGENT_SET_MATCH",
+                  "count": 1
+                },
+                {
+                  "id": "S_TOOL_SET_MATCH",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "budget_query",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "failed": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_EXECUTION_STATUS_VALID",
+                  "count": 1
+                },
+                {
+                  "id": "G_FINAL_ANSWER_CONSISTENT",
+                  "count": 1
+                },
+                {
+                  "id": "G_TASK_TYPE_MATCH",
+                  "count": 1
+                },
+                {
+                  "id": "H_BUDGET_LIMIT",
+                  "count": 1
+                },
+                {
+                  "id": "H_BUDGET_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "H_TOOL_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "T_BUDGET_SINGLE_SCOPE",
+                  "count": 1
+                },
+                {
+                  "id": "S_AGENT_SET_MATCH",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "clarification",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "clarification": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_FINAL_ANSWER_CONSISTENT",
+                  "count": 1
+                },
+                {
+                  "id": "T_CLARIFICATION_MISSING_FIELDS",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "general_chat",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "clarification": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_TASK_TYPE_MATCH",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "partial_replan",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "failed": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_EXECUTION_STATUS_VALID",
+                  "count": 1
+                },
+                {
+                  "id": "G_FINAL_ANSWER_CONSISTENT",
+                  "count": 1
+                },
+                {
+                  "id": "G_TASK_TYPE_MATCH",
+                  "count": 1
+                },
+                {
+                  "id": "H_ATTRACTION_COUNT_BOUNDS",
+                  "count": 1
+                },
+                {
+                  "id": "H_DAILY_LOAD_LIMIT",
+                  "count": 1
+                },
+                {
+                  "id": "H_WEATHER_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "H_TOOL_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "trip_planning",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "failed": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_EXECUTION_STATUS_VALID",
+                  "count": 1
+                },
+                {
+                  "id": "G_FINAL_ANSWER_CONSISTENT",
+                  "count": 1
+                },
+                {
+                  "id": "H_DAILY_LOAD_LIMIT",
+                  "count": 1
+                },
+                {
+                  "id": "H_BUDGET_LIMIT",
+                  "count": 1
+                },
+                {
+                  "id": "H_RAIN_SUITABILITY",
+                  "count": 1
+                },
+                {
+                  "id": "H_BUDGET_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "H_TOOL_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "S_TOOL_SET_MATCH",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "weather_adjustment",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "failed": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_EXECUTION_STATUS_VALID",
+                  "count": 1
+                },
+                {
+                  "id": "G_FINAL_ANSWER_CONSISTENT",
+                  "count": 1
+                },
+                {
+                  "id": "G_TASK_TYPE_MATCH",
+                  "count": 1
+                },
+                {
+                  "id": "H_WEATHER_ADJUSTMENT_REQUIRED",
+                  "count": 1
+                },
+                {
+                  "id": "H_WEATHER_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "H_TOOL_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+                  "count": 1
+                },
+                {
+                  "id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "weather_query",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "failed": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_EXECUTION_STATUS_VALID",
+                  "count": 1
+                }
+              ]
+            }
+          ],
+          "interpretation": "M3 在当前真实 smoke 中覆盖的质量单元全部失败，说明失败不是个别案例波动，而是输出结构、任务类型识别、工具证据或多轮状态复用链路仍需修正。",
+          "formal_run_blocked": true
+        },
+        "regression_tests": [
+          "tests/test_day7_fix_report.py::test_day7_fix_report_classifies_m3_systemic_failures"
+        ],
+        "paper_risk": "该问题未关闭前，不能用当前 pilot 支撑 M3 优于 M2 的论文结论。",
+        "next_action": "Day8 优先修 M3 输出结构、任务类型稳定性、工具证据和多轮状态复用。"
+      },
+      {
+        "issue_id": "METHOD-002",
+        "category": "method_real_failure",
+        "severity": "high",
+        "status": "open",
+        "summary": "M3 失败集中在任务类型/执行状态/最终答案一致性与工具证据规则。",
+        "before_run": "只有总体 STSR 或 HCSR 时，看不出是调度错、工具证据错，还是最终结构化输出错。",
+        "modification": "报告从 evaluation_failed_rule_ids 和输出失败原因中抽取 Top 规则，形成可落地的修正入口。",
+        "after_run": "M3 top_failed_rules=G_EXECUTION_STATUS_VALID(5), G_FINAL_ANSWER_CONSISTENT(5), H_TOOL_EVIDENCE(5), S_TOOL_SET_MATCH(5), G_TASK_TYPE_MATCH(5)；top_failure_reasons=agent decision output is empty or not text(7)。",
+        "evidence": {
+          "top_failed_rules": [
+            {
+              "id": "G_EXECUTION_STATUS_VALID",
+              "count": 5
+            },
+            {
+              "id": "G_FINAL_ANSWER_CONSISTENT",
+              "count": 5
+            },
+            {
+              "id": "H_TOOL_EVIDENCE",
+              "count": 5
+            },
+            {
+              "id": "S_TOOL_SET_MATCH",
+              "count": 5
+            },
+            {
+              "id": "G_TASK_TYPE_MATCH",
+              "count": 5
+            },
+            {
+              "id": "S_AGENT_SET_MATCH",
+              "count": 4
+            },
+            {
+              "id": "H_DAILY_LOAD_LIMIT",
+              "count": 2
+            },
+            {
+              "id": "H_BUDGET_LIMIT",
+              "count": 2
+            },
+            {
+              "id": "H_BUDGET_EVIDENCE",
+              "count": 2
+            },
+            {
+              "id": "S_PLANNED_ACTUAL_TOOL_CONSISTENCY",
+              "count": 2
+            }
+          ],
+          "top_failure_reasons": [
+            {
+              "id": "agent decision output is empty or not text",
+              "count": 7
+            }
+          ],
+          "task_type_breakdown": [
+            {
+              "task_type": "attraction_recommendation",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "clarification": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_TASK_TYPE_MATCH",
+                  "count": 1
+                },
+                {
+                  "id": "H_ATTRACTION_COUNT_BOUNDS",
+                  "count": 1
+                },
+                {
+                  "id": "H_TOOL_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "T_ATTRACTION_SINGLE_SCOPE",
+                  "count": 1
+                },
+                {
+                  "id": "S_AGENT_SET_MATCH",
+                  "count": 1
+                },
+                {
+                  "id": "S_TOOL_SET_MATCH",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "budget_query",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "failed": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_EXECUTION_STATUS_VALID",
+                  "count": 1
+                },
+                {
+                  "id": "G_FINAL_ANSWER_CONSISTENT",
+                  "count": 1
+                },
+                {
+                  "id": "G_TASK_TYPE_MATCH",
+                  "count": 1
+                },
+                {
+                  "id": "H_BUDGET_LIMIT",
+                  "count": 1
+                },
+                {
+                  "id": "H_BUDGET_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "H_TOOL_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "T_BUDGET_SINGLE_SCOPE",
+                  "count": 1
+                },
+                {
+                  "id": "S_AGENT_SET_MATCH",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "clarification",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "clarification": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_FINAL_ANSWER_CONSISTENT",
+                  "count": 1
+                },
+                {
+                  "id": "T_CLARIFICATION_MISSING_FIELDS",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "general_chat",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "clarification": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_TASK_TYPE_MATCH",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "partial_replan",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "failed": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_EXECUTION_STATUS_VALID",
+                  "count": 1
+                },
+                {
+                  "id": "G_FINAL_ANSWER_CONSISTENT",
+                  "count": 1
+                },
+                {
+                  "id": "G_TASK_TYPE_MATCH",
+                  "count": 1
+                },
+                {
+                  "id": "H_ATTRACTION_COUNT_BOUNDS",
+                  "count": 1
+                },
+                {
+                  "id": "H_DAILY_LOAD_LIMIT",
+                  "count": 1
+                },
+                {
+                  "id": "H_WEATHER_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "H_TOOL_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "trip_planning",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "failed": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_EXECUTION_STATUS_VALID",
+                  "count": 1
+                },
+                {
+                  "id": "G_FINAL_ANSWER_CONSISTENT",
+                  "count": 1
+                },
+                {
+                  "id": "H_DAILY_LOAD_LIMIT",
+                  "count": 1
+                },
+                {
+                  "id": "H_BUDGET_LIMIT",
+                  "count": 1
+                },
+                {
+                  "id": "H_RAIN_SUITABILITY",
+                  "count": 1
+                },
+                {
+                  "id": "H_BUDGET_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "H_TOOL_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "S_TOOL_SET_MATCH",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "weather_adjustment",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "failed": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_EXECUTION_STATUS_VALID",
+                  "count": 1
+                },
+                {
+                  "id": "G_FINAL_ANSWER_CONSISTENT",
+                  "count": 1
+                },
+                {
+                  "id": "G_TASK_TYPE_MATCH",
+                  "count": 1
+                },
+                {
+                  "id": "H_WEATHER_ADJUSTMENT_REQUIRED",
+                  "count": 1
+                },
+                {
+                  "id": "H_WEATHER_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "H_TOOL_EVIDENCE",
+                  "count": 1
+                },
+                {
+                  "id": "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+                  "count": 1
+                },
+                {
+                  "id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+                  "count": 1
+                }
+              ]
+            },
+            {
+              "task_type": "weather_query",
+              "total": 1,
+              "failed": 1,
+              "failure_rate": 1.0,
+              "status_counts": {
+                "failed": 1
+              },
+              "top_failed_rules": [
+                {
+                  "id": "G_EXECUTION_STATUS_VALID",
+                  "count": 1
+                }
+              ]
+            }
+          ]
+        },
+        "regression_tests": [
+          "tests/test_day7_fix_report.py::test_day7_fix_report_classifies_m3_systemic_failures"
+        ],
+        "paper_risk": "如果直接扩跑 100+ 案例，会把同一类错误复制成大规模失败，浪费免费 API 额度。",
+        "next_action": "先做小规模回归：每修一类规则，跑 8 条 smoke；通过后再扩展正式集。"
+      }
+    ]
+  },
+  "runtime_audit": {
+    "manifest_runtime": {
+      "model": "gpt-5-mini",
+      "temperature": 0.0,
+      "max_tokens": 1024,
+      "timeout_seconds": 60,
+      "retry_max_attempts": 3
+    },
+    "llm_call_count": 69,
+    "mismatch_count": 0,
+    "mismatches": [],
+    "consistent_with_manifest": true,
+    "request_option_values": {
+      "max_tokens": [
+        "1024"
+      ],
+      "model": [
+        "gpt-5-mini"
+      ],
+      "retry_max_attempts": [
+        "3"
+      ],
+      "temperature": [
+        "0.0"
+      ],
+      "timeout_seconds": [
+        "60"
+      ]
+    },
+    "retry_max_attempts_values": [
+      "3"
+    ]
+  },
+  "method_quality_summary": {
+    "adaptive_multi_agent": {
+      "label": "M3 Proposed",
+      "quality_unit_count": 8,
+      "failed_quality_unit_count": 8,
+      "failure_rate": 1.0,
+      "status_counts": {
+        "failed": 5,
+        "clarification": 3
+      },
+      "top_failed_rules": [
+        {
+          "id": "G_EXECUTION_STATUS_VALID",
+          "count": 5
+        },
+        {
+          "id": "G_FINAL_ANSWER_CONSISTENT",
+          "count": 5
+        },
+        {
+          "id": "H_TOOL_EVIDENCE",
+          "count": 5
+        },
+        {
+          "id": "S_TOOL_SET_MATCH",
+          "count": 5
+        },
+        {
+          "id": "G_TASK_TYPE_MATCH",
+          "count": 5
+        },
+        {
+          "id": "S_AGENT_SET_MATCH",
+          "count": 4
+        },
+        {
+          "id": "H_DAILY_LOAD_LIMIT",
+          "count": 2
+        },
+        {
+          "id": "H_BUDGET_LIMIT",
+          "count": 2
+        },
+        {
+          "id": "H_BUDGET_EVIDENCE",
+          "count": 2
+        },
+        {
+          "id": "S_PLANNED_ACTUAL_TOOL_CONSISTENCY",
+          "count": 2
+        }
+      ],
+      "top_failure_reasons": [
+        {
+          "id": "agent decision output is empty or not text",
+          "count": 7
+        }
+      ]
+    },
+    "fixed_multi_agent": {
+      "label": "M2 Fixed Multi-Agent",
+      "quality_unit_count": 8,
+      "failed_quality_unit_count": 8,
+      "failure_rate": 1.0,
+      "status_counts": {
+        "failed": 5,
+        "clarification": 3
+      },
+      "top_failed_rules": [
+        {
+          "id": "G_FINAL_ANSWER_CONSISTENT",
+          "count": 6
+        },
+        {
+          "id": "S_TOOL_SET_MATCH",
+          "count": 6
+        },
+        {
+          "id": "G_EXECUTION_STATUS_VALID",
+          "count": 5
+        },
+        {
+          "id": "S_PLANNED_ACTUAL_TOOL_CONSISTENCY",
+          "count": 5
+        },
+        {
+          "id": "G_TASK_TYPE_MATCH",
+          "count": 5
+        },
+        {
+          "id": "S_AGENT_SET_MATCH",
+          "count": 5
+        },
+        {
+          "id": "H_TOOL_EVIDENCE",
+          "count": 4
+        },
+        {
+          "id": "H_BUDGET_LIMIT",
+          "count": 3
+        },
+        {
+          "id": "H_RAIN_SUITABILITY",
+          "count": 3
+        },
+        {
+          "id": "H_BUDGET_EVIDENCE",
+          "count": 3
+        }
+      ],
+      "top_failure_reasons": [
+        {
+          "id": "agent decision output is empty or not text",
+          "count": 10
+        }
+      ]
+    },
+    "llm_direct": {
+      "label": "M0 Direct LLM",
+      "quality_unit_count": 8,
+      "failed_quality_unit_count": 8,
+      "failure_rate": 1.0,
+      "status_counts": {
+        "failed": 7,
+        "completed": 1
+      },
+      "top_failed_rules": [
+        {
+          "id": "G_EXECUTION_STATUS_VALID",
+          "count": 7
+        },
+        {
+          "id": "G_FINAL_ANSWER_CONSISTENT",
+          "count": 7
+        },
+        {
+          "id": "H_TOOL_EVIDENCE",
+          "count": 6
+        },
+        {
+          "id": "S_AGENT_SET_MATCH",
+          "count": 6
+        },
+        {
+          "id": "S_TOOL_SET_MATCH",
+          "count": 6
+        },
+        {
+          "id": "G_TASK_TYPE_MATCH",
+          "count": 5
+        },
+        {
+          "id": "H_WEATHER_EVIDENCE",
+          "count": 4
+        },
+        {
+          "id": "H_TRIP_DAYS",
+          "count": 3
+        },
+        {
+          "id": "H_ATTRACTION_COUNT_BOUNDS",
+          "count": 3
+        },
+        {
+          "id": "H_BUDGET_LIMIT",
+          "count": 3
+        }
+      ],
+      "top_failure_reasons": [
+        {
+          "id": "structured LLM output is empty or not text",
+          "count": 7
+        }
+      ]
+    },
+    "single_agent": {
+      "label": "M1 Single Agent",
+      "quality_unit_count": 8,
+      "failed_quality_unit_count": 8,
+      "failure_rate": 1.0,
+      "status_counts": {
+        "failed": 7,
+        "completed": 1
+      },
+      "top_failed_rules": [
+        {
+          "id": "S_AGENT_SET_MATCH",
+          "count": 8
+        },
+        {
+          "id": "G_EXECUTION_STATUS_VALID",
+          "count": 7
+        },
+        {
+          "id": "G_FINAL_ANSWER_CONSISTENT",
+          "count": 7
+        },
+        {
+          "id": "G_TASK_TYPE_MATCH",
+          "count": 5
+        },
+        {
+          "id": "H_TRIP_DAYS",
+          "count": 3
+        },
+        {
+          "id": "H_ATTRACTION_COUNT_BOUNDS",
+          "count": 3
+        },
+        {
+          "id": "H_BUDGET_LIMIT",
+          "count": 3
+        },
+        {
+          "id": "S_TOOL_SET_MATCH",
+          "count": 3
+        },
+        {
+          "id": "H_DAILY_LOAD_LIMIT",
+          "count": 2
+        },
+        {
+          "id": "T_ATTRACTION_SINGLE_SCOPE",
+          "count": 1
+        }
+      ],
+      "top_failure_reasons": [
+        {
+          "id": "structured LLM output is empty or not text",
+          "count": 7
+        }
+      ]
+    }
+  },
+  "m3_systemic_failure_analysis": {
+    "method": "adaptive_multi_agent",
+    "label": "M3 Proposed",
+    "quality_unit_count": 8,
+    "failed_quality_unit_count": 8,
+    "failure_rate": 1.0,
+    "status_counts": {
+      "failed": 5,
+      "clarification": 3
+    },
+    "affected_task_type_count": 8,
+    "systemic_task_types": [
+      "attraction_recommendation",
+      "budget_query",
+      "clarification",
+      "general_chat",
+      "partial_replan",
+      "trip_planning",
+      "weather_adjustment",
+      "weather_query"
+    ],
+    "systemic_failure": true,
+    "top_failed_rules": [
+      {
+        "id": "G_EXECUTION_STATUS_VALID",
+        "count": 5
+      },
+      {
+        "id": "G_FINAL_ANSWER_CONSISTENT",
+        "count": 5
+      },
+      {
+        "id": "H_TOOL_EVIDENCE",
+        "count": 5
+      },
+      {
+        "id": "S_TOOL_SET_MATCH",
+        "count": 5
+      },
+      {
+        "id": "G_TASK_TYPE_MATCH",
+        "count": 5
+      },
+      {
+        "id": "S_AGENT_SET_MATCH",
+        "count": 4
+      },
+      {
+        "id": "H_DAILY_LOAD_LIMIT",
+        "count": 2
+      },
+      {
+        "id": "H_BUDGET_LIMIT",
+        "count": 2
+      },
+      {
+        "id": "H_BUDGET_EVIDENCE",
+        "count": 2
+      },
+      {
+        "id": "S_PLANNED_ACTUAL_TOOL_CONSISTENCY",
+        "count": 2
+      }
+    ],
+    "top_failure_reasons": [
+      {
+        "id": "agent decision output is empty or not text",
+        "count": 7
+      }
+    ],
+    "task_type_breakdown": [
+      {
+        "task_type": "attraction_recommendation",
+        "total": 1,
+        "failed": 1,
+        "failure_rate": 1.0,
+        "status_counts": {
+          "clarification": 1
+        },
+        "top_failed_rules": [
+          {
+            "id": "G_TASK_TYPE_MATCH",
+            "count": 1
+          },
+          {
+            "id": "H_ATTRACTION_COUNT_BOUNDS",
+            "count": 1
+          },
+          {
+            "id": "H_TOOL_EVIDENCE",
+            "count": 1
+          },
+          {
+            "id": "T_ATTRACTION_SINGLE_SCOPE",
+            "count": 1
+          },
+          {
+            "id": "S_AGENT_SET_MATCH",
+            "count": 1
+          },
+          {
+            "id": "S_TOOL_SET_MATCH",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "task_type": "budget_query",
+        "total": 1,
+        "failed": 1,
+        "failure_rate": 1.0,
+        "status_counts": {
+          "failed": 1
+        },
+        "top_failed_rules": [
+          {
+            "id": "G_EXECUTION_STATUS_VALID",
+            "count": 1
+          },
+          {
+            "id": "G_FINAL_ANSWER_CONSISTENT",
+            "count": 1
+          },
+          {
+            "id": "G_TASK_TYPE_MATCH",
+            "count": 1
+          },
+          {
+            "id": "H_BUDGET_LIMIT",
+            "count": 1
+          },
+          {
+            "id": "H_BUDGET_EVIDENCE",
+            "count": 1
+          },
+          {
+            "id": "H_TOOL_EVIDENCE",
+            "count": 1
+          },
+          {
+            "id": "T_BUDGET_SINGLE_SCOPE",
+            "count": 1
+          },
+          {
+            "id": "S_AGENT_SET_MATCH",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "task_type": "clarification",
+        "total": 1,
+        "failed": 1,
+        "failure_rate": 1.0,
+        "status_counts": {
+          "clarification": 1
+        },
+        "top_failed_rules": [
+          {
+            "id": "G_FINAL_ANSWER_CONSISTENT",
+            "count": 1
+          },
+          {
+            "id": "T_CLARIFICATION_MISSING_FIELDS",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "task_type": "general_chat",
+        "total": 1,
+        "failed": 1,
+        "failure_rate": 1.0,
+        "status_counts": {
+          "clarification": 1
+        },
+        "top_failed_rules": [
+          {
+            "id": "G_TASK_TYPE_MATCH",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "task_type": "partial_replan",
+        "total": 1,
+        "failed": 1,
+        "failure_rate": 1.0,
+        "status_counts": {
+          "failed": 1
+        },
+        "top_failed_rules": [
+          {
+            "id": "G_EXECUTION_STATUS_VALID",
+            "count": 1
+          },
+          {
+            "id": "G_FINAL_ANSWER_CONSISTENT",
+            "count": 1
+          },
+          {
+            "id": "G_TASK_TYPE_MATCH",
+            "count": 1
+          },
+          {
+            "id": "H_ATTRACTION_COUNT_BOUNDS",
+            "count": 1
+          },
+          {
+            "id": "H_DAILY_LOAD_LIMIT",
+            "count": 1
+          },
+          {
+            "id": "H_WEATHER_EVIDENCE",
+            "count": 1
+          },
+          {
+            "id": "H_TOOL_EVIDENCE",
+            "count": 1
+          },
+          {
+            "id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "task_type": "trip_planning",
+        "total": 1,
+        "failed": 1,
+        "failure_rate": 1.0,
+        "status_counts": {
+          "failed": 1
+        },
+        "top_failed_rules": [
+          {
+            "id": "G_EXECUTION_STATUS_VALID",
+            "count": 1
+          },
+          {
+            "id": "G_FINAL_ANSWER_CONSISTENT",
+            "count": 1
+          },
+          {
+            "id": "H_DAILY_LOAD_LIMIT",
+            "count": 1
+          },
+          {
+            "id": "H_BUDGET_LIMIT",
+            "count": 1
+          },
+          {
+            "id": "H_RAIN_SUITABILITY",
+            "count": 1
+          },
+          {
+            "id": "H_BUDGET_EVIDENCE",
+            "count": 1
+          },
+          {
+            "id": "H_TOOL_EVIDENCE",
+            "count": 1
+          },
+          {
+            "id": "S_TOOL_SET_MATCH",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "task_type": "weather_adjustment",
+        "total": 1,
+        "failed": 1,
+        "failure_rate": 1.0,
+        "status_counts": {
+          "failed": 1
+        },
+        "top_failed_rules": [
+          {
+            "id": "G_EXECUTION_STATUS_VALID",
+            "count": 1
+          },
+          {
+            "id": "G_FINAL_ANSWER_CONSISTENT",
+            "count": 1
+          },
+          {
+            "id": "G_TASK_TYPE_MATCH",
+            "count": 1
+          },
+          {
+            "id": "H_WEATHER_ADJUSTMENT_REQUIRED",
+            "count": 1
+          },
+          {
+            "id": "H_WEATHER_EVIDENCE",
+            "count": 1
+          },
+          {
+            "id": "H_TOOL_EVIDENCE",
+            "count": 1
+          },
+          {
+            "id": "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+            "count": 1
+          },
+          {
+            "id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+            "count": 1
+          }
+        ]
+      },
+      {
+        "task_type": "weather_query",
+        "total": 1,
+        "failed": 1,
+        "failure_rate": 1.0,
+        "status_counts": {
+          "failed": 1
+        },
+        "top_failed_rules": [
+          {
+            "id": "G_EXECUTION_STATUS_VALID",
+            "count": 1
+          }
+        ]
+      }
+    ],
+    "interpretation": "M3 在当前真实 smoke 中覆盖的质量单元全部失败，说明失败不是个别案例波动，而是输出结构、任务类型识别、工具证据或多轮状态复用链路仍需修正。",
+    "formal_run_blocked": true
+  },
+  "paper_use_policy": {
+    "summary": "当前 Day7 pilot 只能作为链路审计和失败诊断证据，不能作为论文正式效果结论。",
+    "allowed_uses": [
+      "说明实验链路已能生成真实请求级证据",
+      "列出开发期修正和剩余方法问题",
+      "指导 Day8 小规模修正回归"
+    ],
+    "forbidden_uses": [
+      "声称 M3 优于 M2",
+      "把 pilot 指标写入正式实验结果表",
+      "跳过 smoke 修正直接扩跑 100+ 案例"
+    ]
+  },
+  "artifact_paths": {
+    "run_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z",
+    "benchmark_results_json": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/benchmark_results.json",
+    "benchmark_results_csv": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/benchmark_results.csv",
+    "evaluation_summary": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/evaluation_summary.json",
+    "experiment_manifest": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/experiment_manifest.json",
+    "day7_pilot_gate": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/day7_pilot_gate.json",
+    "day7_pilot_report": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/day7_pilot_report.md",
+    "paper_analysis_json": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/paper_analysis.json",
+    "paper_analysis_md": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/paper_analysis.md",
+    "trace_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/traces",
+    "day7_issue_report_json": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/day7_issue_report.json",
+    "day7_fix_report_md": "experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/day7_fix_report.md"
+  }
+}

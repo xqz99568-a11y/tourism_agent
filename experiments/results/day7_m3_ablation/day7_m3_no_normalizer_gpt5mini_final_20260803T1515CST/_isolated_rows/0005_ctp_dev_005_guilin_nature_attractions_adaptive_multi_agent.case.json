@@ -1,0 +1,26 @@
+{
+  "case_id": "ctp_dev_005_guilin_nature_attractions",
+  "user_input": "只推荐桂林3个自然山水类景点，不要生成完整行程、天气报告或预算。",
+  "expected": {
+    "task_type": "attraction_recommendation",
+    "destination": "guilin",
+    "preferences": [
+      "nature"
+    ],
+    "min_attractions": 3,
+    "max_attractions": 3,
+    "required_tools": [
+      "poi_search"
+    ],
+    "accepted_agent_sets": [
+      [
+        "attraction"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "poi_search"
+      ]
+    ]
+  }
+}

@@ -10,6 +10,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import app.core.experiment_runner as experiment_runner_module
+from app.core.experiment_method_input import build_generation_case
 from app.core.experiment_runner import (
     RESEARCH_AGENT_DECISION_SCHEMA_VERSION,
     ExperimentRunner,
@@ -127,6 +128,11 @@ def test_research_tools_return_standard_envelopes_and_fixed_data() -> None:
     assert poi_result.data["status"] == "success"
     assert len(poi_result.data["data"]["attractions"]) == 2
     assert poi_result.data["data"]["attractions"][0]["evidence"]["offline"] is True
+    first_attraction = poi_result.data["data"]["attractions"][0]
+    assert "rain_suitability" in first_attraction
+    assert "outdoor_ratio" in first_attraction
+    assert "visit_intensity" in first_attraction
+    assert "walking_level" in first_attraction
 
     weather_result = asyncio.run(
         ResearchWeatherTool().execute(
@@ -386,6 +392,62 @@ def test_constraint_checker_passes_supported_indoor_senior_rain_plan_with_tool_e
     assert checks["tool_evidence"]["status"] == "passed"
 
 
+def test_constraint_checker_accepts_explicit_rain_suitable_mixed_poi() -> None:
+    result = asyncio.run(
+        ResearchConstraintCheckerTool().execute(
+            request={"city": "Xian"},
+            plan={
+                "daily_itinerary": [{"day": 1, "attractions": [{"poi_id": "xa004"}]}],
+                "weather": {"scenario_type": "rain"},
+                "weather_adjustments": [{"action": "prefer rain-suitable mixed POI"}],
+            },
+        )
+    )
+
+    checks = {item["name"]: item for item in result.data["data"]["checks"]}
+
+    assert checks["poi_existence"]["status"] == "passed"
+    assert checks["rain_attraction_suitability"]["status"] == "passed"
+
+
+def test_constraint_checker_does_not_treat_planning_constraints_as_rain() -> None:
+    result = asyncio.run(
+        ResearchConstraintCheckerTool().execute(
+            request={"city": "Hangzhou"},
+            plan={
+                "daily_itinerary": [{"day": 1, "attractions": [{"poi_id": "hz001"}]}],
+                "weather": {
+                    "scenario_type": "sunny",
+                    "daily_weather": [
+                        {
+                            "day_index": 1,
+                            "state": "sunny",
+                            "weather": "晴天",
+                            "precipitation_mm": 0,
+                            "risk_tags": [],
+                        }
+                    ],
+                    "planning_constraints": {
+                        "dynamic_adjustment_required": False,
+                    },
+                    "weather_adjustment_required": False,
+                },
+                "weather_adjustments": [],
+                "tool_results": {
+                    "poi_search": {"status": "success", "success": True},
+                    "weather_query": {"status": "success", "success": True},
+                },
+            },
+            constraints={"require_tool_evidence": True},
+        )
+    )
+
+    checks = {item["name"]: item for item in result.data["data"]["checks"]}
+    assert checks["weather_adjustment"]["status"] == "NA"
+    assert checks["rain_attraction_suitability"]["status"] == "NA"
+    assert checks["rain_attraction_suitability"]["details"] == {"rain_detected": False}
+
+
 def test_m3_uses_goal_state_scheduler_for_plan_selection() -> None:
     runner = ExperimentRunner()
 
@@ -436,6 +498,76 @@ def test_m3_uses_goal_state_scheduler_for_plan_selection() -> None:
     assert general_plan["agents"] == []
     assert general_plan["tools"] == []
     assert general_plan["scheduler"]["decision"]["decision_reasons"] == ["general_chat_no_agents"]
+
+
+def test_m3_chinese_attraction_only_keeps_requested_poi_count(tmp_path: Path) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
+
+    result = runner.run(
+        build_generation_case(
+            {
+                "case_id": "m3-chinese-two-attractions",
+                "user_input": "只帮我挑深圳2个适合室内参观的景点，不要天气、行程和预算。",
+            },
+            "adaptive_multi_agent",
+        ),
+        method="adaptive_multi_agent",
+    )
+
+    scheduler = result["output"]["metadata"]["adaptive_scheduler"]
+    assert scheduler["ticket"]["task_type"] == "attraction_recommendation"
+    assert scheduler["decision"]["planned_agents"] == ["attraction"]
+    assert scheduler["decision"]["planned_tools"] == ["poi_search"]
+    assert result["trace"]["executed_tools"] == ["poi_search"]
+    assert len(result["output"]["attractions"]) == 2
+    assert result["output"]["weather"] is None
+    assert result["output"]["budget"] is None
+
+
+def test_m3_current_turn_slots_do_not_invalidate_reuse_from_history_text(
+    tmp_path: Path,
+) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
+    first = runner.run(
+        build_generation_case(
+            {
+                "case_id": "m3-history-slot-turn1",
+                "user_input": "先做杭州2026年8月16日出发的两天游，2个人，预算5300元，要包含景点、天气、行程和预算。",
+            },
+            "adaptive_multi_agent",
+        ),
+        method="adaptive_multi_agent",
+    )
+    second_case = build_generation_case(
+        {
+            "case_id": "m3-history-slot-turn2",
+            "user_input": "把杭州这趟旅行改成3天，2026年8月16日、2个人和5300元预算都保持不变。",
+            "dialogue_history": [
+                {
+                    "role": "assistant",
+                    "content": "上一轮答案提到了历史文化、自然、室内偏好和高温天气风险。",
+                }
+            ],
+            "previous_state": first,
+        },
+        "adaptive_multi_agent",
+    )
+
+    assert "preferences" in second_case["parsed_slots"]
+    assert "preferences" not in second_case["current_turn_slots"]
+    second = runner.run(second_case, method="adaptive_multi_agent")
+
+    scheduler = second["output"]["metadata"]["adaptive_scheduler"]
+    assert scheduler["ticket"]["changed_slots"] == ["duration_days"]
+    assert scheduler["ticket"]["preserved_slots"] == [
+        "destination",
+        "start_date",
+        "people_count",
+        "budget_amount",
+    ]
+    assert scheduler["decision"]["planned_agents"] == ["weather", "itinerary", "budget"]
+    assert scheduler["decision"]["planned_tools"] == ["weather_query", "budget_calculator"]
+    assert scheduler["decision"]["reused_agents"] == ["attraction"]
 
 
 def test_constraint_checker_runs_after_method_output(tmp_path: Path) -> None:
@@ -913,8 +1045,13 @@ def test_m3_metrics_survive_llm_answer_timeout_via_trace_scheduler(
         method="adaptive_multi_agent",
     )
 
-    assert result["status"] == "failed"
-    assert result["trace"]["status"] == "failed"
+    assert result["status"] == "completed"
+    assert result["trace"]["status"] == "completed"
+    assert "最终答案整理模型调用超时" in result["output"]["final_answer"]
+    assert all(
+        output["decision_fallback_used"]
+        for output in result["output"]["agent_outputs"].values()
+    )
     assert result["trace"]["adaptive_scheduler"]["name"] == "goal_state_scheduler"
     assert result["metrics"]["m3_scheduler_name"] == "goal_state_scheduler"
     assert result["metrics"]["m3_planned_agent_count"] == 4

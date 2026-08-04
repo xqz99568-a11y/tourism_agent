@@ -1,0 +1,1055 @@
+{
+  "schema_version": "ctp-day7-test-draft-gate-v1",
+  "created_at": "2026-08-02T08:28:55.833604+00:00",
+  "status": "passed",
+  "paper_claims_allowed": false,
+  "dataset_id": "ctp120_test_draft",
+  "dataset_version": "2026-08-01-draft-v1",
+  "split": "test_draft",
+  "dataset_sha256": "005336b0f0eedeebe7576aefa790cb8452f68b168834facb2909123c9330bbb3",
+  "expected": {
+    "case_count": 100,
+    "turn_count": 130,
+    "scenario_case_count": 30,
+    "double_turn_scenario_count": 30,
+    "case_task_quotas": {
+      "trip_planning": 20,
+      "attraction_recommendation": 10,
+      "weather_query": 10,
+      "budget_query": 10,
+      "partial_replan": 20,
+      "weather_adjustment": 10,
+      "clarification": 10,
+      "general_chat": 10
+    },
+    "city_case_distribution": {
+      "beijing": 16,
+      "hangzhou": 16,
+      "xian": 16,
+      "shenzhen": 16,
+      "guilin": 16
+    }
+  },
+  "actual": {
+    "case_count": 100,
+    "single_turn_case_count": 70,
+    "scenario_case_count": 30,
+    "double_turn_scenario_count": 30,
+    "non_double_turn_scenario_count": 0,
+    "total_turn_count": 130,
+    "case_task_distribution": {
+      "attraction_recommendation": 10,
+      "budget_query": 10,
+      "clarification": 10,
+      "general_chat": 10,
+      "partial_replan": 20,
+      "trip_planning": 20,
+      "weather_adjustment": 10,
+      "weather_query": 10
+    },
+    "unit_task_distribution": {
+      "attraction_recommendation": 10,
+      "budget_query": 10,
+      "clarification": 10,
+      "general_chat": 10,
+      "partial_replan": 20,
+      "trip_planning": 50,
+      "weather_adjustment": 10,
+      "weather_query": 10
+    },
+    "city_case_distribution": {
+      "beijing": 16,
+      "guilin": 16,
+      "hangzhou": 16,
+      "shenzhen": 16,
+      "xian": 16
+    },
+    "city_related_case_count": 80,
+    "language": {
+      "policy": "zh-CN visible user_input required",
+      "minimum_cjk_chars_per_unit": 4,
+      "unit_count": 130,
+      "chinese_unit_count": 130,
+      "non_chinese_unit_count": 0,
+      "chinese_ratio": 1.0,
+      "non_chinese_labels": [],
+      "units": [
+        {
+          "label": "ctp_test_001_beijing_full_plan",
+          "cjk_char_count": 65,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_002_hangzhou_full_plan",
+          "cjk_char_count": 57,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_003_xian_full_plan",
+          "cjk_char_count": 59,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_004_shenzhen_full_plan",
+          "cjk_char_count": 61,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_005_guilin_full_plan",
+          "cjk_char_count": 68,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_006_beijing_full_plan",
+          "cjk_char_count": 66,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_007_hangzhou_full_plan",
+          "cjk_char_count": 56,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_008_xian_full_plan",
+          "cjk_char_count": 61,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_009_shenzhen_full_plan",
+          "cjk_char_count": 59,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_010_guilin_full_plan",
+          "cjk_char_count": 69,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_011_beijing_full_plan",
+          "cjk_char_count": 66,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_012_hangzhou_full_plan",
+          "cjk_char_count": 62,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_013_xian_full_plan",
+          "cjk_char_count": 62,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_014_shenzhen_full_plan",
+          "cjk_char_count": 63,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_015_guilin_full_plan",
+          "cjk_char_count": 64,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_016_beijing_full_plan",
+          "cjk_char_count": 63,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_017_hangzhou_full_plan",
+          "cjk_char_count": 56,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_018_xian_full_plan",
+          "cjk_char_count": 59,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_019_shenzhen_full_plan",
+          "cjk_char_count": 60,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_020_guilin_full_plan",
+          "cjk_char_count": 68,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_021_beijing_attractions",
+          "cjk_char_count": 62,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_022_hangzhou_attractions",
+          "cjk_char_count": 54,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_023_xian_attractions",
+          "cjk_char_count": 55,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_024_shenzhen_attractions",
+          "cjk_char_count": 57,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_025_guilin_attractions",
+          "cjk_char_count": 55,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_026_beijing_attractions",
+          "cjk_char_count": 61,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_027_hangzhou_attractions",
+          "cjk_char_count": 61,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_028_xian_attractions",
+          "cjk_char_count": 56,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_029_shenzhen_attractions",
+          "cjk_char_count": 61,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_030_guilin_attractions",
+          "cjk_char_count": 52,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_031_beijing_weather_only",
+          "cjk_char_count": 65,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_032_hangzhou_weather_only",
+          "cjk_char_count": 53,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_033_xian_weather_only",
+          "cjk_char_count": 50,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_034_shenzhen_weather_only",
+          "cjk_char_count": 52,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_035_guilin_weather_only",
+          "cjk_char_count": 52,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_036_beijing_weather_only",
+          "cjk_char_count": 67,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_037_hangzhou_weather_only",
+          "cjk_char_count": 52,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_038_xian_weather_only",
+          "cjk_char_count": 51,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_039_shenzhen_weather_only",
+          "cjk_char_count": 50,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_040_guilin_weather_only",
+          "cjk_char_count": 52,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_041_beijing_budget_only",
+          "cjk_char_count": 65,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_042_hangzhou_budget_only",
+          "cjk_char_count": 56,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_043_xian_budget_only",
+          "cjk_char_count": 54,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_044_shenzhen_budget_only",
+          "cjk_char_count": 56,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_045_guilin_budget_only",
+          "cjk_char_count": 47,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_046_beijing_budget_only",
+          "cjk_char_count": 63,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_047_hangzhou_budget_only",
+          "cjk_char_count": 50,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_048_xian_budget_only",
+          "cjk_char_count": 50,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_049_shenzhen_budget_only",
+          "cjk_char_count": 53,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_050_guilin_budget_only",
+          "cjk_char_count": 50,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_051_beijing_partial_replan/t1_full_plan",
+          "cjk_char_count": 51,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_051_beijing_partial_replan/t2_partial_change",
+          "cjk_char_count": 48,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_052_hangzhou_partial_replan/t1_full_plan",
+          "cjk_char_count": 42,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_052_hangzhou_partial_replan/t2_partial_change",
+          "cjk_char_count": 42,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_053_xian_partial_replan/t1_full_plan",
+          "cjk_char_count": 53,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_053_xian_partial_replan/t2_partial_change",
+          "cjk_char_count": 45,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_054_shenzhen_partial_replan/t1_full_plan",
+          "cjk_char_count": 55,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_054_shenzhen_partial_replan/t2_partial_change",
+          "cjk_char_count": 55,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_055_guilin_partial_replan/t1_full_plan",
+          "cjk_char_count": 44,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_055_guilin_partial_replan/t2_partial_change",
+          "cjk_char_count": 64,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_056_beijing_partial_replan/t1_full_plan",
+          "cjk_char_count": 51,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_056_beijing_partial_replan/t2_partial_change",
+          "cjk_char_count": 50,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_057_hangzhou_partial_replan/t1_full_plan",
+          "cjk_char_count": 43,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_057_hangzhou_partial_replan/t2_partial_change",
+          "cjk_char_count": 50,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_058_xian_partial_replan/t1_full_plan",
+          "cjk_char_count": 55,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_058_xian_partial_replan/t2_partial_change",
+          "cjk_char_count": 58,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_059_shenzhen_partial_replan/t1_full_plan",
+          "cjk_char_count": 51,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_059_shenzhen_partial_replan/t2_partial_change",
+          "cjk_char_count": 50,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_060_guilin_partial_replan/t1_full_plan",
+          "cjk_char_count": 42,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_060_guilin_partial_replan/t2_partial_change",
+          "cjk_char_count": 59,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_061_beijing_partial_replan/t1_full_plan",
+          "cjk_char_count": 52,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_061_beijing_partial_replan/t2_partial_change",
+          "cjk_char_count": 57,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_062_hangzhou_partial_replan/t1_full_plan",
+          "cjk_char_count": 46,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_062_hangzhou_partial_replan/t2_partial_change",
+          "cjk_char_count": 61,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_063_xian_partial_replan/t1_full_plan",
+          "cjk_char_count": 56,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_063_xian_partial_replan/t2_partial_change",
+          "cjk_char_count": 51,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_064_shenzhen_partial_replan/t1_full_plan",
+          "cjk_char_count": 56,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_064_shenzhen_partial_replan/t2_partial_change",
+          "cjk_char_count": 55,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_065_guilin_partial_replan/t1_full_plan",
+          "cjk_char_count": 48,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_065_guilin_partial_replan/t2_partial_change",
+          "cjk_char_count": 63,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_066_beijing_partial_replan/t1_full_plan",
+          "cjk_char_count": 57,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_066_beijing_partial_replan/t2_partial_change",
+          "cjk_char_count": 61,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_067_hangzhou_partial_replan/t1_full_plan",
+          "cjk_char_count": 48,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_067_hangzhou_partial_replan/t2_partial_change",
+          "cjk_char_count": 51,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_068_xian_partial_replan/t1_full_plan",
+          "cjk_char_count": 59,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_068_xian_partial_replan/t2_partial_change",
+          "cjk_char_count": 55,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_069_shenzhen_partial_replan/t1_full_plan",
+          "cjk_char_count": 61,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_069_shenzhen_partial_replan/t2_partial_change",
+          "cjk_char_count": 58,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_070_guilin_partial_replan/t1_full_plan",
+          "cjk_char_count": 50,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_070_guilin_partial_replan/t2_partial_change",
+          "cjk_char_count": 69,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_071_beijing_weather_adjustment/t1_full_plan",
+          "cjk_char_count": 52,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_071_beijing_weather_adjustment/t2_weather_change",
+          "cjk_char_count": 53,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_072_hangzhou_weather_adjustment/t1_full_plan",
+          "cjk_char_count": 44,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_072_hangzhou_weather_adjustment/t2_weather_change",
+          "cjk_char_count": 56,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_073_xian_weather_adjustment/t1_full_plan",
+          "cjk_char_count": 56,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_073_xian_weather_adjustment/t2_weather_change",
+          "cjk_char_count": 59,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_074_shenzhen_weather_adjustment/t1_full_plan",
+          "cjk_char_count": 52,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_074_shenzhen_weather_adjustment/t2_weather_change",
+          "cjk_char_count": 51,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_075_guilin_weather_adjustment/t1_full_plan",
+          "cjk_char_count": 43,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_075_guilin_weather_adjustment/t2_weather_change",
+          "cjk_char_count": 58,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_076_beijing_weather_adjustment/t1_full_plan",
+          "cjk_char_count": 53,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_076_beijing_weather_adjustment/t2_weather_change",
+          "cjk_char_count": 58,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_077_hangzhou_weather_adjustment/t1_full_plan",
+          "cjk_char_count": 47,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_077_hangzhou_weather_adjustment/t2_weather_change",
+          "cjk_char_count": 58,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_078_xian_weather_adjustment/t1_full_plan",
+          "cjk_char_count": 55,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_078_xian_weather_adjustment/t2_weather_change",
+          "cjk_char_count": 59,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_079_shenzhen_weather_adjustment/t1_full_plan",
+          "cjk_char_count": 55,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_079_shenzhen_weather_adjustment/t2_weather_change",
+          "cjk_char_count": 52,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_080_guilin_weather_adjustment/t1_full_plan",
+          "cjk_char_count": 47,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_080_guilin_weather_adjustment/t2_weather_change",
+          "cjk_char_count": 60,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_081_clarification",
+          "cjk_char_count": 62,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_082_clarification",
+          "cjk_char_count": 65,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_083_clarification",
+          "cjk_char_count": 62,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_084_clarification",
+          "cjk_char_count": 61,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_085_clarification",
+          "cjk_char_count": 63,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_086_clarification",
+          "cjk_char_count": 60,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_087_clarification",
+          "cjk_char_count": 64,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_088_clarification",
+          "cjk_char_count": 65,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_089_clarification",
+          "cjk_char_count": 58,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_090_clarification",
+          "cjk_char_count": 66,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_091_general_chat",
+          "cjk_char_count": 62,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_092_general_chat",
+          "cjk_char_count": 65,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_093_general_chat",
+          "cjk_char_count": 61,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_094_general_chat",
+          "cjk_char_count": 58,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_095_general_chat",
+          "cjk_char_count": 52,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_096_general_chat",
+          "cjk_char_count": 49,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_097_general_chat",
+          "cjk_char_count": 52,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_098_general_chat",
+          "cjk_char_count": 55,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_099_general_chat",
+          "cjk_char_count": 50,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_test_100_general_chat",
+          "cjk_char_count": 57,
+          "is_chinese": true
+        }
+      ]
+    },
+    "duplicate_counts": {
+      "internal_duplicate_count": 0,
+      "cross_split_duplicate_count": 0,
+      "near_duplicate_count": 0,
+      "semantic_template_duplicate_count": 0,
+      "tourism_template_family_count": 58,
+      "max_tourism_template_family_size": 6
+    },
+    "semantic_template_duplicate_groups": [],
+    "semantic_template_family_report": {
+      "policy": "Count tourism-task wording families after removing city/date/number values and generated review-context suffixes.",
+      "tourism_unit_count": 110,
+      "min_tourism_template_family_count": 35,
+      "max_allowed_tourism_template_family_size": 6,
+      "tourism_template_family_count": 58,
+      "max_tourism_template_family_size": 6,
+      "diversity_sufficient": true,
+      "family_size_below_limit": true,
+      "largest_families": [
+        {
+          "normalized_template": "num个人在date出发去city旅行num天预算num元先做一版完整安排后面我可能再改条件",
+          "count": 6,
+          "example_labels": [
+            "ctp_test_054_shenzhen_partial_replan/t1_full_plan",
+            "ctp_test_059_shenzhen_partial_replan/t1_full_plan",
+            "ctp_test_064_shenzhen_partial_replan/t1_full_plan",
+            "ctp_test_069_shenzhen_partial_replan/t1_full_plan",
+            "ctp_test_074_shenzhen_weather_adjustment/t1_full_plan",
+            "ctp_test_079_shenzhen_weather_adjustment/t1_full_plan"
+          ]
+        },
+        {
+          "normalized_template": "先为city规划date出发的num天旅行num个人预算num元包含景点天气行程和预算",
+          "count": 6,
+          "example_labels": [
+            "ctp_test_051_beijing_partial_replan/t1_full_plan",
+            "ctp_test_056_beijing_partial_replan/t1_full_plan",
+            "ctp_test_061_beijing_partial_replan/t1_full_plan",
+            "ctp_test_066_beijing_partial_replan/t1_full_plan",
+            "ctp_test_071_beijing_weather_adjustment/t1_full_plan",
+            "ctp_test_076_beijing_weather_adjustment/t1_full_plan"
+          ]
+        },
+        {
+          "normalized_template": "帮我做city旅行初版计划时间是date开始num天num个人预算num元",
+          "count": 6,
+          "example_labels": [
+            "ctp_test_055_guilin_partial_replan/t1_full_plan",
+            "ctp_test_060_guilin_partial_replan/t1_full_plan",
+            "ctp_test_065_guilin_partial_replan/t1_full_plan",
+            "ctp_test_070_guilin_partial_replan/t1_full_plan",
+            "ctp_test_075_guilin_weather_adjustment/t1_full_plan",
+            "ctp_test_080_guilin_weather_adjustment/t1_full_plan"
+          ]
+        },
+        {
+          "normalized_template": "我们准备date去city玩num天num个人预算num元请先给完整旅行方案",
+          "count": 6,
+          "example_labels": [
+            "ctp_test_052_hangzhou_partial_replan/t1_full_plan",
+            "ctp_test_057_hangzhou_partial_replan/t1_full_plan",
+            "ctp_test_062_hangzhou_partial_replan/t1_full_plan",
+            "ctp_test_067_hangzhou_partial_replan/t1_full_plan",
+            "ctp_test_072_hangzhou_weather_adjustment/t1_full_plan",
+            "ctp_test_077_hangzhou_weather_adjustment/t1_full_plan"
+          ]
+        },
+        {
+          "normalized_template": "请把citynum天行程先搭起来date出发num个人预算num元景点天气路线和花费都要覆盖",
+          "count": 6,
+          "example_labels": [
+            "ctp_test_053_xian_partial_replan/t1_full_plan",
+            "ctp_test_058_xian_partial_replan/t1_full_plan",
+            "ctp_test_063_xian_partial_replan/t1_full_plan",
+            "ctp_test_068_xian_partial_replan/t1_full_plan",
+            "ctp_test_073_xian_weather_adjustment/t1_full_plan",
+            "ctp_test_078_xian_weather_adjustment/t1_full_plan"
+          ]
+        },
+        {
+          "normalized_template": "num个人计划在date出发去city玩num天预算上限num元请把景点选择天气行程节奏和费用放在一份方案里",
+          "count": 4,
+          "example_labels": [
+            "ctp_test_004_shenzhen_full_plan",
+            "ctp_test_009_shenzhen_full_plan",
+            "ctp_test_014_shenzhen_full_plan",
+            "ctp_test_019_shenzhen_full_plan"
+          ]
+        },
+        {
+          "normalized_template": "帮我把citynum天旅行捋清楚date走num个人费用控制在num元左右景点天气每天安排和预算都要有",
+          "count": 4,
+          "example_labels": [
+            "ctp_test_002_hangzhou_full_plan",
+            "ctp_test_007_hangzhou_full_plan",
+            "ctp_test_012_hangzhou_full_plan",
+            "ctp_test_017_hangzhou_full_plan"
+          ]
+        },
+        {
+          "normalized_template": "city在date开始的num天适不适合出门请只给天气判断风险提醒和简单准备建议",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_034_shenzhen_weather_only",
+            "ctp_test_039_shenzhen_weather_only"
+          ]
+        },
+        {
+          "normalized_template": "city旅行第num天改按雨天处理date出发整体num天num个人num元预算请保留其他条件",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_074_shenzhen_weather_adjustment/t2_weather_change",
+            "ctp_test_079_shenzhen_weather_adjustment/t2_weather_change"
+          ]
+        },
+        {
+          "normalized_template": "city第num天出现下雨只调整受影响的第num天date出发num天num个人和num元预算都保持不变",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_071_beijing_weather_adjustment/t2_weather_change",
+            "ctp_test_076_beijing_weather_adjustment/t2_weather_change"
+          ]
+        },
+        {
+          "normalized_template": "num个人去city玩num天date出发预算是num元我只想知道钱够不够不要展开景点和路线",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_042_hangzhou_budget_only",
+            "ctp_test_047_hangzhou_budget_only"
+          ]
+        },
+        {
+          "normalized_template": "准备date到city旅行num天同行num个人总预算num元希望方案偏周末深度游同时给出天气风险和花费判断",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_003_xian_full_plan",
+            "ctp_test_013_xian_full_plan"
+          ]
+        },
+        {
+          "normalized_template": "准备date到city旅行num天同行num个人总预算num元希望方案偏避开拥挤路线同时给出天气风险和花费判断",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_008_xian_full_plan",
+            "ctp_test_018_xian_full_plan"
+          ]
+        },
+        {
+          "normalized_template": "刚才的city方案里第num天遇到高温原计划仍是date出发num天num个人预算num元请只改这一天",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_072_hangzhou_weather_adjustment/t2_weather_change",
+            "ctp_test_077_hangzhou_weather_adjustment/t2_weather_change"
+          ]
+        },
+        {
+          "normalized_template": "只帮我估算citydate出发num天num个人旅行预算num元是否够用请给出总费用判断不要生成景点清单或天气报告",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_041_beijing_budget_only",
+            "ctp_test_046_beijing_budget_only"
+          ]
+        },
+        {
+          "normalized_template": "如果city第num天变成炎热高温请局部调整当天安排原条件是date出发num天num个人预算num元",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_075_guilin_weather_adjustment/t2_weather_change",
+            "ctp_test_080_guilin_weather_adjustment/t2_weather_change"
+          ]
+        },
+        {
+          "normalized_template": "如果我们num个人在date去city旅行num天num元预算大概能不能覆盖先别给天气和景点推荐",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_044_shenzhen_budget_only",
+            "ctp_test_049_shenzhen_budget_only"
+          ]
+        },
+        {
+          "normalized_template": "帮我看一下citydate出发后num天的天气情况回答聚焦天气不要夹带路线和预算",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_033_xian_weather_only",
+            "ctp_test_038_xian_weather_only"
+          ]
+        },
+        {
+          "normalized_template": "帮我算city旅行预算是否紧张出发日期date天数num天人数num个人总预算num元",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_045_guilin_budget_only",
+            "ctp_test_050_guilin_budget_only"
+          ]
+        },
+        {
+          "normalized_template": "我只需要city天气从date算起看num天请告诉我风险和穿衣建议先不要做景点或行程",
+          "count": 2,
+          "example_labels": [
+            "ctp_test_032_hangzhou_weather_only",
+            "ctp_test_037_hangzhou_weather_only"
+          ]
+        }
+      ]
+    },
+    "visible_artifacts": {
+      "policy": "formal visible user_input must not expose dataset IDs, sample IDs, annotation hints, tool labels, or multi-agent design",
+      "forbidden_terms": [
+        "样本编号",
+        "实验标注",
+        "固定离线资料",
+        "工具调用",
+        "多 Agent",
+        "多Agent",
+        "多角色旅游系统",
+        "系统架构",
+        "补充背景"
+      ],
+      "leaking_unit_count": 0,
+      "leaking_units": []
+    },
+    "tool_label_completeness": {
+      "unit_count": 130,
+      "required_tools_labeled_count": 130,
+      "forbidden_tools_labeled_count": 130,
+      "missing_required_tools_count": 0,
+      "missing_forbidden_tools_count": 0,
+      "missing_required_tools_units": [],
+      "missing_forbidden_tools_units": []
+    }
+  },
+  "quality_gate": {
+    "schema_version": "ctp-benchmark-dataset-quality-v2",
+    "status": "passed",
+    "error_count": 0,
+    "warning_count": 0,
+    "errors": [],
+    "warnings": []
+  },
+  "offline_feasibility": {
+    "schema_version": "ctp-day7-test-draft-feasibility-v1",
+    "created_at": "2026-08-02T08:28:55.833604+00:00",
+    "status": "passed",
+    "quality_status": "passed",
+    "unit_count": 130,
+    "checked_tourism_unit_count": 110,
+    "passed_tourism_unit_count": 110,
+    "failed_tourism_unit_count": 0,
+    "city_unit_distribution": {
+      "beijing": 22,
+      "guilin": 22,
+      "hangzhou": 22,
+      "shenzhen": 22,
+      "xian": 22
+    },
+    "task_unit_distribution": {
+      "attraction_recommendation": 10,
+      "budget_query": 10,
+      "partial_replan": 20,
+      "trip_planning": 50,
+      "weather_adjustment": 10,
+      "weather_query": 10
+    },
+    "fixed_data_snapshot": {
+      "valid": true,
+      "schema_version": "fixed_data_manifest_v2",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+      "file_count": 25,
+      "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ]
+    },
+    "failed_units": [],
+    "policy": {
+      "fixed_city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "max_trip_days_checked_against_fixed_weather": true,
+      "min_attractions_checked_against_fixed_poi_count": true,
+      "weather_change_checked_against_fixed_scenarios": true
+    }
+  },
+  "checks": {
+    "quality_gate_passed": true,
+    "case_count_matches": true,
+    "turn_count_matches": true,
+    "scenario_case_count_matches": true,
+    "all_scenarios_are_double_turn": true,
+    "case_task_quotas_match": true,
+    "city_case_quotas_match": true,
+    "city_related_case_count_matches": true,
+    "language_all_zh_cn": true,
+    "no_internal_duplicate_inputs": true,
+    "no_cross_split_duplicate_inputs": true,
+    "no_near_duplicate_inputs": true,
+    "no_semantic_template_duplicate_inputs": true,
+    "tourism_template_family_diversity_sufficient": true,
+    "tourism_template_family_size_below_limit": true,
+    "no_visible_experiment_artifacts": true,
+    "required_tools_explicit_for_all_units": true,
+    "forbidden_tools_explicit_for_all_units": true,
+    "offline_feasibility_passed": true,
+    "comparison_splits_checked": true
+  },
+  "failed_checks": [],
+  "paper_use_policy": {
+    "summary": "This is a held-out formal test draft.  It can be used for preflight and manual annotation review, but final paper claims still require a real, frozen formal run.",
+    "allowed_uses": [
+      "formal test-set preflight",
+      "quota and feasibility evidence",
+      "manual review before final freeze"
+    ],
+    "forbidden_uses": [
+      "final result claims without running the four-method experiment",
+      "mixing with ctp120_dev development results"
+    ]
+  }
+}

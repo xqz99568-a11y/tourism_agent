@@ -199,7 +199,7 @@
       }
     },
     {
-      "case_id": "sched_005_budget_from_existing_plan",
+  "case_id": "sched_005_budget_from_existing_plan",
       "turn_type": "multi_turn",
       "user_input": "这个方案大概要花多少钱？",
       "previous_state": {
@@ -342,9 +342,9 @@
         "planned_tools": [
           "budget_calculator"
         ],
-        "reused_agents": [
-          "attraction"
-        ],
+    "reused_agents": [
+      "attraction"
+    ],
         "invalidated_agents": [],
         "clarification_required": false,
         "clarification_fields": [],
@@ -775,7 +775,7 @@
       }
     },
     {
-      "case_id": "sched_009_start_date_changed",
+    "case_id": "sched_009_start_date_changed",
       "turn_type": "multi_turn",
       "user_input": "出发日期改到 2026-09-05，天数和人数不变。",
       "previous_state": {
@@ -951,10 +951,10 @@
         "planned_tools": [
           "weather_query"
         ],
-        "reused_agents": [
-          "attraction",
-          "budget"
-        ],
+      "reused_agents": [
+        "attraction",
+        "budget"
+      ],
         "invalidated_agents": [
           "weather",
           "itinerary"
@@ -1745,7 +1745,7 @@
       }
     },
     {
-      "case_id": "sched_014_weather_adjustment",
+    "case_id": "sched_014_weather_adjustment",
       "turn_type": "multi_turn",
       "user_input": "第二天可能下雨，帮我把行程调整一下，其他尽量不变。",
       "previous_state": {
@@ -1923,9 +1923,9 @@
         "planned_tools": [
           "weather_query"
         ],
-        "reused_agents": [
-          "attraction"
-        ],
+      "reused_agents": [
+        "attraction"
+      ],
         "invalidated_agents": [
           "weather",
           "itinerary"

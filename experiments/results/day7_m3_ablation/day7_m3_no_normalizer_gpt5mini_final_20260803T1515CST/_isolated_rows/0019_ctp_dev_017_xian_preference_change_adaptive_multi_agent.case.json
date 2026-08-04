@@ -1,0 +1,47 @@
+{
+  "case_id": "ctp_dev_017_xian_preference_change",
+  "case_type": "multi_turn",
+  "description": "西安历史游后，改成亲子和低强度偏好。",
+  "turn_id": "t1_full_plan",
+  "target_turn": false,
+  "user_input": "请准备西安2026年8月17日出发的两天历史文化游，2个成人，预算5600元，包含景点、天气、行程和预算。",
+  "expected": {
+    "task_type": "trip_planning",
+    "required_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ],
+    "accepted_agent_sets": [
+      [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ]
+    ],
+    "hard_constraints": {
+      "destination": "xian",
+      "start_date": "2026-08-17",
+      "duration_days": 2,
+      "people_count": 2,
+      "preferences": [
+        "history_culture"
+      ],
+      "min_attractions": 3,
+      "max_pois_per_day": 2,
+      "budget_limit": 5600
+    }
+  },
+  "scenario_id": "ctp_dev_017_xian_preference_change",
+  "turn_index": 0,
+  "scenario_turn_count": 2,
+  "dialogue_history": []
+}

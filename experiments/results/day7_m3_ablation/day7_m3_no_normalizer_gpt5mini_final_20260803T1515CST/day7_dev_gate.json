@@ -1,0 +1,267 @@
+{
+  "schema_version": "ctp-day7-dev-experiment-gate-v1",
+  "created_at": "2026-08-04T06:21:42.714664+00:00",
+  "status": "passed",
+  "paper_claims_allowed": false,
+  "run_id": "day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST",
+  "run_dir": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST",
+  "dataset_id": "ctp120_dev",
+  "dataset_version": "2026-07-31-zh",
+  "expected": {
+    "case_count": 20,
+    "turn_count": 26,
+    "scenario_case_count": 6,
+    "method_count": 1,
+    "raw_result_count": 26,
+    "per_method_result_count": 26,
+    "infrastructure_failure_rate_limit": 0.05,
+    "max_tokens": 4096,
+    "completion_token_cap_hit_rate_limit": 0.05,
+    "quality_pairing_required": false
+  },
+  "actual": {
+    "case_count": 20,
+    "turn_count": 26,
+    "scenario_case_count": 6,
+    "raw_result_count": 26,
+    "csv_row_count": 26,
+    "summary_raw_run_count": 26,
+    "summary_result_count": 26,
+    "quality_result_count": 20,
+    "quality_pair_count": 0
+  },
+  "required_methods": [
+    "adaptive_multi_agent"
+  ],
+  "method_result_counts": {
+    "counts": {
+      "adaptive_multi_agent": 26
+    },
+    "missing_methods": [],
+    "unexpected_methods": []
+  },
+  "raw_turn_pairing": {
+    "complete": true,
+    "unit_count": 26,
+    "incomplete_unit_count": 0,
+    "duplicate_unit_method_count": 0,
+    "sample_incomplete_units": [],
+    "sample_duplicate_unit_methods": []
+  },
+  "multi_turn_state_isolation": {
+    "passed": true,
+    "scenario_case_count": 6,
+    "checked_method_scenario_count": 6,
+    "expected_method_scenario_count": 6,
+    "violation_count": 0,
+    "missing_group_count": 0,
+    "sample_violations": [],
+    "sample_missing_groups": [],
+    "policy": "method_local_previous_state_from_prior_turn_output"
+  },
+  "trace_summary": {
+    "trace_file_count": 26,
+    "loaded_trace_count": 26,
+    "trace_without_llm_call_count": 4,
+    "llm_call_count": 52,
+    "mock_llm_call_count": 0,
+    "fallback_llm_call_count": 0,
+    "cache_hit_count": 0,
+    "prompt_tokens": 103937.0,
+    "completion_tokens": 65808.0,
+    "reasoning_tokens": null,
+    "total_tokens": 169745.0,
+    "estimated_cost": 0.1576,
+    "standardized_estimated_cost": 0.1576,
+    "retry_count": 0.0
+  },
+  "runtime_audit": {
+    "manifest_runtime": {
+      "model": "gpt-5-mini",
+      "temperature": 0.0,
+      "max_tokens": 4096,
+      "timeout_seconds": 60,
+      "retry_max_attempts": 3,
+      "reasoning_effort": "minimal"
+    },
+    "llm_call_count": 52,
+    "mismatch_count": 0,
+    "mismatches": [],
+    "consistent_with_manifest": true,
+    "request_option_values": {
+      "max_tokens": [
+        "4096"
+      ],
+      "model": [
+        "gpt-5-mini"
+      ],
+      "reasoning_effort": [
+        "minimal"
+      ],
+      "retry_max_attempts": [
+        "3"
+      ],
+      "temperature": [
+        "0.0"
+      ],
+      "timeout_seconds": [
+        "60"
+      ]
+    },
+    "day7_max_tokens_protocol": {
+      "expected_max_tokens": 4096,
+      "manifest_matches_protocol": true,
+      "protocol_mismatch_count": 0,
+      "sample_protocol_mismatches": []
+    },
+    "matches_day7_max_tokens_protocol": true
+  },
+  "output_length_risk": {
+    "llm_call_count": 52,
+    "completion_token_cap_hit_count": 0,
+    "completion_token_cap_hit_rate": 0.0,
+    "completion_token_cap_hit_rate_limit": 0.05,
+    "completion_token_cap_hit_rate_below_limit": true,
+    "empty_output_call_count": 0,
+    "empty_and_token_capped_call_count": 0,
+    "request_max_token_values": {
+      "4096": 52
+    },
+    "sample_token_capped_calls": [],
+    "sample_empty_and_token_capped_calls": [],
+    "interpretation": "High cap-hit or empty-and-capped counts indicate that output-length limits, not method capability, may be depressing baseline quality."
+  },
+  "field_completeness": {
+    "token_latency_complete": true,
+    "cost_complete_for_llm_rows": true,
+    "token_latency": {
+      "complete": true,
+      "complete_count": 26,
+      "total_count": 26,
+      "rate": 1.0,
+      "sample_missing": []
+    },
+    "cost_for_llm_rows": {
+      "complete": true,
+      "complete_count": 22,
+      "total_count": 22,
+      "rate": 1.0,
+      "sample_missing": [],
+      "non_llm_row_count": 4
+    }
+  },
+  "infrastructure_failures": {
+    "failed_result_count": 0,
+    "failed_llm_call_count": 0,
+    "failure_rate": 0.0,
+    "sample_failed_results": [],
+    "sample_failed_llm_calls": []
+  },
+  "checks": {
+    "run_dir_exists": true,
+    "core_artifacts_saved": true,
+    "day7_dev_preflight_saved": true,
+    "day7_dev_preflight_schema_valid": true,
+    "day7_dev_preflight_passed": true,
+    "case_count_matches": true,
+    "turn_count_matches": true,
+    "scenario_case_count_matches": true,
+    "result_count_matches": true,
+    "csv_row_count_matches": true,
+    "summary_raw_run_count_matches": true,
+    "summary_result_count_matches": true,
+    "method_counts_match": true,
+    "required_methods_present": true,
+    "raw_turn_pairing_complete": true,
+    "quality_pairing_present": true,
+    "request_level_trace_count_matches": true,
+    "loaded_trace_count_matches": true,
+    "run_audit_attached": true,
+    "runtime_audit_consistent": true,
+    "runtime_matches_day7_max_tokens_protocol": true,
+    "strict_runtime_recorded": true,
+    "cache_disabled_recorded": true,
+    "deterministic_research_final_answer_recorded": true,
+    "no_mock_llm": true,
+    "no_llm_fallback": true,
+    "no_cache_hit": true,
+    "token_latency_fields_complete": true,
+    "cost_fields_complete_for_llm_rows": true,
+    "multi_turn_state_isolation_passed": true,
+    "infrastructure_failure_rate_below_5pct": true,
+    "completion_token_cap_hit_rate_below_limit": true,
+    "no_empty_outputs_at_token_cap": true,
+    "artifact_hashes_recorded": true
+  },
+  "failed_checks": [],
+  "artifact_index": {
+    "schema_version": "ctp-day7-dev-artifact-index-v1",
+    "hash_strategy": "sha256_file_bytes_v1",
+    "files": [
+      {
+        "key": "csv",
+        "path": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/benchmark_results.csv",
+        "size_bytes": 54037,
+        "sha256": "123072bd2a13113c4ab43642bdee4f6f549a0a5b99e67fbd2b33a100716a0094"
+      },
+      {
+        "key": "json",
+        "path": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/benchmark_results.json",
+        "size_bytes": 9770574,
+        "sha256": "e2df93019a476d46a01f29d4e3a381b723536ef0244ae5853955bd20ecac09d8"
+      },
+      {
+        "key": "summary",
+        "path": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/evaluation_summary.json",
+        "size_bytes": 43090,
+        "sha256": "4138e0a2a0f45c241e57f3e78a3ba5b758220d7a2754b92155df6b333ded54a9"
+      },
+      {
+        "key": "paper_tables",
+        "path": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/paper_tables.md",
+        "size_bytes": 3555,
+        "sha256": "0681952e20a1d25dc75769e86f1430dd8d67a8ae4d35ff2aefe5767f68230baf"
+      },
+      {
+        "key": "manifest",
+        "path": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/experiment_manifest.json",
+        "size_bytes": 35207,
+        "sha256": "bb57edc877a3a464f4a74ea2b9e2f3a6c58783993da8d2e2148b8b33f79627fb"
+      },
+      {
+        "key": "day7_dev_preflight",
+        "path": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/day7_dev_preflight_report.json",
+        "size_bytes": 72483,
+        "sha256": "7cb0523c4154f817c72472607aa8f109781c2ac49865a3e87170835515bb652b"
+      }
+    ],
+    "trace_dir": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/traces",
+    "trace_file_count": 26,
+    "trace_combined_sha256": "352dd2697f8bd46a92770f3e27a09e1b498bcd858fbd74cbc15a23c083678b8f",
+    "refreshed_at": "2026-08-04T07:33:41.060052+00:00"
+  },
+  "artifact_paths": {
+    "csv": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/benchmark_results.csv",
+    "json": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/benchmark_results.json",
+    "summary": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/evaluation_summary.json",
+    "paper_tables": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/paper_tables.md",
+    "manifest": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/experiment_manifest.json",
+    "day7_dev_preflight": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/day7_dev_preflight_report.json",
+    "day7_dev_gate": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/day7_dev_gate.json",
+    "day7_dev_report": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/day7_dev_report.md"
+  },
+  "paper_use_policy": {
+    "summary": "This is a Day 7 development-set real run. It may support debugging, ablation planning, and preliminary tables, but it must not replace the final 100-150 case formal experiment.",
+    "allowed_uses": [
+      "development-set real-run completeness evidence",
+      "method failure diagnosis before expanding the dataset",
+      "preliminary cost/token/latency estimates"
+    ],
+    "forbidden_uses": [
+      "final paper conclusion",
+      "claiming M3 superiority over M2 from the development split alone",
+      "mixing development results with the final held-out test set"
+    ]
+  },
+  "interpretation": "Development-set real-run evidence is complete enough for Day 7 diagnosis and for deciding whether to expand to the formal set."
+}

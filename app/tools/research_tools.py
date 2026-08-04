@@ -528,6 +528,13 @@ def _format_attraction(item: Dict[str, Any]) -> Dict[str, Any]:
         "category": item.get("category") or item.get("type"),
         "tags": item.get("tags") or [],
         "indoor_outdoor": item.get("indoor_outdoor"),
+        "outdoor_ratio": item.get("outdoor_ratio"),
+        "weather_suitability": item.get("weather_suitability") or {},
+        "rain_suitability": item.get("rain_suitability"),
+        "high_temperature_suitability": item.get("high_temperature_suitability"),
+        "low_temperature_suitability": item.get("low_temperature_suitability"),
+        "visit_intensity": item.get("visit_intensity"),
+        "walking_level": item.get("walking_level"),
         "recommended_duration_hours": item.get("visit_duration_hours") or item.get("recommended_duration"),
         "ticket_price_cny": ticket_value,
         "ticket_price_known": ticket_value is not None,
@@ -632,9 +639,14 @@ def _check_constraints(
     )
 
     attraction_refs = _collect_plan_attraction_refs(plan)
+    rain_attraction_refs = _rain_scoped_attraction_refs(
+        attraction_refs,
+        weather_payload,
+    )
     attractions = [ref["raw"] for ref in attraction_refs]
     city_id = _constraint_city_id(plan, request, constraints)
     resolved_attractions = _resolve_attraction_refs(attraction_refs, city_id)
+    rain_resolved_attractions = _resolve_attraction_refs(rain_attraction_refs, city_id)
     min_attractions = _first_present(constraints.get("min_attractions"), request.get("min_attractions"))
     max_attractions = _first_present(constraints.get("max_attractions"), request.get("max_attractions"))
 
@@ -673,7 +685,11 @@ def _check_constraints(
         _duplicate_attractions_check(attraction_refs, resolved_attractions),
         _must_include_pois_check(attraction_refs, resolved_attractions, request, constraints, city_id),
         _forbidden_pois_check(attraction_refs, resolved_attractions, request, constraints, city_id),
-        _rain_attraction_suitability_check(weather_payload, attraction_refs, resolved_attractions),
+        _rain_attraction_suitability_check(
+            weather_payload,
+            rain_attraction_refs,
+            rain_resolved_attractions,
+        ),
         _senior_accessibility_check(request, constraints, attraction_refs, resolved_attractions),
         _tool_evidence_check(plan, constraints),
     ]
@@ -736,6 +752,21 @@ def _collect_plan_attraction_refs(plan: Dict[str, Any]) -> List[Dict[str, Any]]:
             if isinstance(activities, list):
                 refs.extend(_coerce_attraction_refs(activities, day_index=day_index))
     return refs
+
+
+def _rain_scoped_attraction_refs(
+    refs: List[Dict[str, Any]],
+    weather_payload: Any,
+) -> List[Dict[str, Any]]:
+    rainy_days = _rainy_day_indexes(weather_payload)
+    if not rainy_days:
+        return refs
+    scoped = [
+        ref
+        for ref in refs
+        if _safe_int(ref.get("day_index")) in rainy_days
+    ]
+    return scoped or refs
 
 
 def _coerce_attraction_refs(items: List[Any], *, day_index: Optional[int]) -> List[Dict[str, Any]]:
@@ -936,7 +967,12 @@ def _rain_attraction_suitability_check(
         suitability = str(((environment.get("weather_suitability") or {}).get("rain") or "")).lower()
         outdoor_ratio = _safe_float(environment.get("outdoor_ratio"))
         environment_type = str(formatted.get("indoor_outdoor") or environment.get("type") or "").lower()
-        if suitability != "suitable" or environment_type == "outdoor" or outdoor_ratio >= 0.5:
+        acceptable = (
+            suitability == "suitable"
+            or environment_type == "indoor"
+            or outdoor_ratio < 0.5
+        )
+        if not acceptable:
             conflicts.append(
                 {
                     "poi": _attraction_display(ref),
@@ -1093,8 +1129,51 @@ def _ordered_unique_text(values: Iterable[Any]) -> List[str]:
 
 
 def _contains_rain(weather_payload: Any) -> bool:
-    text = str(weather_payload).lower()
-    return "rain" in text or "雨" in text
+    return bool(_rainy_day_indexes(weather_payload))
+
+
+def _rainy_day_indexes(weather_payload: Any) -> List[int]:
+    if not isinstance(weather_payload, dict):
+        return []
+    rainy_days: List[int] = []
+    for index, day in enumerate(weather_payload.get("daily_weather") or [], start=1):
+        if not isinstance(day, dict):
+            continue
+        if _weather_day_has_rain(day):
+            rainy_days.append(_safe_int(day.get("day_index") or day.get("day") or index))
+    if rainy_days:
+        return _unique_ints(day for day in rainy_days if day)
+    scenario = str(
+        weather_payload.get("scenario_type")
+        or weather_payload.get("requested_scenario_type")
+        or ""
+    ).lower()
+    if scenario == "rain" or "雨" in scenario:
+        days = len(weather_payload.get("daily_weather") or []) or 1
+        return list(range(1, days + 1))
+    return []
+
+
+def _weather_day_has_rain(day: Dict[str, Any]) -> bool:
+    labels = [
+        str(day.get(key) or "").lower()
+        for key in ("state", "condition", "weather", "scenario_type", "weather_type")
+    ]
+    labels.extend(str(item or "").lower() for item in day.get("risk_tags") or [])
+    if any(label == "rain" or "雨" in label or "rainy" in label for label in labels):
+        return True
+    return _safe_float(day.get("precipitation_mm")) > 0
+
+
+def _unique_ints(values: Iterable[int]) -> List[int]:
+    seen: set[int] = set()
+    result: List[int] = []
+    for value in values:
+        if value in seen:
+            continue
+        seen.add(value)
+        result.append(value)
+    return result
 
 
 def _keyword_from_preferences(preferences: Any, people: Any) -> str:
