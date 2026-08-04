@@ -1,0 +1,24 @@
+{
+  "case_id": "ctp_dev_012_missing_destination_clarification",
+  "user_input": "下个月想带孩子出去玩，但目的地、出发日期和天数都没定，请先帮我澄清信息。",
+  "expected": {
+    "task_type": "clarification",
+    "traveler_group": "family",
+    "missing_slots": [
+      "destination",
+      "duration_days",
+      "start_date"
+    ],
+    "accepted_agent_sets": [
+      []
+    ],
+    "accepted_tool_sets": [
+      []
+    ],
+    "forbidden_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ]
+  }
+}

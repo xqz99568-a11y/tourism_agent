@@ -1,0 +1,37 @@
+{
+  "case_id": "ctp_dev_004_shenzhen_full_plan",
+  "user_input": "请安排深圳2026年8月7日出发的两天城市地标游，2个成人，预算7000元，同时给天气、路线和预算估算。",
+  "expected": {
+    "task_type": "trip_planning",
+    "required_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ],
+    "accepted_agent_sets": [
+      [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ]
+    ],
+    "hard_constraints": {
+      "destination": "shenzhen",
+      "start_date": "2026-08-07",
+      "duration_days": 2,
+      "people_count": 2,
+      "min_attractions": 3,
+      "max_attractions": 4,
+      "max_pois_per_day": 2,
+      "budget_limit": 7000
+    }
+  }
+}

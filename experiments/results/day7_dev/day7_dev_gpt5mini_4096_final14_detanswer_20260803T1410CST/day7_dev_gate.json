@@ -1,0 +1,289 @@
+{
+  "schema_version": "ctp-day7-dev-experiment-gate-v1",
+  "created_at": "2026-08-04T06:21:23.139107+00:00",
+  "status": "passed",
+  "paper_claims_allowed": false,
+  "run_id": "day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST",
+  "run_dir": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST",
+  "dataset_id": "ctp120_dev",
+  "dataset_version": "2026-07-31-zh",
+  "expected": {
+    "case_count": 20,
+    "turn_count": 26,
+    "scenario_case_count": 6,
+    "method_count": 4,
+    "raw_result_count": 104,
+    "per_method_result_count": 26,
+    "infrastructure_failure_rate_limit": 0.05,
+    "max_tokens": 4096,
+    "completion_token_cap_hit_rate_limit": 0.05,
+    "quality_pairing_required": true
+  },
+  "actual": {
+    "case_count": 20,
+    "turn_count": 26,
+    "scenario_case_count": 6,
+    "raw_result_count": 104,
+    "csv_row_count": 104,
+    "summary_raw_run_count": 104,
+    "summary_result_count": 104,
+    "quality_result_count": 80,
+    "quality_pair_count": 20
+  },
+  "required_methods": [
+    "llm_direct",
+    "single_agent",
+    "fixed_multi_agent",
+    "adaptive_multi_agent"
+  ],
+  "method_result_counts": {
+    "counts": {
+      "adaptive_multi_agent": 26,
+      "fixed_multi_agent": 26,
+      "llm_direct": 26,
+      "single_agent": 26
+    },
+    "missing_methods": [],
+    "unexpected_methods": []
+  },
+  "raw_turn_pairing": {
+    "complete": true,
+    "unit_count": 26,
+    "incomplete_unit_count": 0,
+    "duplicate_unit_method_count": 0,
+    "sample_incomplete_units": [],
+    "sample_duplicate_unit_methods": []
+  },
+  "multi_turn_state_isolation": {
+    "passed": true,
+    "scenario_case_count": 6,
+    "checked_method_scenario_count": 24,
+    "expected_method_scenario_count": 24,
+    "violation_count": 0,
+    "missing_group_count": 0,
+    "sample_violations": [],
+    "sample_missing_groups": [],
+    "policy": "method_local_previous_state_from_prior_turn_output"
+  },
+  "trace_summary": {
+    "trace_file_count": 104,
+    "loaded_trace_count": 104,
+    "trace_without_llm_call_count": 10,
+    "llm_call_count": 216,
+    "mock_llm_call_count": 0,
+    "fallback_llm_call_count": 0,
+    "cache_hit_count": 0,
+    "prompt_tokens": 516705.0,
+    "completion_tokens": 241498.0,
+    "reasoning_tokens": null,
+    "total_tokens": 758203.0,
+    "estimated_cost": 0.6122,
+    "standardized_estimated_cost": 0.6122,
+    "retry_count": 1.0
+  },
+  "runtime_audit": {
+    "manifest_runtime": {
+      "model": "gpt-5-mini",
+      "temperature": 0.0,
+      "max_tokens": 4096,
+      "timeout_seconds": 60,
+      "retry_max_attempts": 3,
+      "reasoning_effort": "minimal"
+    },
+    "llm_call_count": 216,
+    "mismatch_count": 0,
+    "mismatches": [],
+    "consistent_with_manifest": true,
+    "request_option_values": {
+      "max_tokens": [
+        "4096"
+      ],
+      "model": [
+        "gpt-5-mini"
+      ],
+      "reasoning_effort": [
+        "minimal"
+      ],
+      "retry_max_attempts": [
+        "3"
+      ],
+      "temperature": [
+        "0.0"
+      ],
+      "timeout_seconds": [
+        "60"
+      ]
+    },
+    "day7_max_tokens_protocol": {
+      "expected_max_tokens": 4096,
+      "manifest_matches_protocol": true,
+      "protocol_mismatch_count": 0,
+      "sample_protocol_mismatches": []
+    },
+    "matches_day7_max_tokens_protocol": true
+  },
+  "output_length_risk": {
+    "llm_call_count": 216,
+    "completion_token_cap_hit_count": 0,
+    "completion_token_cap_hit_rate": 0.0,
+    "completion_token_cap_hit_rate_limit": 0.05,
+    "completion_token_cap_hit_rate_below_limit": true,
+    "empty_output_call_count": 34,
+    "empty_and_token_capped_call_count": 0,
+    "request_max_token_values": {
+      "4096": 216
+    },
+    "sample_token_capped_calls": [],
+    "sample_empty_and_token_capped_calls": [],
+    "interpretation": "High cap-hit or empty-and-capped counts indicate that output-length limits, not method capability, may be depressing baseline quality."
+  },
+  "field_completeness": {
+    "token_latency_complete": true,
+    "cost_complete_for_llm_rows": true,
+    "token_latency": {
+      "complete": true,
+      "complete_count": 104,
+      "total_count": 104,
+      "rate": 1.0,
+      "sample_missing": []
+    },
+    "cost_for_llm_rows": {
+      "complete": true,
+      "complete_count": 94,
+      "total_count": 94,
+      "rate": 1.0,
+      "sample_missing": [],
+      "non_llm_row_count": 10
+    }
+  },
+  "infrastructure_failures": {
+    "failed_result_count": 1,
+    "failed_llm_call_count": 1,
+    "failure_rate": 0.0096,
+    "sample_failed_results": [
+      {
+        "case_id": "ctp_dev_015_hangzhou_people_change",
+        "scenario_id": "ctp_dev_015_hangzhou_people_change",
+        "turn_id": "t1_full_plan",
+        "method": "single_agent",
+        "request_id": "ctp_dev_015_hangzhou_people_change_single_agent_48fb6147",
+        "status": "failed",
+        "error": "experiment result timeout: LLM call exceeded experiment watchdog timeout (185s)"
+      }
+    ],
+    "sample_failed_llm_calls": [
+      {
+        "call_id": "b3b74e6369a04eb2ab736e96904b24ec",
+        "model": "gpt-5-mini",
+        "error": "Connection error."
+      }
+    ]
+  },
+  "checks": {
+    "run_dir_exists": true,
+    "core_artifacts_saved": true,
+    "day7_dev_preflight_saved": true,
+    "day7_dev_preflight_schema_valid": true,
+    "day7_dev_preflight_passed": true,
+    "case_count_matches": true,
+    "turn_count_matches": true,
+    "scenario_case_count_matches": true,
+    "result_count_matches": true,
+    "csv_row_count_matches": true,
+    "summary_raw_run_count_matches": true,
+    "summary_result_count_matches": true,
+    "method_counts_match": true,
+    "required_methods_present": true,
+    "raw_turn_pairing_complete": true,
+    "quality_pairing_present": true,
+    "request_level_trace_count_matches": true,
+    "loaded_trace_count_matches": true,
+    "run_audit_attached": true,
+    "runtime_audit_consistent": true,
+    "runtime_matches_day7_max_tokens_protocol": true,
+    "strict_runtime_recorded": true,
+    "cache_disabled_recorded": true,
+    "deterministic_research_final_answer_recorded": true,
+    "no_mock_llm": true,
+    "no_llm_fallback": true,
+    "no_cache_hit": true,
+    "token_latency_fields_complete": true,
+    "cost_fields_complete_for_llm_rows": true,
+    "multi_turn_state_isolation_passed": true,
+    "infrastructure_failure_rate_below_5pct": true,
+    "completion_token_cap_hit_rate_below_limit": true,
+    "no_empty_outputs_at_token_cap": true,
+    "artifact_hashes_recorded": true
+  },
+  "failed_checks": [],
+  "artifact_index": {
+    "schema_version": "ctp-day7-dev-artifact-index-v1",
+    "hash_strategy": "sha256_file_bytes_v1",
+    "files": [
+      {
+        "key": "csv",
+        "path": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/benchmark_results.csv",
+        "size_bytes": 190883,
+        "sha256": "079bf265fae666c88f497fbd38f78facae651d10113a300bf29d9f8bd7eab0a8"
+      },
+      {
+        "key": "json",
+        "path": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/benchmark_results.json",
+        "size_bytes": 27892257,
+        "sha256": "30d789c39777500c8df9ee8ec153e3a5465d0bba8efdb132e9a81cc166972094"
+      },
+      {
+        "key": "summary",
+        "path": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/evaluation_summary.json",
+        "size_bytes": 91926,
+        "sha256": "17f4fe62e7419acb284b3729165b19132f013072737e6ee49386f29b08d9fc99"
+      },
+      {
+        "key": "paper_tables",
+        "path": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/paper_tables.md",
+        "size_bytes": 6213,
+        "sha256": "940d14c5a43b728cce3f884ab430d8f84844845dfebb474359848598958451fd"
+      },
+      {
+        "key": "manifest",
+        "path": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/experiment_manifest.json",
+        "size_bytes": 35202,
+        "sha256": "c6d9f7010636d51b20e524294123bc72d6d9c110fabc5f04eb5b01528f46f554"
+      },
+      {
+        "key": "day7_dev_preflight",
+        "path": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/day7_dev_preflight_report.json",
+        "size_bytes": 72628,
+        "sha256": "5113d3bfe5f708cc22e8e9f6d23bedf56c4bbb2a942c1f945c74554481994bd0"
+      }
+    ],
+    "trace_dir": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/traces",
+    "trace_file_count": 104,
+    "trace_combined_sha256": "aad85365c9c4ccd7dd3c1edf769f26779c1bd2fcf028176da73dc4dfeb9cf594",
+    "refreshed_at": "2026-08-04T06:21:32.661678+00:00"
+  },
+  "artifact_paths": {
+    "csv": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/benchmark_results.csv",
+    "json": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/benchmark_results.json",
+    "summary": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/evaluation_summary.json",
+    "paper_tables": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/paper_tables.md",
+    "manifest": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/experiment_manifest.json",
+    "day7_dev_preflight": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/day7_dev_preflight_report.json",
+    "day7_dev_gate": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/day7_dev_gate.json",
+    "day7_dev_report": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST/day7_dev_report.md"
+  },
+  "paper_use_policy": {
+    "summary": "This is a Day 7 development-set real run. It may support debugging, ablation planning, and preliminary tables, but it must not replace the final 100-150 case formal experiment.",
+    "allowed_uses": [
+      "development-set real-run completeness evidence",
+      "method failure diagnosis before expanding the dataset",
+      "preliminary cost/token/latency estimates"
+    ],
+    "forbidden_uses": [
+      "final paper conclusion",
+      "claiming M3 superiority over M2 from the development split alone",
+      "mixing development results with the final held-out test set"
+    ]
+  },
+  "interpretation": "Development-set real-run evidence is complete enough for Day 7 diagnosis and for deciding whether to expand to the formal set."
+}

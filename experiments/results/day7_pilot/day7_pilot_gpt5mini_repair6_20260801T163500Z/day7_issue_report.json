@@ -1,0 +1,2048 @@
+{
+  "schema_version": "ctp-day7-fix-report-v1",
+  "created_at": "2026-08-04T07:34:03.487502+00:00",
+  "status": "completed",
+  "run_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z",
+  "run": {
+    "run_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z",
+    "run_id": "day7_pilot_gpt5mini_repair6_20260801T163500Z",
+    "dataset_id": "ctp_smoke_test_day7_pilot",
+    "dataset_version": "2026-07-31-zh",
+    "pilot_gate_status": "passed",
+    "raw_result_count": 40,
+    "quality_result_count": 32,
+    "summary_quality_result_count": 32,
+    "trace_count": 40,
+    "llm_call_count": 98,
+    "case_count": 8,
+    "total_turn_count": 10,
+    "expected_result_count": 40,
+    "model": "gpt-5-mini",
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "timeout_seconds": 60,
+    "retry_max_attempts": 3
+  },
+  "checks": {
+    "run_dir_exists": true,
+    "core_artifacts_loaded": true,
+    "pilot_gate_loaded": true,
+    "three_issue_categories_present": true,
+    "each_issue_has_modification": true,
+    "each_issue_has_before_after": true,
+    "each_issue_has_regression_or_diagnostic_test": true,
+    "m3_systemic_analysis_present": true
+  },
+  "failed_checks": [],
+  "issue_counts": {
+    "infrastructure_errors": {
+      "total": 4,
+      "fixed": 4,
+      "open": 0,
+      "deferred": 0
+    },
+    "experiment_implementation_errors": {
+      "total": 4,
+      "fixed": 4,
+      "open": 0,
+      "deferred": 0
+    },
+    "method_real_failures": {
+      "total": 2,
+      "fixed": 2,
+      "open": 0,
+      "deferred": 0
+    }
+  },
+  "issues": {
+    "infrastructure_errors": [
+      {
+        "issue_id": "INFRA-001",
+        "category": "infrastructure_error",
+        "severity": "high",
+        "status": "fixed",
+        "summary": "报告参数和真实 LLM 请求参数曾可能不一致。",
+        "before_run": "配置模块先加载 settings.temperature=0.2 / timeout=90，pilot/preflight 后置写入环境变量，可能导致 manifest 写 0/60 但 API 实际用 0.2/90。",
+        "modification": "运行时参数改为每次请求解析并写入 request_options，temperature=0 不再被当成空值；trace、manifest、preflight 使用同一套冻结参数。",
+        "after_run": "当前 pilot manifest: model=gpt-5-mini, temperature=0.0, timeout=60, max_tokens=4096; LLM 调用参数不一致数=0。",
+        "evidence": {
+          "manifest_runtime": {
+            "model": "gpt-5-mini",
+            "temperature": 0.0,
+            "max_tokens": 4096,
+            "timeout_seconds": 60,
+            "retry_max_attempts": 3,
+            "reasoning_effort": "minimal"
+          },
+          "llm_call_count": 98,
+          "mismatch_count": 0,
+          "mismatches": [],
+          "consistent_with_manifest": true,
+          "request_option_values": {
+            "max_tokens": [
+              "4096"
+            ],
+            "model": [
+              "gpt-5-mini"
+            ],
+            "reasoning_effort": [
+              "minimal"
+            ],
+            "retry_max_attempts": [
+              "3"
+            ],
+            "temperature": [
+              "0.0"
+            ],
+            "timeout_seconds": [
+              "60"
+            ]
+          },
+          "retry_max_attempts_values": [
+            "3"
+          ]
+        },
+        "regression_tests": [
+          "tests/test_tracing.py::test_openrouter_client_preserves_zero_temperature_and_records_retry_metadata",
+          "tests/test_tracing.py::test_openrouter_client_uses_runtime_env_after_settings_loaded",
+          "tests/test_day6_formal_run_preflight.py::test_day6_formal_preflight_rejects_nonzero_temperature"
+        ],
+        "paper_risk": "如果不修，论文中的温度、超时和成本/时延统计不可复现。",
+        "next_action": "正式实验继续使用 manifest 与 trace 的运行参数一致性作为硬门禁。"
+      },
+      {
+        "issue_id": "INFRA-002",
+        "category": "infrastructure_error",
+        "severity": "high",
+        "status": "fixed",
+        "summary": "重试范围曾过宽，并且 SDK 内部重试可能形成隐藏调用。",
+        "before_run": "客户端会对所有异常重试，OpenAI SDK 自身也可能自动重试；协议要求只允许 429、5xx 和网络超时，且初次请求+最多额外两次重试。",
+        "modification": "禁用 SDK 内部重试；自定义重试限制在 HTTP 429、HTTP 5xx、网络超时；最大尝试次数统一为 3，并完整写入 retry audit。",
+        "after_run": "当前 pilot retry_max_attempts=3，trace 记录 retry_count=1.0，LLM 调用数=98。",
+        "evidence": {
+          "manifest_retry_max_attempts": 3,
+          "trace_retry_count": 1.0,
+          "retry_values_in_calls": [
+            "3"
+          ]
+        },
+        "regression_tests": [
+          "tests/test_tracing.py::test_openrouter_client_preserves_zero_temperature_and_records_retry_metadata",
+          "tests/test_tracing.py::test_openrouter_client_does_not_retry_non_protocol_errors"
+        ],
+        "paper_risk": "如果不修，真实 API 调用次数、Token、成本和失败率都会被隐藏重试污染。",
+        "next_action": "正式实验不允许绕过自定义 retry audit。"
+      },
+      {
+        "issue_id": "INFRA-003",
+        "category": "infrastructure_error",
+        "severity": "medium",
+        "status": "fixed",
+        "summary": "严格模式下 Mock fallback 可能污染真实实验证据。",
+        "before_run": "旧链路存在真实 API 不可用时隐式退回 Mock 的风险。",
+        "modification": "严格模式阻止 Mock fallback，pilot gate 检查所有 LLM 调用均非 mock、非 fallback。",
+        "after_run": "当前 pilot mock_llm_call_count=0，fallback_llm_call_count=0。",
+        "evidence": {
+          "mock_llm_call_count": 0,
+          "fallback_llm_call_count": 0,
+          "strict_mode": true
+        },
+        "regression_tests": [
+          "tests/test_tracing.py::test_strict_mode_rejects_already_initialized_mock_client",
+          "tests/test_tracing.py::test_mock_fallback_and_strict_mode_are_recorded",
+          "tests/test_day7_pilot.py::test_day7_pilot_runs_subset_and_writes_gate_report"
+        ],
+        "paper_risk": "如果不修，论文可能把 Mock 结果误报为真实模型结果。",
+        "next_action": "正式实验继续保持 EXPERIMENT_STRICT_MODE=true。"
+      },
+      {
+        "issue_id": "INFRA-004",
+        "category": "infrastructure_error",
+        "severity": "medium",
+        "status": "fixed",
+        "summary": "Day7 pilot 初次真实运行暴露过 LLM 客户端局部 import 导致的运行时错误。",
+        "before_run": "LLMManager 初始化中局部 import os 造成作用域遮蔽，真实 pilot 未能进入有效 LLM 调用。",
+        "modification": "移除局部 import，复用模块级 os 导入，使真实 API 初始化路径恢复。",
+        "after_run": "当前 pilot 已产生 98 次真实 LLM 调用，result_error_count=0。",
+        "evidence": {
+          "llm_call_count": 98,
+          "result_error_count": 0
+        },
+        "regression_tests": [
+          "tests/test_day6_real_api_smoke.py::test_real_api_smoke_writes_trace_token_latency_and_cost_reports",
+          "tests/test_day7_pilot.py::test_day7_pilot_runs_subset_and_writes_gate_report"
+        ],
+        "paper_risk": "如果不修，无法产生真实 pilot 的请求级 trace 证据。",
+        "next_action": "保持真实运行前先执行 preflight，再执行小规模 pilot。"
+      }
+    ],
+    "experiment_implementation_errors": [
+      {
+        "issue_id": "EXP-001",
+        "category": "experiment_implementation_error",
+        "severity": "high",
+        "status": "fixed",
+        "summary": "数据解析门禁曾只展示解析结果，不检查解析值是否等于金标。",
+        "before_run": "“改成3人”案例会被解析成上一轮 2 人，旧验证器仍显示 passed。",
+        "modification": "新增自然语言解析值与金标一致性检查；changed_slots 新值必须出现在当前话语中；preserved_slots 必须保持上一轮状态。",
+        "after_run": "ctp120_dev 与 benchmark_test 均通过中文解析门禁；people_count 当前轮覆盖历史值。",
+        "evidence": {
+          "dataset_version": "2026-07-31-zh",
+          "quality_result_count": 32
+        },
+        "regression_tests": [
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_prefers_current_turn_value_over_history_for_people_change",
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_blocks_parse_gold_mismatch_for_changed_slot",
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_requires_changed_slot_value_in_current_utterance",
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_blocks_preserved_slot_conflict"
+        ],
+        "paper_risk": "如果不修，正式实验的多轮任务标签不可信，M3 的状态复用评价会失真。",
+        "next_action": "扩展到 100-150 例时继续使用同一 validator 作为数据入库门禁。"
+      },
+      {
+        "issue_id": "EXP-002",
+        "category": "experiment_implementation_error",
+        "severity": "high",
+        "status": "fixed",
+        "summary": "开发集、烟雾集、正式测试集曾缺少重复、近似重复和中文口径检查。",
+        "before_run": "烟雾集和开发集之间存在完全相同输入，且旧数据主要为英文。",
+        "modification": "开发集和烟雾集切换为中文口径；新增跨 split 重复/近似重复、中文输入、离线可行性门禁。",
+        "after_run": "benchmark_test 当前作为 8 个顶层案例、10 个实际轮次的中文 smoke 草稿，不再使用旧英文重复输入。",
+        "evidence": {
+          "pilot_case_count": 8,
+          "pilot_turn_count": 10,
+          "selected_case_ids": [
+            "smoke_xian_full_plan",
+            "smoke_shenzhen_attractions",
+            "smoke_beijing_weather",
+            "smoke_hangzhou_budget",
+            "smoke_guilin_clarification",
+            "smoke_hangzhou_duration_change",
+            "smoke_beijing_rain_adjustment",
+            "smoke_general_chat"
+          ]
+        },
+        "regression_tests": [
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_blocks_cross_split_duplicate_and_near_duplicate",
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_blocks_non_chinese_visible_inputs",
+          "tests/test_day6_benchmark_dataset_quality.py::test_dataset_gate_blocks_offline_infeasible_constraints",
+          "tests/test_day6_benchmark_dataset_quality.py::test_benchmark_test_smoke_dataset_has_strict_gold_labels"
+        ],
+        "paper_risk": "如果不修，测试集可能泄漏开发集样本，论文实验会被认为不独立。",
+        "next_action": "正式测试集冻结前必须再次运行跨 split 检查。"
+      },
+      {
+        "issue_id": "EXP-003",
+        "category": "experiment_implementation_error",
+        "severity": "medium",
+        "status": "fixed",
+        "summary": "Day7 pilot 默认规模曾不是完整 8 条 smoke 链路。",
+        "before_run": "pilot 默认只抽 3 个案例，无法得到协议要求的 8 个顶层案例、10 个轮次、4 种方法、40 条结果。",
+        "modification": "DEFAULT_MAX_CASES 调整为 8；gate 校验 case_count、turn_count、result_count、trace_count。",
+        "after_run": "当前 pilot case_count=8，turn_count=10，expected_result_count=40，actual_result_count=40。",
+        "evidence": {
+          "pilot_structure": {
+            "case_count": 8,
+            "single_turn_case_count": 6,
+            "scenario_case_count": 2,
+            "total_turn_count": 10,
+            "selected_case_ids": [
+              "smoke_xian_full_plan",
+              "smoke_shenzhen_attractions",
+              "smoke_beijing_weather",
+              "smoke_hangzhou_budget",
+              "smoke_guilin_clarification",
+              "smoke_hangzhou_duration_change",
+              "smoke_beijing_rain_adjustment",
+              "smoke_general_chat"
+            ],
+            "method_count": 4,
+            "repeats": 1,
+            "expected_trace_count": 40,
+            "actual_trace_file_count": 40,
+            "loaded_trace_count": 40
+          },
+          "expected_result_count": 40,
+          "actual_result_count": 40
+        },
+        "regression_tests": [
+          "tests/test_day7_pilot.py::test_day7_pilot_default_scope_matches_full_smoke_set",
+          "tests/test_day7_pilot.py::test_day7_pilot_runs_subset_and_writes_gate_report"
+        ],
+        "paper_risk": "如果不修，pilot 不能覆盖完整 smoke 协议，后续问题清单不充分。",
+        "next_action": "正式实验不使用 pilot 规模；pilot 只作扩跑前健康检查。"
+      },
+      {
+        "issue_id": "EXP-004",
+        "category": "experiment_implementation_error",
+        "severity": "medium",
+        "status": "fixed",
+        "summary": "pilot gate 曾容易把证据完整性和方法质量混在一起。",
+        "before_run": "方法失败或无业务 Agent 的澄清/闲聊轮次可能导致证据 gate 被误判失败。",
+        "modification": "pilot gate 只硬检查证据完整性、真实运行参数、无 Mock/fallback；方法质量作为诊断字段输出。",
+        "after_run": "当前 pilot gate=passed；result_status_counts={'completed': 35, 'failed': 3, 'clarification': 2}；quality_gated=False。",
+        "evidence": {
+          "pilot_gate_status": "passed",
+          "quality_policy": {
+            "quality_threshold_enforced": false,
+            "reason": "Day 7 pilot checks evidence completeness and runtime auditability. Task quality metrics are reported but do not gate the pilot."
+          },
+          "result_status_summary": {
+            "status_counts": {
+              "completed": 35,
+              "failed": 3,
+              "clarification": 2
+            },
+            "error_count": 0,
+            "quality_gated": false,
+            "note": "Pilot gates evidence completeness and runtime auditability. Method failures are reported here for diagnosis but are not hard-gated."
+          }
+        },
+        "regression_tests": [
+          "tests/test_day7_pilot.py::test_day7_pilot_runs_subset_and_writes_gate_report"
+        ],
+        "paper_risk": "如果不修，真实方法失败会被误当成基础设施失败，问题定位混乱。",
+        "next_action": "正式实验 gate 与质量阈值仍需分层：先证据有效，再谈方法指标。"
+      }
+    ],
+    "method_real_failures": [
+      {
+        "issue_id": "METHOD-001",
+        "category": "method_real_failure",
+        "severity": "critical",
+        "status": "fixed",
+        "summary": "M3 在真实 smoke 质量评价中存在整类任务系统性失败。",
+        "before_run": "Day7 之前没有真实 smoke 结果，无法判断 M3 是否只是脚手架可跑，还是方法真的可用。",
+        "modification": "本任务不美化结果；新增按任务类型、规则、失败原因的诊断报告，把 M3 真实失败显式列入后续修正入口。",
+        "after_run": "M3 quality_unit_count=8，failed=0，failure_rate=0.0，systemic_failure=False，dev_stsr=1.0，dev_hcsr=1.0，m2_dev_hcsr=1.0，formal_run_blocked=False。",
+        "evidence": {
+          "pilot_smoke_analysis": {
+            "method": "adaptive_multi_agent",
+            "label": "M3 Proposed",
+            "quality_unit_count": 8,
+            "failed_quality_unit_count": 0,
+            "failure_rate": 0.0,
+            "status_counts": {
+              "completed": 7,
+              "clarification": 1
+            },
+            "affected_task_type_count": 0,
+            "systemic_task_types": [],
+            "systemic_failure": false,
+            "top_failed_rules": [],
+            "top_failure_reasons": [],
+            "task_type_breakdown": [
+              {
+                "task_type": "attraction_recommendation",
+                "total": 1,
+                "failed": 0,
+                "failure_rate": 0.0,
+                "status_counts": {
+                  "completed": 1
+                },
+                "top_failed_rules": []
+              },
+              {
+                "task_type": "budget_query",
+                "total": 1,
+                "failed": 0,
+                "failure_rate": 0.0,
+                "status_counts": {
+                  "completed": 1
+                },
+                "top_failed_rules": []
+              },
+              {
+                "task_type": "clarification",
+                "total": 1,
+                "failed": 0,
+                "failure_rate": 0.0,
+                "status_counts": {
+                  "clarification": 1
+                },
+                "top_failed_rules": []
+              },
+              {
+                "task_type": "general_chat",
+                "total": 1,
+                "failed": 0,
+                "failure_rate": 0.0,
+                "status_counts": {
+                  "completed": 1
+                },
+                "top_failed_rules": []
+              },
+              {
+                "task_type": "partial_replan",
+                "total": 1,
+                "failed": 0,
+                "failure_rate": 0.0,
+                "status_counts": {
+                  "completed": 1
+                },
+                "top_failed_rules": []
+              },
+              {
+                "task_type": "trip_planning",
+                "total": 1,
+                "failed": 0,
+                "failure_rate": 0.0,
+                "status_counts": {
+                  "completed": 1
+                },
+                "top_failed_rules": []
+              },
+              {
+                "task_type": "weather_adjustment",
+                "total": 1,
+                "failed": 0,
+                "failure_rate": 0.0,
+                "status_counts": {
+                  "completed": 1
+                },
+                "top_failed_rules": []
+              },
+              {
+                "task_type": "weather_query",
+                "total": 1,
+                "failed": 0,
+                "failure_rate": 0.0,
+                "status_counts": {
+                  "completed": 1
+                },
+                "top_failed_rules": []
+              }
+            ],
+            "interpretation": "当前证据未显示 M3 存在整类任务系统性失败。",
+            "formal_run_blocked": false
+          },
+          "development_quality_analysis": {
+            "available": true,
+            "formal_run_blocked": false,
+            "blocking_reasons": [],
+            "thresholds": {
+              "m3_stsr_min_for_closure": 0.7,
+              "m3_hcsr_should_not_be_below_m2": true
+            },
+            "adaptive_multi_agent": {
+              "case_count": 20,
+              "stsr_rate": 1.0,
+              "evaluation_hcsr_mean": 1.0,
+              "agent_set_exact_match_mean": 1.0,
+              "tool_set_exact_match_mean": 1.0,
+              "successful_case_count": 20,
+              "top_failed_rules": [],
+              "top_tool_failure_types": []
+            },
+            "fixed_multi_agent": {
+              "case_count": 20,
+              "stsr_rate": 0.4,
+              "evaluation_hcsr_mean": 1.0,
+              "agent_set_exact_match_mean": 0.4,
+              "tool_set_exact_match_mean": 0.4,
+              "successful_case_count": 8,
+              "top_failed_rules": [
+                {
+                  "rule_id": "S_AGENT_SET_MATCH",
+                  "count": 12
+                },
+                {
+                  "rule_id": "S_TOOL_SET_MATCH",
+                  "count": 12
+                },
+                {
+                  "rule_id": "T_BUDGET_SINGLE_SCOPE",
+                  "count": 3
+                },
+                {
+                  "rule_id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+                  "count": 3
+                },
+                {
+                  "rule_id": "T_ATTRACTION_SINGLE_SCOPE",
+                  "count": 2
+                },
+                {
+                  "rule_id": "T_WEATHER_SINGLE_SCOPE",
+                  "count": 2
+                },
+                {
+                  "rule_id": "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+                  "count": 2
+                },
+                {
+                  "rule_id": "G_FINAL_ANSWER_CONSISTENT",
+                  "count": 1
+                },
+                {
+                  "rule_id": "T_CLARIFICATION_MISSING_FIELDS",
+                  "count": 1
+                },
+                {
+                  "rule_id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+                  "count": 1
+                }
+              ],
+              "top_tool_failure_types": []
+            },
+            "interpretation": "20-case development evidence does not block method closure."
+          },
+          "m3_method_readiness": {
+            "quality_formal_run_blocked": false,
+            "ablation_required": false,
+            "ablation_closed": true,
+            "ablation_status": "passed",
+            "ablation_run_dir": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST",
+            "formal_run_blocked": false,
+            "blocking_reasons": [],
+            "programmatic_decision_count": 37,
+            "agent_decision_output_count": 64,
+            "programmatic_decision_rate": 0.5781,
+            "llm_valid_decision_count": 27,
+            "development_available": true,
+            "interpretation": "M3 method issues are not blocked by current pilot/development/decision-assistance evidence."
+          }
+        },
+        "regression_tests": [
+          "tests/test_day7_fix_report.py::test_day7_fix_report_classifies_m3_systemic_failures",
+          "tests/test_day7_fix_report.py::test_day7_fix_report_keeps_method_open_when_dev_quality_is_low"
+        ],
+        "paper_risk": "该问题未关闭前，不能用当前 pilot 支撑 M3 优于 M2 的论文结论。",
+        "next_action": "Day8 优先修 M3 输出结构、任务类型稳定性、工具证据和多轮状态复用。"
+      },
+      {
+        "issue_id": "METHOD-003",
+        "category": "method_real_failure",
+        "severity": "medium",
+        "status": "fixed",
+        "summary": "M3 的 Agent 决策存在程序性补全；必须在论文中披露，并设置无补全消融。",
+        "before_run": "LLM fallback=0 只能说明没有模型层降级；它不能说明每个 Agent 决策都由模型直接生成。此前问题报告没有聚合 decision_fallback_used、decision_source 和 reused Agent 输出。",
+        "modification": "新增 agent_decision_assistance_analysis，逐 scope、逐方法统计 LLM 有效决策、deterministic normalizer、reused/synthetic 决策和 programmatic_decision_rate。",
+        "after_run": "M3 programmatic_decision_count=37 / 64，rate=0.5781，ablation_required=False，ablation_status=passed。",
+        "evidence": {
+          "decision_assistance_analysis": {
+            "pilot": {
+              "scope": "pilot",
+              "run_dir": null,
+              "available": true,
+              "result_count": 40,
+              "methods": {
+                "adaptive_multi_agent": {
+                  "result_count": 10,
+                  "rows_with_agent_outputs_count": 8,
+                  "rows_with_programmatic_decision_count": 6,
+                  "agent_decision_output_count": 22,
+                  "llm_valid_decision_count": 11,
+                  "deterministic_normalizer_count": 9,
+                  "reused_or_synthetic_decision_count": 2,
+                  "other_non_llm_decision_count": 0,
+                  "invalid_llm_decision_count": 0,
+                  "programmatic_decision_count": 11,
+                  "programmatic_decision_rate": 0.5,
+                  "llm_valid_decision_rate": 0.5,
+                  "requires_disclosure": true,
+                  "requires_ablation": true,
+                  "by_agent": {
+                    "attraction": {
+                      "deterministic_normalizer": 3,
+                      "llm_valid": 1,
+                      "programmatic": 5,
+                      "reused_or_synthetic": 2,
+                      "total": 6
+                    },
+                    "budget": {
+                      "llm_valid": 5,
+                      "total": 5
+                    },
+                    "itinerary": {
+                      "deterministic_normalizer": 5,
+                      "programmatic": 5,
+                      "total": 5
+                    },
+                    "weather": {
+                      "deterministic_normalizer": 1,
+                      "llm_valid": 5,
+                      "programmatic": 1,
+                      "total": 6
+                    }
+                  },
+                  "by_task_type": {
+                    "attraction_recommendation": {
+                      "deterministic_normalizer": 1,
+                      "programmatic": 1,
+                      "total": 1
+                    },
+                    "budget_query": {
+                      "llm_valid": 1,
+                      "total": 1
+                    },
+                    "partial_replan": {
+                      "deterministic_normalizer": 2,
+                      "llm_valid": 1,
+                      "programmatic": 3,
+                      "reused_or_synthetic": 1,
+                      "total": 4
+                    },
+                    "trip_planning": {
+                      "deterministic_normalizer": 5,
+                      "llm_valid": 7,
+                      "programmatic": 5,
+                      "total": 12
+                    },
+                    "weather_adjustment": {
+                      "deterministic_normalizer": 1,
+                      "llm_valid": 1,
+                      "programmatic": 2,
+                      "reused_or_synthetic": 1,
+                      "total": 3
+                    },
+                    "weather_query": {
+                      "llm_valid": 1,
+                      "total": 1
+                    }
+                  },
+                  "definition": {
+                    "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+                    "note": "This is separate from model/provider-level LLM fallback."
+                  }
+                },
+                "fixed_multi_agent": {
+                  "result_count": 10,
+                  "rows_with_agent_outputs_count": 8,
+                  "rows_with_programmatic_decision_count": 8,
+                  "agent_decision_output_count": 32,
+                  "llm_valid_decision_count": 16,
+                  "deterministic_normalizer_count": 16,
+                  "reused_or_synthetic_decision_count": 0,
+                  "other_non_llm_decision_count": 0,
+                  "invalid_llm_decision_count": 0,
+                  "programmatic_decision_count": 16,
+                  "programmatic_decision_rate": 0.5,
+                  "llm_valid_decision_rate": 0.5,
+                  "requires_disclosure": true,
+                  "requires_ablation": true,
+                  "by_agent": {
+                    "attraction": {
+                      "deterministic_normalizer": 7,
+                      "llm_valid": 1,
+                      "programmatic": 7,
+                      "total": 8
+                    },
+                    "budget": {
+                      "deterministic_normalizer": 1,
+                      "llm_valid": 7,
+                      "programmatic": 1,
+                      "total": 8
+                    },
+                    "itinerary": {
+                      "deterministic_normalizer": 7,
+                      "llm_valid": 1,
+                      "programmatic": 7,
+                      "total": 8
+                    },
+                    "weather": {
+                      "deterministic_normalizer": 1,
+                      "llm_valid": 7,
+                      "programmatic": 1,
+                      "total": 8
+                    }
+                  },
+                  "by_task_type": {
+                    "attraction_recommendation": {
+                      "deterministic_normalizer": 3,
+                      "llm_valid": 1,
+                      "programmatic": 3,
+                      "total": 4
+                    },
+                    "budget_query": {
+                      "deterministic_normalizer": 2,
+                      "llm_valid": 2,
+                      "programmatic": 2,
+                      "total": 4
+                    },
+                    "partial_replan": {
+                      "deterministic_normalizer": 2,
+                      "llm_valid": 2,
+                      "programmatic": 2,
+                      "total": 4
+                    },
+                    "trip_planning": {
+                      "deterministic_normalizer": 5,
+                      "llm_valid": 7,
+                      "programmatic": 5,
+                      "total": 12
+                    },
+                    "weather_adjustment": {
+                      "deterministic_normalizer": 2,
+                      "llm_valid": 2,
+                      "programmatic": 2,
+                      "total": 4
+                    },
+                    "weather_query": {
+                      "deterministic_normalizer": 2,
+                      "llm_valid": 2,
+                      "programmatic": 2,
+                      "total": 4
+                    }
+                  },
+                  "definition": {
+                    "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+                    "note": "This is separate from model/provider-level LLM fallback."
+                  }
+                },
+                "llm_direct": {
+                  "result_count": 10,
+                  "rows_with_agent_outputs_count": 0,
+                  "rows_with_programmatic_decision_count": 0,
+                  "agent_decision_output_count": 0,
+                  "llm_valid_decision_count": 0,
+                  "deterministic_normalizer_count": 0,
+                  "reused_or_synthetic_decision_count": 0,
+                  "other_non_llm_decision_count": 0,
+                  "invalid_llm_decision_count": 0,
+                  "programmatic_decision_count": 0,
+                  "programmatic_decision_rate": null,
+                  "llm_valid_decision_rate": null,
+                  "requires_disclosure": false,
+                  "requires_ablation": false,
+                  "by_agent": {},
+                  "by_task_type": {},
+                  "definition": {
+                    "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+                    "note": "This is separate from model/provider-level LLM fallback."
+                  }
+                },
+                "single_agent": {
+                  "result_count": 10,
+                  "rows_with_agent_outputs_count": 0,
+                  "rows_with_programmatic_decision_count": 0,
+                  "agent_decision_output_count": 0,
+                  "llm_valid_decision_count": 0,
+                  "deterministic_normalizer_count": 0,
+                  "reused_or_synthetic_decision_count": 0,
+                  "other_non_llm_decision_count": 0,
+                  "invalid_llm_decision_count": 0,
+                  "programmatic_decision_count": 0,
+                  "programmatic_decision_rate": null,
+                  "llm_valid_decision_rate": null,
+                  "requires_disclosure": false,
+                  "requires_ablation": false,
+                  "by_agent": {},
+                  "by_task_type": {},
+                  "definition": {
+                    "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+                    "note": "This is separate from model/provider-level LLM fallback."
+                  }
+                }
+              }
+            },
+            "development": {
+              "scope": "development",
+              "run_dir": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST",
+              "available": true,
+              "result_count": 104,
+              "methods": {
+                "adaptive_multi_agent": {
+                  "result_count": 26,
+                  "rows_with_agent_outputs_count": 22,
+                  "rows_with_programmatic_decision_count": 17,
+                  "agent_decision_output_count": 64,
+                  "llm_valid_decision_count": 27,
+                  "deterministic_normalizer_count": 29,
+                  "reused_or_synthetic_decision_count": 8,
+                  "other_non_llm_decision_count": 0,
+                  "invalid_llm_decision_count": 4,
+                  "programmatic_decision_count": 37,
+                  "programmatic_decision_rate": 0.5781,
+                  "llm_valid_decision_rate": 0.4219,
+                  "requires_disclosure": true,
+                  "requires_ablation": true,
+                  "by_agent": {
+                    "attraction": {
+                      "deterministic_normalizer": 8,
+                      "invalid_llm": 2,
+                      "llm_valid": 5,
+                      "programmatic": 12,
+                      "reused_or_synthetic": 4,
+                      "total": 17
+                    },
+                    "budget": {
+                      "deterministic_normalizer": 2,
+                      "invalid_llm": 1,
+                      "llm_valid": 13,
+                      "programmatic": 3,
+                      "reused_or_synthetic": 1,
+                      "total": 16
+                    },
+                    "itinerary": {
+                      "deterministic_normalizer": 12,
+                      "llm_valid": 1,
+                      "programmatic": 13,
+                      "reused_or_synthetic": 1,
+                      "total": 14
+                    },
+                    "weather": {
+                      "deterministic_normalizer": 7,
+                      "invalid_llm": 1,
+                      "llm_valid": 8,
+                      "programmatic": 9,
+                      "reused_or_synthetic": 2,
+                      "total": 17
+                    }
+                  },
+                  "by_task_type": {
+                    "attraction_recommendation": {
+                      "deterministic_normalizer": 1,
+                      "llm_valid": 1,
+                      "programmatic": 1,
+                      "total": 2
+                    },
+                    "budget_query": {
+                      "llm_valid": 3,
+                      "programmatic": 1,
+                      "reused_or_synthetic": 1,
+                      "total": 4
+                    },
+                    "partial_replan": {
+                      "deterministic_normalizer": 3,
+                      "invalid_llm": 3,
+                      "llm_valid": 3,
+                      "programmatic": 9,
+                      "reused_or_synthetic": 6,
+                      "total": 12
+                    },
+                    "trip_planning": {
+                      "deterministic_normalizer": 22,
+                      "llm_valid": 18,
+                      "programmatic": 22,
+                      "total": 40
+                    },
+                    "weather_adjustment": {
+                      "deterministic_normalizer": 2,
+                      "invalid_llm": 1,
+                      "llm_valid": 1,
+                      "programmatic": 3,
+                      "reused_or_synthetic": 1,
+                      "total": 4
+                    },
+                    "weather_query": {
+                      "deterministic_normalizer": 1,
+                      "llm_valid": 1,
+                      "programmatic": 1,
+                      "total": 2
+                    }
+                  },
+                  "definition": {
+                    "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+                    "note": "This is separate from model/provider-level LLM fallback."
+                  }
+                },
+                "fixed_multi_agent": {
+                  "result_count": 26,
+                  "rows_with_agent_outputs_count": 22,
+                  "rows_with_programmatic_decision_count": 22,
+                  "agent_decision_output_count": 88,
+                  "llm_valid_decision_count": 48,
+                  "deterministic_normalizer_count": 40,
+                  "reused_or_synthetic_decision_count": 0,
+                  "other_non_llm_decision_count": 0,
+                  "invalid_llm_decision_count": 0,
+                  "programmatic_decision_count": 40,
+                  "programmatic_decision_rate": 0.4545,
+                  "llm_valid_decision_rate": 0.5455,
+                  "requires_disclosure": true,
+                  "requires_ablation": true,
+                  "by_agent": {
+                    "attraction": {
+                      "deterministic_normalizer": 11,
+                      "llm_valid": 11,
+                      "programmatic": 11,
+                      "total": 22
+                    },
+                    "budget": {
+                      "llm_valid": 22,
+                      "total": 22
+                    },
+                    "itinerary": {
+                      "deterministic_normalizer": 19,
+                      "llm_valid": 3,
+                      "programmatic": 19,
+                      "total": 22
+                    },
+                    "weather": {
+                      "deterministic_normalizer": 10,
+                      "llm_valid": 12,
+                      "programmatic": 10,
+                      "total": 22
+                    }
+                  },
+                  "by_task_type": {
+                    "attraction_recommendation": {
+                      "deterministic_normalizer": 3,
+                      "llm_valid": 5,
+                      "programmatic": 3,
+                      "total": 8
+                    },
+                    "budget_query": {
+                      "deterministic_normalizer": 3,
+                      "llm_valid": 9,
+                      "programmatic": 3,
+                      "total": 12
+                    },
+                    "partial_replan": {
+                      "deterministic_normalizer": 7,
+                      "llm_valid": 5,
+                      "programmatic": 7,
+                      "total": 12
+                    },
+                    "trip_planning": {
+                      "deterministic_normalizer": 19,
+                      "llm_valid": 21,
+                      "programmatic": 19,
+                      "total": 40
+                    },
+                    "weather_adjustment": {
+                      "deterministic_normalizer": 3,
+                      "llm_valid": 5,
+                      "programmatic": 3,
+                      "total": 8
+                    },
+                    "weather_query": {
+                      "deterministic_normalizer": 5,
+                      "llm_valid": 3,
+                      "programmatic": 5,
+                      "total": 8
+                    }
+                  },
+                  "definition": {
+                    "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+                    "note": "This is separate from model/provider-level LLM fallback."
+                  }
+                },
+                "llm_direct": {
+                  "result_count": 26,
+                  "rows_with_agent_outputs_count": 0,
+                  "rows_with_programmatic_decision_count": 0,
+                  "agent_decision_output_count": 0,
+                  "llm_valid_decision_count": 0,
+                  "deterministic_normalizer_count": 0,
+                  "reused_or_synthetic_decision_count": 0,
+                  "other_non_llm_decision_count": 0,
+                  "invalid_llm_decision_count": 0,
+                  "programmatic_decision_count": 0,
+                  "programmatic_decision_rate": null,
+                  "llm_valid_decision_rate": null,
+                  "requires_disclosure": false,
+                  "requires_ablation": false,
+                  "by_agent": {},
+                  "by_task_type": {},
+                  "definition": {
+                    "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+                    "note": "This is separate from model/provider-level LLM fallback."
+                  }
+                },
+                "single_agent": {
+                  "result_count": 26,
+                  "rows_with_agent_outputs_count": 0,
+                  "rows_with_programmatic_decision_count": 0,
+                  "agent_decision_output_count": 0,
+                  "llm_valid_decision_count": 0,
+                  "deterministic_normalizer_count": 0,
+                  "reused_or_synthetic_decision_count": 0,
+                  "other_non_llm_decision_count": 0,
+                  "invalid_llm_decision_count": 0,
+                  "programmatic_decision_count": 0,
+                  "programmatic_decision_rate": null,
+                  "llm_valid_decision_rate": null,
+                  "requires_disclosure": false,
+                  "requires_ablation": false,
+                  "by_agent": {},
+                  "by_task_type": {},
+                  "definition": {
+                    "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+                    "note": "This is separate from model/provider-level LLM fallback."
+                  }
+                }
+              }
+            }
+          },
+          "m3_programmatic_decision_summary": {
+            "result_count": 26,
+            "rows_with_agent_outputs_count": 22,
+            "rows_with_programmatic_decision_count": 17,
+            "agent_decision_output_count": 64,
+            "llm_valid_decision_count": 27,
+            "deterministic_normalizer_count": 29,
+            "reused_or_synthetic_decision_count": 8,
+            "other_non_llm_decision_count": 0,
+            "invalid_llm_decision_count": 4,
+            "programmatic_decision_count": 37,
+            "programmatic_decision_rate": 0.5781,
+            "llm_valid_decision_rate": 0.4219,
+            "requires_disclosure": true,
+            "requires_ablation": true,
+            "by_agent": {
+              "attraction": {
+                "deterministic_normalizer": 8,
+                "invalid_llm": 2,
+                "llm_valid": 5,
+                "programmatic": 12,
+                "reused_or_synthetic": 4,
+                "total": 17
+              },
+              "budget": {
+                "deterministic_normalizer": 2,
+                "invalid_llm": 1,
+                "llm_valid": 13,
+                "programmatic": 3,
+                "reused_or_synthetic": 1,
+                "total": 16
+              },
+              "itinerary": {
+                "deterministic_normalizer": 12,
+                "llm_valid": 1,
+                "programmatic": 13,
+                "reused_or_synthetic": 1,
+                "total": 14
+              },
+              "weather": {
+                "deterministic_normalizer": 7,
+                "invalid_llm": 1,
+                "llm_valid": 8,
+                "programmatic": 9,
+                "reused_or_synthetic": 2,
+                "total": 17
+              }
+            },
+            "by_task_type": {
+              "attraction_recommendation": {
+                "deterministic_normalizer": 1,
+                "llm_valid": 1,
+                "programmatic": 1,
+                "total": 2
+              },
+              "budget_query": {
+                "llm_valid": 3,
+                "programmatic": 1,
+                "reused_or_synthetic": 1,
+                "total": 4
+              },
+              "partial_replan": {
+                "deterministic_normalizer": 3,
+                "invalid_llm": 3,
+                "llm_valid": 3,
+                "programmatic": 9,
+                "reused_or_synthetic": 6,
+                "total": 12
+              },
+              "trip_planning": {
+                "deterministic_normalizer": 22,
+                "llm_valid": 18,
+                "programmatic": 22,
+                "total": 40
+              },
+              "weather_adjustment": {
+                "deterministic_normalizer": 2,
+                "invalid_llm": 1,
+                "llm_valid": 1,
+                "programmatic": 3,
+                "reused_or_synthetic": 1,
+                "total": 4
+              },
+              "weather_query": {
+                "deterministic_normalizer": 1,
+                "llm_valid": 1,
+                "programmatic": 1,
+                "total": 2
+              }
+            },
+            "definition": {
+              "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+              "note": "This is separate from model/provider-level LLM fallback."
+            }
+          },
+          "m3_no_decision_normalizer_ablation": {
+            "available": true,
+            "status": "passed",
+            "ablation_closed": true,
+            "run_dir": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST",
+            "path": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/day7_m3_no_decision_normalizer_ablation.json",
+            "failed_checks": [],
+            "summary": {
+              "ablation_closed": true,
+              "agent_decision_output_count": 52,
+              "deterministic_normalizer_count": 0,
+              "normalizer_skipped_count": 21,
+              "invalid_llm_decision_count": 21,
+              "llm_valid_decision_count": 31,
+              "normalizer_enabled_true_count": 0,
+              "llm_call_count": 52,
+              "runtime_max_tokens_values": [
+                4096
+              ]
+            },
+            "checks": {
+              "run_dir_exists": true,
+              "core_artifacts_saved": true,
+              "single_expected_method_recorded": true,
+              "result_count_matches_expected_turns": true,
+              "method_count_matches_expected_turns": true,
+              "no_unexpected_methods": true,
+              "trace_count_matches_expected_turns": true,
+              "manifest_decision_normalizer_disabled": true,
+              "agent_outputs_do_not_enable_normalizer": true,
+              "deterministic_normalizer_not_used": true,
+              "normalizer_skip_audit_present": true,
+              "runtime_max_tokens_matches_protocol": true,
+              "no_mock_llm": true,
+              "no_llm_fallback": true,
+              "no_cache_hit": true
+            },
+            "controlled_change": {
+              "name": "M3-no-decision-normalizer",
+              "method": "adaptive_multi_agent",
+              "decision_normalizer_enabled": false,
+              "description": "Disable deterministic research-agent decision normalization and preserve invalid/empty LLM Agent decisions as failures."
+            }
+          },
+          "required_ablation": {
+            "name": "M3-no-decision-normalizer",
+            "controlled_change": "disable deterministic agent decision normalizer and report failures instead of repairing invalid or empty Agent decisions",
+            "must_report": [
+              "STSR/HCSR without normalizer",
+              "agent/task/tool errors without normalizer",
+              "programmatic_decision_rate"
+            ],
+            "closed": true
+          }
+        },
+        "regression_tests": [
+          "tests/test_day7_fix_report.py::test_day7_fix_report_discloses_programmatic_agent_decisions"
+        ],
+        "paper_risk": "若不披露和消融，论文读者会误以为 M3 的 Agent 决策全部来自大模型，从而高估多 Agent 协作本身的贡献。",
+        "next_action": "Day8 设计 M3-no-decision-normalizer 消融；正文方法部分披露 normalizer/reuse 机制，实验表中单列触发比例。"
+      }
+    ]
+  },
+  "runtime_audit": {
+    "manifest_runtime": {
+      "model": "gpt-5-mini",
+      "temperature": 0.0,
+      "max_tokens": 4096,
+      "timeout_seconds": 60,
+      "retry_max_attempts": 3,
+      "reasoning_effort": "minimal"
+    },
+    "llm_call_count": 98,
+    "mismatch_count": 0,
+    "mismatches": [],
+    "consistent_with_manifest": true,
+    "request_option_values": {
+      "max_tokens": [
+        "4096"
+      ],
+      "model": [
+        "gpt-5-mini"
+      ],
+      "reasoning_effort": [
+        "minimal"
+      ],
+      "retry_max_attempts": [
+        "3"
+      ],
+      "temperature": [
+        "0.0"
+      ],
+      "timeout_seconds": [
+        "60"
+      ]
+    },
+    "retry_max_attempts_values": [
+      "3"
+    ]
+  },
+  "method_quality_summary": {
+    "adaptive_multi_agent": {
+      "label": "M3 Proposed",
+      "quality_unit_count": 8,
+      "failed_quality_unit_count": 0,
+      "failure_rate": 0.0,
+      "status_counts": {
+        "completed": 7,
+        "clarification": 1
+      },
+      "top_failed_rules": [],
+      "top_failure_reasons": []
+    },
+    "fixed_multi_agent": {
+      "label": "M2 Fixed Multi-Agent",
+      "quality_unit_count": 8,
+      "failed_quality_unit_count": 5,
+      "failure_rate": 0.625,
+      "status_counts": {
+        "completed": 7,
+        "clarification": 1
+      },
+      "top_failed_rules": [
+        {
+          "id": "S_AGENT_SET_MATCH",
+          "count": 4
+        },
+        {
+          "id": "S_TOOL_SET_MATCH",
+          "count": 4
+        },
+        {
+          "id": "T_ATTRACTION_SINGLE_SCOPE",
+          "count": 1
+        },
+        {
+          "id": "T_WEATHER_SINGLE_SCOPE",
+          "count": 1
+        },
+        {
+          "id": "H_BUDGET_LIMIT",
+          "count": 1
+        },
+        {
+          "id": "T_BUDGET_SINGLE_SCOPE",
+          "count": 1
+        },
+        {
+          "id": "G_FINAL_ANSWER_CONSISTENT",
+          "count": 1
+        },
+        {
+          "id": "T_CLARIFICATION_MISSING_FIELDS",
+          "count": 1
+        },
+        {
+          "id": "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+          "count": 1
+        },
+        {
+          "id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+          "count": 1
+        }
+      ],
+      "top_failure_reasons": []
+    },
+    "llm_direct": {
+      "label": "M0 Direct LLM",
+      "quality_unit_count": 8,
+      "failed_quality_unit_count": 7,
+      "failure_rate": 0.875,
+      "status_counts": {
+        "completed": 7,
+        "failed": 1
+      },
+      "top_failed_rules": [
+        {
+          "id": "H_TOOL_EVIDENCE",
+          "count": 6
+        },
+        {
+          "id": "S_AGENT_SET_MATCH",
+          "count": 6
+        },
+        {
+          "id": "S_TOOL_SET_MATCH",
+          "count": 6
+        },
+        {
+          "id": "G_FINAL_ANSWER_CONSISTENT",
+          "count": 5
+        },
+        {
+          "id": "H_POI_GROUNDED",
+          "count": 4
+        },
+        {
+          "id": "H_WEATHER_EVIDENCE",
+          "count": 4
+        },
+        {
+          "id": "H_BUDGET_LIMIT",
+          "count": 3
+        },
+        {
+          "id": "H_BUDGET_EVIDENCE",
+          "count": 3
+        },
+        {
+          "id": "G_EXECUTION_STATUS_VALID",
+          "count": 1
+        },
+        {
+          "id": "T_CLARIFICATION_MISSING_FIELDS",
+          "count": 1
+        }
+      ],
+      "top_failure_reasons": [
+        {
+          "id": "weather_adjustments must be a list of objects",
+          "count": 1
+        }
+      ]
+    },
+    "single_agent": {
+      "label": "M1 Single Agent",
+      "quality_unit_count": 8,
+      "failed_quality_unit_count": 7,
+      "failure_rate": 0.875,
+      "status_counts": {
+        "failed": 2,
+        "completed": 6
+      },
+      "top_failed_rules": [
+        {
+          "id": "S_AGENT_SET_MATCH",
+          "count": 7
+        },
+        {
+          "id": "G_FINAL_ANSWER_CONSISTENT",
+          "count": 4
+        },
+        {
+          "id": "H_TOOL_EVIDENCE",
+          "count": 4
+        },
+        {
+          "id": "S_TOOL_SET_MATCH",
+          "count": 4
+        },
+        {
+          "id": "G_EXECUTION_STATUS_VALID",
+          "count": 2
+        },
+        {
+          "id": "H_POI_GROUNDED",
+          "count": 2
+        },
+        {
+          "id": "H_BUDGET_LIMIT",
+          "count": 2
+        },
+        {
+          "id": "H_BUDGET_EVIDENCE",
+          "count": 2
+        },
+        {
+          "id": "H_WEATHER_EVIDENCE",
+          "count": 2
+        },
+        {
+          "id": "T_CLARIFICATION_MISSING_FIELDS",
+          "count": 1
+        }
+      ],
+      "top_failure_reasons": [
+        {
+          "id": "weather_adjustments must be a list of objects",
+          "count": 2
+        }
+      ]
+    }
+  },
+  "m3_systemic_failure_analysis": {
+    "method": "adaptive_multi_agent",
+    "label": "M3 Proposed",
+    "quality_unit_count": 8,
+    "failed_quality_unit_count": 0,
+    "failure_rate": 0.0,
+    "status_counts": {
+      "completed": 7,
+      "clarification": 1
+    },
+    "affected_task_type_count": 0,
+    "systemic_task_types": [],
+    "systemic_failure": false,
+    "top_failed_rules": [],
+    "top_failure_reasons": [],
+    "task_type_breakdown": [
+      {
+        "task_type": "attraction_recommendation",
+        "total": 1,
+        "failed": 0,
+        "failure_rate": 0.0,
+        "status_counts": {
+          "completed": 1
+        },
+        "top_failed_rules": []
+      },
+      {
+        "task_type": "budget_query",
+        "total": 1,
+        "failed": 0,
+        "failure_rate": 0.0,
+        "status_counts": {
+          "completed": 1
+        },
+        "top_failed_rules": []
+      },
+      {
+        "task_type": "clarification",
+        "total": 1,
+        "failed": 0,
+        "failure_rate": 0.0,
+        "status_counts": {
+          "clarification": 1
+        },
+        "top_failed_rules": []
+      },
+      {
+        "task_type": "general_chat",
+        "total": 1,
+        "failed": 0,
+        "failure_rate": 0.0,
+        "status_counts": {
+          "completed": 1
+        },
+        "top_failed_rules": []
+      },
+      {
+        "task_type": "partial_replan",
+        "total": 1,
+        "failed": 0,
+        "failure_rate": 0.0,
+        "status_counts": {
+          "completed": 1
+        },
+        "top_failed_rules": []
+      },
+      {
+        "task_type": "trip_planning",
+        "total": 1,
+        "failed": 0,
+        "failure_rate": 0.0,
+        "status_counts": {
+          "completed": 1
+        },
+        "top_failed_rules": []
+      },
+      {
+        "task_type": "weather_adjustment",
+        "total": 1,
+        "failed": 0,
+        "failure_rate": 0.0,
+        "status_counts": {
+          "completed": 1
+        },
+        "top_failed_rules": []
+      },
+      {
+        "task_type": "weather_query",
+        "total": 1,
+        "failed": 0,
+        "failure_rate": 0.0,
+        "status_counts": {
+          "completed": 1
+        },
+        "top_failed_rules": []
+      }
+    ],
+    "interpretation": "当前证据未显示 M3 存在整类任务系统性失败。",
+    "formal_run_blocked": false
+  },
+  "m3_development_readiness_analysis": {
+    "available": true,
+    "formal_run_blocked": false,
+    "blocking_reasons": [],
+    "thresholds": {
+      "m3_stsr_min_for_closure": 0.7,
+      "m3_hcsr_should_not_be_below_m2": true
+    },
+    "adaptive_multi_agent": {
+      "case_count": 20,
+      "stsr_rate": 1.0,
+      "evaluation_hcsr_mean": 1.0,
+      "agent_set_exact_match_mean": 1.0,
+      "tool_set_exact_match_mean": 1.0,
+      "successful_case_count": 20,
+      "top_failed_rules": [],
+      "top_tool_failure_types": []
+    },
+    "fixed_multi_agent": {
+      "case_count": 20,
+      "stsr_rate": 0.4,
+      "evaluation_hcsr_mean": 1.0,
+      "agent_set_exact_match_mean": 0.4,
+      "tool_set_exact_match_mean": 0.4,
+      "successful_case_count": 8,
+      "top_failed_rules": [
+        {
+          "rule_id": "S_AGENT_SET_MATCH",
+          "count": 12
+        },
+        {
+          "rule_id": "S_TOOL_SET_MATCH",
+          "count": 12
+        },
+        {
+          "rule_id": "T_BUDGET_SINGLE_SCOPE",
+          "count": 3
+        },
+        {
+          "rule_id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+          "count": 3
+        },
+        {
+          "rule_id": "T_ATTRACTION_SINGLE_SCOPE",
+          "count": 2
+        },
+        {
+          "rule_id": "T_WEATHER_SINGLE_SCOPE",
+          "count": 2
+        },
+        {
+          "rule_id": "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+          "count": 2
+        },
+        {
+          "rule_id": "G_FINAL_ANSWER_CONSISTENT",
+          "count": 1
+        },
+        {
+          "rule_id": "T_CLARIFICATION_MISSING_FIELDS",
+          "count": 1
+        },
+        {
+          "rule_id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+          "count": 1
+        }
+      ],
+      "top_tool_failure_types": []
+    },
+    "interpretation": "20-case development evidence does not block method closure."
+  },
+  "agent_decision_assistance_analysis": {
+    "pilot": {
+      "scope": "pilot",
+      "run_dir": null,
+      "available": true,
+      "result_count": 40,
+      "methods": {
+        "adaptive_multi_agent": {
+          "result_count": 10,
+          "rows_with_agent_outputs_count": 8,
+          "rows_with_programmatic_decision_count": 6,
+          "agent_decision_output_count": 22,
+          "llm_valid_decision_count": 11,
+          "deterministic_normalizer_count": 9,
+          "reused_or_synthetic_decision_count": 2,
+          "other_non_llm_decision_count": 0,
+          "invalid_llm_decision_count": 0,
+          "programmatic_decision_count": 11,
+          "programmatic_decision_rate": 0.5,
+          "llm_valid_decision_rate": 0.5,
+          "requires_disclosure": true,
+          "requires_ablation": true,
+          "by_agent": {
+            "attraction": {
+              "deterministic_normalizer": 3,
+              "llm_valid": 1,
+              "programmatic": 5,
+              "reused_or_synthetic": 2,
+              "total": 6
+            },
+            "budget": {
+              "llm_valid": 5,
+              "total": 5
+            },
+            "itinerary": {
+              "deterministic_normalizer": 5,
+              "programmatic": 5,
+              "total": 5
+            },
+            "weather": {
+              "deterministic_normalizer": 1,
+              "llm_valid": 5,
+              "programmatic": 1,
+              "total": 6
+            }
+          },
+          "by_task_type": {
+            "attraction_recommendation": {
+              "deterministic_normalizer": 1,
+              "programmatic": 1,
+              "total": 1
+            },
+            "budget_query": {
+              "llm_valid": 1,
+              "total": 1
+            },
+            "partial_replan": {
+              "deterministic_normalizer": 2,
+              "llm_valid": 1,
+              "programmatic": 3,
+              "reused_or_synthetic": 1,
+              "total": 4
+            },
+            "trip_planning": {
+              "deterministic_normalizer": 5,
+              "llm_valid": 7,
+              "programmatic": 5,
+              "total": 12
+            },
+            "weather_adjustment": {
+              "deterministic_normalizer": 1,
+              "llm_valid": 1,
+              "programmatic": 2,
+              "reused_or_synthetic": 1,
+              "total": 3
+            },
+            "weather_query": {
+              "llm_valid": 1,
+              "total": 1
+            }
+          },
+          "definition": {
+            "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+            "note": "This is separate from model/provider-level LLM fallback."
+          }
+        },
+        "fixed_multi_agent": {
+          "result_count": 10,
+          "rows_with_agent_outputs_count": 8,
+          "rows_with_programmatic_decision_count": 8,
+          "agent_decision_output_count": 32,
+          "llm_valid_decision_count": 16,
+          "deterministic_normalizer_count": 16,
+          "reused_or_synthetic_decision_count": 0,
+          "other_non_llm_decision_count": 0,
+          "invalid_llm_decision_count": 0,
+          "programmatic_decision_count": 16,
+          "programmatic_decision_rate": 0.5,
+          "llm_valid_decision_rate": 0.5,
+          "requires_disclosure": true,
+          "requires_ablation": true,
+          "by_agent": {
+            "attraction": {
+              "deterministic_normalizer": 7,
+              "llm_valid": 1,
+              "programmatic": 7,
+              "total": 8
+            },
+            "budget": {
+              "deterministic_normalizer": 1,
+              "llm_valid": 7,
+              "programmatic": 1,
+              "total": 8
+            },
+            "itinerary": {
+              "deterministic_normalizer": 7,
+              "llm_valid": 1,
+              "programmatic": 7,
+              "total": 8
+            },
+            "weather": {
+              "deterministic_normalizer": 1,
+              "llm_valid": 7,
+              "programmatic": 1,
+              "total": 8
+            }
+          },
+          "by_task_type": {
+            "attraction_recommendation": {
+              "deterministic_normalizer": 3,
+              "llm_valid": 1,
+              "programmatic": 3,
+              "total": 4
+            },
+            "budget_query": {
+              "deterministic_normalizer": 2,
+              "llm_valid": 2,
+              "programmatic": 2,
+              "total": 4
+            },
+            "partial_replan": {
+              "deterministic_normalizer": 2,
+              "llm_valid": 2,
+              "programmatic": 2,
+              "total": 4
+            },
+            "trip_planning": {
+              "deterministic_normalizer": 5,
+              "llm_valid": 7,
+              "programmatic": 5,
+              "total": 12
+            },
+            "weather_adjustment": {
+              "deterministic_normalizer": 2,
+              "llm_valid": 2,
+              "programmatic": 2,
+              "total": 4
+            },
+            "weather_query": {
+              "deterministic_normalizer": 2,
+              "llm_valid": 2,
+              "programmatic": 2,
+              "total": 4
+            }
+          },
+          "definition": {
+            "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+            "note": "This is separate from model/provider-level LLM fallback."
+          }
+        },
+        "llm_direct": {
+          "result_count": 10,
+          "rows_with_agent_outputs_count": 0,
+          "rows_with_programmatic_decision_count": 0,
+          "agent_decision_output_count": 0,
+          "llm_valid_decision_count": 0,
+          "deterministic_normalizer_count": 0,
+          "reused_or_synthetic_decision_count": 0,
+          "other_non_llm_decision_count": 0,
+          "invalid_llm_decision_count": 0,
+          "programmatic_decision_count": 0,
+          "programmatic_decision_rate": null,
+          "llm_valid_decision_rate": null,
+          "requires_disclosure": false,
+          "requires_ablation": false,
+          "by_agent": {},
+          "by_task_type": {},
+          "definition": {
+            "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+            "note": "This is separate from model/provider-level LLM fallback."
+          }
+        },
+        "single_agent": {
+          "result_count": 10,
+          "rows_with_agent_outputs_count": 0,
+          "rows_with_programmatic_decision_count": 0,
+          "agent_decision_output_count": 0,
+          "llm_valid_decision_count": 0,
+          "deterministic_normalizer_count": 0,
+          "reused_or_synthetic_decision_count": 0,
+          "other_non_llm_decision_count": 0,
+          "invalid_llm_decision_count": 0,
+          "programmatic_decision_count": 0,
+          "programmatic_decision_rate": null,
+          "llm_valid_decision_rate": null,
+          "requires_disclosure": false,
+          "requires_ablation": false,
+          "by_agent": {},
+          "by_task_type": {},
+          "definition": {
+            "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+            "note": "This is separate from model/provider-level LLM fallback."
+          }
+        }
+      }
+    },
+    "development": {
+      "scope": "development",
+      "run_dir": "experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST",
+      "available": true,
+      "result_count": 104,
+      "methods": {
+        "adaptive_multi_agent": {
+          "result_count": 26,
+          "rows_with_agent_outputs_count": 22,
+          "rows_with_programmatic_decision_count": 17,
+          "agent_decision_output_count": 64,
+          "llm_valid_decision_count": 27,
+          "deterministic_normalizer_count": 29,
+          "reused_or_synthetic_decision_count": 8,
+          "other_non_llm_decision_count": 0,
+          "invalid_llm_decision_count": 4,
+          "programmatic_decision_count": 37,
+          "programmatic_decision_rate": 0.5781,
+          "llm_valid_decision_rate": 0.4219,
+          "requires_disclosure": true,
+          "requires_ablation": true,
+          "by_agent": {
+            "attraction": {
+              "deterministic_normalizer": 8,
+              "invalid_llm": 2,
+              "llm_valid": 5,
+              "programmatic": 12,
+              "reused_or_synthetic": 4,
+              "total": 17
+            },
+            "budget": {
+              "deterministic_normalizer": 2,
+              "invalid_llm": 1,
+              "llm_valid": 13,
+              "programmatic": 3,
+              "reused_or_synthetic": 1,
+              "total": 16
+            },
+            "itinerary": {
+              "deterministic_normalizer": 12,
+              "llm_valid": 1,
+              "programmatic": 13,
+              "reused_or_synthetic": 1,
+              "total": 14
+            },
+            "weather": {
+              "deterministic_normalizer": 7,
+              "invalid_llm": 1,
+              "llm_valid": 8,
+              "programmatic": 9,
+              "reused_or_synthetic": 2,
+              "total": 17
+            }
+          },
+          "by_task_type": {
+            "attraction_recommendation": {
+              "deterministic_normalizer": 1,
+              "llm_valid": 1,
+              "programmatic": 1,
+              "total": 2
+            },
+            "budget_query": {
+              "llm_valid": 3,
+              "programmatic": 1,
+              "reused_or_synthetic": 1,
+              "total": 4
+            },
+            "partial_replan": {
+              "deterministic_normalizer": 3,
+              "invalid_llm": 3,
+              "llm_valid": 3,
+              "programmatic": 9,
+              "reused_or_synthetic": 6,
+              "total": 12
+            },
+            "trip_planning": {
+              "deterministic_normalizer": 22,
+              "llm_valid": 18,
+              "programmatic": 22,
+              "total": 40
+            },
+            "weather_adjustment": {
+              "deterministic_normalizer": 2,
+              "invalid_llm": 1,
+              "llm_valid": 1,
+              "programmatic": 3,
+              "reused_or_synthetic": 1,
+              "total": 4
+            },
+            "weather_query": {
+              "deterministic_normalizer": 1,
+              "llm_valid": 1,
+              "programmatic": 1,
+              "total": 2
+            }
+          },
+          "definition": {
+            "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+            "note": "This is separate from model/provider-level LLM fallback."
+          }
+        },
+        "fixed_multi_agent": {
+          "result_count": 26,
+          "rows_with_agent_outputs_count": 22,
+          "rows_with_programmatic_decision_count": 22,
+          "agent_decision_output_count": 88,
+          "llm_valid_decision_count": 48,
+          "deterministic_normalizer_count": 40,
+          "reused_or_synthetic_decision_count": 0,
+          "other_non_llm_decision_count": 0,
+          "invalid_llm_decision_count": 0,
+          "programmatic_decision_count": 40,
+          "programmatic_decision_rate": 0.4545,
+          "llm_valid_decision_rate": 0.5455,
+          "requires_disclosure": true,
+          "requires_ablation": true,
+          "by_agent": {
+            "attraction": {
+              "deterministic_normalizer": 11,
+              "llm_valid": 11,
+              "programmatic": 11,
+              "total": 22
+            },
+            "budget": {
+              "llm_valid": 22,
+              "total": 22
+            },
+            "itinerary": {
+              "deterministic_normalizer": 19,
+              "llm_valid": 3,
+              "programmatic": 19,
+              "total": 22
+            },
+            "weather": {
+              "deterministic_normalizer": 10,
+              "llm_valid": 12,
+              "programmatic": 10,
+              "total": 22
+            }
+          },
+          "by_task_type": {
+            "attraction_recommendation": {
+              "deterministic_normalizer": 3,
+              "llm_valid": 5,
+              "programmatic": 3,
+              "total": 8
+            },
+            "budget_query": {
+              "deterministic_normalizer": 3,
+              "llm_valid": 9,
+              "programmatic": 3,
+              "total": 12
+            },
+            "partial_replan": {
+              "deterministic_normalizer": 7,
+              "llm_valid": 5,
+              "programmatic": 7,
+              "total": 12
+            },
+            "trip_planning": {
+              "deterministic_normalizer": 19,
+              "llm_valid": 21,
+              "programmatic": 19,
+              "total": 40
+            },
+            "weather_adjustment": {
+              "deterministic_normalizer": 3,
+              "llm_valid": 5,
+              "programmatic": 3,
+              "total": 8
+            },
+            "weather_query": {
+              "deterministic_normalizer": 5,
+              "llm_valid": 3,
+              "programmatic": 5,
+              "total": 8
+            }
+          },
+          "definition": {
+            "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+            "note": "This is separate from model/provider-level LLM fallback."
+          }
+        },
+        "llm_direct": {
+          "result_count": 26,
+          "rows_with_agent_outputs_count": 0,
+          "rows_with_programmatic_decision_count": 0,
+          "agent_decision_output_count": 0,
+          "llm_valid_decision_count": 0,
+          "deterministic_normalizer_count": 0,
+          "reused_or_synthetic_decision_count": 0,
+          "other_non_llm_decision_count": 0,
+          "invalid_llm_decision_count": 0,
+          "programmatic_decision_count": 0,
+          "programmatic_decision_rate": null,
+          "llm_valid_decision_rate": null,
+          "requires_disclosure": false,
+          "requires_ablation": false,
+          "by_agent": {},
+          "by_task_type": {},
+          "definition": {
+            "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+            "note": "This is separate from model/provider-level LLM fallback."
+          }
+        },
+        "single_agent": {
+          "result_count": 26,
+          "rows_with_agent_outputs_count": 0,
+          "rows_with_programmatic_decision_count": 0,
+          "agent_decision_output_count": 0,
+          "llm_valid_decision_count": 0,
+          "deterministic_normalizer_count": 0,
+          "reused_or_synthetic_decision_count": 0,
+          "other_non_llm_decision_count": 0,
+          "invalid_llm_decision_count": 0,
+          "programmatic_decision_count": 0,
+          "programmatic_decision_rate": null,
+          "llm_valid_decision_rate": null,
+          "requires_disclosure": false,
+          "requires_ablation": false,
+          "by_agent": {},
+          "by_task_type": {},
+          "definition": {
+            "programmatic_decision_count": "deterministic_normalizer_count + reused_or_synthetic_decision_count + other_non_llm_decision_count",
+            "note": "This is separate from model/provider-level LLM fallback."
+          }
+        }
+      }
+    }
+  },
+  "m3_no_decision_normalizer_ablation": {
+    "available": true,
+    "status": "passed",
+    "ablation_closed": true,
+    "run_dir": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST",
+    "path": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST/day7_m3_no_decision_normalizer_ablation.json",
+    "failed_checks": [],
+    "summary": {
+      "ablation_closed": true,
+      "agent_decision_output_count": 52,
+      "deterministic_normalizer_count": 0,
+      "normalizer_skipped_count": 21,
+      "invalid_llm_decision_count": 21,
+      "llm_valid_decision_count": 31,
+      "normalizer_enabled_true_count": 0,
+      "llm_call_count": 52,
+      "runtime_max_tokens_values": [
+        4096
+      ]
+    },
+    "checks": {
+      "run_dir_exists": true,
+      "core_artifacts_saved": true,
+      "single_expected_method_recorded": true,
+      "result_count_matches_expected_turns": true,
+      "method_count_matches_expected_turns": true,
+      "no_unexpected_methods": true,
+      "trace_count_matches_expected_turns": true,
+      "manifest_decision_normalizer_disabled": true,
+      "agent_outputs_do_not_enable_normalizer": true,
+      "deterministic_normalizer_not_used": true,
+      "normalizer_skip_audit_present": true,
+      "runtime_max_tokens_matches_protocol": true,
+      "no_mock_llm": true,
+      "no_llm_fallback": true,
+      "no_cache_hit": true
+    },
+    "controlled_change": {
+      "name": "M3-no-decision-normalizer",
+      "method": "adaptive_multi_agent",
+      "decision_normalizer_enabled": false,
+      "description": "Disable deterministic research-agent decision normalization and preserve invalid/empty LLM Agent decisions as failures."
+    }
+  },
+  "m3_method_readiness": {
+    "quality_formal_run_blocked": false,
+    "ablation_required": false,
+    "ablation_closed": true,
+    "ablation_status": "passed",
+    "ablation_run_dir": "experiments/results/day7_m3_ablation/day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST",
+    "formal_run_blocked": false,
+    "blocking_reasons": [],
+    "programmatic_decision_count": 37,
+    "agent_decision_output_count": 64,
+    "programmatic_decision_rate": 0.5781,
+    "llm_valid_decision_count": 27,
+    "development_available": true,
+    "interpretation": "M3 method issues are not blocked by current pilot/development/decision-assistance evidence."
+  },
+  "paper_use_policy": {
+    "summary": "当前 Day7 pilot/dev 未发现阻断性 M3 方法问题；仍只能作为开发证据，不替代正式论文结论。",
+    "allowed_uses": [
+      "链路审计",
+      "扩跑前健康检查",
+      "消融设计依据"
+    ],
+    "forbidden_uses": [
+      "替代正式测试集结论"
+    ]
+  },
+  "artifact_paths": {
+    "run_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z",
+    "benchmark_results_json": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/benchmark_results.json",
+    "benchmark_results_csv": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/benchmark_results.csv",
+    "evaluation_summary": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/evaluation_summary.json",
+    "experiment_manifest": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/experiment_manifest.json",
+    "day7_pilot_gate": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/day7_pilot_gate.json",
+    "day7_pilot_report": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/day7_pilot_report.md",
+    "paper_analysis_json": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/paper_analysis.json",
+    "paper_analysis_md": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/paper_analysis.md",
+    "trace_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/traces",
+    "day7_issue_report_json": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/day7_issue_report.json",
+    "day7_fix_report_md": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/day7_fix_report.md"
+  }
+}

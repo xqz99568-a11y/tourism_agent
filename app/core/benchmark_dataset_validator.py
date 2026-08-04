@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import re
 from collections import Counter, defaultdict
+from difflib import SequenceMatcher
 from typing import Any, Iterable, Mapping
 
 from app.core.experiment_method_input import parse_visible_request_slots
@@ -18,7 +19,7 @@ from app.core.independent_evaluator import load_rule_catalog
 from app.tools.research_tools import GENERATION_TOOL_NAMES
 
 
-BENCHMARK_DATASET_QUALITY_SCHEMA_VERSION = "ctp-benchmark-dataset-quality-v1"
+BENCHMARK_DATASET_QUALITY_SCHEMA_VERSION = "ctp-benchmark-dataset-quality-v2"
 
 NO_TOOL_TASK_TYPES = {"general_chat", "clarification"}
 TOURISM_TASK_TYPES = {
@@ -40,6 +41,9 @@ RECOMMENDED_FORMAL_TASK_TYPES = (
     "general_chat",
 )
 DEVELOPMENT_COVERAGE_GATE_CASE_COUNT = 20
+MIN_CHINESE_VISIBLE_CHARS = 4
+NEAR_DUPLICATE_SIMILARITY_THRESHOLD = 0.96
+NEAR_DUPLICATE_MIN_TEXT_LENGTH = 18
 TASK_REQUIRED_TOOLS = {
     "trip_planning": {"poi_search", "weather_query", "budget_calculator"},
     "attraction_recommendation": {"poi_search"},
@@ -82,6 +86,7 @@ def build_benchmark_dataset_quality_report(
     cases: Iterable[Mapping[str, Any]],
     expected_case_count: int | None = None,
     strict_formal: bool = True,
+    comparison_splits: Mapping[str, Iterable[Mapping[str, Any]]] | None = None,
 ) -> dict[str, Any]:
     """Return a read-only benchmark quality report.
 
@@ -93,10 +98,17 @@ def build_benchmark_dataset_quality_report(
     warnings: list[str] = []
     raw_cases = [case for case in cases if isinstance(case, Mapping)]
     units = _flatten_units(raw_cases)
+    comparison_units = {
+        str(split_name): _flatten_units(
+            [case for case in split_cases if isinstance(case, Mapping)]
+        )
+        for split_name, split_cases in (comparison_splits or {}).items()
+    }
     task_types = _allowed_task_types(errors)
     task_distribution: Counter[str] = Counter()
     city_distribution: Counter[str] = Counter()
     label_counts: Counter[str] = Counter()
+    language_report = _language_report(units)
     unit_reports: list[dict[str, Any]] = []
 
     if expected_case_count is not None and len(raw_cases) != expected_case_count:
@@ -115,6 +127,44 @@ def build_benchmark_dataset_quality_report(
         message = (
             "duplicate visible user inputs found: "
             + ", ".join(item["example_labels"][0] for item in duplicate_inputs[:5])
+        )
+        if strict_formal:
+            errors.append(message)
+        else:
+            warnings.append(message)
+
+    cross_split_duplicates = _cross_split_duplicate_visible_inputs(
+        units,
+        comparison_units,
+    )
+    if cross_split_duplicates:
+        message = (
+            "cross-split duplicate visible user inputs found: "
+            + ", ".join(item["source_label"] for item in cross_split_duplicates[:5])
+        )
+        if strict_formal:
+            errors.append(message)
+        else:
+            warnings.append(message)
+
+    near_duplicates = _near_duplicate_visible_inputs(
+        units,
+        comparison_units=comparison_units,
+    )
+    if near_duplicates:
+        message = (
+            "near-duplicate visible user inputs found: "
+            + ", ".join(item["left_label"] for item in near_duplicates[:5])
+        )
+        if strict_formal:
+            errors.append(message)
+        else:
+            warnings.append(message)
+
+    if language_report["non_chinese_unit_count"]:
+        message = (
+            "non-Chinese visible user inputs found: "
+            + ", ".join(language_report["non_chinese_labels"][:5])
         )
         if strict_formal:
             errors.append(message)
@@ -164,14 +214,23 @@ def build_benchmark_dataset_quality_report(
             "city_distribution": dict(sorted(city_distribution.items())),
             "label_field_counts": dict(sorted(label_counts.items())),
             "duplicate_visible_input_groups": duplicate_inputs,
+            "cross_split_duplicate_visible_input_groups": cross_split_duplicates,
+            "near_duplicate_visible_input_pairs": near_duplicates,
             "recommended_task_types": list(RECOMMENDED_FORMAL_TASK_TYPES),
         },
+        "language": language_report,
         "policy": {
             "strict_formal": strict_formal,
             "gold_labels_required": strict_formal,
+            "visible_language": "zh-CN",
             "required_agent_sets": True,
             "required_tool_sets": True,
             "fixed_offline_city_only": True,
+            "parse_gold_consistency_required": True,
+            "changed_slot_evidence_required": True,
+            "preserved_slot_consistency_required": True,
+            "cross_split_duplicate_check": bool(comparison_units),
+            "near_duplicate_similarity_threshold": NEAR_DUPLICATE_SIMILARITY_THRESHOLD,
             "generation_tools": list(GENERATION_TOOL_NAMES),
             "business_agents": list(CANONICAL_AGENT_ORDER),
         },
@@ -239,6 +298,11 @@ def _validate_unit(
         str(unit.get("user_input") or ""),
         dialogue_history=unit.get("dialogue_history"),
     )
+    current_visible_slots = parse_visible_request_slots(str(unit.get("user_input") or ""))
+    previous_visible_slots = parse_visible_request_slots(
+        "",
+        dialogue_history=unit.get("dialogue_history"),
+    )
     gold_slots = _gold_slots(unit, gold)
     city_id = _resolve_city(gold_slots.get("destination") or visible_slots.get("destination"))
 
@@ -294,6 +358,35 @@ def _validate_unit(
         errors=errors,
         warnings=warnings,
     )
+    _validate_parse_gold_consistency(
+        visible_slots=visible_slots,
+        gold_slots=gold_slots,
+        label=label,
+        strict_formal=strict_formal,
+        errors=errors,
+        warnings=warnings,
+    )
+    _validate_slot_change_labels(
+        gold,
+        visible_slots=visible_slots,
+        current_visible_slots=current_visible_slots,
+        previous_visible_slots=previous_visible_slots,
+        gold_slots=gold_slots,
+        label=label,
+        strict_formal=strict_formal,
+        errors=errors,
+        warnings=warnings,
+    )
+    feasibility_report = _validate_offline_feasibility(
+        gold,
+        gold_slots=gold_slots,
+        city_id=city_id,
+        task_type=task_type,
+        label=label,
+        strict_formal=strict_formal,
+        errors=errors,
+        warnings=warnings,
+    )
 
     return {
         "label": label,
@@ -303,6 +396,10 @@ def _validate_unit(
         "task_type": task_type,
         "city_id": city_id,
         "visible_slots": visible_slots,
+        "current_visible_slots": current_visible_slots,
+        "previous_visible_slots": previous_visible_slots,
+        "gold_slots": gold_slots,
+        "offline_feasibility": feasibility_report,
         "present_labels": present_labels,
         "accepted_agent_sets": accepted_agent_sets,
         "accepted_tool_sets": accepted_tool_sets,
@@ -482,6 +579,223 @@ def _validate_city_support(
         errors.append(f"{label}: destination city '{city_id}' is outside fixed offline data")
 
 
+def _validate_parse_gold_consistency(
+    *,
+    visible_slots: Mapping[str, Any],
+    gold_slots: Mapping[str, Any],
+    label: str,
+    strict_formal: bool,
+    errors: list[str],
+    warnings: list[str],
+) -> None:
+    for slot, gold_value in gold_slots.items():
+        if slot not in visible_slots:
+            _label_issue(
+                f"{label}: gold slot '{slot}'={gold_value!r} is not parseable from visible user text/history",
+                strict_formal,
+                errors,
+                warnings,
+            )
+            continue
+        visible_value = visible_slots.get(slot)
+        if not _slot_values_equal(visible_value, gold_value):
+            _label_issue(
+                f"{label}: parsed visible slot '{slot}'={visible_value!r} does not match gold value {gold_value!r}",
+                strict_formal,
+                errors,
+                warnings,
+            )
+
+
+def _validate_slot_change_labels(
+    gold: Mapping[str, Any],
+    *,
+    visible_slots: Mapping[str, Any],
+    current_visible_slots: Mapping[str, Any],
+    previous_visible_slots: Mapping[str, Any],
+    gold_slots: Mapping[str, Any],
+    label: str,
+    strict_formal: bool,
+    errors: list[str],
+    warnings: list[str],
+) -> None:
+    changed_slots = [_canonical_slot(slot) for slot in _text_list(gold.get("changed_slots"))]
+    preserved_slots = [_canonical_slot(slot) for slot in _text_list(gold.get("preserved_slots"))]
+
+    for slot in changed_slots:
+        if slot not in current_visible_slots:
+            _label_issue(
+                f"{label}: changed slot '{slot}' has no new value parseable from the current user utterance",
+                strict_formal,
+                errors,
+                warnings,
+            )
+            continue
+        if slot in gold_slots and not _slot_values_equal(current_visible_slots[slot], gold_slots[slot]):
+            _label_issue(
+                f"{label}: changed slot '{slot}' current value {current_visible_slots[slot]!r} does not match gold {gold_slots[slot]!r}",
+                strict_formal,
+                errors,
+                warnings,
+            )
+
+    for slot in preserved_slots:
+        previous_has_slot = slot in previous_visible_slots
+        if not previous_has_slot:
+            _label_issue(
+                f"{label}: preserved slot '{slot}' is not recoverable from previous visible turns",
+                strict_formal,
+                errors,
+                warnings,
+            )
+            continue
+        if slot in current_visible_slots and not _slot_values_equal(
+            current_visible_slots[slot],
+            previous_visible_slots[slot],
+        ):
+            _label_issue(
+                f"{label}: preserved slot '{slot}' conflicts with current utterance value "
+                f"{current_visible_slots[slot]!r}; previous value is {previous_visible_slots[slot]!r}",
+                strict_formal,
+                errors,
+                warnings,
+            )
+        if slot in gold_slots and not _slot_values_equal(visible_slots.get(slot), gold_slots[slot]):
+            _label_issue(
+                f"{label}: preserved slot '{slot}' final parsed value {visible_slots.get(slot)!r} does not match gold {gold_slots[slot]!r}",
+                strict_formal,
+                errors,
+                warnings,
+            )
+
+
+def _validate_offline_feasibility(
+    gold: Mapping[str, Any],
+    *,
+    gold_slots: Mapping[str, Any],
+    city_id: str | None,
+    task_type: str,
+    label: str,
+    strict_formal: bool,
+    errors: list[str],
+    warnings: list[str],
+) -> dict[str, Any]:
+    report: dict[str, Any] = {
+        "checked": task_type in TOURISM_TASK_TYPES,
+        "status": "not_applicable",
+        "checks": {},
+    }
+    if task_type not in TOURISM_TASK_TYPES:
+        return report
+    if not city_id or city_id not in FIXED_CITY_IDS:
+        report["status"] = "skipped_no_fixed_city"
+        return report
+
+    data = get_fixed_tourism_data()
+    bundle = data.city_bundle(city_id)
+    poi_count = len(bundle["pois"].get("pois") or [])
+    weather_scenarios = {
+        str(item.get("scenario_type") or item.get("id") or ""): item
+        for item in bundle["weather"].get("weather_scenarios") or []
+    }
+    max_weather_days = max(
+        (len(item.get("days") or []) for item in weather_scenarios.values()),
+        default=0,
+    )
+    duration_days = _first_int(
+        gold_slots.get("duration_days"),
+        gold.get("duration_days"),
+        gold.get("duration"),
+        gold.get("days"),
+    )
+    min_attractions = _first_int(gold.get("min_attractions"))
+    max_attractions = _first_int(gold.get("max_attractions"))
+    max_pois_per_day = _first_int(gold.get("max_pois_per_day"))
+    report["checks"] = {
+        "city_id": city_id,
+        "poi_count": poi_count,
+        "weather_scenario_count": len(weather_scenarios),
+        "max_weather_days": max_weather_days,
+        "duration_days": duration_days,
+        "min_attractions": min_attractions,
+        "max_attractions": max_attractions,
+        "max_pois_per_day": max_pois_per_day,
+    }
+
+    unit_errors: list[str] = []
+    if duration_days is not None and max_weather_days and duration_days > max_weather_days:
+        unit_errors.append(
+            f"duration_days={duration_days} exceeds fixed weather coverage {max_weather_days}"
+        )
+    if min_attractions is not None and min_attractions > poi_count:
+        unit_errors.append(f"min_attractions={min_attractions} exceeds fixed POI count {poi_count}")
+    if (
+        min_attractions is not None
+        and max_attractions is not None
+        and max_attractions < min_attractions
+    ):
+        unit_errors.append(
+            f"max_attractions={max_attractions} is smaller than min_attractions={min_attractions}"
+        )
+    if (
+        min_attractions is not None
+        and max_pois_per_day is not None
+        and duration_days is not None
+        and max_pois_per_day * duration_days < min_attractions
+    ):
+        unit_errors.append(
+            "min_attractions cannot fit within duration_days * max_pois_per_day"
+        )
+
+    weather_change = gold.get("weather_change")
+    if isinstance(weather_change, Mapping):
+        scenario_type = str(weather_change.get("scenario_type") or "").strip()
+        affected_days = [
+            int(value)
+            for value in _text_list(weather_change.get("affected_days"))
+            if str(value).isdigit()
+        ]
+        if scenario_type and scenario_type not in weather_scenarios:
+            unit_errors.append(f"weather scenario '{scenario_type}' is not in fixed data")
+        if affected_days:
+            max_affected_day = max(affected_days)
+            if duration_days is not None and max_affected_day > duration_days:
+                unit_errors.append(
+                    f"weather affected day {max_affected_day} exceeds duration_days={duration_days}"
+                )
+            if max_weather_days and max_affected_day > max_weather_days:
+                unit_errors.append(
+                    f"weather affected day {max_affected_day} exceeds fixed weather coverage {max_weather_days}"
+                )
+        report["checks"]["weather_change"] = {
+            "scenario_type": scenario_type,
+            "affected_days": affected_days,
+        }
+
+    for field_name in ("must_include_pois", "required_pois", "forbidden_pois", "avoid_pois"):
+        missing = [
+            value
+            for value in _text_list(gold.get(field_name))
+            if not data.find_entity(value, city=city_id)
+        ]
+        if missing:
+            unit_errors.append(f"{field_name} not found in fixed city data: {missing}")
+
+    if unit_errors:
+        report["status"] = "failed"
+        report["errors"] = unit_errors
+        for item in unit_errors:
+            _label_issue(
+                f"{label}: offline feasibility failed: {item}",
+                strict_formal,
+                errors,
+                warnings,
+            )
+    else:
+        report["status"] = "passed"
+    return report
+
+
 def _is_no_change_reuse_partial(gold: Mapping[str, Any]) -> bool:
     """Return whether a partial_replan label explicitly means "same request again"."""
     if _text_set(gold.get("changed_slots")):
@@ -579,6 +893,100 @@ def _duplicate_visible_inputs(units: list[Mapping[str, Any]]) -> list[dict[str, 
     ]
 
 
+def _cross_split_duplicate_visible_inputs(
+    units: list[Mapping[str, Any]],
+    comparison_units: Mapping[str, list[Mapping[str, Any]]],
+) -> list[dict[str, Any]]:
+    if not comparison_units:
+        return []
+    reference_index: dict[str, list[tuple[str, str]]] = defaultdict(list)
+    for split_name, split_units in comparison_units.items():
+        for unit in split_units:
+            text = _normalized_visible_text(unit)
+            if text:
+                reference_index[text].append((split_name, _unit_label(unit)))
+
+    duplicates: list[dict[str, Any]] = []
+    for unit in units:
+        text = _normalized_visible_text(unit)
+        if not text or text not in reference_index:
+            continue
+        duplicates.append(
+            {
+                "normalized_input": text,
+                "source_label": _unit_label(unit),
+                "matches": [
+                    {"split": split_name, "label": label}
+                    for split_name, label in reference_index[text][:5]
+                ],
+            }
+        )
+    return duplicates
+
+
+def _near_duplicate_visible_inputs(
+    units: list[Mapping[str, Any]],
+    *,
+    comparison_units: Mapping[str, list[Mapping[str, Any]]] | None = None,
+    threshold: float = NEAR_DUPLICATE_SIMILARITY_THRESHOLD,
+) -> list[dict[str, Any]]:
+    current_pairs = [
+        ("current", _unit_label(unit), _near_duplicate_text(unit))
+        for unit in units
+        if len(_near_duplicate_text(unit)) >= NEAR_DUPLICATE_MIN_TEXT_LENGTH
+    ]
+    reference_pairs: list[tuple[str, str, str]] = []
+    for split_name, split_units in (comparison_units or {}).items():
+        reference_pairs.extend(
+            (
+                split_name,
+                _unit_label(unit),
+                _near_duplicate_text(unit),
+            )
+            for unit in split_units
+            if len(_near_duplicate_text(unit)) >= NEAR_DUPLICATE_MIN_TEXT_LENGTH
+        )
+
+    candidates: list[dict[str, Any]] = []
+    for index, left in enumerate(current_pairs):
+        for right in current_pairs[index + 1 :]:
+            if not left[2] or not right[2] or left[2] == right[2]:
+                continue
+            ratio = SequenceMatcher(None, left[2], right[2]).ratio()
+            if ratio >= threshold:
+                candidates.append(
+                    {
+                        "left_split": left[0],
+                        "left_label": left[1],
+                        "right_split": right[0],
+                        "right_label": right[1],
+                        "similarity": round(ratio, 4),
+                    }
+                )
+        for right in reference_pairs:
+            if not left[2] or not right[2] or left[2] == right[2]:
+                continue
+            ratio = SequenceMatcher(None, left[2], right[2]).ratio()
+            if ratio >= threshold:
+                candidates.append(
+                    {
+                        "left_split": left[0],
+                        "left_label": left[1],
+                        "right_split": right[0],
+                        "right_label": right[1],
+                        "similarity": round(ratio, 4),
+                    }
+                )
+    candidates.sort(key=lambda item: (-float(item["similarity"]), item["left_label"]))
+    return candidates[:20]
+
+
+def _near_duplicate_text(unit: Mapping[str, Any]) -> str:
+    text = _normalized_visible_text(unit)
+    text = re.sub(r"[，。！？、,.!?;；:：\"'“”‘’（）()\[\]{}<>《》\s]+", "", text)
+    return text
+
+
 def _normalized_visible_text(unit: Mapping[str, Any]) -> str:
     parts = [str(unit.get("user_input") or "")]
     for item in _history(unit):
@@ -587,6 +995,43 @@ def _normalized_visible_text(unit: Mapping[str, Any]) -> str:
         else:
             parts.append(str(item))
     return re.sub(r"\s+", " ", " ".join(parts)).strip().casefold()
+
+
+def _language_report(units: list[Mapping[str, Any]]) -> dict[str, Any]:
+    unit_reports: list[dict[str, Any]] = []
+    non_chinese_labels: list[str] = []
+    chinese_count = 0
+    for unit in units:
+        label = _unit_label(unit)
+        text = str(unit.get("user_input") or "")
+        cjk_count = _cjk_char_count(text)
+        is_chinese = cjk_count >= MIN_CHINESE_VISIBLE_CHARS
+        if is_chinese:
+            chinese_count += 1
+        else:
+            non_chinese_labels.append(label)
+        unit_reports.append(
+            {
+                "label": label,
+                "cjk_char_count": cjk_count,
+                "is_chinese": is_chinese,
+            }
+        )
+    total = len(units)
+    return {
+        "policy": "zh-CN visible user_input required",
+        "minimum_cjk_chars_per_unit": MIN_CHINESE_VISIBLE_CHARS,
+        "unit_count": total,
+        "chinese_unit_count": chinese_count,
+        "non_chinese_unit_count": len(non_chinese_labels),
+        "chinese_ratio": round(chinese_count / total, 4) if total else 0.0,
+        "non_chinese_labels": non_chinese_labels,
+        "units": unit_reports,
+    }
+
+
+def _cjk_char_count(text: str) -> int:
+    return sum(1 for char in str(text or "") if "\u4e00" <= char <= "\u9fff")
 
 
 def _gold_payload(unit: Mapping[str, Any]) -> dict[str, Any]:
@@ -610,9 +1055,15 @@ def _gold_payload(unit: Mapping[str, Any]) -> dict[str, Any]:
             gold.setdefault("required_tools", decision.get("planned_tools") or [])
     if "task_type" in unit:
         gold.setdefault("task_type", unit.get("task_type"))
+    if isinstance(unit.get("weather_change"), Mapping):
+        gold.setdefault("weather_change", unit.get("weather_change"))
     if isinstance(gold.get("hard_constraints"), Mapping):
         for key, value in gold["hard_constraints"].items():
             gold.setdefault(str(key), value)
+    if isinstance(gold.get("weather_change"), Mapping):
+        scenario_type = gold["weather_change"].get("scenario_type")
+        if scenario_type:
+            gold.setdefault("weather_scenario", scenario_type)
     slots = unit.get("slots") if isinstance(unit.get("slots"), Mapping) else {}
     current_slots = unit.get("current_slots") if isinstance(unit.get("current_slots"), Mapping) else {}
     for target, aliases in {
@@ -681,6 +1132,32 @@ def _sets(value: Any) -> list[list[str]]:
     if all(not isinstance(item, list) for item in value):
         return [_text_list(value)]
     return [_text_list(item) for item in value if isinstance(item, list)]
+
+
+def _canonical_slot(value: Any) -> str:
+    text = str(value or "").strip()
+    normalized = normalize_slots({text: "__slot_marker__"})
+    if normalized:
+        return next(iter(normalized))
+    return text
+
+
+def _slot_values_equal(left: Any, right: Any) -> bool:
+    if isinstance(left, list) or isinstance(right, list):
+        return set(_text_list(left)) == set(_text_list(right))
+    if isinstance(left, (int, float)) or isinstance(right, (int, float)):
+        left_number = _safe_number(left)
+        right_number = _safe_number(right)
+        if left_number is not None and right_number is not None:
+            return left_number == right_number
+    return str(left).strip().casefold() == str(right).strip().casefold()
+
+
+def _safe_number(value: Any) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def _text_set(value: Any) -> set[str]:

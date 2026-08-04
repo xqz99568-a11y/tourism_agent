@@ -21,7 +21,7 @@ from app.core.logger import get_logger
 logger = get_logger(__name__)
 
 REDACTED = "[REDACTED]"
-TRACE_SCHEMA_VERSION = "1.7"
+TRACE_SCHEMA_VERSION = "1.8"
 DEFAULT_TRACE_DIR = Path("experiments/results/traces")
 DEFAULT_TRACE_INTENT = "general_chat"
 DEFAULT_TRACE_ROUTE = "GENERAL_CHAT"
@@ -58,6 +58,7 @@ _NON_SECRET_TOKEN_COUNT_KEYS = {
     "completion_tokens",
     "total_tokens",
     "tokens_used",
+    "max_tokens",
     "first_body_token_ms",
     "first_token_ms",
     "input_token_unit_price",
@@ -727,6 +728,8 @@ class TraceState:
         cached_source_usage: Optional[Dict[str, Any]] = None,
         output_chars: Optional[int] = None,
         chunk_count: Optional[int] = None,
+        request_options: Optional[Dict[str, Any]] = None,
+        retry: Optional[Dict[str, Any]] = None,
     ) -> None:
         duration_ms = (time.perf_counter() - call["started_at_perf"]) * 1000
         ttft_ms = call.get("ttft_ms")
@@ -740,6 +743,10 @@ class TraceState:
         cache_hit_value = bool(call.get("cache_hit") if cache_hit is None else cache_hit)
         resolved_provider = str(provider or call.get("provider") or "unknown")
         resolved_model = str(model or call.get("model") or "unknown")
+        resolved_request_options = sanitize_value(
+            request_options if request_options is not None else call.get("request_options") or {}
+        )
+        retry_record = sanitize_value(retry if retry is not None else call.get("retry_policy") or {})
         cost_record = build_llm_cost_record(
             usage=tokens if isinstance(tokens, dict) else {},
             provider=resolved_provider,
@@ -772,8 +779,20 @@ class TraceState:
             "tool_count": call.get("tool_count"),
             "prompt_version": call.get("prompt_version"),
             "prompt_hash": call.get("prompt_hash"),
+            "request_options": resolved_request_options,
+            "retry": retry_record,
             **cost_record,
         }
+        if isinstance(resolved_request_options, dict):
+            entry["temperature"] = resolved_request_options.get("temperature")
+            entry["max_tokens"] = resolved_request_options.get("max_tokens")
+            entry["timeout_seconds"] = resolved_request_options.get("timeout_seconds")
+            entry["reasoning_effort"] = resolved_request_options.get("reasoning_effort")
+        if isinstance(retry_record, dict):
+            entry["retry_max_attempts"] = retry_record.get("max_attempts")
+            entry["retry_attempt_count"] = retry_record.get("attempt_count")
+            entry["retry_count"] = retry_record.get("retry_count")
+            entry["retry_error_count"] = retry_record.get("error_count")
         if output_chars is not None:
             entry["output_chars"] = int(output_chars)
         self.llm_calls.append(sanitize_value(entry))
@@ -1244,6 +1263,8 @@ def start_llm_call(
     tool_count: Optional[int] = None,
     prompt_version: Optional[str] = None,
     prompt_hash: Optional[str] = None,
+    request_options: Optional[Dict[str, Any]] = None,
+    retry_policy: Optional[Dict[str, Any]] = None,
 ) -> Optional[Dict[str, Any]]:
     if get_current_trace() is None:
         return None
@@ -1264,6 +1285,8 @@ def start_llm_call(
         "tool_count": tool_count,
         "prompt_version": prompt_version,
         "prompt_hash": prompt_hash,
+        "request_options": sanitize_value(request_options or {}),
+        "retry_policy": sanitize_value(retry_policy or {}),
         "ttft_ms": None,
     }
 
@@ -1288,6 +1311,8 @@ def finish_llm_call(
     cached_source_usage: Optional[Dict[str, Any]] = None,
     output_chars: Optional[int] = None,
     chunk_count: Optional[int] = None,
+    request_options: Optional[Dict[str, Any]] = None,
+    retry: Optional[Dict[str, Any]] = None,
 ) -> None:
     trace = get_current_trace()
     if trace is not None and call is not None:
@@ -1304,6 +1329,8 @@ def finish_llm_call(
             cached_source_usage=cached_source_usage,
             output_chars=output_chars,
             chunk_count=chunk_count,
+            request_options=request_options,
+            retry=retry,
         )
 
 

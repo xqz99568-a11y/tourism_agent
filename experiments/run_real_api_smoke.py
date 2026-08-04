@@ -39,8 +39,13 @@ REAL_API_SMOKE_SCHEMA_VERSION = "ctp-real-api-smoke-v1"
 REAL_API_SMOKE_PROMPT_VERSION = "ctp-real-api-smoke-prompt-v1"
 DEFAULT_OUTPUT_ROOT = ROOT / "experiments" / "results" / "real_api_smoke"
 DEFAULT_CASE_ID = "real_api_smoke_connectivity"
+DEFAULT_TEMPERATURE = 0.0
 DEFAULT_MAX_TOKENS = 128
+DEFAULT_RETRY_MAX_ATTEMPTS = 3
+DEFAULT_REASONING_EFFORT = "minimal"
 REAL_API_EVIDENCE_SCHEMA_VERSION = "ctp-real-api-smoke-evidence-v1"
+REAL_API_RUNTIME_CONFIG_SCHEMA_VERSION = "ctp-experiment-runtime-config-v1"
+REAL_API_RETRY_AUDIT_SCHEMA_VERSION = "ctp-llm-retry-audit-v1"
 
 ClientFactory = Callable[[str, str, str, int], Any]
 
@@ -52,7 +57,10 @@ def main() -> int:
     parser.add_argument("--model", type=str, default=None)
     parser.add_argument("--base-url", type=str, default=None)
     parser.add_argument("--timeout", type=int, default=30)
+    parser.add_argument("--temperature", type=float, default=DEFAULT_TEMPERATURE)
     parser.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS)
+    parser.add_argument("--retry-max-attempts", type=int, default=DEFAULT_RETRY_MAX_ATTEMPTS)
+    parser.add_argument("--reasoning-effort", type=str, default=DEFAULT_REASONING_EFFORT)
     parser.add_argument(
         "--allow-missing-config",
         action="store_true",
@@ -84,7 +92,10 @@ def main() -> int:
             base_url=config["base_url"],
             model=config["model"],
             timeout=args.timeout,
+            temperature=args.temperature,
             max_tokens=args.max_tokens,
+            retry_max_attempts=args.retry_max_attempts,
+            reasoning_effort=args.reasoning_effort,
         )
     )
     print(json.dumps(payload, ensure_ascii=False, indent=2))
@@ -100,7 +111,10 @@ async def run_real_api_smoke(
     base_url: str,
     model: str,
     timeout: int = 30,
+    temperature: float = DEFAULT_TEMPERATURE,
     max_tokens: int = DEFAULT_MAX_TOKENS,
+    retry_max_attempts: int = DEFAULT_RETRY_MAX_ATTEMPTS,
+    reasoning_effort: str = DEFAULT_REASONING_EFFORT,
     client_factory: Optional[ClientFactory] = None,
 ) -> Dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -110,6 +124,17 @@ async def run_real_api_smoke(
     provider = _provider_name(base_url)
     messages = _smoke_messages()
     prompt_hash = _prompt_hash(messages)
+    runtime_config = _build_runtime_config(
+        provider=provider,
+        base_url=base_url,
+        model=model,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        timeout=timeout,
+        retry_max_attempts=retry_max_attempts,
+        reasoning_effort=reasoning_effort,
+    )
+    retry_policy = _retry_audit(max_attempts=retry_max_attempts, attempts=[])
     started = time.perf_counter()
     status = "completed"
     error: Optional[str] = None
@@ -127,6 +152,11 @@ async def run_real_api_smoke(
         "MODEL_CONFIG_NAME": "real-api-smoke",
         "LLM_MODEL": model,
         "LLM_BASE_URL": base_url,
+        "LLM_TEMPERATURE": str(temperature),
+        "LLM_MAX_TOKENS": str(max_tokens),
+        "LLM_TIMEOUT": str(timeout),
+        "LLM_RETRY_MAX_ATTEMPTS": str(retry_max_attempts),
+        "LLM_REASONING_EFFORT": str(reasoning_effort),
     }
 
     with _temporary_env(env):
@@ -152,6 +182,8 @@ async def run_real_api_smoke(
                 tool_count=0,
                 prompt_version=REAL_API_SMOKE_PROMPT_VERSION,
                 prompt_hash=prompt_hash,
+                request_options=runtime_config,
+                retry_policy=retry_policy,
             )
             client = (
                 client_factory(api_key, base_url, model, timeout)
@@ -161,16 +193,19 @@ async def run_real_api_smoke(
                     base_url=base_url,
                     model=model,
                     timeout=timeout,
+                    retry_max_attempts=retry_max_attempts,
                 )
             )
             try:
                 response = await client.chat(
                     messages,
-                    temperature=0,
+                    temperature=temperature,
                     max_tokens=max_tokens,
+                    reasoning_effort=reasoning_effort,
                 )
                 content = str(getattr(response, "content", "") or "")
                 usage = dict(getattr(response, "usage", None) or {})
+                audit_metadata = _llm_audit_metadata(response)
                 if trace is not None:
                     trace.mark_first_body_token()
                 finish_llm_call(
@@ -182,6 +217,12 @@ async def run_real_api_smoke(
                     mock=False,
                     fallback=False,
                     output_chars=len(content),
+                    request_options=audit_metadata.get("request_options") or runtime_config,
+                    retry=audit_metadata.get("retry")
+                    or _retry_audit(
+                        max_attempts=retry_max_attempts,
+                        attempts=[{"attempt_index": 1, "success": True}],
+                    ),
                 )
                 result = {
                     "schema_version": REAL_API_SMOKE_SCHEMA_VERSION,
@@ -192,6 +233,12 @@ async def run_real_api_smoke(
                     "base_url": base_url,
                     "model": model,
                     "response_model": str(getattr(response, "model", model)),
+                    "runtime_config": runtime_config,
+                    "temperature": temperature,
+                    "max_tokens": max_tokens,
+                    "timeout_seconds": timeout,
+                    "retry_max_attempts": retry_max_attempts,
+                    "reasoning_effort": reasoning_effort,
                     "finish_reason": str(getattr(response, "finish_reason", "")),
                     "usage": usage,
                     "content_sha256": hashlib.sha256(content.encode("utf-8")).hexdigest(),
@@ -204,6 +251,7 @@ async def run_real_api_smoke(
             except Exception as exc:  # write failure evidence instead of hiding it
                 status = "failed"
                 error = str(exc)
+                audit_metadata = _llm_audit_metadata(exc)
                 mark_trace_status("failed", error=error)
                 finish_llm_call(
                     trace_call,
@@ -214,6 +262,12 @@ async def run_real_api_smoke(
                     mock=False,
                     fallback=False,
                     output_chars=0,
+                    request_options=audit_metadata.get("request_options") or runtime_config,
+                    retry=audit_metadata.get("retry")
+                    or _retry_audit(
+                        max_attempts=retry_max_attempts,
+                        attempts=[{"attempt_index": 1, "success": False, "error": error}],
+                    ),
                 )
                 result = {
                     "schema_version": REAL_API_SMOKE_SCHEMA_VERSION,
@@ -223,6 +277,11 @@ async def run_real_api_smoke(
                     "provider": provider,
                     "base_url": base_url,
                     "model": model,
+                    "runtime_config": runtime_config,
+                    "temperature": temperature,
+                    "max_tokens": max_tokens,
+                    "timeout_seconds": timeout,
+                    "retry_max_attempts": retry_max_attempts,
                     "prompt_version": REAL_API_SMOKE_PROMPT_VERSION,
                     "prompt_hash": prompt_hash,
                     "latency_ms": round((time.perf_counter() - started) * 1000, 2),
@@ -267,6 +326,12 @@ async def run_real_api_smoke(
             "provider": provider,
             "base_url": base_url,
             "model": model,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "timeout_seconds": timeout,
+            "retry_max_attempts": retry_max_attempts,
+            "reasoning_effort": reasoning_effort,
+            "runtime_config": runtime_config,
             "api_key_configured": True,
         },
         api_response_path=api_response_path,
@@ -375,6 +440,16 @@ def _write_skipped_reports(
 ) -> Dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=True)
     status = "skipped"
+    runtime_config = _build_runtime_config(
+        provider=_provider_name(config.get("base_url")),
+        base_url=str(config.get("base_url") or ""),
+        model=str(config.get("model") or ""),
+        temperature=DEFAULT_TEMPERATURE,
+        max_tokens=DEFAULT_MAX_TOKENS,
+        timeout=30,
+        retry_max_attempts=DEFAULT_RETRY_MAX_ATTEMPTS,
+        reasoning_effort=DEFAULT_REASONING_EFFORT,
+    )
     result = {
         "schema_version": REAL_API_SMOKE_SCHEMA_VERSION,
         "status": status,
@@ -384,6 +459,7 @@ def _write_skipped_reports(
         "provider": _provider_name(config.get("base_url")),
         "base_url": config.get("base_url"),
         "model": config.get("model"),
+        "runtime_config": runtime_config,
         "api_key_configured": False,
     }
     price_snapshot = build_price_snapshot(
@@ -466,6 +542,11 @@ def _write_skipped_reports(
             "provider": _provider_name(config.get("base_url")),
             "base_url": config.get("base_url"),
             "model": config.get("model"),
+            "temperature": DEFAULT_TEMPERATURE,
+            "max_tokens": DEFAULT_MAX_TOKENS,
+            "timeout_seconds": 30,
+            "retry_max_attempts": DEFAULT_RETRY_MAX_ATTEMPTS,
+            "runtime_config": runtime_config,
             "api_key_configured": False,
         },
         api_response_path=api_response_path,
@@ -584,11 +665,14 @@ def _build_api_response(
         "content_sha256": result.get("content_sha256"),
         "content_preview": result.get("content_preview"),
         "usage": result.get("usage") or {},
+        "runtime_config": result.get("runtime_config") or {},
         "latency_ms": result.get("latency_ms"),
         "prompt_version": result.get("prompt_version"),
         "prompt_hash": result.get("prompt_hash"),
         "trace_file": result.get("trace_file") or "",
         "llm_call_id": first_call.get("call_id"),
+        "request_options": first_call.get("request_options") or {},
+        "retry": first_call.get("retry") or {},
         "mock": first_call.get("mock"),
         "fallback": first_call.get("fallback"),
         "error": result.get("error"),
@@ -626,6 +710,17 @@ def _build_smoke_gate(
         "cost_report_recorded": cost_report.get("status") == "completed",
         "mock_false_recorded": bool(calls) and all(call.get("mock") is False for call in calls),
         "fallback_false_recorded": bool(calls) and all(call.get("fallback") is False for call in calls),
+        "temperature_zero_recorded": bool(calls)
+        and all(_first_float(call.get("temperature")) == 0.0 for call in calls),
+        "max_tokens_recorded": bool(calls)
+        and all(_first_float(call.get("max_tokens")) is not None for call in calls),
+        "timeout_recorded": bool(calls)
+        and all(_first_float(call.get("timeout_seconds")) is not None for call in calls),
+        "reasoning_effort_recorded": bool(calls)
+        and all(call.get("reasoning_effort") == DEFAULT_REASONING_EFFORT for call in calls),
+        "retry_policy_recorded": bool(calls)
+        and all(isinstance(call.get("retry"), dict) for call in calls)
+        and all(_first_float(call.get("retry_max_attempts")) is not None for call in calls),
     }
     passed = all(checks.values())
     return {
@@ -771,6 +866,11 @@ def _build_manifest(
         "provider": config.get("provider"),
         "base_url": config.get("base_url"),
         "model": config.get("model"),
+        "temperature": config.get("temperature"),
+        "max_tokens": config.get("max_tokens"),
+        "timeout_seconds": config.get("timeout_seconds"),
+        "retry_max_attempts": config.get("retry_max_attempts"),
+        "runtime_config": config.get("runtime_config") or {},
         "api_key_configured": bool(config.get("api_key_configured")),
         "git_commit": git_commit,
         "working_tree_clean": len(git_status) == 0,
@@ -899,6 +999,10 @@ def _render_report(
         f"- base_url: `{base_url}`",
         f"- model: `{model}`",
         f"- response_model: `{result.get('response_model')}`",
+        f"- temperature: `{manifest.get('temperature')}`",
+        f"- max_tokens: `{manifest.get('max_tokens')}`",
+        f"- timeout_seconds: `{manifest.get('timeout_seconds')}`",
+        f"- retry_max_attempts: `{manifest.get('retry_max_attempts')}`",
         f"- finish_reason: `{result.get('finish_reason')}`",
         f"- latency_ms: `{latency_report.get('latency_ms')}`",
         f"- llm_total_duration_ms: `{latency_report.get('llm_total_duration_ms')}`",
@@ -960,6 +1064,59 @@ def _provider_name(base_url: Any) -> str:
     if "openai" in text:
         return "openai"
     return "openai_compatible"
+
+
+def _build_runtime_config(
+    *,
+    provider: str,
+    base_url: str,
+    model: str,
+    temperature: float,
+    max_tokens: int,
+    timeout: int,
+    retry_max_attempts: int,
+    reasoning_effort: str,
+) -> Dict[str, Any]:
+    return {
+        "schema_version": REAL_API_RUNTIME_CONFIG_SCHEMA_VERSION,
+        "provider": provider,
+        "base_url": base_url,
+        "model": model,
+        "temperature": float(temperature),
+        "max_tokens": int(max_tokens),
+        "timeout_seconds": int(timeout),
+        "retry_max_attempts": int(retry_max_attempts),
+        "reasoning_effort": str(reasoning_effort or "").strip().lower() or None,
+        "strict_mode": True,
+        "cache_disabled": True,
+        "trace_save_user_message": False,
+        "mock_fallback_allowed": False,
+    }
+
+
+def _retry_audit(
+    *,
+    max_attempts: int,
+    attempts: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    error_count = sum(1 for attempt in attempts if attempt.get("success") is False)
+    return {
+        "schema_version": REAL_API_RETRY_AUDIT_SCHEMA_VERSION,
+        "max_attempts": int(max_attempts),
+        "attempt_count": len(attempts),
+        "retry_count": max(0, len(attempts) - 1),
+        "error_count": error_count,
+        "succeeded": bool(attempts and attempts[-1].get("success") is True),
+        "attempts": attempts,
+    }
+
+
+def _llm_audit_metadata(value: Any) -> Dict[str, Any]:
+    metadata = getattr(value, "metadata", None)
+    if isinstance(metadata, dict):
+        return metadata
+    metadata = getattr(value, "llm_audit_metadata", None)
+    return metadata if isinstance(metadata, dict) else {}
 
 
 def _load_trace(trace_dir: Path, request_id: str) -> Optional[Dict[str, Any]]:

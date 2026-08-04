@@ -1,0 +1,146 @@
+{
+  "schema_version": "ctp-day7-pilot-gate-v1",
+  "status": "passed",
+  "created_at": "2026-07-31T14:30:29.719298+00:00",
+  "run_id": "day7_pilot_gpt5mini_smoke_20260731T142500Z",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z",
+  "selected_methods": [
+    "llm_direct",
+    "single_agent",
+    "fixed_multi_agent",
+    "adaptive_multi_agent"
+  ],
+  "expected_result_count": 40,
+  "actual_result_count": 40,
+  "pilot_structure": {
+    "case_count": 8,
+    "single_turn_case_count": 6,
+    "scenario_case_count": 2,
+    "total_turn_count": 10,
+    "selected_case_ids": [
+      "smoke_xian_full_plan",
+      "smoke_shenzhen_attractions",
+      "smoke_beijing_weather",
+      "smoke_hangzhou_budget",
+      "smoke_guilin_clarification",
+      "smoke_hangzhou_duration_change",
+      "smoke_beijing_rain_adjustment",
+      "smoke_general_chat"
+    ],
+    "method_count": 4,
+    "repeats": 1,
+    "expected_trace_count": 40,
+    "actual_trace_file_count": 40,
+    "loaded_trace_count": 40
+  },
+  "checks": {
+    "preflight_passed": true,
+    "result_count_matches": true,
+    "csv_row_count_matches": true,
+    "pilot_case_count_matches_preflight": true,
+    "pilot_turn_count_matches_preflight": true,
+    "request_level_trace_count_matches": true,
+    "loaded_trace_count_matches": true,
+    "required_result_files_saved": true,
+    "preflight_report_saved": true,
+    "pilot_benchmark_saved": true,
+    "trace_files_saved": true,
+    "run_audit_attached": true,
+    "metric_fields_present": true,
+    "llm_call_recorded": true,
+    "runtime_audit_recorded": true,
+    "no_llm_fallback_recorded": true,
+    "mock_policy_satisfied": true,
+    "strict_runtime_recorded": true,
+    "cache_disabled_recorded": true,
+    "user_message_not_persisted": true
+  },
+  "failed_checks": [],
+  "quality_policy": {
+    "quality_threshold_enforced": false,
+    "reason": "Day 7 pilot checks evidence completeness and runtime auditability. Task quality metrics are reported but do not gate the pilot."
+  },
+  "artifact_paths": {
+    "pilot_benchmark": "D:/Code/Tourism_Agent/experiments/results/day7_pilot/_day7_pilot_inputs/day7_pilot_gpt5mini_smoke_20260731T142500Z_day7_pilot_benchmark.json",
+    "preflight": "D:/Code/Tourism_Agent/experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/day7_pilot_preflight_report.json",
+    "benchmark_results.csv": "D:/Code/Tourism_Agent/experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/benchmark_results.csv",
+    "benchmark_results.json": "D:/Code/Tourism_Agent/experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/benchmark_results.json",
+    "evaluation_summary.json": "D:/Code/Tourism_Agent/experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/evaluation_summary.json",
+    "paper_tables.md": "D:/Code/Tourism_Agent/experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/paper_tables.md",
+    "experiment_manifest.json": "D:/Code/Tourism_Agent/experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/experiment_manifest.json",
+    "trace_dir": "D:/Code/Tourism_Agent/experiments/results/day7_pilot/day7_pilot_gpt5mini_smoke_20260731T142500Z/traces"
+  },
+  "trace_summary": {
+    "trace_count": 40,
+    "trace_without_llm_call_count": 6,
+    "llm_call_count": 69,
+    "mock_llm_call_count": 0,
+    "fallback_llm_call_count": 0,
+    "retry_count": 1.0,
+    "prompt_tokens": 115709.0,
+    "completion_tokens": 62398.0,
+    "total_tokens": 178107.0,
+    "estimated_cost": 0.0,
+    "standardized_estimated_cost": 0.0,
+    "actual_cost": null
+  },
+  "result_status_summary": {
+    "status_counts": {
+      "failed": 32,
+      "clarification": 6,
+      "completed": 2
+    },
+    "error_count": 0,
+    "quality_gated": false,
+    "note": "Pilot gates evidence completeness and runtime auditability. Method failures are reported here for diagnosis but are not hard-gated."
+  },
+  "metric_summary": {
+    "run_count": 40,
+    "methods": {
+      "adaptive_multi_agent": {
+        "run_count": 10,
+        "stsr_rate": 0.0,
+        "agent_selection_f1_mean": 0.69,
+        "tool_selection_f1_mean": 0.6067,
+        "llm_call_count_sum": 18.0,
+        "agent_call_count_sum": 11.0,
+        "called_tool_count_sum": 11.0,
+        "total_tokens_sum": 43418.0,
+        "estimated_cost_sum": 0.0
+      },
+      "fixed_multi_agent": {
+        "run_count": 10,
+        "stsr_rate": 0.0,
+        "agent_selection_f1_mean": 0.7324,
+        "tool_selection_f1_mean": 0.6233,
+        "llm_call_count_sum": 21.0,
+        "agent_call_count_sum": 14.0,
+        "called_tool_count_sum": 14.0,
+        "total_tokens_sum": 49325.0,
+        "estimated_cost_sum": 0.0
+      },
+      "llm_direct": {
+        "run_count": 10,
+        "stsr_rate": 0.0,
+        "agent_selection_f1_mean": 0.2,
+        "tool_selection_f1_mean": 0.2,
+        "llm_call_count_sum": 10.0,
+        "agent_call_count_sum": 0.0,
+        "called_tool_count_sum": 0.0,
+        "total_tokens_sum": 18055.0,
+        "estimated_cost_sum": 0.0
+      },
+      "single_agent": {
+        "run_count": 10,
+        "stsr_rate": 0.0,
+        "agent_selection_f1_mean": 0.0,
+        "tool_selection_f1_mean": 0.8967,
+        "llm_call_count_sum": 20.0,
+        "agent_call_count_sum": 10.0,
+        "called_tool_count_sum": 19.0,
+        "total_tokens_sum": 67309.0,
+        "estimated_cost_sum": 0.0
+      }
+    }
+  }
+}

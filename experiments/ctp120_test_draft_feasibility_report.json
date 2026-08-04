@@ -1,0 +1,52 @@
+{
+  "schema_version": "ctp-day7-test-draft-feasibility-v1",
+  "created_at": "2026-08-02T08:28:55.833604+00:00",
+  "status": "passed",
+  "quality_status": "passed",
+  "unit_count": 130,
+  "checked_tourism_unit_count": 110,
+  "passed_tourism_unit_count": 110,
+  "failed_tourism_unit_count": 0,
+  "city_unit_distribution": {
+    "beijing": 22,
+    "guilin": 22,
+    "hangzhou": 22,
+    "shenzhen": 22,
+    "xian": 22
+  },
+  "task_unit_distribution": {
+    "attraction_recommendation": 10,
+    "budget_query": 10,
+    "partial_replan": 20,
+    "trip_planning": 50,
+    "weather_adjustment": 10,
+    "weather_query": 10
+  },
+  "fixed_data_snapshot": {
+    "valid": true,
+    "schema_version": "fixed_data_manifest_v2",
+    "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+    "file_count": 25,
+    "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+    "city_ids": [
+      "beijing",
+      "hangzhou",
+      "xian",
+      "shenzhen",
+      "guilin"
+    ]
+  },
+  "failed_units": [],
+  "policy": {
+    "fixed_city_ids": [
+      "beijing",
+      "hangzhou",
+      "xian",
+      "shenzhen",
+      "guilin"
+    ],
+    "max_trip_days_checked_against_fixed_weather": true,
+    "min_attractions_checked_against_fixed_poi_count": true,
+    "weather_change_checked_against_fixed_scenarios": true
+  }
+}

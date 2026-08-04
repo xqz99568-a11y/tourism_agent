@@ -1,0 +1,44 @@
+{
+  "case_id": "ctp_dev_019_shenzhen_heat_adjustment",
+  "case_type": "multi_turn",
+  "description": "深圳城市游后，第一天出现高温并需要避开户外高温时段。",
+  "turn_id": "t1_full_plan",
+  "target_turn": false,
+  "user_input": "设计深圳2026年8月21日出发的两天城市游，2个人，预算7200元，包含景点、天气、行程和预算。",
+  "expected": {
+    "task_type": "trip_planning",
+    "required_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ],
+    "accepted_agent_sets": [
+      [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ]
+    ],
+    "hard_constraints": {
+      "destination": "shenzhen",
+      "start_date": "2026-08-21",
+      "duration_days": 2,
+      "people_count": 2,
+      "min_attractions": 3,
+      "max_pois_per_day": 2,
+      "budget_limit": 7200
+    }
+  },
+  "scenario_id": "ctp_dev_019_shenzhen_heat_adjustment",
+  "turn_index": 0,
+  "scenario_turn_count": 2,
+  "dialogue_history": []
+}

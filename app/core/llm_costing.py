@@ -25,6 +25,11 @@ DEFAULT_PRICE_CURRENCY = "CNY"
 DEFAULT_PRICE_SOURCE = "env_or_zero_default"
 DEFAULT_PRICING_MODE = "standardized_token_estimate"
 
+GPT5_MINI_PRICE_INPUT_USD_PER_1M = 0.25
+GPT5_MINI_PRICE_OUTPUT_USD_PER_1M = 2.00
+GPT5_MINI_PRICE_SOURCE_URL = "https://api.vectorengine.ai/pricing"
+GPT5_MINI_PRICE_SNAPSHOT_DATE = "2026-08-01"
+
 
 def build_llm_cost_record(
     *,
@@ -100,24 +105,72 @@ def build_price_snapshot(
         output_price = 0.0
         pricing_mode = "mock_zero_cost"
         source = "mock_llm"
+        currency = _env_text("LLM_PRICE_CURRENCY") or DEFAULT_PRICE_CURRENCY
+        snapshot_date = _env_text("LLM_PRICE_SNAPSHOT_DATE") or date.today().isoformat()
     else:
-        input_price = _env_float("LLM_PRICE_INPUT_PER_1K", "LLM_INPUT_PRICE_PER_1K") or 0.0
-        output_price = _env_float("LLM_PRICE_OUTPUT_PER_1K", "LLM_OUTPUT_PRICE_PER_1K") or 0.0
+        model_defaults = _known_model_price_defaults(model)
+        input_price = _first_float(
+            _env_float("LLM_PRICE_INPUT_PER_1K", "LLM_INPUT_PRICE_PER_1K"),
+            _env_usd_per_1m_as_per_1k("LLM_PRICE_INPUT_USD_PER_1M"),
+            model_defaults.get("input_token_unit_price"),
+        ) or 0.0
+        output_price = _first_float(
+            _env_float("LLM_PRICE_OUTPUT_PER_1K", "LLM_OUTPUT_PRICE_PER_1K"),
+            _env_usd_per_1m_as_per_1k("LLM_PRICE_OUTPUT_USD_PER_1M"),
+            model_defaults.get("output_token_unit_price"),
+        ) or 0.0
         pricing_mode = _env_text("LLM_PRICE_MODE") or DEFAULT_PRICING_MODE
-        source = _env_text("LLM_PRICE_SOURCE_URL") or DEFAULT_PRICE_SOURCE
+        source = (
+            _env_text("LLM_PRICE_SOURCE_URL")
+            or model_defaults.get("price_source_url")
+            or DEFAULT_PRICE_SOURCE
+        )
+        currency = (
+            _env_text("LLM_PRICE_CURRENCY")
+            or model_defaults.get("currency")
+            or DEFAULT_PRICE_CURRENCY
+        )
+        snapshot_date = (
+            _env_text("LLM_PRICE_SNAPSHOT_DATE")
+            or model_defaults.get("price_snapshot_date")
+            or date.today().isoformat()
+        )
+        if model_defaults and not _env_text("LLM_PRICE_MODE"):
+            pricing_mode = "frozen_default_token_estimate"
 
     return {
         "schema_version": COSTING_SCHEMA_VERSION,
         "provider": str(provider or "unknown"),
         "model": str(model or "unknown"),
-        "price_snapshot_date": _env_text("LLM_PRICE_SNAPSHOT_DATE") or date.today().isoformat(),
+        "price_snapshot_date": snapshot_date,
         "price_source_url": source,
-        "currency": _env_text("LLM_PRICE_CURRENCY") or DEFAULT_PRICE_CURRENCY,
+        "currency": currency,
         "price_unit": _env_text("LLM_PRICE_UNIT") or DEFAULT_PRICE_UNIT,
         "input_token_unit_price": input_price,
         "output_token_unit_price": output_price,
         "pricing_mode": pricing_mode,
     }
+
+
+def _known_model_price_defaults(model: Any) -> Dict[str, Any]:
+    normalized_model = str(model or "").strip().lower()
+    if normalized_model != "gpt-5-mini":
+        return {}
+    return {
+        "currency": "USD",
+        "price_unit": DEFAULT_PRICE_UNIT,
+        "input_token_unit_price": GPT5_MINI_PRICE_INPUT_USD_PER_1M / 1000.0,
+        "output_token_unit_price": GPT5_MINI_PRICE_OUTPUT_USD_PER_1M / 1000.0,
+        "price_source_url": GPT5_MINI_PRICE_SOURCE_URL,
+        "price_snapshot_date": GPT5_MINI_PRICE_SNAPSHOT_DATE,
+    }
+
+
+def _env_usd_per_1m_as_per_1k(name: str) -> Optional[float]:
+    value = _env_float(name)
+    if value is None:
+        return None
+    return value / 1000.0
 
 
 def _env_text(name: str) -> Optional[str]:

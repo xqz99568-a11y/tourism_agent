@@ -12,6 +12,7 @@ if str(ROOT) not in sys.path:
 from app.core.experiment_runner import ExperimentRunner
 from app.core.formal_experiment_preflight import (
     FORMAL_PREFLIGHT_SCHEMA_VERSION,
+    FORMAL_MIN_MAX_TOKENS,
     build_formal_preflight_report,
 )
 from app.core.tracing import get_current_trace
@@ -79,9 +80,188 @@ def test_day6_formal_preflight_accepts_scenario_dataset_without_gold_leak(
     assert report["benchmark"]["case_count"] == 1
     assert report["benchmark"]["scenario_case_count"] == 1
     assert report["benchmark"]["total_turn_count"] == 2
+    assert report["environment"]["LLM_TEMPERATURE"] == 0.0
+    assert report["environment"]["LLM_MAX_TOKENS"] >= FORMAL_MIN_MAX_TOKENS
+    assert report["environment"]["LLM_TIMEOUT"] >= 1
+    assert report["environment"]["LLM_RETRY_MAX_ATTEMPTS"] == 3
+    assert report["environment"]["LLM_REASONING_EFFORT"] == "minimal"
+    assert (
+        report["environment"]["EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER"]
+        is True
+    )
     assert report["run"]["expected_raw_run_count"] == 8
     assert report["method_fairness_contract"]["contract_sha256"]
     assert "LLM runtime configuration check skipped" in report["warnings"]
+
+
+def test_day6_formal_preflight_rejects_nonzero_temperature(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    _formal_env(monkeypatch)
+    monkeypatch.setenv("LLM_TEMPERATURE", "0.2")
+    benchmark_path = tmp_path / "benchmark.json"
+    benchmark_path.write_text(
+        json.dumps(
+            {
+                "cases": [
+                    {
+                        "case_id": "c1",
+                        "user_input": "你好，我只是测试对话。",
+                        "expected": {
+                            "task_type": "general_chat",
+                            "accepted_agent_sets": [[]],
+                            "accepted_tool_sets": [[]],
+                        },
+                    }
+                ]
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    report = build_formal_preflight_report(
+        benchmark_path=benchmark_path,
+        output_dir=tmp_path / "runs",
+        run_id="bad-temp",
+        methods=ExperimentRunner.METHODS,
+        repeats=1,
+        require_llm_config=False,
+    )
+
+    assert report["status"] == "failed"
+    assert "LLM_TEMPERATURE must be 0 for formal runs" in report["errors"]
+
+
+def test_day6_formal_preflight_rejects_low_max_tokens(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    _formal_env(monkeypatch)
+    monkeypatch.setenv("LLM_MAX_TOKENS", "1024")
+    benchmark_path = tmp_path / "benchmark.json"
+    benchmark_path.write_text(
+        json.dumps(
+            {
+                "cases": [
+                    {
+                        "case_id": "c1",
+                        "user_input": "你好，我只是测试对话。",
+                        "expected": {
+                            "task_type": "general_chat",
+                            "accepted_agent_sets": [[]],
+                            "accepted_tool_sets": [[]],
+                        },
+                    }
+                ]
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    report = build_formal_preflight_report(
+        benchmark_path=benchmark_path,
+        output_dir=tmp_path / "runs",
+        run_id="bad-max-tokens",
+        methods=ExperimentRunner.METHODS,
+        repeats=1,
+        require_llm_config=False,
+    )
+
+    assert report["status"] == "failed"
+    assert (
+        f"LLM_MAX_TOKENS must be an integer >= {FORMAL_MIN_MAX_TOKENS} for formal runs"
+        in report["errors"]
+    )
+
+
+def test_day6_formal_preflight_requires_minimal_reasoning_for_gpt5(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    _formal_env(monkeypatch)
+    monkeypatch.setenv("LLM_MODEL", "gpt-5-mini")
+    monkeypatch.delenv("LLM_REASONING_EFFORT", raising=False)
+    benchmark_path = tmp_path / "benchmark.json"
+    benchmark_path.write_text(
+        json.dumps(
+            {
+                "cases": [
+                    {
+                        "case_id": "c1",
+                        "user_input": "你好，我只是测试对话。",
+                        "expected": {
+                            "task_type": "general_chat",
+                            "accepted_agent_sets": [[]],
+                            "accepted_tool_sets": [[]],
+                        },
+                    }
+                ]
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    report = build_formal_preflight_report(
+        benchmark_path=benchmark_path,
+        output_dir=tmp_path / "runs",
+        run_id="bad-reasoning",
+        methods=ExperimentRunner.METHODS,
+        repeats=1,
+        require_llm_config=False,
+    )
+
+    assert report["status"] == "failed"
+    assert (
+        "LLM_REASONING_EFFORT must be minimal for gpt-5 formal runs"
+        in report["errors"]
+    )
+
+
+def test_day6_formal_preflight_requires_deterministic_final_answer(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    _formal_env(monkeypatch)
+    monkeypatch.setenv("EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER", "false")
+    benchmark_path = tmp_path / "benchmark.json"
+    benchmark_path.write_text(
+        json.dumps(
+            {
+                "cases": [
+                    {
+                        "case_id": "c1",
+                        "user_input": "你好，我只是测试对话。",
+                        "expected": {
+                            "task_type": "general_chat",
+                            "accepted_agent_sets": [[]],
+                            "accepted_tool_sets": [[]],
+                        },
+                    }
+                ]
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    report = build_formal_preflight_report(
+        benchmark_path=benchmark_path,
+        output_dir=tmp_path / "runs",
+        run_id="bad-final-answer-mode",
+        methods=ExperimentRunner.METHODS,
+        repeats=1,
+        require_llm_config=False,
+    )
+
+    assert report["status"] == "failed"
+    assert (
+        "EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER must be true "
+        "for formal runs to match the frozen Day 7 development protocol"
+    ) in report["errors"]
 
 
 def test_day6_formal_preflight_blocks_oracle_state_and_nonempty_output(
@@ -279,6 +459,30 @@ def test_day6_formal_runner_preflight_only_does_not_create_run_dir(
         ),
         encoding="utf-8",
     )
+    benchmark_path.write_text(
+        json.dumps(
+            {
+                "cases": [
+                    {
+                        "case_id": "c1",
+                        "user_input": "你好，我只是测试对话。",
+                        "expected": {
+                            "task_type": "general_chat",
+                            "accepted_agent_sets": [[]],
+                            "accepted_tool_sets": [[]],
+                            "forbidden_tools": [
+                                "poi_search",
+                                "weather_query",
+                                "budget_calculator",
+                            ],
+                        },
+                    }
+                ]
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
     output_root = tmp_path / "formal_runs"
     monkeypatch.setattr(
         sys,
@@ -299,7 +503,17 @@ def test_day6_formal_runner_preflight_only_does_not_create_run_dir(
     assert run_formal_experiment.main() == 0
     report = json.loads(capsys.readouterr().out)
     assert report["status"] == "passed"
+    assert (
+        report["environment"]["EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER"]
+        is True
+    )
     assert not (output_root / "preflight-only").exists()
+
+
+def test_day6_formal_runner_defaults_to_100_case_manifest() -> None:
+    from experiments import run_formal_experiment
+
+    assert run_formal_experiment.DEFAULT_BENCHMARK_PATH.name == "benchmark.json"
 
 
 def _formal_env(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -307,3 +521,6 @@ def _formal_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("EXPERIMENT_DISABLE_CACHE", "true")
     monkeypatch.setenv("TRACE_SAVE_USER_MESSAGE", "false")
     monkeypatch.setenv("LLM_TEMPERATURE", "0")
+    monkeypatch.setenv("LLM_RETRY_MAX_ATTEMPTS", "3")
+    monkeypatch.setenv("LLM_REASONING_EFFORT", "minimal")
+    monkeypatch.setenv("EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER", "true")

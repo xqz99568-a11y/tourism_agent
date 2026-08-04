@@ -36,6 +36,7 @@ class LLMSettings(BaseSettings):
     temperature: float = Field(default=0.3, ge=0.0, le=2.0)
     timeout: int = Field(default=60, ge=1)
     max_tokens: int = Field(default=4096, ge=100)
+    retry_max_attempts: int = Field(default=3, ge=1, le=10)
 
     @property
     def is_configured(self) -> bool:

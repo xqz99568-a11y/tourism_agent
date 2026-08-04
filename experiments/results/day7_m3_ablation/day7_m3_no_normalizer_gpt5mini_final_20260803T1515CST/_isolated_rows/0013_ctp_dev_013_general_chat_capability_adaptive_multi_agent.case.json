@@ -1,0 +1,18 @@
+{
+  "case_id": "ctp_dev_013_general_chat_capability",
+  "user_input": "你好，我只是想了解这个旅游助手能做什么，暂时不要制定旅行计划。",
+  "expected": {
+    "task_type": "general_chat",
+    "accepted_agent_sets": [
+      []
+    ],
+    "accepted_tool_sets": [
+      []
+    ],
+    "forbidden_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ]
+  }
+}

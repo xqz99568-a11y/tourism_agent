@@ -1,0 +1,4498 @@
+{
+  "case_id": "ctp_dev_006_beijing_indoor_attractions",
+  "method": "adaptive_multi_agent",
+  "request_id": "ctp_dev_006_beijing_indoor_attractions_adaptive_multi_agent_7ccdcfa1",
+  "run_id": "day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST",
+  "repeat_index": 0,
+  "system_variant": "adaptive_multi_agent",
+  "model_config_name": "day7-dev-real-m3-no-normalizer",
+  "evaluation_mode": "end_to_end",
+  "input_hash": "db179588ca8bb141130e79b3bc14e951ba8be7c0dcc769ddc26fbafc8f4e42e2",
+  "result_hash": "6aadb861579e45cacd01d0f263cd38048e80e4f5e459b0e9d4b0d3203acb8dea",
+  "offline_data": {
+    "schema_version": "fixed_data_manifest_v2",
+    "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+    "city_ids": [
+      "beijing",
+      "hangzhou",
+      "xian",
+      "shenzhen",
+      "guilin"
+    ],
+    "snapshot_dirs": [
+      "pois",
+      "weather",
+      "restaurants",
+      "accommodation",
+      "transport"
+    ],
+    "file_count": 25,
+    "expected_file_count": 25,
+    "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+    "expected_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+    "missing_files": [],
+    "files": [
+      {
+        "kind": "accommodation",
+        "city_id": "beijing",
+        "path": "data/accommodation/beijing.json",
+        "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "accommodation",
+        "city_id": "guilin",
+        "path": "data/accommodation/guilin.json",
+        "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "accommodation",
+        "city_id": "hangzhou",
+        "path": "data/accommodation/hangzhou.json",
+        "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "accommodation",
+        "city_id": "shenzhen",
+        "path": "data/accommodation/shenzhen.json",
+        "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "accommodation",
+        "city_id": "xian",
+        "path": "data/accommodation/xian.json",
+        "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "pois",
+        "city_id": "beijing",
+        "path": "data/pois/beijing.json",
+        "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "pois",
+        "city_id": "guilin",
+        "path": "data/pois/guilin.json",
+        "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "pois",
+        "city_id": "hangzhou",
+        "path": "data/pois/hangzhou.json",
+        "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "pois",
+        "city_id": "shenzhen",
+        "path": "data/pois/shenzhen.json",
+        "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "pois",
+        "city_id": "xian",
+        "path": "data/pois/xian.json",
+        "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "restaurants",
+        "city_id": "beijing",
+        "path": "data/restaurants/beijing.json",
+        "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "restaurants",
+        "city_id": "guilin",
+        "path": "data/restaurants/guilin.json",
+        "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "restaurants",
+        "city_id": "hangzhou",
+        "path": "data/restaurants/hangzhou.json",
+        "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "restaurants",
+        "city_id": "shenzhen",
+        "path": "data/restaurants/shenzhen.json",
+        "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "restaurants",
+        "city_id": "xian",
+        "path": "data/restaurants/xian.json",
+        "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "transport",
+        "city_id": "beijing",
+        "path": "data/transport/beijing.json",
+        "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "transport",
+        "city_id": "guilin",
+        "path": "data/transport/guilin.json",
+        "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "transport",
+        "city_id": "hangzhou",
+        "path": "data/transport/hangzhou.json",
+        "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "transport",
+        "city_id": "shenzhen",
+        "path": "data/transport/shenzhen.json",
+        "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "transport",
+        "city_id": "xian",
+        "path": "data/transport/xian.json",
+        "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "weather",
+        "city_id": "beijing",
+        "path": "data/weather/beijing.json",
+        "sha256": "a6b32944050cc2a638d09a67be8d7747ca2b0153527f856d85b4813651c91d0a",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "weather",
+        "city_id": "guilin",
+        "path": "data/weather/guilin.json",
+        "sha256": "450d86b2f7121f970e7c48e5a38ad113c8e4289c0356f448221ce1d63d412f94",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "weather",
+        "city_id": "hangzhou",
+        "path": "data/weather/hangzhou.json",
+        "sha256": "e4ea7c0b10b350cd4c7ba739746e0634d0aa86d77378d858104c0f789f6f64fd",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "weather",
+        "city_id": "shenzhen",
+        "path": "data/weather/shenzhen.json",
+        "sha256": "533e74a25a72fdc58a0f31746f10dd405611b3ab007f18d0319566deaec5e281",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "weather",
+        "city_id": "xian",
+        "path": "data/weather/xian.json",
+        "sha256": "7d9e244e1bd64d129cb75b641a09adc8521d9ce082b4a28de7bbb2aadb92cef4",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      }
+    ]
+  },
+  "output": {
+    "schema_version": "ctp-experiment-output-v1",
+    "case_id": "ctp_dev_006_beijing_indoor_attractions",
+    "method": "adaptive_multi_agent",
+    "task_type": "attraction_recommendation",
+    "planned_agents": [
+      "attraction"
+    ],
+    "used_agents": [
+      "attraction"
+    ],
+    "planned_tools": [
+      "poi_search"
+    ],
+    "called_tools": [
+      {
+        "tool_name": "poi_search",
+        "status": "completed",
+        "success": true,
+        "arguments": {},
+        "duration_ms": 13.0,
+        "error": null
+      }
+    ],
+    "tool_results": {
+      "poi_search": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "poi_search",
+        "status": "success",
+        "success": true,
+        "input": {
+          "city": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "people": "general",
+          "limit": 2
+        },
+        "data": {
+          "city": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "people": "general",
+          "attractions": [
+            {
+              "poi_id": "bj001",
+              "name": "故宫博物院",
+              "city": "北京",
+              "city_id": "beijing",
+              "category": "museum",
+              "tags": [
+                "博物馆",
+                "世界遗产",
+                "经典景点"
+              ],
+              "indoor_outdoor": "mixed",
+              "outdoor_ratio": 0.35,
+              "weather_suitability": {
+                "sunny": "suitable",
+                "rain": "suitable",
+                "high_temperature": "conditional",
+                "low_temperature": "suitable"
+              },
+              "rain_suitability": "suitable",
+              "high_temperature_suitability": "conditional",
+              "low_temperature_suitability": "suitable",
+              "visit_intensity": "high",
+              "walking_level": "high",
+              "recommended_duration_hours": 4.0,
+              "ticket_price_cny": 60.0,
+              "ticket_price_known": true,
+              "address": "故宫博物院, 4号, 景山前街, 智德社区, 东华门街道, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+              "transport_node_id": "bj001",
+              "evidence": {
+                "dataset_version": "CTP-POI-v1.0",
+                "source_file_id": "ctp_poi_beijing_v1_0",
+                "snapshot_date": "2026-07-17",
+                "offline": true
+              }
+            },
+            {
+              "poi_id": "bj002",
+              "name": "天坛公园",
+              "city": "北京",
+              "city_id": "beijing",
+              "category": "history_culture",
+              "tags": [
+                "公园",
+                "古建筑",
+                "世界遗产"
+              ],
+              "indoor_outdoor": "outdoor",
+              "outdoor_ratio": 0.9,
+              "weather_suitability": {
+                "sunny": "suitable",
+                "rain": "conditional",
+                "high_temperature": "conditional",
+                "low_temperature": "suitable"
+              },
+              "rain_suitability": "conditional",
+              "high_temperature_suitability": "conditional",
+              "low_temperature_suitability": "suitable",
+              "visit_intensity": "medium",
+              "walking_level": "medium",
+              "recommended_duration_hours": 2.5,
+              "ticket_price_cny": null,
+              "ticket_price_known": false,
+              "address": "天坛公园, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+              "transport_node_id": "bj002",
+              "evidence": {
+                "dataset_version": "CTP-POI-v1.0",
+                "source_file_id": "ctp_poi_beijing_v1_0",
+                "snapshot_date": "2026-07-17",
+                "offline": true
+              }
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "frozen_offline",
+          "real_time_api_allowed": false,
+          "poi_dataset_versions": [
+            "CTP-POI-v1.0"
+          ],
+          "source_file_ids": [
+            "ctp_poi_beijing_v1_0"
+          ],
+          "record_count": 2
+        }
+      }
+    },
+    "agent_outputs": {
+      "attraction": {
+        "schema_version": "ctp-research-agent-output-v1",
+        "agent_name": "attraction",
+        "status": "completed",
+        "success": true,
+        "reused": false,
+        "prompt_version": "ctp-research-agent-prompts-v1",
+        "evidence_tools": [
+          "poi_search"
+        ],
+        "upstream_agents": [],
+        "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"attraction\",\n  \"summary\": \"为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。\",\n  \"decisions\": {\n    \"selected_poi_ids\": [\n      \"bj001\",\n      \"bj002\"\n    ],\n    \"poi_evidence\": {\n      \"bj001\": {\n        \"poi_id\": \"bj001\",\n        \"name\": \"故宫博物院\",\n        \"category\": \"museum\",\n        \"indoor_outdoor\": \"mixed\",\n        \"outdoor_ratio\": 0.35,\n        \"rain_suitability\": \"suitable\",\n        \"recommended_duration_hours\": 4.0,\n        \"ticket_price_cny\": 60.0,\n        \"notes\": \"以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。\"\n      },\n      \"bj002\": {\n        \"poi_id\": \"bj002\",\n        \"name\": \"天坛公园\",\n        \"category\": \"history_culture\",\n        \"indoor_outdoor\": \"outdoor\",\n        \"outdoor_ratio\": 0.9,\n        \"rain_suitability\": \"conditional\",\n        \"recommended_duration_hours\": 2.5,\n        \"ticket_price_cny\": null,\n        \"notes\": \"主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。\"\n      }\n    }\n  },\n  \"risks\": [\n    {\n      \"poi_id\": \"bj002\",\n      \"risk\": \"主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。\"\n    },\n    {\n      \"general\": \"工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。\"\n    }\n  ],\n  \"confidence\": 0.6\n}",
+        "decision_schema_version": "ctp-research-agent-decision-v1",
+        "decision": {
+          "schema_version": "ctp-research-agent-decision-v1",
+          "agent_name": "attraction",
+          "summary": "为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。",
+          "decisions": {
+            "selected_poi_ids": [
+              "bj001",
+              "bj002"
+            ],
+            "poi_evidence": {
+              "bj001": {
+                "poi_id": "bj001",
+                "name": "故宫博物院",
+                "category": "museum",
+                "indoor_outdoor": "mixed",
+                "outdoor_ratio": 0.35,
+                "rain_suitability": "suitable",
+                "recommended_duration_hours": 4.0,
+                "ticket_price_cny": 60.0,
+                "notes": "以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。"
+              },
+              "bj002": {
+                "poi_id": "bj002",
+                "name": "天坛公园",
+                "category": "history_culture",
+                "indoor_outdoor": "outdoor",
+                "outdoor_ratio": 0.9,
+                "rain_suitability": "conditional",
+                "recommended_duration_hours": 2.5,
+                "ticket_price_cny": null,
+                "notes": "主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。"
+              }
+            }
+          },
+          "risks": [
+            {
+              "poi_id": "bj002",
+              "risk": "主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。"
+            },
+            {
+              "general": "工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。"
+            }
+          ],
+          "confidence": 0.6
+        },
+        "decision_source": "llm",
+        "decision_fallback_used": false,
+        "decision_normalizer_enabled": false,
+        "decision_normalizer_skipped": false,
+        "decision_parse_status": "passed",
+        "decision_validation_status": "passed",
+        "decision_errors": [],
+        "llm_decision_parse_status": "passed",
+        "llm_decision_validation_status": "passed",
+        "llm_decision_errors": [],
+        "usage": {
+          "prompt_tokens": 735,
+          "completion_tokens": 709,
+          "total_tokens": 1444
+        },
+        "prompt_tokens": 735,
+        "completion_tokens": 709,
+        "total_tokens": 1444,
+        "duration_ms": 10299.25,
+        "llm_call_count": 1
+      }
+    },
+    "attractions": [
+      {
+        "poi_id": "bj001",
+        "name": "故宫博物院",
+        "city": "北京",
+        "city_id": "beijing",
+        "category": "museum",
+        "tags": [
+          "博物馆",
+          "世界遗产",
+          "经典景点"
+        ],
+        "indoor_outdoor": "mixed",
+        "outdoor_ratio": 0.35,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "rain_suitability": "suitable",
+        "high_temperature_suitability": "conditional",
+        "low_temperature_suitability": "suitable",
+        "visit_intensity": "high",
+        "walking_level": "high",
+        "recommended_duration_hours": 4.0,
+        "ticket_price_cny": 60.0,
+        "ticket_price_known": true,
+        "address": "故宫博物院, 4号, 景山前街, 智德社区, 东华门街道, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+        "transport_node_id": "bj001",
+        "evidence": {
+          "dataset_version": "CTP-POI-v1.0",
+          "source_file_id": "ctp_poi_beijing_v1_0",
+          "snapshot_date": "2026-07-17",
+          "offline": true
+        },
+        "agent_selected": true,
+        "agent_decision_source": "attraction",
+        "agent_rank": 1
+      },
+      {
+        "poi_id": "bj002",
+        "name": "天坛公园",
+        "city": "北京",
+        "city_id": "beijing",
+        "category": "history_culture",
+        "tags": [
+          "公园",
+          "古建筑",
+          "世界遗产"
+        ],
+        "indoor_outdoor": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "rain_suitability": "conditional",
+        "high_temperature_suitability": "conditional",
+        "low_temperature_suitability": "suitable",
+        "visit_intensity": "medium",
+        "walking_level": "medium",
+        "recommended_duration_hours": 2.5,
+        "ticket_price_cny": null,
+        "ticket_price_known": false,
+        "address": "天坛公园, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+        "transport_node_id": "bj002",
+        "evidence": {
+          "dataset_version": "CTP-POI-v1.0",
+          "source_file_id": "ctp_poi_beijing_v1_0",
+          "snapshot_date": "2026-07-17",
+          "offline": true
+        },
+        "agent_selected": true,
+        "agent_decision_source": "attraction",
+        "agent_rank": 2
+      }
+    ],
+    "trip_days": 3,
+    "daily_itinerary": [],
+    "budget": null,
+    "weather": null,
+    "weather_adjustments": [],
+    "constraint_report": {
+      "schema_version": "research_tool_result_v1",
+      "tool_contract_version": "ctp-research-tools-v1.0",
+      "tool_name": "constraint_checker",
+      "status": "success",
+      "success": true,
+      "input": {
+        "request": {
+          "destination": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "special_requirements": [
+            "indoor_preferred",
+            "avoidance_constraint"
+          ],
+          "weather_scenario": "rain",
+          "case_id": "ctp_dev_006_beijing_indoor_attractions",
+          "user_input": "北京如果遇到雨天，请只给我2个室内或博物馆类备选景点，不要行程和预算。",
+          "city": "beijing",
+          "budget": null
+        },
+        "constraints": {
+          "min_attractions": 2,
+          "max_attractions": 2
+        }
+      },
+      "data": {
+        "all_passed": true,
+        "applicable_count": 5,
+        "passed_count": 5,
+        "failed_count": 0,
+        "checks": [
+          {
+            "name": "trip_days",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "expected": null,
+              "actual": 0
+            }
+          },
+          {
+            "name": "budget_limit",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "limit": null,
+              "actual": null
+            }
+          },
+          {
+            "name": "weather_adjustment",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": false,
+              "adjustment_count": 0
+            }
+          },
+          {
+            "name": "min_attractions",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "minimum": 2,
+              "actual": 2
+            }
+          },
+          {
+            "name": "max_attractions",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "maximum": 2,
+              "actual": 2
+            }
+          },
+          {
+            "name": "poi_existence",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "city_id": "beijing",
+              "attraction_count": 2,
+              "unresolved": []
+            }
+          },
+          {
+            "name": "duplicate_attractions",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "duplicates": [],
+              "unique_count": 2,
+              "attraction_count": 2
+            }
+          },
+          {
+            "name": "must_include_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": []
+            }
+          },
+          {
+            "name": "forbidden_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "forbidden": []
+            }
+          },
+          {
+            "name": "rain_attraction_suitability",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "rain_detected": false
+            }
+          },
+          {
+            "name": "senior_accessibility",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "senior_request": false
+            }
+          },
+          {
+            "name": "tool_evidence",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "required": false,
+              "required_tools": [
+                "poi_search"
+              ],
+              "missing_or_failed": []
+            }
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "offline": true,
+        "source_mode": "deterministic_evaluator",
+        "real_time_api_allowed": false,
+        "contract": "ctp-research-tools-v1.0"
+      }
+    },
+    "hard_constraint_passed_count": 5,
+    "hard_constraint_failed_count": 0,
+    "hard_constraint_applicable_count": 5,
+    "hard_constraints_all_satisfied": true,
+    "hcsr": 1.0,
+    "execution_status": "completed",
+    "final_answer": "证据景点：故宫博物院(bj001)、天坛公园(bj002)",
+    "raw_output": {
+      "task_type": "attraction_recommendation",
+      "planned_agents": [
+        "attraction"
+      ],
+      "used_agents": [
+        "attraction"
+      ],
+      "planned_tools": [
+        "poi_search"
+      ],
+      "called_tools": [
+        {
+          "call_id": "attraction-poi_search-33ed1a",
+          "name": "poi_search",
+          "tool_name": "poi_search",
+          "agent_name": "attraction",
+          "agent": "attraction",
+          "component": "attraction",
+          "params": {
+            "city": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "people": "general",
+            "limit": 2
+          },
+          "duration": 13.0,
+          "duration_ms": 13.0,
+          "status": "completed",
+          "success": true,
+          "error": null,
+          "cache_hit": null,
+          "fallback_used": null
+        }
+      ],
+      "agent_outputs": {
+        "attraction": {
+          "schema_version": "ctp-research-agent-output-v1",
+          "agent_name": "attraction",
+          "status": "completed",
+          "success": true,
+          "reused": false,
+          "prompt_version": "ctp-research-agent-prompts-v1",
+          "evidence_tools": [
+            "poi_search"
+          ],
+          "upstream_agents": [],
+          "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"attraction\",\n  \"summary\": \"为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。\",\n  \"decisions\": {\n    \"selected_poi_ids\": [\n      \"bj001\",\n      \"bj002\"\n    ],\n    \"poi_evidence\": {\n      \"bj001\": {\n        \"poi_id\": \"bj001\",\n        \"name\": \"故宫博物院\",\n        \"category\": \"museum\",\n        \"indoor_outdoor\": \"mixed\",\n        \"outdoor_ratio\": 0.35,\n        \"rain_suitability\": \"suitable\",\n        \"recommended_duration_hours\": 4.0,\n        \"ticket_price_cny\": 60.0,\n        \"notes\": \"以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。\"\n      },\n      \"bj002\": {\n        \"poi_id\": \"bj002\",\n        \"name\": \"天坛公园\",\n        \"category\": \"history_culture\",\n        \"indoor_outdoor\": \"outdoor\",\n        \"outdoor_ratio\": 0.9,\n        \"rain_suitability\": \"conditional\",\n        \"recommended_duration_hours\": 2.5,\n        \"ticket_price_cny\": null,\n        \"notes\": \"主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。\"\n      }\n    }\n  },\n  \"risks\": [\n    {\n      \"poi_id\": \"bj002\",\n      \"risk\": \"主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。\"\n    },\n    {\n      \"general\": \"工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。\"\n    }\n  ],\n  \"confidence\": 0.6\n}",
+          "decision_schema_version": "ctp-research-agent-decision-v1",
+          "decision": {
+            "schema_version": "ctp-research-agent-decision-v1",
+            "agent_name": "attraction",
+            "summary": "为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。",
+            "decisions": {
+              "selected_poi_ids": [
+                "bj001",
+                "bj002"
+              ],
+              "poi_evidence": {
+                "bj001": {
+                  "poi_id": "bj001",
+                  "name": "故宫博物院",
+                  "category": "museum",
+                  "indoor_outdoor": "mixed",
+                  "outdoor_ratio": 0.35,
+                  "rain_suitability": "suitable",
+                  "recommended_duration_hours": 4.0,
+                  "ticket_price_cny": 60.0,
+                  "notes": "以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。"
+                },
+                "bj002": {
+                  "poi_id": "bj002",
+                  "name": "天坛公园",
+                  "category": "history_culture",
+                  "indoor_outdoor": "outdoor",
+                  "outdoor_ratio": 0.9,
+                  "rain_suitability": "conditional",
+                  "recommended_duration_hours": 2.5,
+                  "ticket_price_cny": null,
+                  "notes": "主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。"
+                }
+              }
+            },
+            "risks": [
+              {
+                "poi_id": "bj002",
+                "risk": "主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。"
+              },
+              {
+                "general": "工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。"
+              }
+            ],
+            "confidence": 0.6
+          },
+          "decision_source": "llm",
+          "decision_fallback_used": false,
+          "decision_normalizer_enabled": false,
+          "decision_normalizer_skipped": false,
+          "decision_parse_status": "passed",
+          "decision_validation_status": "passed",
+          "decision_errors": [],
+          "llm_decision_parse_status": "passed",
+          "llm_decision_validation_status": "passed",
+          "llm_decision_errors": [],
+          "usage": {
+            "prompt_tokens": 735,
+            "completion_tokens": 709,
+            "total_tokens": 1444
+          },
+          "prompt_tokens": 735,
+          "completion_tokens": 709,
+          "total_tokens": 1444,
+          "duration_ms": 10299.25,
+          "llm_call_count": 1
+        }
+      },
+      "attractions": [
+        {
+          "poi_id": "bj001",
+          "name": "故宫博物院",
+          "city": "北京",
+          "city_id": "beijing",
+          "category": "museum",
+          "tags": [
+            "博物馆",
+            "世界遗产",
+            "经典景点"
+          ],
+          "indoor_outdoor": "mixed",
+          "outdoor_ratio": 0.35,
+          "weather_suitability": {
+            "sunny": "suitable",
+            "rain": "suitable",
+            "high_temperature": "conditional",
+            "low_temperature": "suitable"
+          },
+          "rain_suitability": "suitable",
+          "high_temperature_suitability": "conditional",
+          "low_temperature_suitability": "suitable",
+          "visit_intensity": "high",
+          "walking_level": "high",
+          "recommended_duration_hours": 4.0,
+          "ticket_price_cny": 60.0,
+          "ticket_price_known": true,
+          "address": "故宫博物院, 4号, 景山前街, 智德社区, 东华门街道, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+          "transport_node_id": "bj001",
+          "evidence": {
+            "dataset_version": "CTP-POI-v1.0",
+            "source_file_id": "ctp_poi_beijing_v1_0",
+            "snapshot_date": "2026-07-17",
+            "offline": true
+          },
+          "agent_selected": true,
+          "agent_decision_source": "attraction",
+          "agent_rank": 1
+        },
+        {
+          "poi_id": "bj002",
+          "name": "天坛公园",
+          "city": "北京",
+          "city_id": "beijing",
+          "category": "history_culture",
+          "tags": [
+            "公园",
+            "古建筑",
+            "世界遗产"
+          ],
+          "indoor_outdoor": "outdoor",
+          "outdoor_ratio": 0.9,
+          "weather_suitability": {
+            "sunny": "suitable",
+            "rain": "conditional",
+            "high_temperature": "conditional",
+            "low_temperature": "suitable"
+          },
+          "rain_suitability": "conditional",
+          "high_temperature_suitability": "conditional",
+          "low_temperature_suitability": "suitable",
+          "visit_intensity": "medium",
+          "walking_level": "medium",
+          "recommended_duration_hours": 2.5,
+          "ticket_price_cny": null,
+          "ticket_price_known": false,
+          "address": "天坛公园, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+          "transport_node_id": "bj002",
+          "evidence": {
+            "dataset_version": "CTP-POI-v1.0",
+            "source_file_id": "ctp_poi_beijing_v1_0",
+            "snapshot_date": "2026-07-17",
+            "offline": true
+          },
+          "agent_selected": true,
+          "agent_decision_source": "attraction",
+          "agent_rank": 2
+        }
+      ],
+      "trip_days": 3,
+      "daily_itinerary": [],
+      "budget": null,
+      "weather": null,
+      "weather_adjustments": [],
+      "execution_status": "completed",
+      "final_answer": "证据景点：故宫博物院(bj001)、天坛公园(bj002)",
+      "tool_results": {
+        "poi_search": {
+          "schema_version": "research_tool_result_v1",
+          "tool_contract_version": "ctp-research-tools-v1.0",
+          "tool_name": "poi_search",
+          "status": "success",
+          "success": true,
+          "input": {
+            "city": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "people": "general",
+            "limit": 2
+          },
+          "data": {
+            "city": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "people": "general",
+            "attractions": [
+              {
+                "poi_id": "bj001",
+                "name": "故宫博物院",
+                "city": "北京",
+                "city_id": "beijing",
+                "category": "museum",
+                "tags": [
+                  "博物馆",
+                  "世界遗产",
+                  "经典景点"
+                ],
+                "indoor_outdoor": "mixed",
+                "outdoor_ratio": 0.35,
+                "weather_suitability": {
+                  "sunny": "suitable",
+                  "rain": "suitable",
+                  "high_temperature": "conditional",
+                  "low_temperature": "suitable"
+                },
+                "rain_suitability": "suitable",
+                "high_temperature_suitability": "conditional",
+                "low_temperature_suitability": "suitable",
+                "visit_intensity": "high",
+                "walking_level": "high",
+                "recommended_duration_hours": 4.0,
+                "ticket_price_cny": 60.0,
+                "ticket_price_known": true,
+                "address": "故宫博物院, 4号, 景山前街, 智德社区, 东华门街道, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+                "transport_node_id": "bj001",
+                "evidence": {
+                  "dataset_version": "CTP-POI-v1.0",
+                  "source_file_id": "ctp_poi_beijing_v1_0",
+                  "snapshot_date": "2026-07-17",
+                  "offline": true
+                }
+              },
+              {
+                "poi_id": "bj002",
+                "name": "天坛公园",
+                "city": "北京",
+                "city_id": "beijing",
+                "category": "history_culture",
+                "tags": [
+                  "公园",
+                  "古建筑",
+                  "世界遗产"
+                ],
+                "indoor_outdoor": "outdoor",
+                "outdoor_ratio": 0.9,
+                "weather_suitability": {
+                  "sunny": "suitable",
+                  "rain": "conditional",
+                  "high_temperature": "conditional",
+                  "low_temperature": "suitable"
+                },
+                "rain_suitability": "conditional",
+                "high_temperature_suitability": "conditional",
+                "low_temperature_suitability": "suitable",
+                "visit_intensity": "medium",
+                "walking_level": "medium",
+                "recommended_duration_hours": 2.5,
+                "ticket_price_cny": null,
+                "ticket_price_known": false,
+                "address": "天坛公园, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+                "transport_node_id": "bj002",
+                "evidence": {
+                  "dataset_version": "CTP-POI-v1.0",
+                  "source_file_id": "ctp_poi_beijing_v1_0",
+                  "snapshot_date": "2026-07-17",
+                  "offline": true
+                }
+              }
+            ]
+          },
+          "error": null,
+          "metadata": {
+            "offline": true,
+            "source_mode": "frozen_offline",
+            "real_time_api_allowed": false,
+            "poi_dataset_versions": [
+              "CTP-POI-v1.0"
+            ],
+            "source_file_ids": [
+              "ctp_poi_beijing_v1_0"
+            ],
+            "record_count": 2
+          }
+        }
+      },
+      "metadata": {
+        "research_method": "adaptive_multi_agent",
+        "output_contract": "ctp-experiment-output-v1",
+        "generation_tool_contract": "ctp-research-tools-v1.0",
+        "method_input_schema_version": "ctp-method-input-v1",
+        "goal_state_slots": {
+          "destination": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "special_requirements": [
+            "indoor_preferred",
+            "avoidance_constraint"
+          ],
+          "weather_scenario": "rain"
+        },
+        "result_agents": [
+          "attraction"
+        ],
+        "agent_output_schema_version": "ctp-research-agent-output-v1",
+        "agent_decision_schema_version": "ctp-research-agent-decision-v1",
+        "agent_prompt_version": "ctp-research-agent-prompts-v1",
+        "agent_outputs": {
+          "attraction": {
+            "schema_version": "ctp-research-agent-output-v1",
+            "agent_name": "attraction",
+            "status": "completed",
+            "success": true,
+            "reused": false,
+            "prompt_version": "ctp-research-agent-prompts-v1",
+            "evidence_tools": [
+              "poi_search"
+            ],
+            "upstream_agents": [],
+            "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"attraction\",\n  \"summary\": \"为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。\",\n  \"decisions\": {\n    \"selected_poi_ids\": [\n      \"bj001\",\n      \"bj002\"\n    ],\n    \"poi_evidence\": {\n      \"bj001\": {\n        \"poi_id\": \"bj001\",\n        \"name\": \"故宫博物院\",\n        \"category\": \"museum\",\n        \"indoor_outdoor\": \"mixed\",\n        \"outdoor_ratio\": 0.35,\n        \"rain_suitability\": \"suitable\",\n        \"recommended_duration_hours\": 4.0,\n        \"ticket_price_cny\": 60.0,\n        \"notes\": \"以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。\"\n      },\n      \"bj002\": {\n        \"poi_id\": \"bj002\",\n        \"name\": \"天坛公园\",\n        \"category\": \"history_culture\",\n        \"indoor_outdoor\": \"outdoor\",\n        \"outdoor_ratio\": 0.9,\n        \"rain_suitability\": \"conditional\",\n        \"recommended_duration_hours\": 2.5,\n        \"ticket_price_cny\": null,\n        \"notes\": \"主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。\"\n      }\n    }\n  },\n  \"risks\": [\n    {\n      \"poi_id\": \"bj002\",\n      \"risk\": \"主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。\"\n    },\n    {\n      \"general\": \"工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。\"\n    }\n  ],\n  \"confidence\": 0.6\n}",
+            "decision_schema_version": "ctp-research-agent-decision-v1",
+            "decision": {
+              "schema_version": "ctp-research-agent-decision-v1",
+              "agent_name": "attraction",
+              "summary": "为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。",
+              "decisions": {
+                "selected_poi_ids": [
+                  "bj001",
+                  "bj002"
+                ],
+                "poi_evidence": {
+                  "bj001": {
+                    "poi_id": "bj001",
+                    "name": "故宫博物院",
+                    "category": "museum",
+                    "indoor_outdoor": "mixed",
+                    "outdoor_ratio": 0.35,
+                    "rain_suitability": "suitable",
+                    "recommended_duration_hours": 4.0,
+                    "ticket_price_cny": 60.0,
+                    "notes": "以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。"
+                  },
+                  "bj002": {
+                    "poi_id": "bj002",
+                    "name": "天坛公园",
+                    "category": "history_culture",
+                    "indoor_outdoor": "outdoor",
+                    "outdoor_ratio": 0.9,
+                    "rain_suitability": "conditional",
+                    "recommended_duration_hours": 2.5,
+                    "ticket_price_cny": null,
+                    "notes": "主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。"
+                  }
+                }
+              },
+              "risks": [
+                {
+                  "poi_id": "bj002",
+                  "risk": "主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。"
+                },
+                {
+                  "general": "工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。"
+                }
+              ],
+              "confidence": 0.6
+            },
+            "decision_source": "llm",
+            "decision_fallback_used": false,
+            "decision_normalizer_enabled": false,
+            "decision_normalizer_skipped": false,
+            "decision_parse_status": "passed",
+            "decision_validation_status": "passed",
+            "decision_errors": [],
+            "llm_decision_parse_status": "passed",
+            "llm_decision_validation_status": "passed",
+            "llm_decision_errors": [],
+            "usage": {
+              "prompt_tokens": 735,
+              "completion_tokens": 709,
+              "total_tokens": 1444
+            },
+            "prompt_tokens": 735,
+            "completion_tokens": 709,
+            "total_tokens": 1444,
+            "duration_ms": 10299.25,
+            "llm_call_count": 1
+          }
+        },
+        "agent_decision_audit": {
+          "attraction": {
+            "status": "completed",
+            "reused": false,
+            "decision_source": "llm",
+            "decision_fallback_used": false,
+            "decision_normalizer_enabled": false,
+            "decision_normalizer_skipped": false,
+            "decision_parse_status": "passed",
+            "decision_validation_status": "passed",
+            "llm_decision_error_count": 0,
+            "decision_error_count": 0,
+            "has_applicable_decision": true
+          }
+        },
+        "adaptive_scheduler": {
+          "name": "goal_state_scheduler",
+          "ticket": {
+            "schema_version": "ctp-goal-state-ticket-v1",
+            "task_type": "attraction_recommendation",
+            "current_slots": {
+              "destination": "beijing",
+              "preferences": [
+                "history_culture",
+                "indoor"
+              ],
+              "special_requirements": [
+                "indoor_preferred",
+                "avoidance_constraint"
+              ],
+              "weather_scenario": "rain"
+            },
+            "previous_slots": {},
+            "changed_slots": [
+              "destination",
+              "preferences",
+              "special_requirements",
+              "weather_scenario"
+            ],
+            "preserved_slots": [],
+            "missing_slots": [],
+            "required_capabilities": [
+              "poi_evidence"
+            ],
+            "dependency_policy": {},
+            "clarification_required": false,
+            "clarification_fields": [],
+            "goal_change_type": "new_request"
+          },
+          "decision": {
+            "schema_version": "ctp-scheduler-decision-v1",
+            "planned_agents": [
+              "attraction"
+            ],
+            "planned_tools": [
+              "poi_search"
+            ],
+            "reused_agents": [],
+            "invalidated_agents": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "decision_reasons": [
+              "single_capability_request"
+            ],
+            "reuse_validation": {}
+          },
+          "reuse_execution": {
+            "previous_state_provided": false,
+            "expected_reused_agents": [],
+            "reused_agent_results": [],
+            "missing_reused_agent_results": [],
+            "expected_reused_agent_count": 0,
+            "reused_agent_result_count": 0,
+            "missing_reused_agent_result_count": 0,
+            "expected_reused_tools": [],
+            "reused_tool_results": [],
+            "missing_reused_tool_results": [],
+            "expected_reused_tool_count": 0,
+            "reused_tool_result_count": 0,
+            "missing_reused_tool_result_count": 0,
+            "reuse_hit_rate": null,
+            "agent_reuse_hit_rate": null
+          },
+          "result_fingerprints": {
+            "attraction": {
+              "destination": "beijing",
+              "preferences": [
+                "history_culture",
+                "indoor"
+              ]
+            }
+          }
+        },
+        "scheduler": {
+          "name": "goal_state_scheduler",
+          "ticket": {
+            "schema_version": "ctp-goal-state-ticket-v1",
+            "task_type": "attraction_recommendation",
+            "current_slots": {
+              "destination": "beijing",
+              "preferences": [
+                "history_culture",
+                "indoor"
+              ],
+              "special_requirements": [
+                "indoor_preferred",
+                "avoidance_constraint"
+              ],
+              "weather_scenario": "rain"
+            },
+            "previous_slots": {},
+            "changed_slots": [
+              "destination",
+              "preferences",
+              "special_requirements",
+              "weather_scenario"
+            ],
+            "preserved_slots": [],
+            "missing_slots": [],
+            "required_capabilities": [
+              "poi_evidence"
+            ],
+            "dependency_policy": {},
+            "clarification_required": false,
+            "clarification_fields": [],
+            "goal_change_type": "new_request"
+          },
+          "decision": {
+            "schema_version": "ctp-scheduler-decision-v1",
+            "planned_agents": [
+              "attraction"
+            ],
+            "planned_tools": [
+              "poi_search"
+            ],
+            "reused_agents": [],
+            "invalidated_agents": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "decision_reasons": [
+              "single_capability_request"
+            ],
+            "reuse_validation": {}
+          },
+          "reuse_execution": {
+            "previous_state_provided": false,
+            "expected_reused_agents": [],
+            "reused_agent_results": [],
+            "missing_reused_agent_results": [],
+            "expected_reused_agent_count": 0,
+            "reused_agent_result_count": 0,
+            "missing_reused_agent_result_count": 0,
+            "expected_reused_tools": [],
+            "reused_tool_results": [],
+            "missing_reused_tool_results": [],
+            "expected_reused_tool_count": 0,
+            "reused_tool_result_count": 0,
+            "missing_reused_tool_result_count": 0,
+            "reuse_hit_rate": null,
+            "agent_reuse_hit_rate": null
+          },
+          "result_fingerprints": {
+            "attraction": {
+              "destination": "beijing",
+              "preferences": [
+                "history_culture",
+                "indoor"
+              ]
+            }
+          }
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        }
+      }
+    },
+    "metadata": {
+      "research_method": "adaptive_multi_agent",
+      "output_contract": "ctp-experiment-output-v1",
+      "generation_tool_contract": "ctp-research-tools-v1.0",
+      "method_input_schema_version": "ctp-method-input-v1",
+      "goal_state_slots": {
+        "destination": "beijing",
+        "preferences": [
+          "history_culture",
+          "indoor"
+        ],
+        "special_requirements": [
+          "indoor_preferred",
+          "avoidance_constraint"
+        ],
+        "weather_scenario": "rain"
+      },
+      "result_agents": [
+        "attraction"
+      ],
+      "agent_output_schema_version": "ctp-research-agent-output-v1",
+      "agent_decision_schema_version": "ctp-research-agent-decision-v1",
+      "agent_prompt_version": "ctp-research-agent-prompts-v1",
+      "agent_outputs": {
+        "attraction": {
+          "schema_version": "ctp-research-agent-output-v1",
+          "agent_name": "attraction",
+          "status": "completed",
+          "success": true,
+          "reused": false,
+          "prompt_version": "ctp-research-agent-prompts-v1",
+          "evidence_tools": [
+            "poi_search"
+          ],
+          "upstream_agents": [],
+          "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"attraction\",\n  \"summary\": \"为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。\",\n  \"decisions\": {\n    \"selected_poi_ids\": [\n      \"bj001\",\n      \"bj002\"\n    ],\n    \"poi_evidence\": {\n      \"bj001\": {\n        \"poi_id\": \"bj001\",\n        \"name\": \"故宫博物院\",\n        \"category\": \"museum\",\n        \"indoor_outdoor\": \"mixed\",\n        \"outdoor_ratio\": 0.35,\n        \"rain_suitability\": \"suitable\",\n        \"recommended_duration_hours\": 4.0,\n        \"ticket_price_cny\": 60.0,\n        \"notes\": \"以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。\"\n      },\n      \"bj002\": {\n        \"poi_id\": \"bj002\",\n        \"name\": \"天坛公园\",\n        \"category\": \"history_culture\",\n        \"indoor_outdoor\": \"outdoor\",\n        \"outdoor_ratio\": 0.9,\n        \"rain_suitability\": \"conditional\",\n        \"recommended_duration_hours\": 2.5,\n        \"ticket_price_cny\": null,\n        \"notes\": \"主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。\"\n      }\n    }\n  },\n  \"risks\": [\n    {\n      \"poi_id\": \"bj002\",\n      \"risk\": \"主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。\"\n    },\n    {\n      \"general\": \"工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。\"\n    }\n  ],\n  \"confidence\": 0.6\n}",
+          "decision_schema_version": "ctp-research-agent-decision-v1",
+          "decision": {
+            "schema_version": "ctp-research-agent-decision-v1",
+            "agent_name": "attraction",
+            "summary": "为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。",
+            "decisions": {
+              "selected_poi_ids": [
+                "bj001",
+                "bj002"
+              ],
+              "poi_evidence": {
+                "bj001": {
+                  "poi_id": "bj001",
+                  "name": "故宫博物院",
+                  "category": "museum",
+                  "indoor_outdoor": "mixed",
+                  "outdoor_ratio": 0.35,
+                  "rain_suitability": "suitable",
+                  "recommended_duration_hours": 4.0,
+                  "ticket_price_cny": 60.0,
+                  "notes": "以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。"
+                },
+                "bj002": {
+                  "poi_id": "bj002",
+                  "name": "天坛公园",
+                  "category": "history_culture",
+                  "indoor_outdoor": "outdoor",
+                  "outdoor_ratio": 0.9,
+                  "rain_suitability": "conditional",
+                  "recommended_duration_hours": 2.5,
+                  "ticket_price_cny": null,
+                  "notes": "主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。"
+                }
+              }
+            },
+            "risks": [
+              {
+                "poi_id": "bj002",
+                "risk": "主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。"
+              },
+              {
+                "general": "工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。"
+              }
+            ],
+            "confidence": 0.6
+          },
+          "decision_source": "llm",
+          "decision_fallback_used": false,
+          "decision_normalizer_enabled": false,
+          "decision_normalizer_skipped": false,
+          "decision_parse_status": "passed",
+          "decision_validation_status": "passed",
+          "decision_errors": [],
+          "llm_decision_parse_status": "passed",
+          "llm_decision_validation_status": "passed",
+          "llm_decision_errors": [],
+          "usage": {
+            "prompt_tokens": 735,
+            "completion_tokens": 709,
+            "total_tokens": 1444
+          },
+          "prompt_tokens": 735,
+          "completion_tokens": 709,
+          "total_tokens": 1444,
+          "duration_ms": 10299.25,
+          "llm_call_count": 1
+        }
+      },
+      "agent_decision_audit": {
+        "attraction": {
+          "status": "completed",
+          "reused": false,
+          "decision_source": "llm",
+          "decision_fallback_used": false,
+          "decision_normalizer_enabled": false,
+          "decision_normalizer_skipped": false,
+          "decision_parse_status": "passed",
+          "decision_validation_status": "passed",
+          "llm_decision_error_count": 0,
+          "decision_error_count": 0,
+          "has_applicable_decision": true
+        }
+      },
+      "adaptive_scheduler": {
+        "name": "goal_state_scheduler",
+        "ticket": {
+          "schema_version": "ctp-goal-state-ticket-v1",
+          "task_type": "attraction_recommendation",
+          "current_slots": {
+            "destination": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "special_requirements": [
+              "indoor_preferred",
+              "avoidance_constraint"
+            ],
+            "weather_scenario": "rain"
+          },
+          "previous_slots": {},
+          "changed_slots": [
+            "destination",
+            "preferences",
+            "special_requirements",
+            "weather_scenario"
+          ],
+          "preserved_slots": [],
+          "missing_slots": [],
+          "required_capabilities": [
+            "poi_evidence"
+          ],
+          "dependency_policy": {},
+          "clarification_required": false,
+          "clarification_fields": [],
+          "goal_change_type": "new_request"
+        },
+        "decision": {
+          "schema_version": "ctp-scheduler-decision-v1",
+          "planned_agents": [
+            "attraction"
+          ],
+          "planned_tools": [
+            "poi_search"
+          ],
+          "reused_agents": [],
+          "invalidated_agents": [],
+          "clarification_required": false,
+          "clarification_fields": [],
+          "decision_reasons": [
+            "single_capability_request"
+          ],
+          "reuse_validation": {}
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        },
+        "result_fingerprints": {
+          "attraction": {
+            "destination": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ]
+          }
+        }
+      },
+      "scheduler": {
+        "name": "goal_state_scheduler",
+        "ticket": {
+          "schema_version": "ctp-goal-state-ticket-v1",
+          "task_type": "attraction_recommendation",
+          "current_slots": {
+            "destination": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "special_requirements": [
+              "indoor_preferred",
+              "avoidance_constraint"
+            ],
+            "weather_scenario": "rain"
+          },
+          "previous_slots": {},
+          "changed_slots": [
+            "destination",
+            "preferences",
+            "special_requirements",
+            "weather_scenario"
+          ],
+          "preserved_slots": [],
+          "missing_slots": [],
+          "required_capabilities": [
+            "poi_evidence"
+          ],
+          "dependency_policy": {},
+          "clarification_required": false,
+          "clarification_fields": [],
+          "goal_change_type": "new_request"
+        },
+        "decision": {
+          "schema_version": "ctp-scheduler-decision-v1",
+          "planned_agents": [
+            "attraction"
+          ],
+          "planned_tools": [
+            "poi_search"
+          ],
+          "reused_agents": [],
+          "invalidated_agents": [],
+          "clarification_required": false,
+          "clarification_fields": [],
+          "decision_reasons": [
+            "single_capability_request"
+          ],
+          "reuse_validation": {}
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        },
+        "result_fingerprints": {
+          "attraction": {
+            "destination": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ]
+          }
+        }
+      },
+      "reuse_execution": {
+        "previous_state_provided": false,
+        "expected_reused_agents": [],
+        "reused_agent_results": [],
+        "missing_reused_agent_results": [],
+        "expected_reused_agent_count": 0,
+        "reused_agent_result_count": 0,
+        "missing_reused_agent_result_count": 0,
+        "expected_reused_tools": [],
+        "reused_tool_results": [],
+        "missing_reused_tool_results": [],
+        "expected_reused_tool_count": 0,
+        "reused_tool_result_count": 0,
+        "missing_reused_tool_result_count": 0,
+        "reuse_hit_rate": null,
+        "agent_reuse_hit_rate": null
+      },
+      "adaptive_scheduler_metrics": {
+        "m3_scheduler_name": "goal_state_scheduler",
+        "m3_task_type": "attraction_recommendation",
+        "m3_clarification_required": false,
+        "m3_clarification_fields": [],
+        "m3_clarification_field_count": 0,
+        "m3_decision_reasons": [
+          "single_capability_request"
+        ],
+        "m3_planned_agents": [
+          "attraction"
+        ],
+        "m3_reused_agents": [],
+        "m3_invalidated_agents": [],
+        "m3_planned_tools": [
+          "poi_search"
+        ],
+        "m3_expected_reused_tools": [],
+        "m3_reused_tool_results": [],
+        "m3_missing_reused_tool_results": [],
+        "m3_previous_state_provided": false,
+        "m3_m2_reference_agent_count": 4,
+        "m3_m2_reference_tool_count": 3,
+        "m3_planned_agent_count": 1,
+        "m3_executed_agent_count": 1,
+        "m3_reused_agent_count": 0,
+        "m3_invalidated_agent_count": 0,
+        "m3_planned_tool_count": 1,
+        "m3_executed_tool_count": 1,
+        "m3_expected_reused_tool_count": 0,
+        "m3_reused_tool_result_count": 0,
+        "m3_missing_reused_tool_result_count": 0,
+        "m3_agent_reuse_rate": 0.0,
+        "m3_tool_reuse_rate": 0.0,
+        "m3_reuse_hit_rate": null,
+        "m3_agent_call_savings_vs_m2": 3,
+        "m3_tool_call_savings_vs_m2": 2,
+        "m3_agent_call_reduction_rate_vs_m2": 0.75,
+        "m3_tool_call_reduction_rate_vs_m2": 0.6667
+      },
+      "run_audit_schema_version": "ctp-run-audit-v1"
+    }
+  },
+  "constraint_report": {
+    "schema_version": "research_tool_result_v1",
+    "tool_contract_version": "ctp-research-tools-v1.0",
+    "tool_name": "constraint_checker",
+    "status": "success",
+    "success": true,
+    "input": {
+      "request": {
+        "destination": "beijing",
+        "preferences": [
+          "history_culture",
+          "indoor"
+        ],
+        "special_requirements": [
+          "indoor_preferred",
+          "avoidance_constraint"
+        ],
+        "weather_scenario": "rain",
+        "case_id": "ctp_dev_006_beijing_indoor_attractions",
+        "user_input": "北京如果遇到雨天，请只给我2个室内或博物馆类备选景点，不要行程和预算。",
+        "city": "beijing",
+        "budget": null
+      },
+      "constraints": {
+        "min_attractions": 2,
+        "max_attractions": 2
+      }
+    },
+    "data": {
+      "all_passed": true,
+      "applicable_count": 5,
+      "passed_count": 5,
+      "failed_count": 0,
+      "checks": [
+        {
+          "name": "trip_days",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "expected": null,
+            "actual": 0
+          }
+        },
+        {
+          "name": "budget_limit",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "limit": null,
+            "actual": null
+          }
+        },
+        {
+          "name": "weather_adjustment",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "required": false,
+            "adjustment_count": 0
+          }
+        },
+        {
+          "name": "min_attractions",
+          "status": "passed",
+          "passed": true,
+          "details": {
+            "minimum": 2,
+            "actual": 2
+          }
+        },
+        {
+          "name": "max_attractions",
+          "status": "passed",
+          "passed": true,
+          "details": {
+            "maximum": 2,
+            "actual": 2
+          }
+        },
+        {
+          "name": "poi_existence",
+          "status": "passed",
+          "passed": true,
+          "details": {
+            "city_id": "beijing",
+            "attraction_count": 2,
+            "unresolved": []
+          }
+        },
+        {
+          "name": "duplicate_attractions",
+          "status": "passed",
+          "passed": true,
+          "details": {
+            "duplicates": [],
+            "unique_count": 2,
+            "attraction_count": 2
+          }
+        },
+        {
+          "name": "must_include_pois",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "required": []
+          }
+        },
+        {
+          "name": "forbidden_pois",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "forbidden": []
+          }
+        },
+        {
+          "name": "rain_attraction_suitability",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "rain_detected": false
+          }
+        },
+        {
+          "name": "senior_accessibility",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "senior_request": false
+          }
+        },
+        {
+          "name": "tool_evidence",
+          "status": "passed",
+          "passed": true,
+          "details": {
+            "required": false,
+            "required_tools": [
+              "poi_search"
+            ],
+            "missing_or_failed": []
+          }
+        }
+      ]
+    },
+    "error": null,
+    "metadata": {
+      "offline": true,
+      "source_mode": "deterministic_evaluator",
+      "real_time_api_allowed": false,
+      "contract": "ctp-research-tools-v1.0"
+    }
+  },
+  "hard_constraint_applicable_count": 5,
+  "hard_constraint_passed_count": 5,
+  "hard_constraint_failed_count": 0,
+  "hard_constraints_all_satisfied": true,
+  "hcsr": 1.0,
+  "raw_output": {
+    "schema_version": "ctp-experiment-output-v1",
+    "case_id": "ctp_dev_006_beijing_indoor_attractions",
+    "method": "adaptive_multi_agent",
+    "task_type": "attraction_recommendation",
+    "planned_agents": [
+      "attraction"
+    ],
+    "used_agents": [
+      "attraction"
+    ],
+    "planned_tools": [
+      "poi_search"
+    ],
+    "called_tools": [
+      {
+        "call_id": "attraction-poi_search-33ed1a",
+        "name": "poi_search",
+        "tool_name": "poi_search",
+        "agent_name": "attraction",
+        "agent": "attraction",
+        "component": "attraction",
+        "params": {
+          "city": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "people": "general",
+          "limit": 2
+        },
+        "duration": 13.0,
+        "duration_ms": 13.0,
+        "status": "completed",
+        "success": true,
+        "error": null,
+        "cache_hit": null,
+        "fallback_used": null
+      }
+    ],
+    "agent_outputs": {
+      "attraction": {
+        "schema_version": "ctp-research-agent-output-v1",
+        "agent_name": "attraction",
+        "status": "completed",
+        "success": true,
+        "reused": false,
+        "prompt_version": "ctp-research-agent-prompts-v1",
+        "evidence_tools": [
+          "poi_search"
+        ],
+        "upstream_agents": [],
+        "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"attraction\",\n  \"summary\": \"为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。\",\n  \"decisions\": {\n    \"selected_poi_ids\": [\n      \"bj001\",\n      \"bj002\"\n    ],\n    \"poi_evidence\": {\n      \"bj001\": {\n        \"poi_id\": \"bj001\",\n        \"name\": \"故宫博物院\",\n        \"category\": \"museum\",\n        \"indoor_outdoor\": \"mixed\",\n        \"outdoor_ratio\": 0.35,\n        \"rain_suitability\": \"suitable\",\n        \"recommended_duration_hours\": 4.0,\n        \"ticket_price_cny\": 60.0,\n        \"notes\": \"以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。\"\n      },\n      \"bj002\": {\n        \"poi_id\": \"bj002\",\n        \"name\": \"天坛公园\",\n        \"category\": \"history_culture\",\n        \"indoor_outdoor\": \"outdoor\",\n        \"outdoor_ratio\": 0.9,\n        \"rain_suitability\": \"conditional\",\n        \"recommended_duration_hours\": 2.5,\n        \"ticket_price_cny\": null,\n        \"notes\": \"主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。\"\n      }\n    }\n  },\n  \"risks\": [\n    {\n      \"poi_id\": \"bj002\",\n      \"risk\": \"主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。\"\n    },\n    {\n      \"general\": \"工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。\"\n    }\n  ],\n  \"confidence\": 0.6\n}",
+        "decision_schema_version": "ctp-research-agent-decision-v1",
+        "decision": {
+          "schema_version": "ctp-research-agent-decision-v1",
+          "agent_name": "attraction",
+          "summary": "为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。",
+          "decisions": {
+            "selected_poi_ids": [
+              "bj001",
+              "bj002"
+            ],
+            "poi_evidence": {
+              "bj001": {
+                "poi_id": "bj001",
+                "name": "故宫博物院",
+                "category": "museum",
+                "indoor_outdoor": "mixed",
+                "outdoor_ratio": 0.35,
+                "rain_suitability": "suitable",
+                "recommended_duration_hours": 4.0,
+                "ticket_price_cny": 60.0,
+                "notes": "以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。"
+              },
+              "bj002": {
+                "poi_id": "bj002",
+                "name": "天坛公园",
+                "category": "history_culture",
+                "indoor_outdoor": "outdoor",
+                "outdoor_ratio": 0.9,
+                "rain_suitability": "conditional",
+                "recommended_duration_hours": 2.5,
+                "ticket_price_cny": null,
+                "notes": "主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。"
+              }
+            }
+          },
+          "risks": [
+            {
+              "poi_id": "bj002",
+              "risk": "主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。"
+            },
+            {
+              "general": "工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。"
+            }
+          ],
+          "confidence": 0.6
+        },
+        "decision_source": "llm",
+        "decision_fallback_used": false,
+        "decision_normalizer_enabled": false,
+        "decision_normalizer_skipped": false,
+        "decision_parse_status": "passed",
+        "decision_validation_status": "passed",
+        "decision_errors": [],
+        "llm_decision_parse_status": "passed",
+        "llm_decision_validation_status": "passed",
+        "llm_decision_errors": [],
+        "usage": {
+          "prompt_tokens": 735,
+          "completion_tokens": 709,
+          "total_tokens": 1444
+        },
+        "prompt_tokens": 735,
+        "completion_tokens": 709,
+        "total_tokens": 1444,
+        "duration_ms": 10299.25,
+        "llm_call_count": 1
+      }
+    },
+    "attractions": [
+      {
+        "poi_id": "bj001",
+        "name": "故宫博物院",
+        "city": "北京",
+        "city_id": "beijing",
+        "category": "museum",
+        "tags": [
+          "博物馆",
+          "世界遗产",
+          "经典景点"
+        ],
+        "indoor_outdoor": "mixed",
+        "outdoor_ratio": 0.35,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "suitable",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "rain_suitability": "suitable",
+        "high_temperature_suitability": "conditional",
+        "low_temperature_suitability": "suitable",
+        "visit_intensity": "high",
+        "walking_level": "high",
+        "recommended_duration_hours": 4.0,
+        "ticket_price_cny": 60.0,
+        "ticket_price_known": true,
+        "address": "故宫博物院, 4号, 景山前街, 智德社区, 东华门街道, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+        "transport_node_id": "bj001",
+        "evidence": {
+          "dataset_version": "CTP-POI-v1.0",
+          "source_file_id": "ctp_poi_beijing_v1_0",
+          "snapshot_date": "2026-07-17",
+          "offline": true
+        },
+        "agent_selected": true,
+        "agent_decision_source": "attraction",
+        "agent_rank": 1
+      },
+      {
+        "poi_id": "bj002",
+        "name": "天坛公园",
+        "city": "北京",
+        "city_id": "beijing",
+        "category": "history_culture",
+        "tags": [
+          "公园",
+          "古建筑",
+          "世界遗产"
+        ],
+        "indoor_outdoor": "outdoor",
+        "outdoor_ratio": 0.9,
+        "weather_suitability": {
+          "sunny": "suitable",
+          "rain": "conditional",
+          "high_temperature": "conditional",
+          "low_temperature": "suitable"
+        },
+        "rain_suitability": "conditional",
+        "high_temperature_suitability": "conditional",
+        "low_temperature_suitability": "suitable",
+        "visit_intensity": "medium",
+        "walking_level": "medium",
+        "recommended_duration_hours": 2.5,
+        "ticket_price_cny": null,
+        "ticket_price_known": false,
+        "address": "天坛公园, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+        "transport_node_id": "bj002",
+        "evidence": {
+          "dataset_version": "CTP-POI-v1.0",
+          "source_file_id": "ctp_poi_beijing_v1_0",
+          "snapshot_date": "2026-07-17",
+          "offline": true
+        },
+        "agent_selected": true,
+        "agent_decision_source": "attraction",
+        "agent_rank": 2
+      }
+    ],
+    "trip_days": 3,
+    "daily_itinerary": [],
+    "budget": null,
+    "weather": null,
+    "weather_adjustments": [],
+    "execution_status": "completed",
+    "final_answer": "证据景点：故宫博物院(bj001)、天坛公园(bj002)",
+    "raw_output": {
+      "task_type": "attraction_recommendation",
+      "planned_agents": [
+        "attraction"
+      ],
+      "used_agents": [
+        "attraction"
+      ],
+      "planned_tools": [
+        "poi_search"
+      ],
+      "called_tools": [
+        {
+          "call_id": "attraction-poi_search-33ed1a",
+          "name": "poi_search",
+          "tool_name": "poi_search",
+          "agent_name": "attraction",
+          "agent": "attraction",
+          "component": "attraction",
+          "params": {
+            "city": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "people": "general",
+            "limit": 2
+          },
+          "duration": 13.0,
+          "duration_ms": 13.0,
+          "status": "completed",
+          "success": true,
+          "error": null,
+          "cache_hit": null,
+          "fallback_used": null
+        }
+      ],
+      "agent_outputs": {
+        "attraction": {
+          "schema_version": "ctp-research-agent-output-v1",
+          "agent_name": "attraction",
+          "status": "completed",
+          "success": true,
+          "reused": false,
+          "prompt_version": "ctp-research-agent-prompts-v1",
+          "evidence_tools": [
+            "poi_search"
+          ],
+          "upstream_agents": [],
+          "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"attraction\",\n  \"summary\": \"为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。\",\n  \"decisions\": {\n    \"selected_poi_ids\": [\n      \"bj001\",\n      \"bj002\"\n    ],\n    \"poi_evidence\": {\n      \"bj001\": {\n        \"poi_id\": \"bj001\",\n        \"name\": \"故宫博物院\",\n        \"category\": \"museum\",\n        \"indoor_outdoor\": \"mixed\",\n        \"outdoor_ratio\": 0.35,\n        \"rain_suitability\": \"suitable\",\n        \"recommended_duration_hours\": 4.0,\n        \"ticket_price_cny\": 60.0,\n        \"notes\": \"以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。\"\n      },\n      \"bj002\": {\n        \"poi_id\": \"bj002\",\n        \"name\": \"天坛公园\",\n        \"category\": \"history_culture\",\n        \"indoor_outdoor\": \"outdoor\",\n        \"outdoor_ratio\": 0.9,\n        \"rain_suitability\": \"conditional\",\n        \"recommended_duration_hours\": 2.5,\n        \"ticket_price_cny\": null,\n        \"notes\": \"主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。\"\n      }\n    }\n  },\n  \"risks\": [\n    {\n      \"poi_id\": \"bj002\",\n      \"risk\": \"主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。\"\n    },\n    {\n      \"general\": \"工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。\"\n    }\n  ],\n  \"confidence\": 0.6\n}",
+          "decision_schema_version": "ctp-research-agent-decision-v1",
+          "decision": {
+            "schema_version": "ctp-research-agent-decision-v1",
+            "agent_name": "attraction",
+            "summary": "为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。",
+            "decisions": {
+              "selected_poi_ids": [
+                "bj001",
+                "bj002"
+              ],
+              "poi_evidence": {
+                "bj001": {
+                  "poi_id": "bj001",
+                  "name": "故宫博物院",
+                  "category": "museum",
+                  "indoor_outdoor": "mixed",
+                  "outdoor_ratio": 0.35,
+                  "rain_suitability": "suitable",
+                  "recommended_duration_hours": 4.0,
+                  "ticket_price_cny": 60.0,
+                  "notes": "以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。"
+                },
+                "bj002": {
+                  "poi_id": "bj002",
+                  "name": "天坛公园",
+                  "category": "history_culture",
+                  "indoor_outdoor": "outdoor",
+                  "outdoor_ratio": 0.9,
+                  "rain_suitability": "conditional",
+                  "recommended_duration_hours": 2.5,
+                  "ticket_price_cny": null,
+                  "notes": "主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。"
+                }
+              }
+            },
+            "risks": [
+              {
+                "poi_id": "bj002",
+                "risk": "主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。"
+              },
+              {
+                "general": "工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。"
+              }
+            ],
+            "confidence": 0.6
+          },
+          "decision_source": "llm",
+          "decision_fallback_used": false,
+          "decision_normalizer_enabled": false,
+          "decision_normalizer_skipped": false,
+          "decision_parse_status": "passed",
+          "decision_validation_status": "passed",
+          "decision_errors": [],
+          "llm_decision_parse_status": "passed",
+          "llm_decision_validation_status": "passed",
+          "llm_decision_errors": [],
+          "usage": {
+            "prompt_tokens": 735,
+            "completion_tokens": 709,
+            "total_tokens": 1444
+          },
+          "prompt_tokens": 735,
+          "completion_tokens": 709,
+          "total_tokens": 1444,
+          "duration_ms": 10299.25,
+          "llm_call_count": 1
+        }
+      },
+      "attractions": [
+        {
+          "poi_id": "bj001",
+          "name": "故宫博物院",
+          "city": "北京",
+          "city_id": "beijing",
+          "category": "museum",
+          "tags": [
+            "博物馆",
+            "世界遗产",
+            "经典景点"
+          ],
+          "indoor_outdoor": "mixed",
+          "outdoor_ratio": 0.35,
+          "weather_suitability": {
+            "sunny": "suitable",
+            "rain": "suitable",
+            "high_temperature": "conditional",
+            "low_temperature": "suitable"
+          },
+          "rain_suitability": "suitable",
+          "high_temperature_suitability": "conditional",
+          "low_temperature_suitability": "suitable",
+          "visit_intensity": "high",
+          "walking_level": "high",
+          "recommended_duration_hours": 4.0,
+          "ticket_price_cny": 60.0,
+          "ticket_price_known": true,
+          "address": "故宫博物院, 4号, 景山前街, 智德社区, 东华门街道, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+          "transport_node_id": "bj001",
+          "evidence": {
+            "dataset_version": "CTP-POI-v1.0",
+            "source_file_id": "ctp_poi_beijing_v1_0",
+            "snapshot_date": "2026-07-17",
+            "offline": true
+          },
+          "agent_selected": true,
+          "agent_decision_source": "attraction",
+          "agent_rank": 1
+        },
+        {
+          "poi_id": "bj002",
+          "name": "天坛公园",
+          "city": "北京",
+          "city_id": "beijing",
+          "category": "history_culture",
+          "tags": [
+            "公园",
+            "古建筑",
+            "世界遗产"
+          ],
+          "indoor_outdoor": "outdoor",
+          "outdoor_ratio": 0.9,
+          "weather_suitability": {
+            "sunny": "suitable",
+            "rain": "conditional",
+            "high_temperature": "conditional",
+            "low_temperature": "suitable"
+          },
+          "rain_suitability": "conditional",
+          "high_temperature_suitability": "conditional",
+          "low_temperature_suitability": "suitable",
+          "visit_intensity": "medium",
+          "walking_level": "medium",
+          "recommended_duration_hours": 2.5,
+          "ticket_price_cny": null,
+          "ticket_price_known": false,
+          "address": "天坛公园, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+          "transport_node_id": "bj002",
+          "evidence": {
+            "dataset_version": "CTP-POI-v1.0",
+            "source_file_id": "ctp_poi_beijing_v1_0",
+            "snapshot_date": "2026-07-17",
+            "offline": true
+          },
+          "agent_selected": true,
+          "agent_decision_source": "attraction",
+          "agent_rank": 2
+        }
+      ],
+      "trip_days": 3,
+      "daily_itinerary": [],
+      "budget": null,
+      "weather": null,
+      "weather_adjustments": [],
+      "execution_status": "completed",
+      "final_answer": "证据景点：故宫博物院(bj001)、天坛公园(bj002)",
+      "tool_results": {
+        "poi_search": {
+          "schema_version": "research_tool_result_v1",
+          "tool_contract_version": "ctp-research-tools-v1.0",
+          "tool_name": "poi_search",
+          "status": "success",
+          "success": true,
+          "input": {
+            "city": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "people": "general",
+            "limit": 2
+          },
+          "data": {
+            "city": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "people": "general",
+            "attractions": [
+              {
+                "poi_id": "bj001",
+                "name": "故宫博物院",
+                "city": "北京",
+                "city_id": "beijing",
+                "category": "museum",
+                "tags": [
+                  "博物馆",
+                  "世界遗产",
+                  "经典景点"
+                ],
+                "indoor_outdoor": "mixed",
+                "outdoor_ratio": 0.35,
+                "weather_suitability": {
+                  "sunny": "suitable",
+                  "rain": "suitable",
+                  "high_temperature": "conditional",
+                  "low_temperature": "suitable"
+                },
+                "rain_suitability": "suitable",
+                "high_temperature_suitability": "conditional",
+                "low_temperature_suitability": "suitable",
+                "visit_intensity": "high",
+                "walking_level": "high",
+                "recommended_duration_hours": 4.0,
+                "ticket_price_cny": 60.0,
+                "ticket_price_known": true,
+                "address": "故宫博物院, 4号, 景山前街, 智德社区, 东华门街道, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+                "transport_node_id": "bj001",
+                "evidence": {
+                  "dataset_version": "CTP-POI-v1.0",
+                  "source_file_id": "ctp_poi_beijing_v1_0",
+                  "snapshot_date": "2026-07-17",
+                  "offline": true
+                }
+              },
+              {
+                "poi_id": "bj002",
+                "name": "天坛公园",
+                "city": "北京",
+                "city_id": "beijing",
+                "category": "history_culture",
+                "tags": [
+                  "公园",
+                  "古建筑",
+                  "世界遗产"
+                ],
+                "indoor_outdoor": "outdoor",
+                "outdoor_ratio": 0.9,
+                "weather_suitability": {
+                  "sunny": "suitable",
+                  "rain": "conditional",
+                  "high_temperature": "conditional",
+                  "low_temperature": "suitable"
+                },
+                "rain_suitability": "conditional",
+                "high_temperature_suitability": "conditional",
+                "low_temperature_suitability": "suitable",
+                "visit_intensity": "medium",
+                "walking_level": "medium",
+                "recommended_duration_hours": 2.5,
+                "ticket_price_cny": null,
+                "ticket_price_known": false,
+                "address": "天坛公园, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+                "transport_node_id": "bj002",
+                "evidence": {
+                  "dataset_version": "CTP-POI-v1.0",
+                  "source_file_id": "ctp_poi_beijing_v1_0",
+                  "snapshot_date": "2026-07-17",
+                  "offline": true
+                }
+              }
+            ]
+          },
+          "error": null,
+          "metadata": {
+            "offline": true,
+            "source_mode": "frozen_offline",
+            "real_time_api_allowed": false,
+            "poi_dataset_versions": [
+              "CTP-POI-v1.0"
+            ],
+            "source_file_ids": [
+              "ctp_poi_beijing_v1_0"
+            ],
+            "record_count": 2
+          }
+        }
+      },
+      "metadata": {
+        "research_method": "adaptive_multi_agent",
+        "output_contract": "ctp-experiment-output-v1",
+        "generation_tool_contract": "ctp-research-tools-v1.0",
+        "method_input_schema_version": "ctp-method-input-v1",
+        "goal_state_slots": {
+          "destination": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "special_requirements": [
+            "indoor_preferred",
+            "avoidance_constraint"
+          ],
+          "weather_scenario": "rain"
+        },
+        "result_agents": [
+          "attraction"
+        ],
+        "agent_output_schema_version": "ctp-research-agent-output-v1",
+        "agent_decision_schema_version": "ctp-research-agent-decision-v1",
+        "agent_prompt_version": "ctp-research-agent-prompts-v1",
+        "agent_outputs": {
+          "attraction": {
+            "schema_version": "ctp-research-agent-output-v1",
+            "agent_name": "attraction",
+            "status": "completed",
+            "success": true,
+            "reused": false,
+            "prompt_version": "ctp-research-agent-prompts-v1",
+            "evidence_tools": [
+              "poi_search"
+            ],
+            "upstream_agents": [],
+            "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"attraction\",\n  \"summary\": \"为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。\",\n  \"decisions\": {\n    \"selected_poi_ids\": [\n      \"bj001\",\n      \"bj002\"\n    ],\n    \"poi_evidence\": {\n      \"bj001\": {\n        \"poi_id\": \"bj001\",\n        \"name\": \"故宫博物院\",\n        \"category\": \"museum\",\n        \"indoor_outdoor\": \"mixed\",\n        \"outdoor_ratio\": 0.35,\n        \"rain_suitability\": \"suitable\",\n        \"recommended_duration_hours\": 4.0,\n        \"ticket_price_cny\": 60.0,\n        \"notes\": \"以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。\"\n      },\n      \"bj002\": {\n        \"poi_id\": \"bj002\",\n        \"name\": \"天坛公园\",\n        \"category\": \"history_culture\",\n        \"indoor_outdoor\": \"outdoor\",\n        \"outdoor_ratio\": 0.9,\n        \"rain_suitability\": \"conditional\",\n        \"recommended_duration_hours\": 2.5,\n        \"ticket_price_cny\": null,\n        \"notes\": \"主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。\"\n      }\n    }\n  },\n  \"risks\": [\n    {\n      \"poi_id\": \"bj002\",\n      \"risk\": \"主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。\"\n    },\n    {\n      \"general\": \"工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。\"\n    }\n  ],\n  \"confidence\": 0.6\n}",
+            "decision_schema_version": "ctp-research-agent-decision-v1",
+            "decision": {
+              "schema_version": "ctp-research-agent-decision-v1",
+              "agent_name": "attraction",
+              "summary": "为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。",
+              "decisions": {
+                "selected_poi_ids": [
+                  "bj001",
+                  "bj002"
+                ],
+                "poi_evidence": {
+                  "bj001": {
+                    "poi_id": "bj001",
+                    "name": "故宫博物院",
+                    "category": "museum",
+                    "indoor_outdoor": "mixed",
+                    "outdoor_ratio": 0.35,
+                    "rain_suitability": "suitable",
+                    "recommended_duration_hours": 4.0,
+                    "ticket_price_cny": 60.0,
+                    "notes": "以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。"
+                  },
+                  "bj002": {
+                    "poi_id": "bj002",
+                    "name": "天坛公园",
+                    "category": "history_culture",
+                    "indoor_outdoor": "outdoor",
+                    "outdoor_ratio": 0.9,
+                    "rain_suitability": "conditional",
+                    "recommended_duration_hours": 2.5,
+                    "ticket_price_cny": null,
+                    "notes": "主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。"
+                  }
+                }
+              },
+              "risks": [
+                {
+                  "poi_id": "bj002",
+                  "risk": "主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。"
+                },
+                {
+                  "general": "工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。"
+                }
+              ],
+              "confidence": 0.6
+            },
+            "decision_source": "llm",
+            "decision_fallback_used": false,
+            "decision_normalizer_enabled": false,
+            "decision_normalizer_skipped": false,
+            "decision_parse_status": "passed",
+            "decision_validation_status": "passed",
+            "decision_errors": [],
+            "llm_decision_parse_status": "passed",
+            "llm_decision_validation_status": "passed",
+            "llm_decision_errors": [],
+            "usage": {
+              "prompt_tokens": 735,
+              "completion_tokens": 709,
+              "total_tokens": 1444
+            },
+            "prompt_tokens": 735,
+            "completion_tokens": 709,
+            "total_tokens": 1444,
+            "duration_ms": 10299.25,
+            "llm_call_count": 1
+          }
+        },
+        "agent_decision_audit": {
+          "attraction": {
+            "status": "completed",
+            "reused": false,
+            "decision_source": "llm",
+            "decision_fallback_used": false,
+            "decision_normalizer_enabled": false,
+            "decision_normalizer_skipped": false,
+            "decision_parse_status": "passed",
+            "decision_validation_status": "passed",
+            "llm_decision_error_count": 0,
+            "decision_error_count": 0,
+            "has_applicable_decision": true
+          }
+        },
+        "adaptive_scheduler": {
+          "name": "goal_state_scheduler",
+          "ticket": {
+            "schema_version": "ctp-goal-state-ticket-v1",
+            "task_type": "attraction_recommendation",
+            "current_slots": {
+              "destination": "beijing",
+              "preferences": [
+                "history_culture",
+                "indoor"
+              ],
+              "special_requirements": [
+                "indoor_preferred",
+                "avoidance_constraint"
+              ],
+              "weather_scenario": "rain"
+            },
+            "previous_slots": {},
+            "changed_slots": [
+              "destination",
+              "preferences",
+              "special_requirements",
+              "weather_scenario"
+            ],
+            "preserved_slots": [],
+            "missing_slots": [],
+            "required_capabilities": [
+              "poi_evidence"
+            ],
+            "dependency_policy": {},
+            "clarification_required": false,
+            "clarification_fields": [],
+            "goal_change_type": "new_request"
+          },
+          "decision": {
+            "schema_version": "ctp-scheduler-decision-v1",
+            "planned_agents": [
+              "attraction"
+            ],
+            "planned_tools": [
+              "poi_search"
+            ],
+            "reused_agents": [],
+            "invalidated_agents": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "decision_reasons": [
+              "single_capability_request"
+            ],
+            "reuse_validation": {}
+          },
+          "reuse_execution": {
+            "previous_state_provided": false,
+            "expected_reused_agents": [],
+            "reused_agent_results": [],
+            "missing_reused_agent_results": [],
+            "expected_reused_agent_count": 0,
+            "reused_agent_result_count": 0,
+            "missing_reused_agent_result_count": 0,
+            "expected_reused_tools": [],
+            "reused_tool_results": [],
+            "missing_reused_tool_results": [],
+            "expected_reused_tool_count": 0,
+            "reused_tool_result_count": 0,
+            "missing_reused_tool_result_count": 0,
+            "reuse_hit_rate": null,
+            "agent_reuse_hit_rate": null
+          },
+          "result_fingerprints": {
+            "attraction": {
+              "destination": "beijing",
+              "preferences": [
+                "history_culture",
+                "indoor"
+              ]
+            }
+          }
+        },
+        "scheduler": {
+          "name": "goal_state_scheduler",
+          "ticket": {
+            "schema_version": "ctp-goal-state-ticket-v1",
+            "task_type": "attraction_recommendation",
+            "current_slots": {
+              "destination": "beijing",
+              "preferences": [
+                "history_culture",
+                "indoor"
+              ],
+              "special_requirements": [
+                "indoor_preferred",
+                "avoidance_constraint"
+              ],
+              "weather_scenario": "rain"
+            },
+            "previous_slots": {},
+            "changed_slots": [
+              "destination",
+              "preferences",
+              "special_requirements",
+              "weather_scenario"
+            ],
+            "preserved_slots": [],
+            "missing_slots": [],
+            "required_capabilities": [
+              "poi_evidence"
+            ],
+            "dependency_policy": {},
+            "clarification_required": false,
+            "clarification_fields": [],
+            "goal_change_type": "new_request"
+          },
+          "decision": {
+            "schema_version": "ctp-scheduler-decision-v1",
+            "planned_agents": [
+              "attraction"
+            ],
+            "planned_tools": [
+              "poi_search"
+            ],
+            "reused_agents": [],
+            "invalidated_agents": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "decision_reasons": [
+              "single_capability_request"
+            ],
+            "reuse_validation": {}
+          },
+          "reuse_execution": {
+            "previous_state_provided": false,
+            "expected_reused_agents": [],
+            "reused_agent_results": [],
+            "missing_reused_agent_results": [],
+            "expected_reused_agent_count": 0,
+            "reused_agent_result_count": 0,
+            "missing_reused_agent_result_count": 0,
+            "expected_reused_tools": [],
+            "reused_tool_results": [],
+            "missing_reused_tool_results": [],
+            "expected_reused_tool_count": 0,
+            "reused_tool_result_count": 0,
+            "missing_reused_tool_result_count": 0,
+            "reuse_hit_rate": null,
+            "agent_reuse_hit_rate": null
+          },
+          "result_fingerprints": {
+            "attraction": {
+              "destination": "beijing",
+              "preferences": [
+                "history_culture",
+                "indoor"
+              ]
+            }
+          }
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        }
+      }
+    },
+    "tool_results": {
+      "poi_search": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "poi_search",
+        "status": "success",
+        "success": true,
+        "input": {
+          "city": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "people": "general",
+          "limit": 2
+        },
+        "data": {
+          "city": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "people": "general",
+          "attractions": [
+            {
+              "poi_id": "bj001",
+              "name": "故宫博物院",
+              "city": "北京",
+              "city_id": "beijing",
+              "category": "museum",
+              "tags": [
+                "博物馆",
+                "世界遗产",
+                "经典景点"
+              ],
+              "indoor_outdoor": "mixed",
+              "outdoor_ratio": 0.35,
+              "weather_suitability": {
+                "sunny": "suitable",
+                "rain": "suitable",
+                "high_temperature": "conditional",
+                "low_temperature": "suitable"
+              },
+              "rain_suitability": "suitable",
+              "high_temperature_suitability": "conditional",
+              "low_temperature_suitability": "suitable",
+              "visit_intensity": "high",
+              "walking_level": "high",
+              "recommended_duration_hours": 4.0,
+              "ticket_price_cny": 60.0,
+              "ticket_price_known": true,
+              "address": "故宫博物院, 4号, 景山前街, 智德社区, 东华门街道, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+              "transport_node_id": "bj001",
+              "evidence": {
+                "dataset_version": "CTP-POI-v1.0",
+                "source_file_id": "ctp_poi_beijing_v1_0",
+                "snapshot_date": "2026-07-17",
+                "offline": true
+              }
+            },
+            {
+              "poi_id": "bj002",
+              "name": "天坛公园",
+              "city": "北京",
+              "city_id": "beijing",
+              "category": "history_culture",
+              "tags": [
+                "公园",
+                "古建筑",
+                "世界遗产"
+              ],
+              "indoor_outdoor": "outdoor",
+              "outdoor_ratio": 0.9,
+              "weather_suitability": {
+                "sunny": "suitable",
+                "rain": "conditional",
+                "high_temperature": "conditional",
+                "low_temperature": "suitable"
+              },
+              "rain_suitability": "conditional",
+              "high_temperature_suitability": "conditional",
+              "low_temperature_suitability": "suitable",
+              "visit_intensity": "medium",
+              "walking_level": "medium",
+              "recommended_duration_hours": 2.5,
+              "ticket_price_cny": null,
+              "ticket_price_known": false,
+              "address": "天坛公园, 首都功能核心区, 东城区, 北京市, 100010, 中国",
+              "transport_node_id": "bj002",
+              "evidence": {
+                "dataset_version": "CTP-POI-v1.0",
+                "source_file_id": "ctp_poi_beijing_v1_0",
+                "snapshot_date": "2026-07-17",
+                "offline": true
+              }
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "frozen_offline",
+          "real_time_api_allowed": false,
+          "poi_dataset_versions": [
+            "CTP-POI-v1.0"
+          ],
+          "source_file_ids": [
+            "ctp_poi_beijing_v1_0"
+          ],
+          "record_count": 2
+        }
+      }
+    },
+    "metadata": {
+      "research_method": "adaptive_multi_agent",
+      "output_contract": "ctp-experiment-output-v1",
+      "generation_tool_contract": "ctp-research-tools-v1.0",
+      "method_input_schema_version": "ctp-method-input-v1",
+      "goal_state_slots": {
+        "destination": "beijing",
+        "preferences": [
+          "history_culture",
+          "indoor"
+        ],
+        "special_requirements": [
+          "indoor_preferred",
+          "avoidance_constraint"
+        ],
+        "weather_scenario": "rain"
+      },
+      "result_agents": [
+        "attraction"
+      ],
+      "agent_output_schema_version": "ctp-research-agent-output-v1",
+      "agent_decision_schema_version": "ctp-research-agent-decision-v1",
+      "agent_prompt_version": "ctp-research-agent-prompts-v1",
+      "agent_outputs": {
+        "attraction": {
+          "schema_version": "ctp-research-agent-output-v1",
+          "agent_name": "attraction",
+          "status": "completed",
+          "success": true,
+          "reused": false,
+          "prompt_version": "ctp-research-agent-prompts-v1",
+          "evidence_tools": [
+            "poi_search"
+          ],
+          "upstream_agents": [],
+          "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"attraction\",\n  \"summary\": \"为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。\",\n  \"decisions\": {\n    \"selected_poi_ids\": [\n      \"bj001\",\n      \"bj002\"\n    ],\n    \"poi_evidence\": {\n      \"bj001\": {\n        \"poi_id\": \"bj001\",\n        \"name\": \"故宫博物院\",\n        \"category\": \"museum\",\n        \"indoor_outdoor\": \"mixed\",\n        \"outdoor_ratio\": 0.35,\n        \"rain_suitability\": \"suitable\",\n        \"recommended_duration_hours\": 4.0,\n        \"ticket_price_cny\": 60.0,\n        \"notes\": \"以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。\"\n      },\n      \"bj002\": {\n        \"poi_id\": \"bj002\",\n        \"name\": \"天坛公园\",\n        \"category\": \"history_culture\",\n        \"indoor_outdoor\": \"outdoor\",\n        \"outdoor_ratio\": 0.9,\n        \"rain_suitability\": \"conditional\",\n        \"recommended_duration_hours\": 2.5,\n        \"ticket_price_cny\": null,\n        \"notes\": \"主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。\"\n      }\n    }\n  },\n  \"risks\": [\n    {\n      \"poi_id\": \"bj002\",\n      \"risk\": \"主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。\"\n    },\n    {\n      \"general\": \"工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。\"\n    }\n  ],\n  \"confidence\": 0.6\n}",
+          "decision_schema_version": "ctp-research-agent-decision-v1",
+          "decision": {
+            "schema_version": "ctp-research-agent-decision-v1",
+            "agent_name": "attraction",
+            "summary": "为北京在下雨天气提供两处室内或以室内为主的备选景点。基于提供的离线 POI 搜索结果，仅有两条记录：故宫博物院（bj001，室内/室外混合，以室内参观为主，雨天适合）和天坛公园（bj002，主要为室外，雨天适合性为“有条件”）。根据用户要求仅提供室内或博物馆类景点，天坛不符合室内优先条件，因此仅故宫可被视为完全符合。因为工具返回限制为两条且必须选出两个备选景点，第二项将以证据标注为不完全符合（室外占比高，雨天适宜性为“conditional”），并明确风险与限制。",
+            "decisions": {
+              "selected_poi_ids": [
+                "bj001",
+                "bj002"
+              ],
+              "poi_evidence": {
+                "bj001": {
+                  "poi_id": "bj001",
+                  "name": "故宫博物院",
+                  "category": "museum",
+                  "indoor_outdoor": "mixed",
+                  "outdoor_ratio": 0.35,
+                  "rain_suitability": "suitable",
+                  "recommended_duration_hours": 4.0,
+                  "ticket_price_cny": 60.0,
+                  "notes": "以室内展厅为主的博物馆，工具数据明确标注雨天适合，是符合“室内或博物馆类备选景点”的首选。"
+                },
+                "bj002": {
+                  "poi_id": "bj002",
+                  "name": "天坛公园",
+                  "category": "history_culture",
+                  "indoor_outdoor": "outdoor",
+                  "outdoor_ratio": 0.9,
+                  "rain_suitability": "conditional",
+                  "recommended_duration_hours": 2.5,
+                  "ticket_price_cny": null,
+                  "notes": "主要为室外景点，雨天适宜性为“conditional”。不完全符合用户要求的“室内或博物馆类”，已包括仅为应工具返回限制而提供，并在风险中说明限制。"
+                }
+              }
+            },
+            "risks": [
+              {
+                "poi_id": "bj002",
+                "risk": "主要为室外景点，雨天访问体验可能受影响（淋雨、道路湿滑、部分景点关闭或观赏受限）。工具数据将其雨天适宜性标为“conditional”，说明需额外确认是否有室内替代参观点或临时防雨安排。"
+              },
+              {
+                "general": "工具证据集仅包含两条 POI 记录。用户要求仅室内/博物馆类，但数据源有限，第二项并非严格室内。建议如果需要严格满足“仅室内”条件，应允许查询更多 POI 数据或放宽工具限制。"
+              }
+            ],
+            "confidence": 0.6
+          },
+          "decision_source": "llm",
+          "decision_fallback_used": false,
+          "decision_normalizer_enabled": false,
+          "decision_normalizer_skipped": false,
+          "decision_parse_status": "passed",
+          "decision_validation_status": "passed",
+          "decision_errors": [],
+          "llm_decision_parse_status": "passed",
+          "llm_decision_validation_status": "passed",
+          "llm_decision_errors": [],
+          "usage": {
+            "prompt_tokens": 735,
+            "completion_tokens": 709,
+            "total_tokens": 1444
+          },
+          "prompt_tokens": 735,
+          "completion_tokens": 709,
+          "total_tokens": 1444,
+          "duration_ms": 10299.25,
+          "llm_call_count": 1
+        }
+      },
+      "agent_decision_audit": {
+        "attraction": {
+          "status": "completed",
+          "reused": false,
+          "decision_source": "llm",
+          "decision_fallback_used": false,
+          "decision_normalizer_enabled": false,
+          "decision_normalizer_skipped": false,
+          "decision_parse_status": "passed",
+          "decision_validation_status": "passed",
+          "llm_decision_error_count": 0,
+          "decision_error_count": 0,
+          "has_applicable_decision": true
+        }
+      },
+      "adaptive_scheduler": {
+        "name": "goal_state_scheduler",
+        "ticket": {
+          "schema_version": "ctp-goal-state-ticket-v1",
+          "task_type": "attraction_recommendation",
+          "current_slots": {
+            "destination": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "special_requirements": [
+              "indoor_preferred",
+              "avoidance_constraint"
+            ],
+            "weather_scenario": "rain"
+          },
+          "previous_slots": {},
+          "changed_slots": [
+            "destination",
+            "preferences",
+            "special_requirements",
+            "weather_scenario"
+          ],
+          "preserved_slots": [],
+          "missing_slots": [],
+          "required_capabilities": [
+            "poi_evidence"
+          ],
+          "dependency_policy": {},
+          "clarification_required": false,
+          "clarification_fields": [],
+          "goal_change_type": "new_request"
+        },
+        "decision": {
+          "schema_version": "ctp-scheduler-decision-v1",
+          "planned_agents": [
+            "attraction"
+          ],
+          "planned_tools": [
+            "poi_search"
+          ],
+          "reused_agents": [],
+          "invalidated_agents": [],
+          "clarification_required": false,
+          "clarification_fields": [],
+          "decision_reasons": [
+            "single_capability_request"
+          ],
+          "reuse_validation": {}
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        },
+        "result_fingerprints": {
+          "attraction": {
+            "destination": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ]
+          }
+        }
+      },
+      "scheduler": {
+        "name": "goal_state_scheduler",
+        "ticket": {
+          "schema_version": "ctp-goal-state-ticket-v1",
+          "task_type": "attraction_recommendation",
+          "current_slots": {
+            "destination": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "special_requirements": [
+              "indoor_preferred",
+              "avoidance_constraint"
+            ],
+            "weather_scenario": "rain"
+          },
+          "previous_slots": {},
+          "changed_slots": [
+            "destination",
+            "preferences",
+            "special_requirements",
+            "weather_scenario"
+          ],
+          "preserved_slots": [],
+          "missing_slots": [],
+          "required_capabilities": [
+            "poi_evidence"
+          ],
+          "dependency_policy": {},
+          "clarification_required": false,
+          "clarification_fields": [],
+          "goal_change_type": "new_request"
+        },
+        "decision": {
+          "schema_version": "ctp-scheduler-decision-v1",
+          "planned_agents": [
+            "attraction"
+          ],
+          "planned_tools": [
+            "poi_search"
+          ],
+          "reused_agents": [],
+          "invalidated_agents": [],
+          "clarification_required": false,
+          "clarification_fields": [],
+          "decision_reasons": [
+            "single_capability_request"
+          ],
+          "reuse_validation": {}
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        },
+        "result_fingerprints": {
+          "attraction": {
+            "destination": "beijing",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ]
+          }
+        }
+      },
+      "reuse_execution": {
+        "previous_state_provided": false,
+        "expected_reused_agents": [],
+        "reused_agent_results": [],
+        "missing_reused_agent_results": [],
+        "expected_reused_agent_count": 0,
+        "reused_agent_result_count": 0,
+        "missing_reused_agent_result_count": 0,
+        "expected_reused_tools": [],
+        "reused_tool_results": [],
+        "missing_reused_tool_results": [],
+        "expected_reused_tool_count": 0,
+        "reused_tool_result_count": 0,
+        "missing_reused_tool_result_count": 0,
+        "reuse_hit_rate": null,
+        "agent_reuse_hit_rate": null
+      }
+    }
+  },
+  "latency": 10736.02,
+  "latency_ms": 10736.02,
+  "ttft_ms": null,
+  "trace": {
+    "schema_version": "1.8",
+    "created_at": "2026-08-03T14:14:23.588327+00:00",
+    "request_id": "ctp_dev_006_beijing_indoor_attractions_adaptive_multi_agent_7ccdcfa1",
+    "session_id": "exp-ctp_dev_006_beijing_indoor_attractions-adaptive_multi_agent-run-day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST-r0",
+    "case_id": "ctp_dev_006_beijing_indoor_attractions",
+    "run_id": "day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST",
+    "experiment_case_id": "ctp_dev_006_beijing_indoor_attractions",
+    "experiment_group": null,
+    "repeat_index": 0,
+    "system_variant": "adaptive_multi_agent",
+    "method": "adaptive_multi_agent",
+    "evaluation_mode": "end_to_end",
+    "model_config_name": "day7-dev-real-m3-no-normalizer",
+    "input_hash": "db179588ca8bb141130e79b3bc14e951ba8be7c0dcc769ddc26fbafc8f4e42e2",
+    "user_message_hash": "db179588ca8bb141130e79b3bc14e951ba8be7c0dcc769ddc26fbafc8f4e42e2",
+    "user_message": null,
+    "result_hash": "6aadb861579e45cacd01d0f263cd38048e80e4f5e459b0e9d4b0d3203acb8dea",
+    "offline_data": {
+      "schema_version": "fixed_data_manifest_v2",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+      "city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "snapshot_dirs": [
+        "pois",
+        "weather",
+        "restaurants",
+        "accommodation",
+        "transport"
+      ],
+      "file_count": 25,
+      "expected_file_count": 25,
+      "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "expected_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "missing_files": [],
+      "files": [
+        {
+          "kind": "accommodation",
+          "city_id": "beijing",
+          "path": "data/accommodation/beijing.json",
+          "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "guilin",
+          "path": "data/accommodation/guilin.json",
+          "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "hangzhou",
+          "path": "data/accommodation/hangzhou.json",
+          "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "shenzhen",
+          "path": "data/accommodation/shenzhen.json",
+          "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "xian",
+          "path": "data/accommodation/xian.json",
+          "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "beijing",
+          "path": "data/pois/beijing.json",
+          "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "guilin",
+          "path": "data/pois/guilin.json",
+          "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "hangzhou",
+          "path": "data/pois/hangzhou.json",
+          "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "shenzhen",
+          "path": "data/pois/shenzhen.json",
+          "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "xian",
+          "path": "data/pois/xian.json",
+          "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "beijing",
+          "path": "data/restaurants/beijing.json",
+          "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "guilin",
+          "path": "data/restaurants/guilin.json",
+          "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "hangzhou",
+          "path": "data/restaurants/hangzhou.json",
+          "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "shenzhen",
+          "path": "data/restaurants/shenzhen.json",
+          "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "xian",
+          "path": "data/restaurants/xian.json",
+          "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "beijing",
+          "path": "data/transport/beijing.json",
+          "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "guilin",
+          "path": "data/transport/guilin.json",
+          "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "hangzhou",
+          "path": "data/transport/hangzhou.json",
+          "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "shenzhen",
+          "path": "data/transport/shenzhen.json",
+          "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "xian",
+          "path": "data/transport/xian.json",
+          "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "beijing",
+          "path": "data/weather/beijing.json",
+          "sha256": "a6b32944050cc2a638d09a67be8d7747ca2b0153527f856d85b4813651c91d0a",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "guilin",
+          "path": "data/weather/guilin.json",
+          "sha256": "450d86b2f7121f970e7c48e5a38ad113c8e4289c0356f448221ce1d63d412f94",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "hangzhou",
+          "path": "data/weather/hangzhou.json",
+          "sha256": "e4ea7c0b10b350cd4c7ba739746e0634d0aa86d77378d858104c0f789f6f64fd",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "shenzhen",
+          "path": "data/weather/shenzhen.json",
+          "sha256": "533e74a25a72fdc58a0f31746f10dd405611b3ab007f18d0319566deaec5e281",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "xian",
+          "path": "data/weather/xian.json",
+          "sha256": "7d9e244e1bd64d129cb75b641a09adc8521d9ce082b4a28de7bbb2aadb92cef4",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        }
+      ]
+    },
+    "status": "completed",
+    "mode": "planning",
+    "intent": "general_chat",
+    "route": "GENERAL_CHAT",
+    "extracted_info": {},
+    "constraints": [],
+    "missing_fields": [],
+    "planned_agents": [
+      "attraction"
+    ],
+    "executed_agents": [
+      "attraction"
+    ],
+    "planned_tools": [
+      "poi_search"
+    ],
+    "executed_tools": [
+      "poi_search"
+    ],
+    "selected_agents": [
+      "attraction"
+    ],
+    "selected_tools": [
+      "poi_search"
+    ],
+    "goal": {
+      "intent": "general_chat",
+      "route": "GENERAL_CHAT",
+      "slots": {},
+      "constraints": [],
+      "planned_agents": [
+        "attraction"
+      ],
+      "selected_agents": [
+        "attraction"
+      ]
+    },
+    "stage_timings": {},
+    "agent_timings": {},
+    "agent_runs": [
+      {
+        "agent_run_id": "9c2c99806fc34455aac44b0e1fb546c7",
+        "agent_name": "attraction",
+        "started_at": "2026-08-03T14:14:23.588327+00:00",
+        "completed_at": "2026-08-03T14:14:34.216755+00:00",
+        "duration_ms": 10628.0,
+        "status": "completed",
+        "tokens": 1444,
+        "tool_count": 1,
+        "error": null,
+        "usage": {
+          "prompt_tokens": 735,
+          "completion_tokens": 709,
+          "total_tokens": 1444
+        },
+        "prompt_tokens": 735,
+        "completion_tokens": 709,
+        "total_tokens": 1444,
+        "llm_call_count": 1
+      }
+    ],
+    "llm_calls": [
+      {
+        "call_id": "cc1f4dafec734548977140857e23d2a4",
+        "id": "cc1f4dafec734548977140857e23d2a4",
+        "agent_name": "attraction",
+        "component": "attraction",
+        "provider": "openrouter",
+        "model": "gpt-5-mini",
+        "streaming": false,
+        "duration_ms": 10297.72,
+        "ttft_ms": null,
+        "tokens": {
+          "prompt_tokens": 735,
+          "completion_tokens": 709,
+          "total_tokens": 1444
+        },
+        "usage": {
+          "prompt_tokens": 735,
+          "completion_tokens": 709,
+          "total_tokens": 1444
+        },
+        "cached_source_usage": null,
+        "chunk_count": null,
+        "mock_used": false,
+        "fallback_used": false,
+        "cache_hit": false,
+        "mock": false,
+        "fallback": false,
+        "success": true,
+        "error": null,
+        "message_count": 2,
+        "message_chars": 2507,
+        "tool_count": 0,
+        "prompt_version": "ctp-research-agent-prompts-v1",
+        "prompt_hash": "7eaae97df23f7920ef81c34a22908a68115eb83d34c835a0a622cf075f68cf37",
+        "request_options": {
+          "schema_version": "ctp-llm-runtime-options-v1",
+          "model": "gpt-5-mini",
+          "base_url": "https://api.vectorengine.ai/v1",
+          "temperature": 0.0,
+          "max_tokens": 4096,
+          "timeout_seconds": 60,
+          "reasoning_effort": "minimal",
+          "tool_count": 0,
+          "tool_choice": null,
+          "streaming": false,
+          "sdk_max_retries": 0
+        },
+        "retry": {
+          "schema_version": "ctp-llm-retry-audit-v1",
+          "max_attempts": 3,
+          "attempt_count": 1,
+          "retry_count": 0,
+          "error_count": 0,
+          "succeeded": true,
+          "attempts": [
+            {
+              "attempt_index": 1,
+              "success": true,
+              "duration_ms": 10297.43,
+              "finish_reason": "stop",
+              "output_chars": 1508,
+              "usage": {
+                "prompt_tokens": 735,
+                "completion_tokens": 709,
+                "total_tokens": 1444,
+                "completion_tokens_details": "[REDACTED]",
+                "prompt_tokens_details": "[REDACTED]"
+              }
+            }
+          ]
+        },
+        "cost_schema_version": "ctp-llm-costing-v1",
+        "cost_currency": "USD",
+        "estimated_cost": 0.00160175,
+        "standardized_estimated_cost": 0.00160175,
+        "estimated_cost_cny": null,
+        "standardized_estimated_cost_cny": null,
+        "actual_cost": null,
+        "actual_cost_status": "not_reported_by_provider",
+        "input_token_unit_price": 0.00025,
+        "output_token_unit_price": 0.002,
+        "price_unit": "per_1k_tokens",
+        "price_snapshot_date": "2026-08-01",
+        "price_source_url": "https://api.vectorengine.ai/pricing",
+        "pricing_mode": "frozen_default_token_estimate",
+        "price_snapshot": {
+          "schema_version": "ctp-llm-costing-v1",
+          "provider": "openrouter",
+          "model": "gpt-5-mini",
+          "price_snapshot_date": "2026-08-01",
+          "price_source_url": "https://api.vectorengine.ai/pricing",
+          "currency": "USD",
+          "price_unit": "per_1k_tokens",
+          "input_token_unit_price": 0.00025,
+          "output_token_unit_price": 0.002,
+          "pricing_mode": "frozen_default_token_estimate"
+        },
+        "temperature": 0.0,
+        "max_tokens": 4096,
+        "timeout_seconds": 60,
+        "reasoning_effort": "minimal",
+        "retry_max_attempts": 3,
+        "retry_attempt_count": 1,
+        "retry_count": 0,
+        "retry_error_count": 0,
+        "output_chars": 1508
+      }
+    ],
+    "tool_calls": [
+      {
+        "call_id": "attraction-poi_search-33ed1a",
+        "name": "poi_search",
+        "tool_name": "poi_search",
+        "agent_name": "attraction",
+        "agent": "attraction",
+        "component": "attraction",
+        "params": {
+          "city": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "people": "general",
+          "limit": 2
+        },
+        "duration": 13.0,
+        "duration_ms": 13.0,
+        "status": "completed",
+        "success": true,
+        "error": null,
+        "cache_hit": null,
+        "fallback_used": null
+      }
+    ],
+    "api_calls": [],
+    "adaptive_scheduler": {
+      "name": "goal_state_scheduler",
+      "ticket": {
+        "schema_version": "ctp-goal-state-ticket-v1",
+        "task_type": "attraction_recommendation",
+        "current_slots": {
+          "destination": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "special_requirements": [
+            "indoor_preferred",
+            "avoidance_constraint"
+          ],
+          "weather_scenario": "rain"
+        },
+        "previous_slots": {},
+        "changed_slots": [
+          "destination",
+          "preferences",
+          "special_requirements",
+          "weather_scenario"
+        ],
+        "preserved_slots": [],
+        "missing_slots": [],
+        "required_capabilities": [
+          "poi_evidence"
+        ],
+        "dependency_policy": {},
+        "clarification_required": false,
+        "clarification_fields": [],
+        "goal_change_type": "new_request"
+      },
+      "decision": {
+        "schema_version": "ctp-scheduler-decision-v1",
+        "planned_agents": [
+          "attraction"
+        ],
+        "planned_tools": [
+          "poi_search"
+        ],
+        "reused_agents": [],
+        "invalidated_agents": [],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "single_capability_request"
+        ],
+        "reuse_validation": {}
+      },
+      "reuse_execution": {
+        "previous_state_provided": false,
+        "expected_reused_agents": [],
+        "reused_agent_results": [],
+        "missing_reused_agent_results": [],
+        "expected_reused_agent_count": 0,
+        "reused_agent_result_count": 0,
+        "missing_reused_agent_result_count": 0,
+        "expected_reused_tools": [],
+        "reused_tool_results": [],
+        "missing_reused_tool_results": [],
+        "expected_reused_tool_count": 0,
+        "reused_tool_result_count": 0,
+        "missing_reused_tool_result_count": 0,
+        "reuse_hit_rate": null,
+        "agent_reuse_hit_rate": null
+      },
+      "result_fingerprints": {
+        "attraction": {
+          "destination": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ]
+        }
+      }
+    },
+    "scheduler": {
+      "name": "goal_state_scheduler",
+      "ticket": {
+        "schema_version": "ctp-goal-state-ticket-v1",
+        "task_type": "attraction_recommendation",
+        "current_slots": {
+          "destination": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "special_requirements": [
+            "indoor_preferred",
+            "avoidance_constraint"
+          ],
+          "weather_scenario": "rain"
+        },
+        "previous_slots": {},
+        "changed_slots": [
+          "destination",
+          "preferences",
+          "special_requirements",
+          "weather_scenario"
+        ],
+        "preserved_slots": [],
+        "missing_slots": [],
+        "required_capabilities": [
+          "poi_evidence"
+        ],
+        "dependency_policy": {},
+        "clarification_required": false,
+        "clarification_fields": [],
+        "goal_change_type": "new_request"
+      },
+      "decision": {
+        "schema_version": "ctp-scheduler-decision-v1",
+        "planned_agents": [
+          "attraction"
+        ],
+        "planned_tools": [
+          "poi_search"
+        ],
+        "reused_agents": [],
+        "invalidated_agents": [],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "single_capability_request"
+        ],
+        "reuse_validation": {}
+      },
+      "reuse_execution": {
+        "previous_state_provided": false,
+        "expected_reused_agents": [],
+        "reused_agent_results": [],
+        "missing_reused_agent_results": [],
+        "expected_reused_agent_count": 0,
+        "reused_agent_result_count": 0,
+        "missing_reused_agent_result_count": 0,
+        "expected_reused_tools": [],
+        "reused_tool_results": [],
+        "missing_reused_tool_results": [],
+        "expected_reused_tool_count": 0,
+        "reused_tool_result_count": 0,
+        "missing_reused_tool_result_count": 0,
+        "reuse_hit_rate": null,
+        "agent_reuse_hit_rate": null
+      },
+      "result_fingerprints": {
+        "attraction": {
+          "destination": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ]
+        }
+      }
+    },
+    "total_duration_ms": 10724.06,
+    "first_body_token_ms": null,
+    "first_token_ms": null,
+    "error": null,
+    "llm_call_count": 1,
+    "tool_call_count": 1,
+    "successful_tool_call_count": 1,
+    "failed_tool_call_count": 0,
+    "tool_call_success_rate": 1.0,
+    "planned_tool_count": 1,
+    "executed_tool_count": 1,
+    "selected_tool_count": 1,
+    "api_call_count": 0,
+    "agent_call_count": 1,
+    "failed_agent_count": 0,
+    "cache_hit_count": 0,
+    "fallback_count": 0,
+    "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\day7_m3_ablation\\day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST\\traces\\20260803T141434315496Z_ctp_dev_006_beijing_indoor_attractions_adaptive_multi_agent_7ccdcfa1_ce93edb1.jsonl"
+  },
+  "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\day7_m3_ablation\\day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST\\traces\\20260803T141434315496Z_ctp_dev_006_beijing_indoor_attractions_adaptive_multi_agent_7ccdcfa1_ce93edb1.jsonl",
+  "evaluation": {
+    "schema_version": "ctp-independent-evaluation-v1",
+    "catalog_id": "day5_independent_evaluator_rules",
+    "case_id": "ctp_dev_006_beijing_indoor_attractions",
+    "task_type": "attraction_recommendation",
+    "output_task_type": "attraction_recommendation",
+    "rules": [
+      {
+        "id": "G_SCHEMA_VALID",
+        "usage": "stsr_gate",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "schema_version": "ctp-experiment-output-v1",
+          "expected": "ctp-experiment-output-v1"
+        }
+      },
+      {
+        "id": "G_EXECUTION_STATUS_VALID",
+        "usage": "stsr_gate",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "execution_status": "completed",
+          "trace_status": "completed",
+          "failed_evidence": false,
+          "issues": []
+        }
+      },
+      {
+        "id": "G_FINAL_ANSWER_CONSISTENT",
+        "usage": "stsr_gate",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "issues": [],
+          "missing_pois": [],
+          "unselected_pois_mentioned": [],
+          "budget_total": null,
+          "weather_terms": [],
+          "missing_clarification_fields": []
+        }
+      },
+      {
+        "id": "G_TASK_TYPE_MATCH",
+        "usage": "stsr_gate",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "expected": "attraction_recommendation",
+          "actual": "attraction_recommendation"
+        }
+      },
+      {
+        "id": "H_TRIP_DAYS",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_ATTRACTION_COUNT_BOUNDS",
+        "usage": "hcsr",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "minimum": 2,
+          "maximum": 2,
+          "actual": 2
+        }
+      },
+      {
+        "id": "H_DAILY_LOAD_LIMIT",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_BUDGET_LIMIT",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_POI_GROUNDED",
+        "usage": "hcsr",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "details": {
+            "city_id": "beijing",
+            "attraction_count": 2,
+            "unresolved": []
+          }
+        }
+      },
+      {
+        "id": "H_NO_DUPLICATE_POIS",
+        "usage": "hcsr",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "attraction_count": 2,
+          "duplicates": []
+        }
+      },
+      {
+        "id": "H_MUST_INCLUDE_POIS",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {}
+      },
+      {
+        "id": "H_FORBIDDEN_POIS",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {}
+      },
+      {
+        "id": "H_RAIN_SUITABILITY",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_SENIOR_ACCESSIBILITY",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "details": {
+            "senior_request": false
+          }
+        }
+      },
+      {
+        "id": "H_WEATHER_ADJUSTMENT_REQUIRED",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_WEATHER_EVIDENCE",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_BUDGET_EVIDENCE",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_TOOL_EVIDENCE",
+        "usage": "hcsr",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "required_tools": [
+            "poi_search"
+          ],
+          "missing_or_failed": []
+        }
+      },
+      {
+        "id": "T_CLARIFICATION_MISSING_FIELDS",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_CLARIFICATION_NO_PREMATURE_PLAN",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_GENERAL_CHAT_NO_BUSINESS_EXECUTION",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_GENERAL_CHAT_NO_TRIP_ARTIFACT",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_ATTRACTION_SINGLE_SCOPE",
+        "usage": "stsr_gate",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "artifact_present": true,
+          "unrelated_tools": [],
+          "unrelated_agents": []
+        }
+      },
+      {
+        "id": "T_WEATHER_SINGLE_SCOPE",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_BUDGET_SINGLE_SCOPE",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_PARTIAL_REUSE_VALIDITY",
+        "usage": "agent_tool_metric",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "S_AGENT_SET_MATCH",
+        "usage": "agent_tool_metric",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "accepted": [
+            [
+              "attraction"
+            ]
+          ],
+          "actual": [
+            "attraction"
+          ]
+        }
+      },
+      {
+        "id": "S_TOOL_SET_MATCH",
+        "usage": "agent_tool_metric",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "accepted": [
+            [
+              "poi_search"
+            ]
+          ],
+          "actual": [
+            "poi_search"
+          ]
+        }
+      },
+      {
+        "id": "S_PLANNED_ACTUAL_AGENT_CONSISTENCY",
+        "usage": "agent_tool_metric",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "planned": [
+            "attraction"
+          ],
+          "actual": [
+            "attraction"
+          ]
+        }
+      },
+      {
+        "id": "S_PLANNED_ACTUAL_TOOL_CONSISTENCY",
+        "usage": "agent_tool_metric",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "planned": [
+            "poi_search"
+          ],
+          "actual": [
+            "poi_search"
+          ]
+        }
+      },
+      {
+        "id": "S_FORBIDDEN_GENERATION_TOOLS",
+        "usage": "agent_tool_metric",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {}
+      }
+    ],
+    "metrics": {
+      "stsr": true,
+      "stsr_gate_applicable_count": 5,
+      "stsr_gate_passed_count": 5,
+      "stsr_gate_failed_count": 0,
+      "evaluation_hcsr": 1.0,
+      "evaluation_hcsr_applicable_count": 4,
+      "evaluation_hcsr_passed_count": 4,
+      "evaluation_hcsr_failed_count": 0,
+      "evaluation_failed_rule_ids": [],
+      "evaluation_failed_rule_count": 0,
+      "agent_selection_precision": 1.0,
+      "agent_selection_recall": 1.0,
+      "agent_selection_f1": 1.0,
+      "agent_set_exact_match": true,
+      "necessary_agent_coverage": 1.0,
+      "extra_agent_count": 0,
+      "missing_agent_count": 0,
+      "duplicate_agent_count": 0,
+      "planned_actual_agent_consistency": 1.0,
+      "agent_execution_success_rate": 1.0,
+      "tool_selection_precision": 1.0,
+      "tool_selection_recall": 1.0,
+      "tool_selection_f1": 1.0,
+      "tool_set_exact_match": true,
+      "necessary_tool_coverage": 1.0,
+      "extra_tool_count": 0,
+      "missing_tool_count": 0,
+      "duplicate_tool_count": 0,
+      "forbidden_tool_call_count": 0,
+      "planned_actual_tool_consistency": 1.0,
+      "tool_call_success_rate": 1.0,
+      "tool_failure_count": 0,
+      "tool_failure_types": [],
+      "total_tokens": 1444.0,
+      "estimated_cost": 0.0016,
+      "standardized_estimated_cost": 0.0016,
+      "actual_cost": null,
+      "cost_per_success": 0.0016
+    },
+    "guards": [
+      "method_blind",
+      "no_llm_or_live_api",
+      "no_output_repair",
+      "structured_fields_only",
+      "append_only_evidence"
+    ]
+  },
+  "run_audit": {
+    "schema_version": "ctp-run-audit-v1",
+    "method": "adaptive_multi_agent",
+    "planned_agents": [
+      "attraction"
+    ],
+    "used_agents": [
+      "attraction"
+    ],
+    "executed_agents": [
+      "attraction"
+    ],
+    "planned_tools": [
+      "poi_search"
+    ],
+    "called_tools": [
+      "poi_search"
+    ],
+    "executed_tools": [
+      "poi_search"
+    ],
+    "cost": {
+      "estimated_cost": 0.0016,
+      "standardized_estimated_cost": 0.0016,
+      "actual_cost": null,
+      "actual_cost_available": false,
+      "actual_cost_statuses": [
+        "not_reported_by_provider"
+      ],
+      "price_snapshots": [
+        {
+          "schema_version": "ctp-llm-costing-v1",
+          "provider": "openrouter",
+          "model": "gpt-5-mini",
+          "price_snapshot_date": "2026-08-01",
+          "price_source_url": "https://api.vectorengine.ai/pricing",
+          "currency": "USD",
+          "price_unit": "per_1k_tokens",
+          "input_token_unit_price": 0.00025,
+          "output_token_unit_price": 0.002,
+          "pricing_mode": "frozen_default_token_estimate"
+        }
+      ]
+    },
+    "metrics": {
+      "planned_agent_count": 1,
+      "used_agent_count": 1,
+      "executed_agent_count": 1,
+      "agent_call_count": 1,
+      "successful_agent_call_count": 1,
+      "failed_agent_call_count": 0,
+      "duplicate_agent_call_count": 0,
+      "planned_executed_agent_coverage": 1.0,
+      "planned_actual_agent_consistency": 1.0,
+      "agent_execution_success_rate": 1.0,
+      "planned_tool_count": 1,
+      "called_tool_count": 1,
+      "executed_tool_count": 1,
+      "successful_tool_call_count": 1,
+      "failed_tool_call_count": 0,
+      "duplicate_tool_call_count": 0,
+      "planned_executed_tool_coverage": 1.0,
+      "planned_actual_tool_consistency": 1.0,
+      "tool_call_success_rate": 1.0,
+      "llm_call_count": 1,
+      "llm_retry_attempt_count": 1.0,
+      "llm_retry_count": 0.0,
+      "llm_retry_error_count": 0.0,
+      "agent_llm_call_count": 1,
+      "api_call_count": 0,
+      "prompt_tokens": 735.0,
+      "completion_tokens": 709.0,
+      "total_tokens": 1444.0,
+      "agent_prompt_tokens": 735.0,
+      "agent_completion_tokens": 709.0,
+      "agent_total_tokens": 1444.0,
+      "estimated_cost": 0.0016,
+      "standardized_estimated_cost": 0.0016,
+      "latency_ms": 10736.02,
+      "trace_total_duration_ms": 10724.06,
+      "llm_total_duration_ms": 10297.72,
+      "agent_total_duration_ms": 10628.0,
+      "tool_total_duration_ms": 13.0
+    }
+  },
+  "audit": {
+    "schema_version": "ctp-run-audit-v1",
+    "method": "adaptive_multi_agent",
+    "planned_agents": [
+      "attraction"
+    ],
+    "used_agents": [
+      "attraction"
+    ],
+    "executed_agents": [
+      "attraction"
+    ],
+    "planned_tools": [
+      "poi_search"
+    ],
+    "called_tools": [
+      "poi_search"
+    ],
+    "executed_tools": [
+      "poi_search"
+    ],
+    "cost": {
+      "estimated_cost": 0.0016,
+      "standardized_estimated_cost": 0.0016,
+      "actual_cost": null,
+      "actual_cost_available": false,
+      "actual_cost_statuses": [
+        "not_reported_by_provider"
+      ],
+      "price_snapshots": [
+        {
+          "schema_version": "ctp-llm-costing-v1",
+          "provider": "openrouter",
+          "model": "gpt-5-mini",
+          "price_snapshot_date": "2026-08-01",
+          "price_source_url": "https://api.vectorengine.ai/pricing",
+          "currency": "USD",
+          "price_unit": "per_1k_tokens",
+          "input_token_unit_price": 0.00025,
+          "output_token_unit_price": 0.002,
+          "pricing_mode": "frozen_default_token_estimate"
+        }
+      ]
+    },
+    "metrics": {
+      "planned_agent_count": 1,
+      "used_agent_count": 1,
+      "executed_agent_count": 1,
+      "agent_call_count": 1,
+      "successful_agent_call_count": 1,
+      "failed_agent_call_count": 0,
+      "duplicate_agent_call_count": 0,
+      "planned_executed_agent_coverage": 1.0,
+      "planned_actual_agent_consistency": 1.0,
+      "agent_execution_success_rate": 1.0,
+      "planned_tool_count": 1,
+      "called_tool_count": 1,
+      "executed_tool_count": 1,
+      "successful_tool_call_count": 1,
+      "failed_tool_call_count": 0,
+      "duplicate_tool_call_count": 0,
+      "planned_executed_tool_coverage": 1.0,
+      "planned_actual_tool_consistency": 1.0,
+      "tool_call_success_rate": 1.0,
+      "llm_call_count": 1,
+      "llm_retry_attempt_count": 1.0,
+      "llm_retry_count": 0.0,
+      "llm_retry_error_count": 0.0,
+      "agent_llm_call_count": 1,
+      "api_call_count": 0,
+      "prompt_tokens": 735.0,
+      "completion_tokens": 709.0,
+      "total_tokens": 1444.0,
+      "agent_prompt_tokens": 735.0,
+      "agent_completion_tokens": 709.0,
+      "agent_total_tokens": 1444.0,
+      "estimated_cost": 0.0016,
+      "standardized_estimated_cost": 0.0016,
+      "latency_ms": 10736.02,
+      "trace_total_duration_ms": 10724.06,
+      "llm_total_duration_ms": 10297.72,
+      "agent_total_duration_ms": 10628.0,
+      "tool_total_duration_ms": 13.0
+    }
+  },
+  "status": "completed",
+  "metrics": {
+    "expected_tools": [],
+    "selected_tools": [
+      "poi_search"
+    ],
+    "expected_tool_count": 0,
+    "correct_tool_count": null,
+    "tool_selection_accuracy": null,
+    "intent_correct": null,
+    "route_correct": null,
+    "agents_correct": null,
+    "constraint_report": {
+      "schema_version": "research_tool_result_v1",
+      "tool_contract_version": "ctp-research-tools-v1.0",
+      "tool_name": "constraint_checker",
+      "status": "success",
+      "success": true,
+      "input": {
+        "request": {
+          "destination": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "special_requirements": [
+            "indoor_preferred",
+            "avoidance_constraint"
+          ],
+          "weather_scenario": "rain",
+          "case_id": "ctp_dev_006_beijing_indoor_attractions",
+          "user_input": "北京如果遇到雨天，请只给我2个室内或博物馆类备选景点，不要行程和预算。",
+          "city": "beijing",
+          "budget": null
+        },
+        "constraints": {
+          "min_attractions": 2,
+          "max_attractions": 2
+        }
+      },
+      "data": {
+        "all_passed": true,
+        "applicable_count": 5,
+        "passed_count": 5,
+        "failed_count": 0,
+        "checks": [
+          {
+            "name": "trip_days",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "expected": null,
+              "actual": 0
+            }
+          },
+          {
+            "name": "budget_limit",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "limit": null,
+              "actual": null
+            }
+          },
+          {
+            "name": "weather_adjustment",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": false,
+              "adjustment_count": 0
+            }
+          },
+          {
+            "name": "min_attractions",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "minimum": 2,
+              "actual": 2
+            }
+          },
+          {
+            "name": "max_attractions",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "maximum": 2,
+              "actual": 2
+            }
+          },
+          {
+            "name": "poi_existence",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "city_id": "beijing",
+              "attraction_count": 2,
+              "unresolved": []
+            }
+          },
+          {
+            "name": "duplicate_attractions",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "duplicates": [],
+              "unique_count": 2,
+              "attraction_count": 2
+            }
+          },
+          {
+            "name": "must_include_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": []
+            }
+          },
+          {
+            "name": "forbidden_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "forbidden": []
+            }
+          },
+          {
+            "name": "rain_attraction_suitability",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "rain_detected": false
+            }
+          },
+          {
+            "name": "senior_accessibility",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "senior_request": false
+            }
+          },
+          {
+            "name": "tool_evidence",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "required": false,
+              "required_tools": [
+                "poi_search"
+              ],
+              "missing_or_failed": []
+            }
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "offline": true,
+        "source_mode": "deterministic_evaluator",
+        "real_time_api_allowed": false,
+        "contract": "ctp-research-tools-v1.0"
+      }
+    },
+    "hard_constraint_applicable_count": 5,
+    "hard_constraint_passed_count": 5,
+    "hard_constraint_failed_count": 0,
+    "hard_constraints_all_satisfied": true,
+    "hcsr": 1.0,
+    "m3_scheduler_name": "goal_state_scheduler",
+    "m3_task_type": "attraction_recommendation",
+    "m3_clarification_required": false,
+    "m3_clarification_fields": [],
+    "m3_clarification_field_count": 0,
+    "m3_decision_reasons": [
+      "single_capability_request"
+    ],
+    "m3_planned_agents": [
+      "attraction"
+    ],
+    "m3_reused_agents": [],
+    "m3_invalidated_agents": [],
+    "m3_planned_tools": [
+      "poi_search"
+    ],
+    "m3_expected_reused_tools": [],
+    "m3_reused_tool_results": [],
+    "m3_missing_reused_tool_results": [],
+    "m3_previous_state_provided": false,
+    "m3_m2_reference_agent_count": 4,
+    "m3_m2_reference_tool_count": 3,
+    "m3_planned_agent_count": 1,
+    "m3_executed_agent_count": 1,
+    "m3_reused_agent_count": 0,
+    "m3_invalidated_agent_count": 0,
+    "m3_planned_tool_count": 1,
+    "m3_executed_tool_count": 1,
+    "m3_expected_reused_tool_count": 0,
+    "m3_reused_tool_result_count": 0,
+    "m3_missing_reused_tool_result_count": 0,
+    "m3_agent_reuse_rate": 0.0,
+    "m3_tool_reuse_rate": 0.0,
+    "m3_reuse_hit_rate": null,
+    "m3_agent_call_savings_vs_m2": 3,
+    "m3_tool_call_savings_vs_m2": 2,
+    "m3_agent_call_reduction_rate_vs_m2": 0.75,
+    "m3_tool_call_reduction_rate_vs_m2": 0.6667,
+    "stsr": true,
+    "stsr_gate_applicable_count": 5,
+    "stsr_gate_passed_count": 5,
+    "stsr_gate_failed_count": 0,
+    "evaluation_hcsr": 1.0,
+    "evaluation_hcsr_applicable_count": 4,
+    "evaluation_hcsr_passed_count": 4,
+    "evaluation_hcsr_failed_count": 0,
+    "evaluation_failed_rule_ids": [],
+    "evaluation_failed_rule_count": 0,
+    "agent_selection_precision": 1.0,
+    "agent_selection_recall": 1.0,
+    "agent_selection_f1": 1.0,
+    "agent_set_exact_match": true,
+    "necessary_agent_coverage": 1.0,
+    "extra_agent_count": 0,
+    "missing_agent_count": 0,
+    "duplicate_agent_count": 0,
+    "planned_actual_agent_consistency": 1.0,
+    "agent_execution_success_rate": 1.0,
+    "tool_selection_precision": 1.0,
+    "tool_selection_recall": 1.0,
+    "tool_selection_f1": 1.0,
+    "tool_set_exact_match": true,
+    "necessary_tool_coverage": 1.0,
+    "extra_tool_count": 0,
+    "missing_tool_count": 0,
+    "duplicate_tool_count": 0,
+    "forbidden_tool_call_count": 0,
+    "planned_actual_tool_consistency": 1.0,
+    "tool_call_success_rate": 1.0,
+    "tool_failure_count": 0,
+    "tool_failure_types": [],
+    "total_tokens": 1444.0,
+    "estimated_cost": 0.0016,
+    "standardized_estimated_cost": 0.0016,
+    "actual_cost": null,
+    "cost_per_success": 0.0016,
+    "planned_agent_count": 1,
+    "used_agent_count": 1,
+    "executed_agent_count": 1,
+    "agent_call_count": 1,
+    "successful_agent_call_count": 1,
+    "failed_agent_call_count": 0,
+    "duplicate_agent_call_count": 0,
+    "planned_executed_agent_coverage": 1.0,
+    "planned_tool_count": 1,
+    "called_tool_count": 1,
+    "executed_tool_count": 1,
+    "successful_tool_call_count": 1,
+    "failed_tool_call_count": 0,
+    "duplicate_tool_call_count": 0,
+    "planned_executed_tool_coverage": 1.0,
+    "llm_call_count": 1,
+    "llm_retry_attempt_count": 1.0,
+    "llm_retry_count": 0.0,
+    "llm_retry_error_count": 0.0,
+    "agent_llm_call_count": 1,
+    "api_call_count": 0,
+    "prompt_tokens": 735.0,
+    "completion_tokens": 709.0,
+    "agent_prompt_tokens": 735.0,
+    "agent_completion_tokens": 709.0,
+    "agent_total_tokens": 1444.0,
+    "latency_ms": 10736.02,
+    "trace_total_duration_ms": 10724.06,
+    "llm_total_duration_ms": 10297.72,
+    "agent_total_duration_ms": 10628.0,
+    "tool_total_duration_ms": 13.0
+  },
+  "error": null
+}

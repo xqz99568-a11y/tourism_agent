@@ -1,0 +1,42 @@
+{
+  "case_id": "ctp_dev_003_xian_family_full_plan",
+  "user_input": "我们一家3口想在2026年8月5日去西安玩两天，偏历史文化和亲子体验，预算6000元，请给完整旅行计划。",
+  "expected": {
+    "task_type": "trip_planning",
+    "required_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ],
+    "accepted_agent_sets": [
+      [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ]
+    ],
+    "hard_constraints": {
+      "destination": "xian",
+      "start_date": "2026-08-05",
+      "duration_days": 2,
+      "people_count": 3,
+      "min_attractions": 3,
+      "max_attractions": 4,
+      "max_pois_per_day": 2,
+      "budget_limit": 6000,
+      "traveler_group": "family",
+      "preferences": [
+        "history_culture",
+        "family"
+      ]
+    }
+  }
+}

@@ -347,6 +347,51 @@ def test_clarification_answer_must_ask_missing_fields() -> None:
     assert report["metrics"]["stsr"] is False
 
 
+def test_clarification_budget_amount_accepts_chinese_budget_label() -> None:
+    case = {
+        "case_id": "clarification-budget-amount",
+        "task_type": "clarification",
+        "expected": {
+            "task_type": "clarification",
+            "missing_slots": ["start_date", "duration_days", "budget_amount"],
+            "accepted_agent_sets": [[]],
+            "accepted_tool_sets": [[]],
+        },
+    }
+    output = _output()
+    output.update(
+        {
+            "task_type": "clarification",
+            "planned_agents": [],
+            "used_agents": [],
+            "planned_tools": [],
+            "called_tools": [],
+            "tool_results": {},
+            "attractions": [],
+            "trip_days": None,
+            "daily_itinerary": [],
+            "budget": None,
+            "weather": None,
+            "execution_status": "clarification",
+            "metadata": {
+                "clarification_fields": [
+                    "start_date",
+                    "duration_days",
+                    "budget_amount",
+                ]
+            },
+            "final_answer": "需要先补充：出发日期、旅行天数、预算。",
+        }
+    )
+
+    report = evaluate_case(case=case, output=output)
+    rules = {item["id"]: item for item in report["rules"]}
+
+    assert rules["T_CLARIFICATION_MISSING_FIELDS"]["status"] == "passed"
+    assert rules["G_FINAL_ANSWER_CONSISTENT"]["status"] == "passed"
+    assert report["metrics"]["stsr"] is True
+
+
 def test_agent_f1_is_zero_when_precision_and_recall_are_zero() -> None:
     output = _output()
     output["used_agents"] = ["single_agent"]
@@ -416,6 +461,137 @@ def test_partial_preserved_slot_compares_actual_output_value() -> None:
     rules = {item["id"]: item for item in report["rules"]}
 
     assert rules["T_PARTIAL_PRESERVED_SLOTS_KEPT"]["status"] == "failed"
+
+
+def test_partial_preserved_slot_accepts_chinese_city_alias_and_budget_amount_metadata() -> None:
+    case = _case()
+    case["task_type"] = "partial_replan"
+    case["previous_state"] = {
+        "slots": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-16",
+            "people_count": 2,
+            "budget_amount": 5300,
+        }
+    }
+    case["expected"].update({
+        "task_type": "partial_replan",
+        "changed_slots": ["duration_days"],
+        "preserved_slots": [
+            "destination",
+            "start_date",
+            "people_count",
+            "budget_amount",
+        ],
+    })
+    output = _output()
+    output["task_type"] = "partial_replan"
+    output["metadata"] = {
+        "goal_state_slots": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-16",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5300,
+        },
+        "scheduler": {
+            "ticket": {
+                "changed_slots": ["duration_days"],
+                "preserved_slots": [
+                    "destination",
+                    "start_date",
+                    "people_count",
+                    "budget_amount",
+                ],
+                "current_slots": {"budget_amount": 5300},
+            }
+        },
+    }
+    output["tool_results"]["weather_query"]["input"] = {
+        "city": "杭州",
+        "date": "2026-08-16",
+        "days": 3,
+    }
+    output["tool_results"]["weather_query"]["data"] = {
+        "city": "杭州",
+        "daily_weather": [{"date": "2026-08-16", "state": "sunny"}],
+    }
+    output["tool_results"]["budget_calculator"]["input"] = {
+        "city": "hangzhou",
+        "people_count": 2,
+        "days": 3,
+    }
+    output["tool_results"]["budget_calculator"]["data"] = {
+        "city": "hangzhou",
+        "people_count": 2,
+        "days": 3,
+        "total": 900,
+    }
+
+    report = evaluate_case(case=case, output=output)
+    rules = {item["id"]: item for item in report["rules"]}
+
+    assert rules["T_PARTIAL_PRESERVED_SLOTS_KEPT"]["status"] == "passed"
+
+
+def test_partial_changed_slots_accept_goal_state_preference_metadata() -> None:
+    case = _case()
+    case["task_type"] = "partial_replan"
+    case["current_slots"] = {
+        "people_count": 3,
+        "traveler_group": "family",
+        "preferences": ["family"],
+        "special_requirements": ["low_intensity"],
+    }
+    case["previous_state"] = {
+        "slots": {
+            "people_count": 2,
+            "preferences": ["history_culture"],
+        }
+    }
+    case["expected"].update({
+        "task_type": "partial_replan",
+        "changed_slots": [
+            "people_count",
+            "traveler_group",
+            "preferences",
+            "special_requirements",
+        ],
+        "preserved_slots": [],
+    })
+    output = _output()
+    output["task_type"] = "partial_replan"
+    output["budget"] = {"people_count": 3}
+    output["metadata"] = {
+        "goal_state_slots": {
+            "people_count": 3,
+            "traveler_group": "family",
+            "preferences": ["family"],
+            "special_requirements": ["low_intensity"],
+        },
+        "scheduler": {
+            "ticket": {
+                "changed_slots": [
+                    "people_count",
+                    "traveler_group",
+                    "preferences",
+                    "special_requirements",
+                ],
+                "preserved_slots": [],
+                "current_slots": {
+                    "people_count": 3,
+                    "traveler_group": "family",
+                    "preferences": ["family"],
+                    "special_requirements": ["low_intensity"],
+                },
+            }
+        },
+    }
+
+    report = evaluate_case(case=case, output=output)
+    rules = {item["id"]: item for item in report["rules"]}
+
+    assert rules["T_PARTIAL_CHANGED_SLOTS_APPLIED"]["status"] == "passed"
 
 
 def test_weather_unaffected_itinerary_content_must_match_previous_state() -> None:

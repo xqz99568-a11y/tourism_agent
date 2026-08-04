@@ -1,0 +1,41 @@
+{
+  "case_id": "ctp_dev_002_beijing_senior_full_plan",
+  "user_input": "帮4位老人做北京三天行程，2026年8月3日出发，预算8000元，要包含景点、天气、节奏轻松的路线和总预算。",
+  "expected": {
+    "task_type": "trip_planning",
+    "required_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ],
+    "accepted_agent_sets": [
+      [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ]
+    ],
+    "hard_constraints": {
+      "destination": "beijing",
+      "start_date": "2026-08-03",
+      "duration_days": 3,
+      "people_count": 4,
+      "min_attractions": 3,
+      "max_attractions": 6,
+      "max_pois_per_day": 2,
+      "budget_limit": 8000,
+      "traveler_group": "senior",
+      "special_requirements": [
+        "low_intensity"
+      ]
+    }
+  }
+}

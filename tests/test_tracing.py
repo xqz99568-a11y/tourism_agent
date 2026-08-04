@@ -2,6 +2,7 @@ import asyncio
 import json
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -13,8 +14,16 @@ from app.agents.attraction import AttractionAgent
 from app.agents.orchestrator import AgentOrchestrator
 from app.agents.base import AgentCapability, AgentConfig, AgentResponse, AgentStatus, BaseAgent
 from app.core.context import ExecutionContext, SessionContext
-from app.core.llm.client import BaseLLMClient, LLMManager, LLMMessage, LLMResponse, MockLLMClient
+from app.core.llm.client import (
+    BaseLLMClient,
+    LLMManager,
+    LLMMessage,
+    LLMResponse,
+    MockLLMClient,
+    OpenRouterClient,
+)
 from app.core.llm.manager import EnhancedLLMManager, LLMCallMetrics, SimpleLLMCache
+from app.core.llm_costing import build_llm_cost_record
 from app.core.tool_executor import ToolExecutor
 from app.main import TourismSystemApp
 from app.core.tracing import (
@@ -48,6 +57,41 @@ def test_tracing_disabled_writes_no_jsonl(monkeypatch: pytest.MonkeyPatch, tmp_p
         record_tool_call("demo", params={"api_key": "secret"})
 
     assert list(tmp_path.glob("*.jsonl")) == []
+
+
+def test_gpt5mini_default_price_snapshot_keeps_standardized_cost_nonzero(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    for name in (
+        "LLM_PRICE_INPUT_PER_1K",
+        "LLM_INPUT_PRICE_PER_1K",
+        "LLM_PRICE_OUTPUT_PER_1K",
+        "LLM_OUTPUT_PRICE_PER_1K",
+        "LLM_PRICE_INPUT_USD_PER_1M",
+        "LLM_PRICE_OUTPUT_USD_PER_1M",
+        "LLM_PRICE_SOURCE_URL",
+        "LLM_PRICE_SNAPSHOT_DATE",
+        "LLM_PRICE_CURRENCY",
+        "LLM_PRICE_MODE",
+    ):
+        monkeypatch.delenv(name, raising=False)
+
+    record = build_llm_cost_record(
+        usage={"prompt_tokens": 1000, "completion_tokens": 1000, "total_tokens": 2000},
+        provider="vectorengine_openai_compatible",
+        model="gpt-5-mini",
+        mock=False,
+    )
+
+    assert record["cost_currency"] == "USD"
+    assert record["standardized_estimated_cost"] == 0.00225
+    assert record["input_token_unit_price"] == 0.00025
+    assert record["output_token_unit_price"] == 0.002
+    assert record["price_source_url"] == "https://api.vectorengine.ai/pricing"
+    assert record["price_snapshot_date"] == "2026-08-01"
+    assert record["pricing_mode"] == "frozen_default_token_estimate"
+    assert record["actual_cost"] is None
+    assert record["actual_cost_status"] == "not_reported_by_provider"
 
 
 def test_tracing_enabled_writes_valid_jsonl_and_redacts_sensitive_fields(
@@ -107,7 +151,7 @@ def test_tracing_enabled_writes_valid_jsonl_and_redacts_sensitive_fields(
     assert "token-value" not in raw
     assert "plural-secret" not in raw
     assert "plural-tool-secret" not in raw
-    assert record["schema_version"] == "1.7"
+    assert record["schema_version"] == "1.8"
     assert "input_hash" in record
     assert "result_hash" in record
     assert "offline_data" in record
@@ -504,6 +548,71 @@ class _FakeStreamClient(BaseLLMClient):
         return [[0.0] for _ in texts]
 
 
+class _RetryableStatusError(Exception):
+    def __init__(self, status_code: int) -> None:
+        super().__init__(f"HTTP {status_code}")
+        self.status_code = status_code
+
+
+class _FakeOpenAICompletions:
+    def __init__(
+        self,
+        *,
+        failures_before_success: int = 0,
+        failures: list[BaseException] | None = None,
+        responses: list[dict] | None = None,
+    ) -> None:
+        self.failures_before_success = failures_before_success
+        self.failures = list(failures or [])
+        self.responses = list(responses or [])
+        self.requests: list[dict] = []
+
+    async def create(self, **kwargs):
+        self.requests.append(dict(kwargs))
+        if self.failures:
+            raise self.failures.pop(0)
+        if len(self.requests) <= self.failures_before_success:
+            raise _RetryableStatusError(500)
+        if self.responses:
+            payload = self.responses.pop(0)
+            usage_payload = payload.get("usage") or {}
+            return SimpleNamespace(
+                model=payload.get("model") or kwargs["model"],
+                usage=SimpleNamespace(
+                    prompt_tokens=usage_payload.get("prompt_tokens", 2),
+                    completion_tokens=usage_payload.get("completion_tokens", 3),
+                    total_tokens=usage_payload.get("total_tokens", 5),
+                ),
+                choices=[
+                    SimpleNamespace(
+                        message=SimpleNamespace(
+                            content=payload.get("content", "ok"),
+                            tool_calls=payload.get("tool_calls"),
+                        ),
+                        finish_reason=payload.get("finish_reason", "stop"),
+                    )
+                ],
+            )
+        return SimpleNamespace(
+            model=kwargs["model"],
+            usage=SimpleNamespace(
+                prompt_tokens=2,
+                completion_tokens=3,
+                total_tokens=5,
+            ),
+            choices=[
+                SimpleNamespace(
+                    message=SimpleNamespace(content="ok", tool_calls=None),
+                    finish_reason="stop",
+                )
+            ],
+        )
+
+
+def _fake_openai_client(completions: _FakeOpenAICompletions) -> SimpleNamespace:
+    return SimpleNamespace(chat=SimpleNamespace(completions=completions))
+
+
 class _FailingClient(BaseLLMClient):
     model = "failing-primary"
 
@@ -516,6 +625,218 @@ class _FailingClient(BaseLLMClient):
 
     async def embeddings(self, texts):
         return [[0.0] for _ in texts]
+
+
+def test_openrouter_client_preserves_zero_temperature_and_records_retry_metadata() -> None:
+    completions = _FakeOpenAICompletions(failures_before_success=2)
+    client = OpenRouterClient(
+        api_key="test-key-not-persisted",
+        base_url="https://api.vectorengine.ai/v1",
+        model="gpt-test",
+        timeout=7,
+        retry_max_attempts=3,
+        retry_wait_min_seconds=0,
+    )
+    assert getattr(client.client, "max_retries") == 0
+    client.client = _fake_openai_client(completions)
+
+    response = asyncio.run(
+        client.chat(
+            [LLMMessage(role="user", content="hello")],
+            temperature=0,
+            max_tokens=123,
+            reasoning_effort="minimal",
+        )
+    )
+
+    assert [request["temperature"] for request in completions.requests] == [0, 0, 0]
+    assert [request["max_tokens"] for request in completions.requests] == [123, 123, 123]
+    assert [request["reasoning_effort"] for request in completions.requests] == [
+        "minimal",
+        "minimal",
+        "minimal",
+    ]
+    assert [request["timeout"] for request in completions.requests] == [7, 7, 7]
+    assert response.content == "ok"
+    assert response.metadata["request_options"]["temperature"] == 0
+    assert response.metadata["request_options"]["max_tokens"] == 123
+    assert response.metadata["request_options"]["reasoning_effort"] == "minimal"
+    assert response.metadata["request_options"]["timeout_seconds"] == 7
+    assert response.metadata["request_options"]["sdk_max_retries"] == 0
+    assert response.metadata["retry"]["max_attempts"] == 3
+    assert response.metadata["retry"]["attempt_count"] == 3
+    assert response.metadata["retry"]["retry_count"] == 2
+    assert response.metadata["retry"]["error_count"] == 2
+    assert [attempt["retryable"] for attempt in response.metadata["retry"]["attempts"][:2]] == [
+        True,
+        True,
+    ]
+
+
+def test_openrouter_client_retries_empty_token_capped_response_and_records_usage() -> None:
+    completions = _FakeOpenAICompletions(
+        responses=[
+            {
+                "content": "",
+                "finish_reason": "length",
+                "usage": {
+                    "prompt_tokens": 11,
+                    "completion_tokens": 4096,
+                    "total_tokens": 4107,
+                },
+            },
+            {
+                "content": "{\"ok\": true}",
+                "finish_reason": "stop",
+                "usage": {
+                    "prompt_tokens": 12,
+                    "completion_tokens": 7,
+                    "total_tokens": 19,
+                },
+            },
+        ]
+    )
+    client = OpenRouterClient(
+        api_key="test-key-not-persisted",
+        base_url="https://api.vectorengine.ai/v1",
+        model="gpt-test",
+        timeout=7,
+        retry_max_attempts=3,
+        retry_wait_min_seconds=0,
+    )
+    client.client = _fake_openai_client(completions)
+
+    response = asyncio.run(
+        client.chat(
+            [LLMMessage(role="user", content="hello")],
+            temperature=0,
+            max_tokens=4096,
+        )
+    )
+
+    assert len(completions.requests) == 2
+    assert response.content == "{\"ok\": true}"
+    assert response.usage == {
+        "prompt_tokens": 23,
+        "completion_tokens": 4103,
+        "total_tokens": 4126,
+    }
+    assert response.metadata["single_attempt_usage"] == {
+        "prompt_tokens": 12,
+        "completion_tokens": 7,
+        "total_tokens": 19,
+    }
+    retry = response.metadata["retry"]
+    assert retry["attempt_count"] == 2
+    assert retry["retry_count"] == 1
+    assert retry["error_count"] == 1
+    assert retry["succeeded"] is True
+    assert retry["attempts"][0]["retry_reason"] == "empty_output_at_token_cap"
+    assert retry["attempts"][0]["retryable"] is True
+    assert retry["attempts"][0]["output_chars"] == 0
+    assert retry["attempts"][1]["success"] is True
+
+
+def test_openrouter_client_uses_runtime_env_after_settings_loaded(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    completions = _FakeOpenAICompletions()
+    client = OpenRouterClient(
+        api_key="test-key-not-persisted",
+        base_url="https://api.vectorengine.ai/v1",
+        model="gpt-test",
+        retry_wait_min_seconds=0,
+    )
+    client.client = _fake_openai_client(completions)
+
+    monkeypatch.setenv("LLM_TEMPERATURE", "0")
+    monkeypatch.setenv("LLM_MAX_TOKENS", "321")
+    monkeypatch.setenv("LLM_TIMEOUT", "9")
+    monkeypatch.setenv("LLM_RETRY_MAX_ATTEMPTS", "3")
+    monkeypatch.setenv("LLM_REASONING_EFFORT", "minimal")
+
+    response = asyncio.run(client.chat([LLMMessage(role="user", content="hello")]))
+
+    assert completions.requests == [
+        {
+            "model": "gpt-test",
+            "messages": [{"role": "user", "content": "hello"}],
+            "temperature": 0.0,
+            "max_tokens": 321,
+            "timeout": 9,
+            "reasoning_effort": "minimal",
+        }
+    ]
+    assert response.metadata["request_options"]["temperature"] == 0.0
+    assert response.metadata["request_options"]["max_tokens"] == 321
+    assert response.metadata["request_options"]["timeout_seconds"] == 9
+    assert response.metadata["request_options"]["reasoning_effort"] == "minimal"
+    assert response.metadata["retry"]["max_attempts"] == 3
+
+
+@pytest.mark.parametrize(
+    "error",
+    [
+        RuntimeError("ordinary program failure"),
+        json.JSONDecodeError("bad json", "{", 0),
+    ],
+)
+def test_openrouter_client_does_not_retry_non_protocol_errors(error: BaseException) -> None:
+    completions = _FakeOpenAICompletions(failures=[error])
+    client = OpenRouterClient(
+        api_key="test-key-not-persisted",
+        base_url="https://api.vectorengine.ai/v1",
+        model="gpt-test",
+        timeout=7,
+        retry_max_attempts=3,
+        retry_wait_min_seconds=0,
+    )
+    client.client = _fake_openai_client(completions)
+
+    with pytest.raises(error.__class__):
+        asyncio.run(client.chat([LLMMessage(role="user", content="hello")]))
+
+    assert len(completions.requests) == 1
+    metadata = getattr(error, "llm_audit_metadata")
+    assert metadata["retry"]["max_attempts"] == 3
+    assert metadata["retry"]["attempt_count"] == 1
+    assert metadata["retry"]["retry_count"] == 0
+    assert metadata["retry"]["attempts"][0]["retryable"] is False
+
+
+def test_llm_trace_records_runtime_options_and_retry_audit(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+
+    manager = LLMManager.__new__(LLMManager)
+    manager._client = _FakeStreamClient()
+
+    async def run_call() -> None:
+        with request_trace("runtime-request", "runtime-session"):
+            await manager.chat(
+                [LLMMessage(role="user", content="hello")],
+                temperature=0,
+                max_tokens=256,
+                reasoning_effort="minimal",
+            )
+
+    asyncio.run(run_call())
+
+    call = _trace_records(tmp_path)[0]["llm_calls"][0]
+    assert call["request_options"]["schema_version"] == "ctp-llm-runtime-options-v1"
+    assert call["request_options"]["temperature"] == 0
+    assert call["request_options"]["max_tokens"] == 256
+    assert call["request_options"]["reasoning_effort"] == "minimal"
+    assert call["temperature"] == 0
+    assert call["max_tokens"] == 256
+    assert call["reasoning_effort"] == "minimal"
+    assert call["retry"]["schema_version"] == "ctp-llm-retry-audit-v1"
+    assert call["retry_attempt_count"] == 1
+    assert call["retry_count"] == 0
+    assert call["retry_error_count"] == 0
 
 
 def test_llm_trace_records_cost_snapshot_and_prompt_hash(

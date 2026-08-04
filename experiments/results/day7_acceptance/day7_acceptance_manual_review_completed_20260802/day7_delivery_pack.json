@@ -1,0 +1,424 @@
+{
+  "schema_version": "ctp-day7-stage-delivery-pack-v1",
+  "created_at": "2026-08-02T09:58:17.682654+00:00",
+  "run_id": "day7_acceptance_manual_review_completed_20260802",
+  "delivery_status": "blocked",
+  "ready_for_day8": false,
+  "prepared_for_manual_review": false,
+  "paper_claims_allowed": false,
+  "failed_checks": [
+    "dev_gate_passed",
+    "dev_runtime_matches_day7_max_tokens_protocol",
+    "dev_completion_token_cap_hit_rate_below_limit",
+    "dev_no_empty_outputs_at_token_cap",
+    "cost_forecast_passed",
+    "method_real_failures_closed",
+    "formal_run_unblocked_by_issue_report",
+    "m3_programmatic_decision_ablation_closed",
+    "git_freeze_tag_created",
+    "git_freeze_tag_matches_head",
+    "git_worktree_clean_at_acceptance"
+  ],
+  "preparation_failed_checks": [
+    "dev_gate_passed",
+    "dev_runtime_matches_day7_max_tokens_protocol",
+    "dev_completion_token_cap_hit_rate_below_limit",
+    "dev_no_empty_outputs_at_token_cap",
+    "cost_forecast_passed"
+  ],
+  "final_acceptance_failed_checks": [
+    "method_real_failures_closed",
+    "formal_run_unblocked_by_issue_report",
+    "m3_programmatic_decision_ablation_closed",
+    "git_freeze_tag_created",
+    "git_freeze_tag_matches_head",
+    "git_worktree_clean_at_acceptance"
+  ],
+  "acceptance_level": "day7_stage_acceptance_blocked",
+  "manual_review_summary": {
+    "status": "human_review_completed",
+    "human_review_completed": true,
+    "expected_row_count": 130,
+    "row_count": 130,
+    "row_count_matches_expected": true,
+    "approved_row_count": 130,
+    "pending_human_confirmation_count": 0,
+    "machine_needs_attention_count": 0,
+    "unresolved_machine_attention_count": 0,
+    "rejected_or_needs_revision_count": 0,
+    "blank_reviewer_count": 0,
+    "blank_decision_count": 0,
+    "source_error_count": 0,
+    "source_errors": [],
+    "pending_unit_id_sample": [],
+    "unresolved_attention_unit_id_sample": [],
+    "rejected_unit_id_sample": [],
+    "policy": {
+      "all_rows_require_human_reviewer": true,
+      "all_rows_require_human_decision": true,
+      "machine_needs_attention_rows_require_notes": true,
+      "machine_needs_attention_rows_block_acceptance_until_resolved": true
+    }
+  },
+  "git_freeze_summary": {
+    "freeze_tag_name": "day7-acceptance-20260801",
+    "freeze_object_created": false,
+    "freeze_matches_head": false,
+    "worktree_dirty": true,
+    "changed_file_count": 90
+  },
+  "source_artifacts": [
+    {
+      "key": "test_draft_dataset",
+      "path": "experiments/ctp120_test_draft.json",
+      "exists": true,
+      "size_bytes": 159944,
+      "sha256": "d53408b3bc33f81f45361776eb9f893988327a4f1556903f0f57664538173543"
+    },
+    {
+      "key": "test_draft_quota_report",
+      "path": "experiments/ctp120_test_draft_quota_report.json",
+      "exists": true,
+      "size_bytes": 34980,
+      "sha256": "4d9cc9390786f0a623cab6be054a25ea66aedb51ba3a7c749caef76981cb623a"
+    },
+    {
+      "key": "test_draft_feasibility_report",
+      "path": "experiments/ctp120_test_draft_feasibility_report.json",
+      "exists": true,
+      "size_bytes": 1379,
+      "sha256": "ca12dcbeb7801eb9386d786bc9cd46ac9c38f339c3741a254aa658c183aa3f11"
+    },
+    {
+      "key": "benchmark_manifest",
+      "path": "experiments/benchmark.json",
+      "exists": true,
+      "size_bytes": 653,
+      "sha256": "7f0030443cfd02a11fd1abf6f5b6a9fac0e9c958278dc84c6cb639e2fd7e0e68"
+    },
+    {
+      "key": "pilot_gate",
+      "path": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/day7_pilot_gate.json",
+      "exists": true,
+      "size_bytes": 5456,
+      "sha256": "7e5ac862575f08885c862755bb5e0a14a9c930e5a40a190e40e67184b3b100ad"
+    },
+    {
+      "key": "pilot_issue_report",
+      "path": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/day7_issue_report.json",
+      "exists": true,
+      "size_bytes": 83399,
+      "sha256": "97da913c062ba7ffbff9fb546f831c4539472d70531fc36bdb4bf3d76fe19b3c"
+    },
+    {
+      "key": "dev_gate",
+      "path": "experiments/results/day7_dev/day7_dev_gpt5mini_repair2_20260802T053000Z/day7_dev_gate.json",
+      "exists": true,
+      "size_bytes": 18522,
+      "sha256": "8de61ce98abd00bc63eecb0a7031933c9d051459b715ab9cd4473f9c3c383b13"
+    },
+    {
+      "key": "cost_forecast",
+      "path": "experiments/results/day7_dev/day7_dev_gpt5mini_repair2_20260802T053000Z/day7_cost_forecast.json",
+      "exists": true,
+      "size_bytes": 25438,
+      "sha256": "457c15cbc86e78f14590d5b403d38ac3436c1d8e067435db4869deb4660bc3d2"
+    }
+  ],
+  "day7_evidence": {
+    "quota_gate": {
+      "status": "passed",
+      "path": "experiments/ctp120_test_draft_quota_report.json",
+      "case_count": 100,
+      "turn_count": 130,
+      "failed_checks": []
+    },
+    "saved_feasibility": {
+      "status": "passed",
+      "path": "experiments/ctp120_test_draft_feasibility_report.json",
+      "checked_tourism_unit_count": 110,
+      "failed_tourism_unit_count": 0
+    },
+    "benchmark_manifest": {
+      "path": "experiments/benchmark.json",
+      "case_files": [
+        "ctp120_test_draft.json"
+      ],
+      "comparison_files": [
+        "ctp120_dev.json",
+        "benchmark_test.json"
+      ],
+      "expected": {
+        "case_count": 100,
+        "turn_count": 130,
+        "scenario_case_count": 30,
+        "statistical_unit": "case_id"
+      }
+    },
+    "pilot_run": {
+      "status": "passed",
+      "run_id": "day7_pilot_gpt5mini_repair6_20260801T163500Z",
+      "run_dir": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z",
+      "raw_result_count": 40,
+      "trace_count": 40,
+      "failed_checks": [],
+      "quality_gated": false
+    },
+    "development_run": {
+      "status": "failed",
+      "run_id": "day7_dev_gpt5mini_repair2_20260802T053000Z",
+      "run_dir": "experiments/results/day7_dev/day7_dev_gpt5mini_repair2_20260802T053000Z",
+      "raw_result_count": 104,
+      "trace_count": 104,
+      "failed_checks": [
+        "runtime_matches_day7_max_tokens_protocol",
+        "completion_token_cap_hit_rate_below_limit",
+        "no_empty_outputs_at_token_cap"
+      ],
+      "method_stsr": {
+        "adaptive_multi_agent": 0.3,
+        "fixed_multi_agent": 0.1,
+        "llm_direct": 0.0,
+        "single_agent": 0.0
+      },
+      "runtime_matches_day7_max_tokens_protocol": false,
+      "completion_token_cap_hit_rate": 0.5618,
+      "completion_token_cap_hit_rate_below_limit": false,
+      "empty_and_token_capped_call_count": 148
+    },
+    "cost_forecast": {
+      "status": "failed",
+      "freeze_status": "not_frozen",
+      "rerun_required": true,
+      "rerun_required_checks": [
+        "trace_standardized_cost_nonzero",
+        "trace_price_source_not_zero_default",
+        "runtime_max_tokens_matches_day7_protocol",
+        "completion_token_cap_hit_rate_below_limit",
+        "no_empty_outputs_at_token_cap"
+      ],
+      "path": "experiments/results/day7_dev/day7_dev_gpt5mini_repair2_20260802T053000Z/day7_cost_forecast.json",
+      "formal_projection": {
+        "case_count": 100,
+        "turn_count": 130,
+        "raw_result_count": 520,
+        "scale_factor_from_development_raw_rows": 5.0,
+        "prompt_tokens": 3488725.0,
+        "completion_tokens": 1103025.0,
+        "total_tokens": 4591750.0,
+        "cost_usd": 3.07823125,
+        "cost_cny": 22.47109,
+        "llm_call_count": 1335.0,
+        "mean_cost_cny_per_result": 0.043214,
+        "mean_total_tokens_per_result": 8830.2885,
+        "estimation_method": "Linear extrapolation from the completed 20-case development run to 100 cases / about 130 turns / 520 method-turn rows."
+      },
+      "budget_gate": {
+        "status": "passed",
+        "dev_budget_cny": 15.0,
+        "formal_budget_cny": 75.0,
+        "two_week_budget_cny": 150.0,
+        "configured_network_retry_reserve_rate": 0.1,
+        "observed_retry_overhead_rate": 0.007491,
+        "network_retry_reserve_rate": 0.1,
+        "extra_dev_reruns": 1,
+        "dev_with_reserve_cny": 4.94364,
+        "formal_with_reserve_cny": 24.718199,
+        "two_week_total_cny": 34.605479,
+        "checks": {
+          "dev_under_budget": true,
+          "formal_under_budget": true,
+          "two_week_under_budget": true
+        }
+      },
+      "runtime_max_tokens_matches_day7_protocol": false,
+      "completion_token_cap_hit_rate": 0.5618,
+      "empty_and_token_capped_call_count": 148,
+      "failed_checks": [
+        "dev_gate_passed",
+        "trace_standardized_cost_nonzero",
+        "trace_price_source_not_zero_default",
+        "runtime_max_tokens_matches_day7_protocol",
+        "completion_token_cap_hit_rate_below_limit",
+        "no_empty_outputs_at_token_cap"
+      ]
+    },
+    "fix_report": {
+      "status": "completed",
+      "path": "experiments/results/day7_pilot/day7_pilot_gpt5mini_repair6_20260801T163500Z/day7_issue_report.json",
+      "open_issue_counts": {
+        "infrastructure_errors": 0,
+        "experiment_implementation_errors": 0,
+        "method_real_failures": 3
+      },
+      "deferred_issue_counts": {
+        "infrastructure_errors": 0,
+        "experiment_implementation_errors": 0,
+        "method_real_failures": 0
+      },
+      "total_open_issue_count": 3,
+      "total_deferred_issue_count": 0,
+      "method_open_issue_count": 3,
+      "m3_systemic_failure": false,
+      "m3_method_formal_run_blocked": true,
+      "m3_programmatic_decision_count": 44,
+      "m3_agent_decision_output_count": 61,
+      "m3_programmatic_decision_rate": 0.7213,
+      "agent_decision_ablation_required": true,
+      "formal_run_blocked": true,
+      "failed_checks": []
+    }
+  },
+  "git_freeze_snapshot": {
+    "head_commit": "11e9326128ad3f74ec95764726024226bb44dc8c",
+    "head_short": "11e9326",
+    "branch": "master",
+    "worktree_dirty": true,
+    "changed_file_count": 90,
+    "status_sample": [
+      "M app/core/benchmark_dataset_validator.py",
+      " M app/core/config.py",
+      " M app/core/experiment_method_input.py",
+      " M app/core/experiment_run_audit.py",
+      " M app/core/experiment_runner.py",
+      " M app/core/formal_experiment_preflight.py",
+      " M app/core/goal_state_scheduler.py",
+      " M app/core/independent_evaluator.py",
+      " M app/core/llm/client.py",
+      " M app/core/llm/manager.py",
+      " M app/core/llm_costing.py",
+      " M app/core/tracing.py",
+      " M app/tools/research_tools.py",
+      " M docs/Day6_ctp120_dev_dataset.md",
+      " M docs/TRACE_FIELDS.md",
+      " M experiments/benchmark.json",
+      " M experiments/benchmark_test.json",
+      " M experiments/ctp120_dev.json",
+      " M experiments/day4_scheduler_acceptance_cases.json",
+      " M experiments/run_formal_experiment.py",
+      " M experiments/run_real_api_smoke.py",
+      " M experiments/validate_benchmark_dataset.py",
+      " M tests/test_day6_benchmark_dataset_quality.py",
+      " M tests/test_day6_formal_run_preflight.py",
+      " M tests/test_day6_real_api_smoke.py",
+      " M tests/test_experiment_runner.py",
+      " M tests/test_goal_state_scheduler.py",
+      " M tests/test_independent_evaluator.py",
+      " M tests/test_research_tools.py",
+      " M tests/test_tracing.py",
+      "?? app/core/day7_acceptance_review.py",
+      "?? app/core/day7_cost_forecast.py",
+      "?? app/core/day7_delivery_pack.py",
+      "?? app/core/day7_dev_experiment_gate.py",
+      "?? app/core/day7_fix_report.py",
+      "?? app/core/day7_test_draft.py",
+      "?? app/core/experiment_paper_analysis.py",
+      "?? app/core/formal_experiment_gate.py",
+      "?? app/core/paper_draft_pack.py",
+      "?? app/core/paper_result_pack.py"
+    ],
+    "freeze_object_created": false,
+    "freeze_tag_name": "day7-acceptance-20260801",
+    "freeze_tag_commit": null,
+    "freeze_matches_head": false,
+    "freeze_mode": "snapshot_only",
+    "recommended_tag_name": "day7-acceptance-20260801",
+    "recommended_commands": [
+      "git add <人工确认后的 Day7 文件>",
+      "git commit -m \"Freeze Day7 acceptance evidence\"",
+      "git tag -a day7-acceptance-20260801 -m \"Day7 acceptance evidence freeze\""
+    ]
+  },
+  "day8_next_steps": [
+    "人工确认 review CSV 中的任务类型、硬约束和多轮 changed/preserved slots。",
+    "修复 Day7 fix report 中仍 open 的 method_real_failures，尤其是 M3 系统性失败。",
+    "小规模复跑确认质量提升后，再执行 100 案例/520 原始结果正式主实验。"
+  ],
+  "outputs": {
+    "annotation_review_json": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_annotation_review_round1.json",
+    "annotation_review_csv": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_annotation_review_round1.csv",
+    "case_review_table_md": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_case_review_table.md",
+    "cross_dataset_leakage_json": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_cross_dataset_leakage_report.json",
+    "cross_dataset_leakage_md": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_cross_dataset_leakage_report.md",
+    "offline_feasibility_json": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_offline_feasibility_report.json",
+    "offline_feasibility_md": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_offline_feasibility_report.md",
+    "acceptance_report_md": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/Day7_acceptance_report.md",
+    "day7_delivery_pack_json": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_delivery_pack.json",
+    "day7_delivery_report_md": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_delivery_report.md"
+  },
+  "generated_artifacts": [
+    {
+      "key": "annotation_review_json",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_annotation_review_round1.json",
+      "exists": true,
+      "size_bytes": 213147,
+      "sha256": "10704fa9cf595d106ab595cfb4af9210161fb79ccb6a60b85eeb2207f5603966"
+    },
+    {
+      "key": "annotation_review_csv",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_annotation_review_round1.csv",
+      "exists": true,
+      "size_bytes": 118189,
+      "sha256": "6d1c9d050157962cb8e5e4a99f570402521b71fbe56a993155db518ec917eb94"
+    },
+    {
+      "key": "case_review_table_md",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_case_review_table.md",
+      "exists": true,
+      "size_bytes": 15569,
+      "sha256": "daf720fef50967657336f2f36d08165a6dc54bb4ea5d733b01ca242292c68361"
+    },
+    {
+      "key": "cross_dataset_leakage_json",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_cross_dataset_leakage_report.json",
+      "exists": true,
+      "size_bytes": 684,
+      "sha256": "663c64d0d365c12aeaded3e9f91e436cba7cfa7d707eb365d4d2bb0da7cd9f1c"
+    },
+    {
+      "key": "cross_dataset_leakage_md",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_cross_dataset_leakage_report.md",
+      "exists": true,
+      "size_bytes": 319,
+      "sha256": "a83ce2f2fb2bcf585228a5c89e2760041745ad189be428a34e6f24b27006054e"
+    },
+    {
+      "key": "offline_feasibility_json",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_offline_feasibility_report.json",
+      "exists": true,
+      "size_bytes": 61565,
+      "sha256": "1b863d7ff397d0d8347504295d49a7da24ae4278529f9b983cc68cebef4e73d1"
+    },
+    {
+      "key": "offline_feasibility_md",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_offline_feasibility_report.md",
+      "exists": true,
+      "size_bytes": 520,
+      "sha256": "a944b13576c55d6acca6a5a3cdc4da426f767dc0b1ae8092a210d3a2ca5ca04f"
+    },
+    {
+      "key": "acceptance_report_md",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/Day7_acceptance_report.md",
+      "exists": true,
+      "size_bytes": 6300,
+      "sha256": null,
+      "hash_note": "self-referential report; hash is intentionally not embedded"
+    },
+    {
+      "key": "day7_delivery_pack_json",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_delivery_pack.json",
+      "exists": true,
+      "size_bytes": 17403,
+      "sha256": null,
+      "hash_note": "self-referential report; hash is intentionally not embedded"
+    },
+    {
+      "key": "day7_delivery_report_md",
+      "path": "experiments/results/day7_acceptance/day7_acceptance_manual_review_completed_20260802/day7_delivery_report.md",
+      "exists": true,
+      "size_bytes": 1441,
+      "sha256": null,
+      "hash_note": "self-referential report; hash is intentionally not embedded"
+    }
+  ]
+}

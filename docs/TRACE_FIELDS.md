@@ -113,7 +113,22 @@ contains:
 - `result_fingerprints`: semantic fingerprints of newly produced results, used
   by the next turn to prevent reuse when the old tool input does not match the
   current destination, date, duration, people count, preferences, or budget
-  state.
+
+## Day 7 LLM runtime audit fields
+
+`schema_version=1.8` adds per-call LLM runtime and retry evidence for formal
+paper experiments:
+
+- `request_options`: provider-neutral runtime options, including model,
+  base_url, temperature, max_tokens, timeout_seconds, tool_count, tool_choice,
+  streaming, and the OpenAI-compatible SDK retry setting.
+- `retry`: retry audit record, including max_attempts, attempt_count,
+  retry_count, error_count, succeeded, and attempt summaries.
+  Formal runs set SDK internal retries to `0`; all persisted retry attempts are
+  produced by the project-level retry policy, not hidden SDK retries.
+- Flattened convenience fields: `temperature`, `max_tokens`,
+  `timeout_seconds`, `retry_max_attempts`, `retry_attempt_count`, and
+  `retry_count`, and `retry_error_count`.
 
 For paper experiments, reuse metrics must be derived from these persisted
 fields. A previous result is reusable only when it is successful and its input

@@ -7,6 +7,8 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import os
+import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
@@ -21,15 +23,9 @@ from typing import (
 )
 
 import httpx
-from openai import AsyncOpenAI
+from openai import APIStatusError, APITimeoutError, AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 from openai.types.chat.chat_completion import Choice
-from tenacity import (
-    retry,
-    stop_after_attempt,
-    wait_exponential,
-)
-
 from app.core.config import settings
 from app.core.logger import get_logger
 from app.core.tracing import (
@@ -40,6 +36,291 @@ from app.core.tracing import (
 )
 
 logger = get_logger(__name__)
+
+LLM_RUNTIME_OPTIONS_SCHEMA_VERSION = "ctp-llm-runtime-options-v1"
+LLM_RETRY_AUDIT_SCHEMA_VERSION = "ctp-llm-retry-audit-v1"
+OPENAI_SDK_MAX_RETRIES = 0
+LLM_REASONING_EFFORT_ENV = "LLM_REASONING_EFFORT"
+SUPPORTED_REASONING_EFFORTS = {"minimal", "low", "medium", "high"}
+
+
+def _coalesce(value: Any, default: Any) -> Any:
+    return default if value is None else value
+
+
+def _runtime_text(env_name: str, default: Any) -> str:
+    value = os.getenv(env_name)
+    if value is None or not str(value).strip():
+        return str(default or "")
+    return str(value).strip()
+
+
+def _runtime_float(env_name: str, default: Any) -> float:
+    value = os.getenv(env_name)
+    if value is None or not str(value).strip():
+        return float(default)
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return float(default)
+
+
+def _runtime_int(env_name: str, default: Any) -> int:
+    value = os.getenv(env_name)
+    if value is None or not str(value).strip():
+        return int(default)
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return int(default)
+
+
+def _runtime_llm_temperature(explicit: Any = None, fallback: Any = None) -> float:
+    if explicit is not None:
+        return float(explicit)
+    default = settings.llm.temperature if fallback is None else fallback
+    return _runtime_float("LLM_TEMPERATURE", default)
+
+
+def _runtime_llm_max_tokens(explicit: Any = None, fallback: Any = None) -> int:
+    if explicit is not None:
+        return _positive_int(explicit, settings.llm.max_tokens)
+    default = settings.llm.max_tokens if fallback is None else fallback
+    return _positive_int(
+        _runtime_int("LLM_MAX_TOKENS", default),
+        settings.llm.max_tokens,
+    )
+
+
+def _runtime_llm_timeout(explicit: Any = None, fallback: Any = None) -> int:
+    if explicit is not None:
+        return _positive_int(explicit, settings.llm.timeout)
+    default = settings.llm.timeout if fallback is None else fallback
+    return _positive_int(
+        _runtime_int("LLM_TIMEOUT", default),
+        settings.llm.timeout,
+    )
+
+
+def _runtime_llm_retry_max_attempts(explicit: Any = None, fallback: Any = None) -> int:
+    if explicit is not None:
+        return _positive_int(explicit, settings.llm.retry_max_attempts)
+    default = settings.llm.retry_max_attempts if fallback is None else fallback
+    return _positive_int(
+        _runtime_int("LLM_RETRY_MAX_ATTEMPTS", default),
+        settings.llm.retry_max_attempts,
+    )
+
+
+def _runtime_llm_reasoning_effort(explicit: Any = None) -> Optional[str]:
+    """Return the optional reasoning-effort setting for reasoning models."""
+    raw = explicit if explicit is not None else os.getenv(LLM_REASONING_EFFORT_ENV)
+    if raw is None:
+        return None
+    value = str(raw).strip().lower()
+    if not value:
+        return None
+    return value if value in SUPPORTED_REASONING_EFFORTS else None
+
+
+def _runtime_llm_timeout_for_client(client: Any, explicit: Any = None) -> int:
+    if explicit is not None or getattr(client, "_timeout_explicit", False):
+        return _runtime_llm_timeout(
+            explicit if explicit is not None else getattr(client, "timeout", None)
+        )
+    return _runtime_llm_timeout(None, fallback=getattr(client, "timeout", None))
+
+
+def _runtime_llm_retry_max_attempts_for_client(client: Any, explicit: Any = None) -> int:
+    if explicit is not None or getattr(client, "_retry_max_attempts_explicit", False):
+        return _runtime_llm_retry_max_attempts(
+            explicit
+            if explicit is not None
+            else getattr(client, "retry_max_attempts", None)
+        )
+    return _runtime_llm_retry_max_attempts(
+        None,
+        fallback=getattr(client, "retry_max_attempts", None),
+    )
+
+
+def _retryable_llm_error_reason(exc: BaseException) -> Optional[str]:
+    status_code = getattr(exc, "status_code", None)
+    response = getattr(exc, "response", None)
+    if status_code is None and response is not None:
+        status_code = getattr(response, "status_code", None)
+    try:
+        numeric_status = int(status_code) if status_code is not None else None
+    except (TypeError, ValueError):
+        numeric_status = None
+    if numeric_status == 429:
+        return "http_429"
+    if numeric_status is not None and 500 <= numeric_status <= 599:
+        return "http_5xx"
+    if isinstance(exc, (APITimeoutError, httpx.TimeoutException, TimeoutError, asyncio.TimeoutError)):
+        return "network_timeout"
+    if isinstance(exc, APIStatusError):
+        return None
+    return None
+
+
+def _is_retryable_llm_error(exc: BaseException) -> bool:
+    return _retryable_llm_error_reason(exc) is not None
+
+
+def _positive_int(value: Any, default: int) -> int:
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return int(default)
+    return max(1, parsed)
+
+
+def _runtime_options(
+    *,
+    model: Any,
+    temperature: Any,
+    max_tokens: Any,
+    timeout_seconds: Any,
+    tool_count: int,
+    streaming: bool,
+    base_url: Any = None,
+    tool_choice: Any = None,
+    reasoning_effort: Any = None,
+) -> Dict[str, Any]:
+    return {
+        "schema_version": LLM_RUNTIME_OPTIONS_SCHEMA_VERSION,
+        "model": str(model or ""),
+        "base_url": str(base_url or ""),
+        "temperature": temperature,
+        "max_tokens": max_tokens,
+        "timeout_seconds": timeout_seconds,
+        "reasoning_effort": reasoning_effort,
+        "tool_count": int(tool_count),
+        "tool_choice": tool_choice,
+        "streaming": bool(streaming),
+    }
+
+
+def _retry_audit(
+    *,
+    max_attempts: int,
+    attempts: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    error_count = sum(1 for attempt in attempts if attempt.get("success") is False)
+    return {
+        "schema_version": LLM_RETRY_AUDIT_SCHEMA_VERSION,
+        "max_attempts": int(max_attempts),
+        "attempt_count": len(attempts),
+        "retry_count": max(0, len(attempts) - 1),
+        "error_count": error_count,
+        "succeeded": bool(attempts and attempts[-1].get("success") is True),
+        "attempts": attempts,
+    }
+
+
+def _usage_from_chat_completion(response: ChatCompletion) -> Dict[str, Any]:
+    usage = {
+        "prompt_tokens": response.usage.prompt_tokens if response.usage else 0,
+        "completion_tokens": response.usage.completion_tokens if response.usage else 0,
+        "total_tokens": response.usage.total_tokens if response.usage else 0,
+    }
+    if response.usage:
+        completion_details = getattr(response.usage, "completion_tokens_details", None)
+        if completion_details is not None:
+            usage["completion_tokens_details"] = (
+                completion_details.model_dump(mode="json")
+                if hasattr(completion_details, "model_dump")
+                else completion_details
+            )
+        prompt_details = getattr(response.usage, "prompt_tokens_details", None)
+        if prompt_details is not None:
+            usage["prompt_tokens_details"] = (
+                prompt_details.model_dump(mode="json")
+                if hasattr(prompt_details, "model_dump")
+                else prompt_details
+            )
+    return usage
+
+
+def _sum_usage_records(records: List[Dict[str, Any]]) -> Dict[str, Any]:
+    totals = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
+    has_any = False
+    for record in records:
+        usage = record.get("usage")
+        if not isinstance(usage, dict):
+            continue
+        has_any = True
+        for key in totals:
+            try:
+                totals[key] += int(usage.get(key) or 0)
+            except (TypeError, ValueError):
+                continue
+    return totals if has_any else {}
+
+
+def _empty_token_capped_retry_reason(
+    response: "LLMResponse",
+    *,
+    max_tokens: int,
+) -> Optional[str]:
+    if response.tool_calls:
+        return None
+    if str(response.content or "").strip():
+        return None
+    try:
+        completion_tokens = int(response.usage.get("completion_tokens") or 0)
+    except (TypeError, ValueError):
+        completion_tokens = 0
+    finish_reason = str(response.finish_reason or "").strip().lower()
+    if finish_reason in {"length", "max_tokens", "content_filter"} or (
+        max_tokens > 0 and completion_tokens >= max_tokens
+    ):
+        return "empty_output_at_token_cap"
+    return None
+
+
+def _retry_result_from_policy(
+    policy: Dict[str, Any],
+    *,
+    success: bool,
+    error: Any = None,
+) -> Dict[str, Any]:
+    attempt: Dict[str, Any] = {"attempt_index": 1, "success": bool(success)}
+    if error:
+        attempt["error_type"] = error.__class__.__name__
+        attempt["error"] = str(error)
+    return _retry_audit(
+        max_attempts=_positive_int(policy.get("max_attempts"), settings.llm.retry_max_attempts),
+        attempts=[attempt],
+    )
+
+
+def _attach_llm_audit_metadata(
+    target: Any,
+    *,
+    request_options: Dict[str, Any],
+    retry: Dict[str, Any],
+) -> None:
+    try:
+        setattr(
+            target,
+            "llm_audit_metadata",
+            {
+                "request_options": request_options,
+                "retry": retry,
+            },
+        )
+    except Exception:
+        return
+
+
+def _audit_metadata(value: Any) -> Dict[str, Any]:
+    metadata = getattr(value, "metadata", None)
+    if isinstance(metadata, dict):
+        return metadata
+    metadata = getattr(value, "llm_audit_metadata", None)
+    return metadata if isinstance(metadata, dict) else {}
 
 
 class MessageRole(str, Enum):
@@ -120,6 +401,7 @@ class LLMResponse:
     usage: dict
     finish_reason: str
     tool_calls: List[ToolCall] = field(default_factory=list)
+    metadata: Dict[str, Any] = field(default_factory=dict)
 
     @property
     def has_tool_calls(self) -> bool:
@@ -166,61 +448,207 @@ class OpenRouterClient(BaseLLMClient):
         api_key: Optional[str] = None,
         base_url: Optional[str] = None,
         model: Optional[str] = None,
-        timeout: int = 30,  # 降低超时时间，加快响应
+        timeout: Optional[int] = None,
+        retry_max_attempts: Optional[int] = None,
+        retry_wait_min_seconds: float = 1.0,
+        retry_wait_max_seconds: float = 5.0,
     ):
-        self.api_key = api_key or settings.llm.api_key
-        self.base_url = base_url or settings.llm.base_url
-        self.model = model or settings.llm.model
-        self.timeout = timeout
+        self.api_key = api_key or _runtime_text("LLM_API_KEY", settings.llm.api_key)
+        self.base_url = base_url or _runtime_text("LLM_BASE_URL", settings.llm.base_url)
+        self.model = model or _runtime_text("LLM_MODEL", settings.llm.model)
+        self._timeout_explicit = timeout is not None
+        self._retry_max_attempts_explicit = retry_max_attempts is not None
+        self.timeout = _runtime_llm_timeout(timeout)
+        self.retry_max_attempts = _runtime_llm_retry_max_attempts(retry_max_attempts)
+        self.retry_wait_min_seconds = max(0.0, float(retry_wait_min_seconds))
+        self.retry_wait_max_seconds = max(
+            self.retry_wait_min_seconds,
+            float(retry_wait_max_seconds),
+        )
+        self.sdk_max_retries = OPENAI_SDK_MAX_RETRIES
 
         self.client = AsyncOpenAI(
             api_key=self.api_key,
             base_url=self.base_url,
-            timeout=timeout,
-            http_client=httpx.AsyncClient(timeout=httpx.Timeout(timeout)),
+            timeout=self.timeout,
+            max_retries=self.sdk_max_retries,
+            http_client=httpx.AsyncClient(timeout=httpx.Timeout(self.timeout)),
         )
 
-    @retry(
-        stop=stop_after_attempt(2),  # 减少重试次数
-        wait=wait_exponential(multiplier=1, min=1, max=5),  # 缩短等待时间
-    )
     async def chat(
         self,
         messages: List[LLMMessage],
         tools: Optional[List[ToolDefinition]] = None,
         temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
+        reasoning_effort: Optional[str] = None,
+        retry_max_attempts: Optional[int] = None,
         **kwargs,
     ) -> LLMResponse:
         """发送对话请求"""
 
         # 转换为 API 格式
         api_messages = [msg.to_dict() for msg in messages]
+        resolved_temperature = _runtime_llm_temperature(temperature)
+        resolved_max_tokens = _runtime_llm_max_tokens(max_tokens)
+        resolved_reasoning_effort = _runtime_llm_reasoning_effort(
+            kwargs.pop("reasoning_effort", reasoning_effort)
+        )
+        resolved_timeout = _runtime_llm_timeout_for_client(
+            self,
+            kwargs.pop("timeout", None),
+        )
+        resolved_max_attempts = _runtime_llm_retry_max_attempts_for_client(
+            self,
+            retry_max_attempts,
+        )
+        request_options = _runtime_options(
+            model=self.model,
+            base_url=self.base_url,
+            temperature=resolved_temperature,
+            max_tokens=resolved_max_tokens,
+            timeout_seconds=resolved_timeout,
+            reasoning_effort=resolved_reasoning_effort,
+            tool_count=len(tools or []),
+            tool_choice="auto" if tools else None,
+            streaming=False,
+        )
+        request_options["sdk_max_retries"] = self.sdk_max_retries
 
         # 构建请求参数
         request_kwargs: Dict[str, Any] = {
             "model": self.model,
             "messages": api_messages,
-            "temperature": temperature or settings.llm.temperature,
-            "max_tokens": max_tokens or settings.llm.max_tokens,
+            "temperature": resolved_temperature,
+            "max_tokens": resolved_max_tokens,
+            "timeout": resolved_timeout,
         }
+        if resolved_reasoning_effort is not None:
+            request_kwargs["reasoning_effort"] = resolved_reasoning_effort
 
         if tools:
             request_kwargs["tools"] = [tool.to_dict() for tool in tools]
             request_kwargs["tool_choice"] = "auto"
 
-        try:
-            response: ChatCompletion = await self.client.chat.completions.create(
-                **request_kwargs
+        attempts: List[Dict[str, Any]] = []
+        last_error: Optional[BaseException] = None
+        for attempt_index in range(1, resolved_max_attempts + 1):
+            attempt_started = time.perf_counter()
+            try:
+                response: ChatCompletion = await self.client.chat.completions.create(
+                    **request_kwargs
+                )
+            except Exception as exc:
+                last_error = exc
+                retry_reason = _retryable_llm_error_reason(exc)
+                attempts.append(
+                    {
+                        "attempt_index": attempt_index,
+                        "success": False,
+                        "duration_ms": round(
+                            (time.perf_counter() - attempt_started) * 1000,
+                            2,
+                        ),
+                        "error_type": exc.__class__.__name__,
+                        "error": str(exc),
+                        "retryable": retry_reason is not None,
+                        "retry_reason": retry_reason,
+                    }
+                )
+                if retry_reason is None or attempt_index >= resolved_max_attempts:
+                    retry_record = _retry_audit(
+                        max_attempts=resolved_max_attempts,
+                        attempts=attempts,
+                    )
+                    _attach_llm_audit_metadata(
+                        exc,
+                        request_options=request_options,
+                        retry=retry_record,
+                    )
+                    logger.error(f"LLM API 调用失败: {exc}")
+                    raise
+                wait_seconds = min(
+                    self.retry_wait_max_seconds,
+                    self.retry_wait_min_seconds * (2 ** (attempt_index - 1)),
+                )
+                if wait_seconds > 0:
+                    await asyncio.sleep(wait_seconds)
+                continue
+
+            try:
+                parsed_response = self._parse_response(response)
+            except Exception as parse_error:
+                retry_record = _retry_audit(
+                    max_attempts=resolved_max_attempts,
+                    attempts=attempts,
+                )
+                _attach_llm_audit_metadata(
+                    parse_error,
+                    request_options=request_options,
+                    retry=retry_record,
+                )
+                raise
+            usage = dict(parsed_response.usage or {})
+            duration_ms = round(
+                (time.perf_counter() - attempt_started) * 1000,
+                2,
             )
+            retry_reason = _empty_token_capped_retry_reason(
+                parsed_response,
+                max_tokens=resolved_max_tokens,
+            )
+            if retry_reason is not None and attempt_index < resolved_max_attempts:
+                attempts.append(
+                    {
+                        "attempt_index": attempt_index,
+                        "success": False,
+                        "duration_ms": duration_ms,
+                        "retryable": True,
+                        "retry_reason": retry_reason,
+                        "finish_reason": parsed_response.finish_reason,
+                        "output_chars": len(str(parsed_response.content or "")),
+                        "usage": usage,
+                    }
+                )
+                wait_seconds = min(
+                    self.retry_wait_max_seconds,
+                    self.retry_wait_min_seconds * (2 ** (attempt_index - 1)),
+                )
+                if wait_seconds > 0:
+                    await asyncio.sleep(wait_seconds)
+                continue
 
-            return self._parse_response(response)
+            attempts.append(
+                {
+                    "attempt_index": attempt_index,
+                    "success": True,
+                    "duration_ms": duration_ms,
+                    "finish_reason": parsed_response.finish_reason,
+                    "output_chars": len(str(parsed_response.content or "")),
+                    "usage": usage,
+                }
+            )
+            retry_record = _retry_audit(
+                max_attempts=resolved_max_attempts,
+                attempts=attempts,
+            )
+            aggregated_usage = _sum_usage_records(attempts)
+            if aggregated_usage:
+                parsed_response.metadata["single_attempt_usage"] = parsed_response.usage
+                parsed_response.usage = aggregated_usage
+            parsed_response.metadata["request_options"] = request_options
+            parsed_response.metadata["retry"] = retry_record
+            return parsed_response
 
-        except Exception as e:
-            logger.error(f"LLM API 调用失败: {e}")
-            raise
+        assert last_error is not None
+        raise last_error
 
-    def _parse_response(self, response: ChatCompletion) -> LLMResponse:
+    def _parse_response(
+        self,
+        response: ChatCompletion,
+        *,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> LLMResponse:
         """解析 API 响应"""
         choice: Choice = response.choices[0]
         message = choice.message
@@ -238,16 +666,15 @@ class OpenRouterClient(BaseLLMClient):
                         )
                     )
 
+        usage = _usage_from_chat_completion(response)
+
         return LLMResponse(
             content=message.content or "",
             model=response.model,
-            usage={
-                "prompt_tokens": response.usage.prompt_tokens if response.usage else 0,
-                "completion_tokens": response.usage.completion_tokens if response.usage else 0,
-                "total_tokens": response.usage.total_tokens if response.usage else 0,
-            },
+            usage=usage,
             finish_reason=choice.finish_reason or "",
             tool_calls=tool_calls,
+            metadata=metadata or {},
         )
 
     async def stream(
@@ -260,13 +687,24 @@ class OpenRouterClient(BaseLLMClient):
         """流式对话"""
 
         api_messages = [msg.to_dict() for msg in messages]
+        resolved_temperature = _runtime_llm_temperature(temperature)
+        resolved_reasoning_effort = _runtime_llm_reasoning_effort(
+            kwargs.pop("reasoning_effort", None)
+        )
+        resolved_timeout = _runtime_llm_timeout_for_client(
+            self,
+            kwargs.pop("timeout", None),
+        )
 
         request_kwargs: Dict[str, Any] = {
             "model": self.model,
             "messages": api_messages,
-            "temperature": temperature or settings.llm.temperature,
+            "temperature": resolved_temperature,
+            "timeout": resolved_timeout,
             "stream": True,
         }
+        if resolved_reasoning_effort is not None:
+            request_kwargs["reasoning_effort"] = resolved_reasoning_effort
 
         if tools:
             request_kwargs["tools"] = [tool.to_dict() for tool in tools]
@@ -333,8 +771,8 @@ class OllamaClient(BaseLLMClient):
             "messages": ollama_messages,
             "stream": False,
             "options": {
-                "temperature": temperature or 0.7,
-                "num_predict": max_tokens or 4096,
+                "temperature": _runtime_llm_temperature(temperature),
+                "num_predict": _runtime_llm_max_tokens(max_tokens),
             },
         }
 
@@ -408,8 +846,8 @@ class OllamaClient(BaseLLMClient):
             "messages": ollama_messages,
             "stream": True,
             "options": {
-                "temperature": temperature or 0.7,
-                "num_predict": 4096,
+                "temperature": _runtime_llm_temperature(temperature),
+                "num_predict": _runtime_llm_max_tokens(kwargs.get("max_tokens")),
             },
         }
 
@@ -774,8 +1212,12 @@ class LLMManager:
     def _init_client(self) -> None:
         """初始化客户端，优先使用本地 Ollama"""
         strict_mode = is_experiment_strict_mode()
+        llm_configured = bool(os.getenv("LLM_API_KEY") or settings.llm.is_configured)
+        if strict_mode and llm_configured:
+            self._client = OpenRouterClient()
+            logger.info(f"OpenRouter 客户端已初始化，使用模型: {settings.llm.model}")
+            return
         # 检查是否配置了 Ollama (本地模型)
-        import os
         ollama_base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
         ollama_model = os.environ.get("OLLAMA_MODEL", "qwen2.5")
         
@@ -796,7 +1238,7 @@ class LLMManager:
             logger.debug(f"Ollama 不可用: {e}")
 
         # 降级到 OpenRouter
-        if settings.llm.is_configured:
+        if llm_configured:
             self._client = OpenRouterClient()
             logger.info(f"OpenRouter 客户端已初始化，使用模型: {settings.llm.model}")
         else:
@@ -861,6 +1303,30 @@ class LLMManager:
             return "openrouter"
         return client.__class__.__name__.replace("Client", "").lower() or "unknown"
 
+    def _request_options(
+        self,
+        client: BaseLLMClient,
+        kwargs: Dict[str, Any],
+        tools: Optional[List[ToolDefinition]],
+        *,
+        streaming: bool,
+    ) -> Dict[str, Any]:
+        return _runtime_options(
+            model=self._client_model_name(client),
+            base_url=getattr(client, "base_url", ""),
+            temperature=_runtime_llm_temperature(kwargs.get("temperature")),
+            max_tokens=_runtime_llm_max_tokens(kwargs.get("max_tokens")),
+            timeout_seconds=_runtime_llm_timeout_for_client(client, kwargs.get("timeout")),
+            reasoning_effort=_runtime_llm_reasoning_effort(kwargs.get("reasoning_effort")),
+            tool_count=len(tools or []),
+            tool_choice="auto" if tools else None,
+            streaming=streaming,
+        )
+
+    def _retry_policy(self, client: BaseLLMClient) -> Dict[str, Any]:
+        max_attempts = _runtime_llm_retry_max_attempts_for_client(client)
+        return _retry_audit(max_attempts=max_attempts, attempts=[])
+
     async def chat(
         self,
         messages: List[LLMMessage],
@@ -904,6 +1370,8 @@ async def _traced_llm_manager_chat(
     **kwargs,
 ) -> LLMResponse:
     client = self.get_client()
+    request_options = self._request_options(client, kwargs, tools, streaming=False)
+    retry_policy = self._retry_policy(client)
     trace_call = start_llm_call(
         provider=self._client_provider_name(client),
         model=self._client_model_name(client),
@@ -915,6 +1383,8 @@ async def _traced_llm_manager_chat(
         tool_count=len(tools or []),
         prompt_version=self._prompt_version(messages),
         prompt_hash=self._prompt_hash(messages, tools),
+        request_options=request_options,
+        retry_policy=retry_policy,
     )
     if is_experiment_strict_mode() and isinstance(client, MockLLMClient):
         error = RuntimeError("EXPERIMENT_STRICT_MODE forbids Mock LLM client")
@@ -926,11 +1396,14 @@ async def _traced_llm_manager_chat(
             error=error,
             mock=True,
             fallback=False,
+            request_options=request_options,
+            retry=retry_policy,
         )
         raise error
 
     try:
         response = await client.chat(messages, tools, **kwargs)
+        audit_metadata = _audit_metadata(response)
         finish_llm_call(
             trace_call,
             provider=self._client_provider_name(client),
@@ -940,13 +1413,19 @@ async def _traced_llm_manager_chat(
             mock=isinstance(client, MockLLMClient),
             fallback=False,
             output_chars=len(str(response.content or "")),
+            request_options=audit_metadata.get("request_options") or request_options,
+            retry=audit_metadata.get("retry")
+            or _retry_result_from_policy(retry_policy, success=True),
         )
         return response
     except Exception as exc:
         logger.error(f"LLM API 璋冪敤澶辫触: {exc}")
+        error_metadata = _audit_metadata(exc)
         if not isinstance(client, MockLLMClient) and not is_experiment_strict_mode():
             logger.info("Falling back to Mock LLM client")
             mock_client = MockLLMClient()
+            mock_request_options = self._request_options(mock_client, kwargs, tools, streaming=False)
+            mock_retry_policy = self._retry_policy(mock_client)
             try:
                 response = await mock_client.chat(messages, tools, **kwargs)
                 finish_llm_call(
@@ -958,6 +1437,8 @@ async def _traced_llm_manager_chat(
                     mock=True,
                     fallback=True,
                     output_chars=len(str(response.content or "")),
+                    request_options=mock_request_options,
+                    retry=_retry_result_from_policy(mock_retry_policy, success=True),
                 )
                 return response
             except Exception as mock_error:
@@ -969,6 +1450,12 @@ async def _traced_llm_manager_chat(
                     error=mock_error,
                     mock=True,
                     fallback=True,
+                    request_options=mock_request_options,
+                    retry=_retry_result_from_policy(
+                        mock_retry_policy,
+                        success=False,
+                        error=mock_error,
+                    ),
                 )
                 raise
         finish_llm_call(
@@ -979,6 +1466,9 @@ async def _traced_llm_manager_chat(
             error=exc,
             mock=isinstance(client, MockLLMClient),
             fallback=False,
+            request_options=error_metadata.get("request_options") or request_options,
+            retry=error_metadata.get("retry")
+            or _retry_result_from_policy(retry_policy, success=False, error=exc),
         )
         raise
 
@@ -990,6 +1480,8 @@ async def _traced_llm_manager_stream(
     **kwargs,
 ) -> AsyncGenerator[str, None]:
     client = self.get_client()
+    request_options = self._request_options(client, kwargs, tools, streaming=True)
+    retry_policy = self._retry_policy(client)
     trace_call = start_llm_call(
         provider=self._client_provider_name(client),
         model=self._client_model_name(client),
@@ -1001,6 +1493,8 @@ async def _traced_llm_manager_stream(
         tool_count=len(tools or []),
         prompt_version=self._prompt_version(messages),
         prompt_hash=self._prompt_hash(messages, tools),
+        request_options=request_options,
+        retry_policy=retry_policy,
     )
     chunk_count = 0
     output_chars = 0
@@ -1016,6 +1510,8 @@ async def _traced_llm_manager_stream(
             fallback=False,
             output_chars=0,
             chunk_count=0,
+            request_options=request_options,
+            retry=retry_policy,
         )
         raise error
     try:
@@ -1036,6 +1532,8 @@ async def _traced_llm_manager_stream(
             fallback=False,
             output_chars=output_chars,
             chunk_count=chunk_count,
+            request_options=request_options,
+            retry=_retry_result_from_policy(retry_policy, success=False, error=exc),
         )
         raise
     else:
@@ -1048,6 +1546,8 @@ async def _traced_llm_manager_stream(
             fallback=False,
             output_chars=output_chars,
             chunk_count=chunk_count,
+            request_options=request_options,
+            retry=_retry_result_from_policy(retry_policy, success=True),
         )
 
 

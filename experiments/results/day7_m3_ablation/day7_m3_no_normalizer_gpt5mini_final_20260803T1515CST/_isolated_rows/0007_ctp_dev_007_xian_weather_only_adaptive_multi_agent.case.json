@@ -1,0 +1,23 @@
+{
+  "case_id": "ctp_dev_007_xian_weather_only",
+  "user_input": "只查询西安2026年8月9日开始3天的天气预报，不要推荐景点。",
+  "expected": {
+    "task_type": "weather_query",
+    "destination": "xian",
+    "start_date": "2026-08-09",
+    "duration_days": 3,
+    "required_tools": [
+      "weather_query"
+    ],
+    "accepted_agent_sets": [
+      [
+        "weather"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "weather_query"
+      ]
+    ]
+  }
+}

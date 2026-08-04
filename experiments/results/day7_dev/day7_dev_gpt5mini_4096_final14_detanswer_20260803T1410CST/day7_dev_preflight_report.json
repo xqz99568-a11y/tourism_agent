@@ -1,0 +1,2497 @@
+{
+  "schema_version": "ctp-formal-preflight-v1",
+  "status": "passed",
+  "errors": [],
+  "warnings": [],
+  "benchmark": {
+    "path": "D:/Code/Tourism_Agent/experiments/ctp120_dev.json",
+    "sha256": "1732299a01bb6ca31b039137b5441d34e2e46f0ab07c43ca766d2f54ea814b2a",
+    "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+    "case_count": 20,
+    "single_turn_case_count": 14,
+    "scenario_case_count": 6,
+    "total_turn_count": 26,
+    "statistical_unit": "case_id"
+  },
+  "run": {
+    "run_id": "day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST",
+    "output_dir": "D:/Code/Tourism_Agent/experiments/results/day7_dev/day7_dev_gpt5mini_4096_final14_detanswer_20260803T1410CST",
+    "methods": [
+      "llm_direct",
+      "single_agent",
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ],
+    "method_count": 4,
+    "repeats": 1,
+    "method_order_seed": 20260718,
+    "expected_raw_run_count": 104,
+    "expected_result_files": [
+      "benchmark_results.csv",
+      "benchmark_results.json",
+      "evaluation_summary.json",
+      "paper_tables.md",
+      "experiment_manifest.json"
+    ]
+  },
+  "method_fairness_contract": {
+    "schema_version": "ctp-method-fairness-contract-v1",
+    "contract_id": "day6_four_method_fairness_20260728",
+    "active_methods": [
+      "llm_direct",
+      "single_agent",
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ],
+    "primary_comparison": {
+      "baseline": "fixed_multi_agent",
+      "proposed": "adaptive_multi_agent",
+      "comparison_unit": "paired_case",
+      "claim_boundary": "M3 may claim efficiency gains over M2 only when task quality is not lower under the frozen evaluator."
+    },
+    "generation_visibility": {
+      "generation_visible_fields": [
+        "case_id",
+        "user_input",
+        "dialogue_history",
+        "method_input",
+        "method_previous_state",
+        "parsed_slots"
+      ],
+      "evaluator_only_fields": [
+        "task_type",
+        "slots",
+        "current_slots",
+        "previous_slots",
+        "changed_slots",
+        "preserved_slots",
+        "expected",
+        "expected_goal",
+        "standard_answer",
+        "gold",
+        "accepted_agent_sets",
+        "required_tools",
+        "forbidden_tools",
+        "hard_constraints",
+        "evaluation_rules"
+      ],
+      "gold_visible_to_generation": false,
+      "policy": "Generation methods may only use the visible request/history/state fields; gold labels and accepted sets are reserved for the evaluator."
+    },
+    "runtime_controls": {
+      "model_config": "same model, temperature, max tokens, timeout, and retry policy",
+      "offline_data": "same frozen local tourism data snapshot",
+      "output_schema": "ctp-experiment-output-v1",
+      "evaluator": "method-blind independent evaluator after generation",
+      "method_order": "deterministic per-case seeded randomization",
+      "formal_run_policy": "no mocks, no silent fallback, no rerun-to-success"
+    },
+    "dependency_policy": {
+      "agent_order": [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ],
+      "tool_order": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "agent_tool_map": {
+        "attraction": [
+          "poi_search"
+        ],
+        "weather": [
+          "weather_query"
+        ],
+        "itinerary": [],
+        "budget": [
+          "budget_calculator"
+        ]
+      },
+      "result_dependencies": {
+        "itinerary": [
+          "attraction",
+          "weather"
+        ],
+        "budget": [
+          "attraction"
+        ]
+      },
+      "budget_agent_dependencies": [
+        "attraction_result_for_existing_plan_or_ticket_budget",
+        "duration_days",
+        "people_count",
+        "budget_level"
+      ],
+      "budget_query_scope_policy": {
+        "rough_budget_without_history_or_ticket_terms": [
+          "budget"
+        ],
+        "existing_plan_budget_query": [
+          "reused_attraction",
+          "budget"
+        ],
+        "ticket_or_admission_budget_without_reusable_attractions": [
+          "attraction",
+          "budget"
+        ]
+      },
+      "slot_change_invalidation": {
+        "destination": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "duration_days": [
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "start_date": [
+          "weather",
+          "itinerary"
+        ],
+        "people_count": [
+          "budget"
+        ],
+        "traveler_group": [
+          "attraction",
+          "itinerary",
+          "budget"
+        ],
+        "preferences": [
+          "attraction",
+          "itinerary",
+          "budget"
+        ],
+        "budget_amount": [
+          "attraction",
+          "itinerary",
+          "budget"
+        ],
+        "budget_level": [
+          "attraction",
+          "itinerary",
+          "budget"
+        ],
+        "weather_scenario": [
+          "weather",
+          "itinerary"
+        ]
+      },
+      "multi_turn_counting": {
+        "state_scope": "per method, per case, per repeat",
+        "previous_state_source": "only the same method's own previous turn output",
+        "scenario_unit": "one multi-turn scenario is one paired statistical unit",
+        "warm_start": "no oracle or handcrafted previous_state in formal test runs",
+        "initial_turn_failure": "the scenario remains failed; do not repair with gold state"
+      }
+    },
+    "m2_m3_fairness": {
+      "must_match": [
+        "business_agents",
+        "available_generation_tools",
+        "tool_contract_version",
+        "output_schema_version",
+        "model_config_policy",
+        "offline_data_policy",
+        "evaluator_policy"
+      ],
+      "only_allowed_differences": [
+        "scheduler_policy",
+        "state_reuse_policy",
+        "planned_agent_subset",
+        "planned_tool_subset"
+      ]
+    },
+    "methods": {
+      "llm_direct": {
+        "method": "llm_direct",
+        "paper_label": "M0 Direct LLM",
+        "experimental_role": "no-agent/no-tool lower bound",
+        "agent_topology": "none",
+        "business_agents": [],
+        "available_generation_tools": [],
+        "scheduler_policy": "no scheduler",
+        "state_reuse_policy": "no structured result reuse",
+        "can_call_generation_tools": false,
+        "can_reuse_previous_results": false,
+        "output_schema_version": "ctp-experiment-output-v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "model_config_policy": "shared_frozen_model_config",
+        "offline_data_policy": "shared_fixed_offline_data",
+        "evaluator_policy": "method_blind_independent_evaluator"
+      },
+      "single_agent": {
+        "method": "single_agent",
+        "paper_label": "M1 Single Agent",
+        "experimental_role": "single general agent baseline",
+        "agent_topology": "one general tourism agent",
+        "business_agents": [
+          "single_agent"
+        ],
+        "available_generation_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "scheduler_policy": "single agent decides tool use internally",
+        "state_reuse_policy": "no structured result reuse",
+        "can_call_generation_tools": true,
+        "can_reuse_previous_results": false,
+        "output_schema_version": "ctp-experiment-output-v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "model_config_policy": "shared_frozen_model_config",
+        "offline_data_policy": "shared_fixed_offline_data",
+        "evaluator_policy": "method_blind_independent_evaluator"
+      },
+      "fixed_multi_agent": {
+        "method": "fixed_multi_agent",
+        "paper_label": "M2 Fixed Multi-Agent",
+        "experimental_role": "fixed multi-agent baseline",
+        "agent_topology": "four shared business agents",
+        "business_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "available_generation_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "scheduler_policy": "full business chain for every executable tourism task",
+        "state_reuse_policy": "no local result reuse; rerun the fixed chain",
+        "can_call_generation_tools": true,
+        "can_reuse_previous_results": false,
+        "output_schema_version": "ctp-experiment-output-v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "model_config_policy": "shared_frozen_model_config",
+        "offline_data_policy": "shared_fixed_offline_data",
+        "evaluator_policy": "method_blind_independent_evaluator"
+      },
+      "adaptive_multi_agent": {
+        "method": "adaptive_multi_agent",
+        "paper_label": "M3 Proposed Method",
+        "experimental_role": "goal-state adaptive scheduling method",
+        "agent_topology": "four shared business agents",
+        "business_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "available_generation_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "scheduler_policy": "goal-state scheduler selects the minimal valid subset",
+        "state_reuse_policy": "reuse only same-method valid previous artifacts",
+        "can_call_generation_tools": true,
+        "can_reuse_previous_results": true,
+        "output_schema_version": "ctp-experiment-output-v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "model_config_policy": "shared_frozen_model_config",
+        "offline_data_policy": "shared_fixed_offline_data",
+        "evaluator_policy": "method_blind_independent_evaluator"
+      }
+    },
+    "source_documents": [
+      "Phase0_实验协议.md",
+      "docs/Day4_goal_state_scheduler_rules.md",
+      "docs/Day5_evaluation_rule_catalog.md",
+      "docs/Day6_four_method_fairness.md"
+    ],
+    "contract_sha256": "72fbfbd81a60dc2c7d0f34523d6508d4becdaf3d636ed765af0edee71c30006b"
+  },
+  "benchmark_quality": {
+    "schema_version": "ctp-benchmark-dataset-quality-v2",
+    "status": "passed",
+    "errors": [],
+    "warnings": [],
+    "dataset": {
+      "dataset_id": "ctp120_dev",
+      "dataset_version": "2026-07-31-zh",
+      "schema_version": "ctp-benchmark-v1",
+      "expected_case_count": 20,
+      "case_count": 20,
+      "scenario_case_count": 6,
+      "total_unit_count": 26,
+      "fixed_city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ]
+    },
+    "coverage": {
+      "task_distribution": {
+        "attraction_recommendation": 2,
+        "budget_query": 3,
+        "clarification": 2,
+        "general_chat": 2,
+        "partial_replan": 3,
+        "trip_planning": 10,
+        "weather_adjustment": 2,
+        "weather_query": 2
+      },
+      "city_distribution": {
+        "beijing": 5,
+        "guilin": 4,
+        "hangzhou": 6,
+        "shenzhen": 4,
+        "xian": 4
+      },
+      "label_field_counts": {
+        "accepted_agent_sets": 26,
+        "accepted_tool_sets": 26,
+        "changed_slots": 6,
+        "duration_days": 20,
+        "expected": 26,
+        "forbidden_tools": 4,
+        "hard_constraints": 16,
+        "missing_slots": 2,
+        "preserved_slots": 6,
+        "required_tools": 26,
+        "task_type": 26
+      },
+      "duplicate_visible_input_groups": [],
+      "cross_split_duplicate_visible_input_groups": [],
+      "near_duplicate_visible_input_pairs": [],
+      "recommended_task_types": [
+        "trip_planning",
+        "attraction_recommendation",
+        "weather_query",
+        "budget_query",
+        "partial_replan",
+        "weather_adjustment",
+        "clarification",
+        "general_chat"
+      ]
+    },
+    "language": {
+      "policy": "zh-CN visible user_input required",
+      "minimum_cjk_chars_per_unit": 4,
+      "unit_count": 26,
+      "chinese_unit_count": 26,
+      "non_chinese_unit_count": 0,
+      "chinese_ratio": 1.0,
+      "non_chinese_labels": [],
+      "units": [
+        {
+          "label": "ctp_dev_001_hangzhou_full_plan",
+          "cjk_char_count": 38,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_002_beijing_senior_full_plan",
+          "cjk_char_count": 37,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_003_xian_family_full_plan",
+          "cjk_char_count": 37,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_004_shenzhen_full_plan",
+          "cjk_char_count": 36,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_005_guilin_nature_attractions",
+          "cjk_char_count": 28,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_006_beijing_indoor_attractions",
+          "cjk_char_count": 31,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_007_xian_weather_only",
+          "cjk_char_count": 22,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_008_shenzhen_weather_only",
+          "cjk_char_count": 24,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_009_guilin_rough_budget",
+          "cjk_char_count": 35,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_010_hangzhou_rough_budget",
+          "cjk_char_count": 27,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_011_beijing_clarification",
+          "cjk_char_count": 32,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_012_missing_destination_clarification",
+          "cjk_char_count": 32,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_013_general_chat_capability",
+          "cjk_char_count": 28,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_014_general_chat_goodnight",
+          "cjk_char_count": 24,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_015_hangzhou_people_change/t1_full_plan",
+          "cjk_char_count": 31,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_015_hangzhou_people_change/t2_people_change",
+          "cjk_char_count": 27,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_016_beijing_duration_change/t1_full_plan",
+          "cjk_char_count": 30,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_016_beijing_duration_change/t2_extend_duration",
+          "cjk_char_count": 28,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_017_xian_preference_change/t1_full_plan",
+          "cjk_char_count": 35,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_017_xian_preference_change/t2_family_preference",
+          "cjk_char_count": 33,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_018_guilin_rain_adjustment/t1_full_plan",
+          "cjk_char_count": 33,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_018_guilin_rain_adjustment/t2_rain_day2",
+          "cjk_char_count": 29,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_019_shenzhen_heat_adjustment/t1_full_plan",
+          "cjk_char_count": 31,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_019_shenzhen_heat_adjustment/t2_heat_day1",
+          "cjk_char_count": 38,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_020_hangzhou_repeat_no_change/t1_full_plan",
+          "cjk_char_count": 32,
+          "is_chinese": true
+        },
+        {
+          "label": "ctp_dev_020_hangzhou_repeat_no_change/t2_repeat_same",
+          "cjk_char_count": 29,
+          "is_chinese": true
+        }
+      ]
+    },
+    "policy": {
+      "strict_formal": true,
+      "gold_labels_required": true,
+      "visible_language": "zh-CN",
+      "required_agent_sets": true,
+      "required_tool_sets": true,
+      "fixed_offline_city_only": true,
+      "parse_gold_consistency_required": true,
+      "changed_slot_evidence_required": true,
+      "preserved_slot_consistency_required": true,
+      "cross_split_duplicate_check": false,
+      "near_duplicate_similarity_threshold": 0.96,
+      "generation_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "business_agents": [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ]
+    },
+    "units": [
+      {
+        "label": "ctp_dev_001_hangzhou_full_plan",
+        "case_id": "ctp_dev_001_hangzhou_full_plan",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "trip_planning",
+        "city_id": "hangzhou",
+        "visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-01",
+          "duration_days": 2,
+          "people_count": 2,
+          "traveler_group": "couple",
+          "budget_amount": 5000
+        },
+        "current_visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-01",
+          "duration_days": 2,
+          "people_count": 2,
+          "traveler_group": "couple",
+          "budget_amount": 5000
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-01",
+          "duration_days": 2,
+          "people_count": 2,
+          "traveler_group": "couple",
+          "budget_amount": 5000
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "hangzhou",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": 3,
+            "max_attractions": 4,
+            "max_pois_per_day": 2
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_002_beijing_senior_full_plan",
+        "case_id": "ctp_dev_002_beijing_senior_full_plan",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "trip_planning",
+        "city_id": "beijing",
+        "visible_slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-03",
+          "duration_days": 3,
+          "people_count": 4,
+          "traveler_group": "senior",
+          "budget_amount": 8000,
+          "special_requirements": [
+            "low_intensity"
+          ]
+        },
+        "current_visible_slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-03",
+          "duration_days": 3,
+          "people_count": 4,
+          "traveler_group": "senior",
+          "budget_amount": 8000,
+          "special_requirements": [
+            "low_intensity"
+          ]
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-03",
+          "duration_days": 3,
+          "people_count": 4,
+          "traveler_group": "senior",
+          "budget_amount": 8000,
+          "special_requirements": [
+            "low_intensity"
+          ]
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "beijing",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 3,
+            "min_attractions": 3,
+            "max_attractions": 6,
+            "max_pois_per_day": 2
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_003_xian_family_full_plan",
+        "case_id": "ctp_dev_003_xian_family_full_plan",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "trip_planning",
+        "city_id": "xian",
+        "visible_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-05",
+          "duration_days": 2,
+          "people_count": 3,
+          "traveler_group": "family",
+          "budget_amount": 6000,
+          "preferences": [
+            "history_culture",
+            "family"
+          ]
+        },
+        "current_visible_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-05",
+          "duration_days": 2,
+          "people_count": 3,
+          "traveler_group": "family",
+          "budget_amount": 6000,
+          "preferences": [
+            "history_culture",
+            "family"
+          ]
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-05",
+          "duration_days": 2,
+          "people_count": 3,
+          "traveler_group": "family",
+          "budget_amount": 6000,
+          "preferences": [
+            "history_culture",
+            "family"
+          ]
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "xian",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": 3,
+            "max_attractions": 4,
+            "max_pois_per_day": 2
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_004_shenzhen_full_plan",
+        "case_id": "ctp_dev_004_shenzhen_full_plan",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "trip_planning",
+        "city_id": "shenzhen",
+        "visible_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-07",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 7000
+        },
+        "current_visible_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-07",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 7000
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-07",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 7000
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "shenzhen",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": 3,
+            "max_attractions": 4,
+            "max_pois_per_day": 2
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_005_guilin_nature_attractions",
+        "case_id": "ctp_dev_005_guilin_nature_attractions",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "attraction_recommendation",
+        "city_id": "guilin",
+        "visible_slots": {
+          "destination": "guilin",
+          "preferences": [
+            "nature"
+          ],
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "current_visible_slots": {
+          "destination": "guilin",
+          "preferences": [
+            "nature"
+          ],
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "guilin",
+          "preferences": [
+            "nature"
+          ]
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "guilin",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": null,
+            "min_attractions": 3,
+            "max_attractions": 3,
+            "max_pois_per_day": null
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "expected",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search"
+          ]
+        ],
+        "required_tools": [
+          "poi_search"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_006_beijing_indoor_attractions",
+        "case_id": "ctp_dev_006_beijing_indoor_attractions",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "attraction_recommendation",
+        "city_id": "beijing",
+        "visible_slots": {
+          "destination": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "special_requirements": [
+            "indoor_preferred",
+            "avoidance_constraint"
+          ],
+          "weather_scenario": "rain"
+        },
+        "current_visible_slots": {
+          "destination": "beijing",
+          "preferences": [
+            "history_culture",
+            "indoor"
+          ],
+          "special_requirements": [
+            "indoor_preferred",
+            "avoidance_constraint"
+          ],
+          "weather_scenario": "rain"
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "beijing",
+          "preferences": [
+            "indoor",
+            "history_culture"
+          ],
+          "weather_scenario": "rain"
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "beijing",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": null,
+            "min_attractions": 2,
+            "max_attractions": 2,
+            "max_pois_per_day": null
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "expected",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search"
+          ]
+        ],
+        "required_tools": [
+          "poi_search"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_007_xian_weather_only",
+        "case_id": "ctp_dev_007_xian_weather_only",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "weather_query",
+        "city_id": "xian",
+        "visible_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-09",
+          "duration_days": 3,
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "current_visible_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-09",
+          "duration_days": 3,
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-09",
+          "duration_days": 3
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "xian",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 3,
+            "min_attractions": null,
+            "max_attractions": null,
+            "max_pois_per_day": null
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "weather"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "weather_query"
+          ]
+        ],
+        "required_tools": [
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_008_shenzhen_weather_only",
+        "case_id": "ctp_dev_008_shenzhen_weather_only",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "weather_query",
+        "city_id": "shenzhen",
+        "visible_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-11",
+          "duration_days": 2
+        },
+        "current_visible_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-11",
+          "duration_days": 2
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-11",
+          "duration_days": 2
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "shenzhen",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": null,
+            "max_attractions": null,
+            "max_pois_per_day": null
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "weather"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "weather_query"
+          ]
+        ],
+        "required_tools": [
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_009_guilin_rough_budget",
+        "case_id": "ctp_dev_009_guilin_rough_budget",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "budget_query",
+        "city_id": "guilin",
+        "visible_slots": {
+          "destination": "guilin",
+          "start_date": "2026-08-12",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_amount": 4500,
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "current_visible_slots": {
+          "destination": "guilin",
+          "start_date": "2026-08-12",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_amount": 4500,
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "guilin",
+          "start_date": "2026-08-12",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_amount": 4500
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "guilin",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 3,
+            "min_attractions": null,
+            "max_attractions": null,
+            "max_pois_per_day": null
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_010_hangzhou_rough_budget",
+        "case_id": "ctp_dev_010_hangzhou_rough_budget",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "budget_query",
+        "city_id": "hangzhou",
+        "visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-14",
+          "duration_days": 2,
+          "people_count": 3,
+          "budget_amount": 4000,
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "current_visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-14",
+          "duration_days": 2,
+          "people_count": 3,
+          "budget_amount": 4000,
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-14",
+          "duration_days": 2,
+          "people_count": 3,
+          "budget_amount": 4000
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "hangzhou",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": null,
+            "max_attractions": null,
+            "max_pois_per_day": null
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_011_beijing_clarification",
+        "case_id": "ctp_dev_011_beijing_clarification",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "clarification",
+        "city_id": "beijing",
+        "visible_slots": {
+          "destination": "beijing"
+        },
+        "current_visible_slots": {
+          "destination": "beijing"
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "beijing"
+        },
+        "offline_feasibility": {
+          "checked": false,
+          "status": "not_applicable",
+          "checks": {}
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "expected",
+          "forbidden_tools",
+          "missing_slots",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "required_tools": [],
+        "forbidden_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ]
+      },
+      {
+        "label": "ctp_dev_012_missing_destination_clarification",
+        "case_id": "ctp_dev_012_missing_destination_clarification",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "clarification",
+        "city_id": null,
+        "visible_slots": {
+          "people_count": 3,
+          "traveler_group": "family",
+          "preferences": [
+            "family"
+          ]
+        },
+        "current_visible_slots": {
+          "people_count": 3,
+          "traveler_group": "family",
+          "preferences": [
+            "family"
+          ]
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "traveler_group": "family"
+        },
+        "offline_feasibility": {
+          "checked": false,
+          "status": "not_applicable",
+          "checks": {}
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "expected",
+          "forbidden_tools",
+          "missing_slots",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "required_tools": [],
+        "forbidden_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ]
+      },
+      {
+        "label": "ctp_dev_013_general_chat_capability",
+        "case_id": "ctp_dev_013_general_chat_capability",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "general_chat",
+        "city_id": null,
+        "visible_slots": {
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "current_visible_slots": {
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {},
+        "offline_feasibility": {
+          "checked": false,
+          "status": "not_applicable",
+          "checks": {}
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "expected",
+          "forbidden_tools",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "required_tools": [],
+        "forbidden_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ]
+      },
+      {
+        "label": "ctp_dev_014_general_chat_goodnight",
+        "case_id": "ctp_dev_014_general_chat_goodnight",
+        "scenario_id": "",
+        "turn_id": "",
+        "task_type": "general_chat",
+        "city_id": null,
+        "visible_slots": {},
+        "current_visible_slots": {},
+        "previous_visible_slots": {},
+        "gold_slots": {},
+        "offline_feasibility": {
+          "checked": false,
+          "status": "not_applicable",
+          "checks": {}
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "expected",
+          "forbidden_tools",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "required_tools": [],
+        "forbidden_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ]
+      },
+      {
+        "label": "ctp_dev_015_hangzhou_people_change/t1_full_plan",
+        "case_id": "ctp_dev_015_hangzhou_people_change",
+        "scenario_id": "ctp_dev_015_hangzhou_people_change",
+        "turn_id": "t1_full_plan",
+        "task_type": "trip_planning",
+        "city_id": "hangzhou",
+        "visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-13",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5200
+        },
+        "current_visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-13",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5200
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-13",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5200
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "hangzhou",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": 3,
+            "max_attractions": null,
+            "max_pois_per_day": 2
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_015_hangzhou_people_change/t2_people_change",
+        "case_id": "ctp_dev_015_hangzhou_people_change",
+        "scenario_id": "ctp_dev_015_hangzhou_people_change",
+        "turn_id": "t2_people_change",
+        "task_type": "budget_query",
+        "city_id": "hangzhou",
+        "visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-13",
+          "duration_days": 2,
+          "people_count": 3,
+          "budget_amount": 5200
+        },
+        "current_visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-13",
+          "duration_days": 2,
+          "people_count": 3
+        },
+        "previous_visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-13",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5200
+        },
+        "gold_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-13",
+          "duration_days": 2,
+          "people_count": 3,
+          "budget_amount": 5200
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "hangzhou",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": null,
+            "max_attractions": null,
+            "max_pois_per_day": null
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "changed_slots",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "preserved_slots",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_016_beijing_duration_change/t1_full_plan",
+        "case_id": "ctp_dev_016_beijing_duration_change",
+        "scenario_id": "ctp_dev_016_beijing_duration_change",
+        "turn_id": "t1_full_plan",
+        "task_type": "trip_planning",
+        "city_id": "beijing",
+        "visible_slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-15",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 6500
+        },
+        "current_visible_slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-15",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 6500
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-15",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 6500
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "beijing",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": 3,
+            "max_attractions": null,
+            "max_pois_per_day": 2
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_016_beijing_duration_change/t2_extend_duration",
+        "case_id": "ctp_dev_016_beijing_duration_change",
+        "scenario_id": "ctp_dev_016_beijing_duration_change",
+        "turn_id": "t2_extend_duration",
+        "task_type": "partial_replan",
+        "city_id": "beijing",
+        "visible_slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-15",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_amount": 6500
+        },
+        "current_visible_slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-15",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_amount": 6500
+        },
+        "previous_visible_slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-15",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 6500
+        },
+        "gold_slots": {
+          "destination": "beijing",
+          "start_date": "2026-08-15",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_amount": 6500
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "beijing",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 3,
+            "min_attractions": 3,
+            "max_attractions": null,
+            "max_pois_per_day": 2
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "changed_slots",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "preserved_slots",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator",
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_017_xian_preference_change/t1_full_plan",
+        "case_id": "ctp_dev_017_xian_preference_change",
+        "scenario_id": "ctp_dev_017_xian_preference_change",
+        "turn_id": "t1_full_plan",
+        "task_type": "trip_planning",
+        "city_id": "xian",
+        "visible_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-17",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5600,
+          "preferences": [
+            "history_culture"
+          ]
+        },
+        "current_visible_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-17",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5600,
+          "preferences": [
+            "history_culture"
+          ]
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-17",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5600,
+          "preferences": [
+            "history_culture"
+          ]
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "xian",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": 3,
+            "max_attractions": null,
+            "max_pois_per_day": 2
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_017_xian_preference_change/t2_family_preference",
+        "case_id": "ctp_dev_017_xian_preference_change",
+        "scenario_id": "ctp_dev_017_xian_preference_change",
+        "turn_id": "t2_family_preference",
+        "task_type": "partial_replan",
+        "city_id": "xian",
+        "visible_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-17",
+          "duration_days": 2,
+          "people_count": 3,
+          "traveler_group": "family",
+          "budget_amount": 5600,
+          "preferences": [
+            "family"
+          ],
+          "special_requirements": [
+            "low_intensity"
+          ]
+        },
+        "current_visible_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-17",
+          "duration_days": 2,
+          "people_count": 3,
+          "traveler_group": "family",
+          "budget_amount": 5600,
+          "preferences": [
+            "family"
+          ],
+          "special_requirements": [
+            "low_intensity"
+          ]
+        },
+        "previous_visible_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-17",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5600,
+          "preferences": [
+            "history_culture"
+          ]
+        },
+        "gold_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-17",
+          "duration_days": 2,
+          "people_count": 3,
+          "traveler_group": "family",
+          "budget_amount": 5600,
+          "preferences": [
+            "family"
+          ],
+          "special_requirements": [
+            "low_intensity"
+          ]
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "xian",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": 3,
+            "max_attractions": null,
+            "max_pois_per_day": 2
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "changed_slots",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "preserved_slots",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator",
+          "poi_search"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_018_guilin_rain_adjustment/t1_full_plan",
+        "case_id": "ctp_dev_018_guilin_rain_adjustment",
+        "scenario_id": "ctp_dev_018_guilin_rain_adjustment",
+        "turn_id": "t1_full_plan",
+        "task_type": "trip_planning",
+        "city_id": "guilin",
+        "visible_slots": {
+          "destination": "guilin",
+          "start_date": "2026-08-19",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 4800,
+          "preferences": [
+            "nature"
+          ]
+        },
+        "current_visible_slots": {
+          "destination": "guilin",
+          "start_date": "2026-08-19",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 4800,
+          "preferences": [
+            "nature"
+          ]
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "guilin",
+          "start_date": "2026-08-19",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 4800,
+          "preferences": [
+            "nature"
+          ]
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "guilin",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": 3,
+            "max_attractions": null,
+            "max_pois_per_day": 2
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_018_guilin_rain_adjustment/t2_rain_day2",
+        "case_id": "ctp_dev_018_guilin_rain_adjustment",
+        "scenario_id": "ctp_dev_018_guilin_rain_adjustment",
+        "turn_id": "t2_rain_day2",
+        "task_type": "weather_adjustment",
+        "city_id": "guilin",
+        "visible_slots": {
+          "destination": "guilin",
+          "start_date": "2026-08-19",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 4800,
+          "preferences": [
+            "nature"
+          ],
+          "weather_scenario": "rain"
+        },
+        "current_visible_slots": {
+          "destination": "guilin",
+          "start_date": "2026-08-19",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 4800,
+          "weather_scenario": "rain"
+        },
+        "previous_visible_slots": {
+          "destination": "guilin",
+          "start_date": "2026-08-19",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 4800,
+          "preferences": [
+            "nature"
+          ]
+        },
+        "gold_slots": {
+          "destination": "guilin",
+          "start_date": "2026-08-19",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 4800,
+          "weather_scenario": "rain"
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "guilin",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": null,
+            "max_attractions": null,
+            "max_pois_per_day": null,
+            "weather_change": {
+              "scenario_type": "rain",
+              "affected_days": [
+                2
+              ]
+            }
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "changed_slots",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "preserved_slots",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "weather",
+            "itinerary"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "weather_query"
+          ]
+        ],
+        "required_tools": [
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_019_shenzhen_heat_adjustment/t1_full_plan",
+        "case_id": "ctp_dev_019_shenzhen_heat_adjustment",
+        "scenario_id": "ctp_dev_019_shenzhen_heat_adjustment",
+        "turn_id": "t1_full_plan",
+        "task_type": "trip_planning",
+        "city_id": "shenzhen",
+        "visible_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-21",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 7200
+        },
+        "current_visible_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-21",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 7200
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-21",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 7200
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "shenzhen",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": 3,
+            "max_attractions": null,
+            "max_pois_per_day": 2
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_019_shenzhen_heat_adjustment/t2_heat_day1",
+        "case_id": "ctp_dev_019_shenzhen_heat_adjustment",
+        "scenario_id": "ctp_dev_019_shenzhen_heat_adjustment",
+        "turn_id": "t2_heat_day1",
+        "task_type": "weather_adjustment",
+        "city_id": "shenzhen",
+        "visible_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-21",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 7200,
+          "preferences": [
+            "nature",
+            "indoor"
+          ],
+          "special_requirements": [
+            "indoor_preferred"
+          ],
+          "weather_scenario": "high_temperature"
+        },
+        "current_visible_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-21",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 7200,
+          "preferences": [
+            "nature",
+            "indoor"
+          ],
+          "special_requirements": [
+            "indoor_preferred"
+          ],
+          "weather_scenario": "high_temperature"
+        },
+        "previous_visible_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-21",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 7200
+        },
+        "gold_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-21",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 7200,
+          "special_requirements": [
+            "indoor_preferred"
+          ],
+          "weather_scenario": "high_temperature"
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "shenzhen",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": null,
+            "max_attractions": null,
+            "max_pois_per_day": null,
+            "weather_change": {
+              "scenario_type": "high_temperature",
+              "affected_days": [
+                1
+              ]
+            }
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "changed_slots",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "preserved_slots",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "weather",
+            "itinerary"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "weather_query"
+          ]
+        ],
+        "required_tools": [
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_020_hangzhou_repeat_no_change/t1_full_plan",
+        "case_id": "ctp_dev_020_hangzhou_repeat_no_change",
+        "scenario_id": "ctp_dev_020_hangzhou_repeat_no_change",
+        "turn_id": "t1_full_plan",
+        "task_type": "trip_planning",
+        "city_id": "hangzhou",
+        "visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-23",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5100,
+          "preferences": [
+            "history_culture"
+          ]
+        },
+        "current_visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-23",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5100,
+          "preferences": [
+            "history_culture"
+          ]
+        },
+        "previous_visible_slots": {},
+        "gold_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-23",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5100,
+          "preferences": [
+            "history_culture"
+          ]
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "hangzhou",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": 3,
+            "max_attractions": null,
+            "max_pois_per_day": 2
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "required_tools": [
+          "budget_calculator",
+          "poi_search",
+          "weather_query"
+        ],
+        "forbidden_tools": []
+      },
+      {
+        "label": "ctp_dev_020_hangzhou_repeat_no_change/t2_repeat_same",
+        "case_id": "ctp_dev_020_hangzhou_repeat_no_change",
+        "scenario_id": "ctp_dev_020_hangzhou_repeat_no_change",
+        "turn_id": "t2_repeat_same",
+        "task_type": "partial_replan",
+        "city_id": "hangzhou",
+        "visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-23",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5100,
+          "preferences": [
+            "history_culture"
+          ]
+        },
+        "current_visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-23",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5100,
+          "preferences": [
+            "history_culture"
+          ]
+        },
+        "previous_visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-23",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5100,
+          "preferences": [
+            "history_culture"
+          ]
+        },
+        "gold_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-23",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 5100
+        },
+        "offline_feasibility": {
+          "checked": true,
+          "status": "passed",
+          "checks": {
+            "city_id": "hangzhou",
+            "poi_count": 30,
+            "weather_scenario_count": 5,
+            "max_weather_days": 5,
+            "duration_days": 2,
+            "min_attractions": null,
+            "max_attractions": null,
+            "max_pois_per_day": null
+          }
+        },
+        "present_labels": [
+          "accepted_agent_sets",
+          "accepted_tool_sets",
+          "changed_slots",
+          "duration_days",
+          "expected",
+          "hard_constraints",
+          "preserved_slots",
+          "required_tools",
+          "task_type"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "required_tools": [],
+        "forbidden_tools": []
+      }
+    ]
+  },
+  "fixed_data": {
+    "valid": true,
+    "schema_version": "fixed_data_manifest_v2",
+    "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+    "file_count": 25,
+    "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+    "city_ids": [
+      "beijing",
+      "hangzhou",
+      "xian",
+      "shenzhen",
+      "guilin"
+    ]
+  },
+  "environment": {
+    "EXPERIMENT_STRICT_MODE": true,
+    "EXPERIMENT_DISABLE_CACHE": true,
+    "TRACE_SAVE_USER_MESSAGE": false,
+    "LLM_MODEL": "gpt-5-mini",
+    "LLM_BASE_URL": "https://api.vectorengine.ai/v1",
+    "LLM_TEMPERATURE": 0.0,
+    "LLM_MAX_TOKENS": 4096,
+    "LLM_TIMEOUT": 60,
+    "LLM_RETRY_MAX_ATTEMPTS": 3,
+    "LLM_REASONING_EFFORT": "minimal",
+    "LLM_CONFIGURED": true,
+    "OLLAMA_CONFIGURED": false
+  },
+  "policy": {
+    "strict_formal": true,
+    "gold_visible_to_generation": false,
+    "previous_state_policy": "formal multi-turn state must be produced by the same method's prior turn",
+    "no_overwrite": true,
+    "preflight_consumes_api": false
+  }
+}

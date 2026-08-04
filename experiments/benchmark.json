@@ -1,10 +1,21 @@
 {
   "schema_version": "ctp-benchmark-manifest-v1",
   "dataset_id": "tourism_benchmark_v1",
-  "dataset_version": "2026-07-30-dev",
-  "split": "development",
-  "description": "Benchmark manifest for the current paper-level development split. Replace or extend this manifest when the formal 100-120 case test split is frozen.",
+  "dataset_version": "2026-08-01-draft-v1",
+  "split": "test_draft",
+  "language": "zh-CN",
+  "description": "正式测试集草稿入口。当前指向 ctp120_test_draft.json；该入口用于 100案例/130轮正式实验 preflight，开发集仍保留在 ctp120_dev.json。",
   "case_files": [
-    "ctp120_dev.json"
-  ]
+    "ctp120_test_draft.json"
+  ],
+  "comparison_files": [
+    "ctp120_dev.json",
+    "benchmark_test.json"
+  ],
+  "expected": {
+    "case_count": 100,
+    "turn_count": 130,
+    "scenario_case_count": 30,
+    "statistical_unit": "case_id"
+  }
 }

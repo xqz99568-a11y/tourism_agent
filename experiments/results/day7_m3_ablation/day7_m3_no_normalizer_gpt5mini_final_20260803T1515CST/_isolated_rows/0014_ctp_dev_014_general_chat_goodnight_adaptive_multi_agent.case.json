@@ -1,0 +1,18 @@
+{
+  "case_id": "ctp_dev_014_general_chat_goodnight",
+  "user_input": "谢谢，今天不需要景点、天气、路线或预算，我只是来道个晚安。",
+  "expected": {
+    "task_type": "general_chat",
+    "accepted_agent_sets": [
+      []
+    ],
+    "accepted_tool_sets": [
+      []
+    ],
+    "forbidden_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ]
+  }
+}

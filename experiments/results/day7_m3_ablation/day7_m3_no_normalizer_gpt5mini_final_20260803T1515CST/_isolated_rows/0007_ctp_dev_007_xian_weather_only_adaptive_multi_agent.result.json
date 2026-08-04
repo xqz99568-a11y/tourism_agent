@@ -1,0 +1,4998 @@
+{
+  "case_id": "ctp_dev_007_xian_weather_only",
+  "method": "adaptive_multi_agent",
+  "request_id": "ctp_dev_007_xian_weather_only_adaptive_multi_agent_2b69108d",
+  "run_id": "day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST",
+  "repeat_index": 0,
+  "system_variant": "adaptive_multi_agent",
+  "model_config_name": "day7-dev-real-m3-no-normalizer",
+  "evaluation_mode": "end_to_end",
+  "input_hash": "162543e8c715bdd3d3cb1ee4181cf00783661e85e42f7ad7afcb659d98f29369",
+  "result_hash": "e5d46dbfaecdecfc741aff34c5f943e4d5beb7653b0bab055aab90c1e278e938",
+  "offline_data": {
+    "schema_version": "fixed_data_manifest_v2",
+    "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+    "city_ids": [
+      "beijing",
+      "hangzhou",
+      "xian",
+      "shenzhen",
+      "guilin"
+    ],
+    "snapshot_dirs": [
+      "pois",
+      "weather",
+      "restaurants",
+      "accommodation",
+      "transport"
+    ],
+    "file_count": 25,
+    "expected_file_count": 25,
+    "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+    "expected_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+    "missing_files": [],
+    "files": [
+      {
+        "kind": "accommodation",
+        "city_id": "beijing",
+        "path": "data/accommodation/beijing.json",
+        "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "accommodation",
+        "city_id": "guilin",
+        "path": "data/accommodation/guilin.json",
+        "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "accommodation",
+        "city_id": "hangzhou",
+        "path": "data/accommodation/hangzhou.json",
+        "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "accommodation",
+        "city_id": "shenzhen",
+        "path": "data/accommodation/shenzhen.json",
+        "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "accommodation",
+        "city_id": "xian",
+        "path": "data/accommodation/xian.json",
+        "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "pois",
+        "city_id": "beijing",
+        "path": "data/pois/beijing.json",
+        "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "pois",
+        "city_id": "guilin",
+        "path": "data/pois/guilin.json",
+        "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "pois",
+        "city_id": "hangzhou",
+        "path": "data/pois/hangzhou.json",
+        "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "pois",
+        "city_id": "shenzhen",
+        "path": "data/pois/shenzhen.json",
+        "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "pois",
+        "city_id": "xian",
+        "path": "data/pois/xian.json",
+        "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "restaurants",
+        "city_id": "beijing",
+        "path": "data/restaurants/beijing.json",
+        "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "restaurants",
+        "city_id": "guilin",
+        "path": "data/restaurants/guilin.json",
+        "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "restaurants",
+        "city_id": "hangzhou",
+        "path": "data/restaurants/hangzhou.json",
+        "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "restaurants",
+        "city_id": "shenzhen",
+        "path": "data/restaurants/shenzhen.json",
+        "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "restaurants",
+        "city_id": "xian",
+        "path": "data/restaurants/xian.json",
+        "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "transport",
+        "city_id": "beijing",
+        "path": "data/transport/beijing.json",
+        "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "transport",
+        "city_id": "guilin",
+        "path": "data/transport/guilin.json",
+        "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "transport",
+        "city_id": "hangzhou",
+        "path": "data/transport/hangzhou.json",
+        "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "transport",
+        "city_id": "shenzhen",
+        "path": "data/transport/shenzhen.json",
+        "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "transport",
+        "city_id": "xian",
+        "path": "data/transport/xian.json",
+        "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "weather",
+        "city_id": "beijing",
+        "path": "data/weather/beijing.json",
+        "sha256": "a6b32944050cc2a638d09a67be8d7747ca2b0153527f856d85b4813651c91d0a",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "weather",
+        "city_id": "guilin",
+        "path": "data/weather/guilin.json",
+        "sha256": "450d86b2f7121f970e7c48e5a38ad113c8e4289c0356f448221ce1d63d412f94",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "weather",
+        "city_id": "hangzhou",
+        "path": "data/weather/hangzhou.json",
+        "sha256": "e4ea7c0b10b350cd4c7ba739746e0634d0aa86d77378d858104c0f789f6f64fd",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "weather",
+        "city_id": "shenzhen",
+        "path": "data/weather/shenzhen.json",
+        "sha256": "533e74a25a72fdc58a0f31746f10dd405611b3ab007f18d0319566deaec5e281",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      {
+        "kind": "weather",
+        "city_id": "xian",
+        "path": "data/weather/xian.json",
+        "sha256": "7d9e244e1bd64d129cb75b641a09adc8521d9ce082b4a28de7bbb2aadb92cef4",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      }
+    ]
+  },
+  "output": {
+    "schema_version": "ctp-experiment-output-v1",
+    "case_id": "ctp_dev_007_xian_weather_only",
+    "method": "adaptive_multi_agent",
+    "task_type": "weather_query",
+    "planned_agents": [
+      "weather"
+    ],
+    "used_agents": [
+      "weather"
+    ],
+    "planned_tools": [
+      "weather_query"
+    ],
+    "called_tools": [
+      {
+        "tool_name": "weather_query",
+        "status": "completed",
+        "success": true,
+        "arguments": {},
+        "duration_ms": 9.0,
+        "error": null
+      }
+    ],
+    "tool_results": {
+      "weather_query": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "weather_query",
+        "status": "success",
+        "success": true,
+        "input": {
+          "city": "xian",
+          "date": "2026-08-09",
+          "days": 3,
+          "scenario_type": "sunny"
+        },
+        "data": {
+          "city": "西安",
+          "city_id": "xian",
+          "date": "2026-08-09",
+          "scenario_type": "rain",
+          "requested_scenario_type": "sunny",
+          "scenario_selection": "city_date_hash",
+          "risk_level": "medium",
+          "daily_weather": [
+            {
+              "day_index": 1,
+              "date": "2026-08-09",
+              "state": "rain",
+              "weather": "雨天",
+              "temperature_min_c": 14,
+              "temperature_max_c": 21,
+              "precipitation_mm": 8.0,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain"
+              ],
+              "suitable_periods": [
+                "morning",
+                "afternoon"
+              ],
+              "avoid_periods": []
+            },
+            {
+              "day_index": 2,
+              "date": "2026-08-10",
+              "state": "rain",
+              "weather": "雨天",
+              "temperature_min_c": 13,
+              "temperature_max_c": 20,
+              "precipitation_mm": 18.0,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain"
+              ],
+              "suitable_periods": [
+                "morning",
+                "afternoon"
+              ],
+              "avoid_periods": []
+            },
+            {
+              "day_index": 3,
+              "date": "2026-08-11",
+              "state": "rain",
+              "weather": "雨天",
+              "temperature_min_c": 15,
+              "temperature_max_c": 22,
+              "precipitation_mm": 12.0,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain"
+              ],
+              "suitable_periods": [
+                "morning",
+                "afternoon"
+              ],
+              "avoid_periods": []
+            }
+          ],
+          "planning_constraints": {
+            "dynamic_adjustment_required": true,
+            "indoor_preference": true,
+            "minimum_indoor_activity_ratio": 0.6,
+            "avoid_time_windows": [],
+            "maximum_continuous_outdoor_hours": 1,
+            "mandatory_actions": [
+              "提供博物馆和室内遗址展示替代方案",
+              "降低城墙骑行和长距离露天步行优先级"
+            ]
+          },
+          "weather_adjustment_required": true
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "frozen_offline",
+          "real_time_api_allowed": false,
+          "dataset_version": "CTP-WEATHER-v1.0",
+          "source_file_id": "ctp_weather_xian_v1_0",
+          "record_count": 3,
+          "canonical_city_id": "xian",
+          "weather_date_mapping_rule": "sha256(canonical_city_id + date) selects one fixed scenario when date is provided"
+        }
+      }
+    },
+    "agent_outputs": {
+      "weather": {
+        "schema_version": "ctp-research-agent-output-v1",
+        "agent_name": "weather",
+        "status": "completed",
+        "success": true,
+        "reused": false,
+        "prompt_version": "ctp-research-agent-prompts-v1",
+        "evidence_tools": [
+          "weather_query"
+        ],
+        "upstream_agents": [],
+        "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"weather\",\n  \"summary\": \"基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。\",\n  \"decisions\": {\n    \"attraction\": {\n      \"selected_poi_ids\": [],\n      \"notes\": \"用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。\"\n    },\n    \"weather\": {\n      \"risk_days\": [\n        {\n          \"day_index\": 1,\n          \"date\": \"2026-08-09\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 14,\n          \"temperature_max_c\": 21,\n          \"precipitation_mm\": 8.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 2,\n          \"date\": \"2026-08-10\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 13,\n          \"temperature_max_c\": 20,\n          \"precipitation_mm\": 18.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 3,\n          \"date\": \"2026-08-11\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 15,\n          \"temperature_max_c\": 22,\n          \"precipitation_mm\": 12.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        }\n      ],\n      \"adjustment_required\": true,\n      \"adjustment_notes\": \"工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。\"\n    },\n    \"itinerary\": {\n      \"daily_itinerary\": [\n        {\n          \"day\": 1,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 2,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 3,\n          \"attraction_poi_ids\": []\n        }\n      ],\n      \"notes\": \"应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。\"\n    },\n    \"budget\": {\n      \"feasibility\": true,\n      \"budget_notes\": \"天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。\",\n      \"recommended_total\": null\n    }\n  },\n  \"risks\": [\n    {\n      \"type\": \"weather\",\n      \"description\": \"连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"将活动安排以室内为主（工具建议至少60%室内活动）。\",\n        \"限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。\",\n        \"降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。\",\n        \"保持行程弹性，准备根据实时情况动态调整。\"\n      ]\n    },\n    {\n      \"type\": \"planning_constraint\",\n      \"description\": \"工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"保留备选室内活动时段与交通时间缓冲。\",\n        \"避免将关键行程安排在连续长时间的户外活动段。\"\n      ]\n    }\n  ],\n  \"confidence\": 0.85\n}",
+        "decision_schema_version": "ctp-research-agent-decision-v1",
+        "decision": {
+          "schema_version": "ctp-research-agent-decision-v1",
+          "agent_name": "weather",
+          "summary": "基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。",
+          "decisions": {
+            "attraction": {
+              "selected_poi_ids": [],
+              "notes": "用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。"
+            },
+            "weather": {
+              "risk_days": [
+                {
+                  "day_index": 1,
+                  "date": "2026-08-09",
+                  "weather": "雨天",
+                  "temperature_min_c": 14,
+                  "temperature_max_c": 21,
+                  "precipitation_mm": 8.0,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "afternoon"
+                  ],
+                  "avoid_periods": []
+                },
+                {
+                  "day_index": 2,
+                  "date": "2026-08-10",
+                  "weather": "雨天",
+                  "temperature_min_c": 13,
+                  "temperature_max_c": 20,
+                  "precipitation_mm": 18.0,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "afternoon"
+                  ],
+                  "avoid_periods": []
+                },
+                {
+                  "day_index": 3,
+                  "date": "2026-08-11",
+                  "weather": "雨天",
+                  "temperature_min_c": 15,
+                  "temperature_max_c": 22,
+                  "precipitation_mm": 12.0,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "afternoon"
+                  ],
+                  "avoid_periods": []
+                }
+              ],
+              "adjustment_required": true,
+              "adjustment_notes": "工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。"
+            },
+            "itinerary": {
+              "daily_itinerary": [
+                {
+                  "day": 1,
+                  "attraction_poi_ids": []
+                },
+                {
+                  "day": 2,
+                  "attraction_poi_ids": []
+                },
+                {
+                  "day": 3,
+                  "attraction_poi_ids": []
+                }
+              ],
+              "notes": "应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。"
+            },
+            "budget": {
+              "feasibility": true,
+              "budget_notes": "天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。",
+              "recommended_total": null
+            }
+          },
+          "risks": [
+            {
+              "type": "weather",
+              "description": "连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。",
+              "likelihood": "medium",
+              "impact": "medium",
+              "mitigation": [
+                "将活动安排以室内为主（工具建议至少60%室内活动）。",
+                "限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。",
+                "降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。",
+                "保持行程弹性，准备根据实时情况动态调整。"
+              ]
+            },
+            {
+              "type": "planning_constraint",
+              "description": "工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。",
+              "likelihood": "medium",
+              "impact": "medium",
+              "mitigation": [
+                "保留备选室内活动时段与交通时间缓冲。",
+                "避免将关键行程安排在连续长时间的户外活动段。"
+              ]
+            }
+          ],
+          "confidence": 0.85
+        },
+        "decision_source": "llm",
+        "decision_fallback_used": false,
+        "decision_normalizer_enabled": false,
+        "decision_normalizer_skipped": false,
+        "decision_parse_status": "passed",
+        "decision_validation_status": "passed",
+        "decision_errors": [],
+        "llm_decision_parse_status": "passed",
+        "llm_decision_validation_status": "passed",
+        "llm_decision_errors": [],
+        "usage": {
+          "prompt_tokens": 871,
+          "completion_tokens": 1196,
+          "total_tokens": 2067
+        },
+        "prompt_tokens": 871,
+        "completion_tokens": 1196,
+        "total_tokens": 2067,
+        "duration_ms": 14220.47,
+        "llm_call_count": 1
+      }
+    },
+    "attractions": [],
+    "trip_days": 3,
+    "daily_itinerary": [],
+    "budget": null,
+    "weather": {
+      "city": "西安",
+      "city_id": "xian",
+      "date": "2026-08-09",
+      "scenario_type": "rain",
+      "requested_scenario_type": "sunny",
+      "scenario_selection": "city_date_hash",
+      "risk_level": "medium",
+      "daily_weather": [
+        {
+          "day_index": 1,
+          "date": "2026-08-09",
+          "state": "rain",
+          "weather": "雨天",
+          "temperature_min_c": 14,
+          "temperature_max_c": 21,
+          "precipitation_mm": 8.0,
+          "risk_level": "medium",
+          "risk_tags": [
+            "rain"
+          ],
+          "suitable_periods": [
+            "morning",
+            "afternoon"
+          ],
+          "avoid_periods": []
+        },
+        {
+          "day_index": 2,
+          "date": "2026-08-10",
+          "state": "rain",
+          "weather": "雨天",
+          "temperature_min_c": 13,
+          "temperature_max_c": 20,
+          "precipitation_mm": 18.0,
+          "risk_level": "medium",
+          "risk_tags": [
+            "rain"
+          ],
+          "suitable_periods": [
+            "morning",
+            "afternoon"
+          ],
+          "avoid_periods": []
+        },
+        {
+          "day_index": 3,
+          "date": "2026-08-11",
+          "state": "rain",
+          "weather": "雨天",
+          "temperature_min_c": 15,
+          "temperature_max_c": 22,
+          "precipitation_mm": 12.0,
+          "risk_level": "medium",
+          "risk_tags": [
+            "rain"
+          ],
+          "suitable_periods": [
+            "morning",
+            "afternoon"
+          ],
+          "avoid_periods": []
+        }
+      ],
+      "planning_constraints": {
+        "dynamic_adjustment_required": true,
+        "indoor_preference": true,
+        "minimum_indoor_activity_ratio": 0.6,
+        "avoid_time_windows": [],
+        "maximum_continuous_outdoor_hours": 1,
+        "mandatory_actions": [
+          "提供博物馆和室内遗址展示替代方案",
+          "降低城墙骑行和长距离露天步行优先级"
+        ]
+      },
+      "weather_adjustment_required": true,
+      "agent_weather_decision": {
+        "risk_days": [],
+        "adjustment_required": false,
+        "source": "weather"
+      }
+    },
+    "weather_adjustments": [
+      {
+        "day": 1,
+        "day_index": 1,
+        "reason": "rain",
+        "action": "减少长时间户外活动，优先安排室内或低风险景点",
+        "candidate_indoor_pois": []
+      },
+      {
+        "day": 2,
+        "day_index": 2,
+        "reason": "rain",
+        "action": "减少长时间户外活动，优先安排室内或低风险景点",
+        "candidate_indoor_pois": []
+      },
+      {
+        "day": 3,
+        "day_index": 3,
+        "reason": "rain",
+        "action": "减少长时间户外活动，优先安排室内或低风险景点",
+        "candidate_indoor_pois": []
+      }
+    ],
+    "constraint_report": {
+      "schema_version": "research_tool_result_v1",
+      "tool_contract_version": "ctp-research-tools-v1.0",
+      "tool_name": "constraint_checker",
+      "status": "success",
+      "success": true,
+      "input": {
+        "request": {
+          "destination": "xian",
+          "start_date": "2026-08-09",
+          "duration_days": 3,
+          "special_requirements": [
+            "avoidance_constraint"
+          ],
+          "case_id": "ctp_dev_007_xian_weather_only",
+          "user_input": "只查询西安2026年8月9日开始3天的天气预报，不要推荐景点。",
+          "city": "xian",
+          "budget": null
+        },
+        "constraints": {}
+      },
+      "data": {
+        "all_passed": true,
+        "applicable_count": 2,
+        "passed_count": 2,
+        "failed_count": 0,
+        "checks": [
+          {
+            "name": "trip_days",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "expected": null,
+              "actual": 0
+            }
+          },
+          {
+            "name": "budget_limit",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "limit": null,
+              "actual": null
+            }
+          },
+          {
+            "name": "weather_adjustment",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "required": true,
+              "adjustment_count": 3
+            }
+          },
+          {
+            "name": "min_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "minimum": null,
+              "actual": 0
+            }
+          },
+          {
+            "name": "max_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "maximum": null,
+              "actual": 0
+            }
+          },
+          {
+            "name": "poi_existence",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "attraction_count": 0
+            }
+          },
+          {
+            "name": "duplicate_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "attraction_count": 0
+            }
+          },
+          {
+            "name": "must_include_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": []
+            }
+          },
+          {
+            "name": "forbidden_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "forbidden": []
+            }
+          },
+          {
+            "name": "rain_attraction_suitability",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "rain_detected": true,
+              "attraction_count": 0
+            }
+          },
+          {
+            "name": "senior_accessibility",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "senior_request": false
+            }
+          },
+          {
+            "name": "tool_evidence",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "required": false,
+              "required_tools": [
+                "weather_query"
+              ],
+              "missing_or_failed": []
+            }
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "offline": true,
+        "source_mode": "deterministic_evaluator",
+        "real_time_api_allowed": false,
+        "contract": "ctp-research-tools-v1.0"
+      }
+    },
+    "hard_constraint_passed_count": 2,
+    "hard_constraint_failed_count": 0,
+    "hard_constraint_applicable_count": 2,
+    "hard_constraints_all_satisfied": true,
+    "hcsr": 1.0,
+    "execution_status": "completed",
+    "final_answer": "天气证据：rain",
+    "raw_output": {
+      "task_type": "weather_query",
+      "planned_agents": [
+        "weather"
+      ],
+      "used_agents": [
+        "weather"
+      ],
+      "planned_tools": [
+        "weather_query"
+      ],
+      "called_tools": [
+        {
+          "call_id": "weather-weather_query-2a3ab3",
+          "name": "weather_query",
+          "tool_name": "weather_query",
+          "agent_name": "weather",
+          "agent": "weather",
+          "component": "weather",
+          "params": {
+            "city": "xian",
+            "date": "2026-08-09",
+            "days": 3,
+            "scenario_type": "sunny"
+          },
+          "duration": 9.0,
+          "duration_ms": 9.0,
+          "status": "completed",
+          "success": true,
+          "error": null,
+          "cache_hit": null,
+          "fallback_used": null
+        }
+      ],
+      "agent_outputs": {
+        "weather": {
+          "schema_version": "ctp-research-agent-output-v1",
+          "agent_name": "weather",
+          "status": "completed",
+          "success": true,
+          "reused": false,
+          "prompt_version": "ctp-research-agent-prompts-v1",
+          "evidence_tools": [
+            "weather_query"
+          ],
+          "upstream_agents": [],
+          "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"weather\",\n  \"summary\": \"基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。\",\n  \"decisions\": {\n    \"attraction\": {\n      \"selected_poi_ids\": [],\n      \"notes\": \"用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。\"\n    },\n    \"weather\": {\n      \"risk_days\": [\n        {\n          \"day_index\": 1,\n          \"date\": \"2026-08-09\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 14,\n          \"temperature_max_c\": 21,\n          \"precipitation_mm\": 8.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 2,\n          \"date\": \"2026-08-10\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 13,\n          \"temperature_max_c\": 20,\n          \"precipitation_mm\": 18.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 3,\n          \"date\": \"2026-08-11\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 15,\n          \"temperature_max_c\": 22,\n          \"precipitation_mm\": 12.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        }\n      ],\n      \"adjustment_required\": true,\n      \"adjustment_notes\": \"工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。\"\n    },\n    \"itinerary\": {\n      \"daily_itinerary\": [\n        {\n          \"day\": 1,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 2,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 3,\n          \"attraction_poi_ids\": []\n        }\n      ],\n      \"notes\": \"应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。\"\n    },\n    \"budget\": {\n      \"feasibility\": true,\n      \"budget_notes\": \"天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。\",\n      \"recommended_total\": null\n    }\n  },\n  \"risks\": [\n    {\n      \"type\": \"weather\",\n      \"description\": \"连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"将活动安排以室内为主（工具建议至少60%室内活动）。\",\n        \"限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。\",\n        \"降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。\",\n        \"保持行程弹性，准备根据实时情况动态调整。\"\n      ]\n    },\n    {\n      \"type\": \"planning_constraint\",\n      \"description\": \"工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"保留备选室内活动时段与交通时间缓冲。\",\n        \"避免将关键行程安排在连续长时间的户外活动段。\"\n      ]\n    }\n  ],\n  \"confidence\": 0.85\n}",
+          "decision_schema_version": "ctp-research-agent-decision-v1",
+          "decision": {
+            "schema_version": "ctp-research-agent-decision-v1",
+            "agent_name": "weather",
+            "summary": "基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。",
+            "decisions": {
+              "attraction": {
+                "selected_poi_ids": [],
+                "notes": "用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。"
+              },
+              "weather": {
+                "risk_days": [
+                  {
+                    "day_index": 1,
+                    "date": "2026-08-09",
+                    "weather": "雨天",
+                    "temperature_min_c": 14,
+                    "temperature_max_c": 21,
+                    "precipitation_mm": 8.0,
+                    "risk_level": "medium",
+                    "risk_tags": [
+                      "rain"
+                    ],
+                    "suitable_periods": [
+                      "morning",
+                      "afternoon"
+                    ],
+                    "avoid_periods": []
+                  },
+                  {
+                    "day_index": 2,
+                    "date": "2026-08-10",
+                    "weather": "雨天",
+                    "temperature_min_c": 13,
+                    "temperature_max_c": 20,
+                    "precipitation_mm": 18.0,
+                    "risk_level": "medium",
+                    "risk_tags": [
+                      "rain"
+                    ],
+                    "suitable_periods": [
+                      "morning",
+                      "afternoon"
+                    ],
+                    "avoid_periods": []
+                  },
+                  {
+                    "day_index": 3,
+                    "date": "2026-08-11",
+                    "weather": "雨天",
+                    "temperature_min_c": 15,
+                    "temperature_max_c": 22,
+                    "precipitation_mm": 12.0,
+                    "risk_level": "medium",
+                    "risk_tags": [
+                      "rain"
+                    ],
+                    "suitable_periods": [
+                      "morning",
+                      "afternoon"
+                    ],
+                    "avoid_periods": []
+                  }
+                ],
+                "adjustment_required": true,
+                "adjustment_notes": "工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。"
+              },
+              "itinerary": {
+                "daily_itinerary": [
+                  {
+                    "day": 1,
+                    "attraction_poi_ids": []
+                  },
+                  {
+                    "day": 2,
+                    "attraction_poi_ids": []
+                  },
+                  {
+                    "day": 3,
+                    "attraction_poi_ids": []
+                  }
+                ],
+                "notes": "应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。"
+              },
+              "budget": {
+                "feasibility": true,
+                "budget_notes": "天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。",
+                "recommended_total": null
+              }
+            },
+            "risks": [
+              {
+                "type": "weather",
+                "description": "连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。",
+                "likelihood": "medium",
+                "impact": "medium",
+                "mitigation": [
+                  "将活动安排以室内为主（工具建议至少60%室内活动）。",
+                  "限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。",
+                  "降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。",
+                  "保持行程弹性，准备根据实时情况动态调整。"
+                ]
+              },
+              {
+                "type": "planning_constraint",
+                "description": "工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。",
+                "likelihood": "medium",
+                "impact": "medium",
+                "mitigation": [
+                  "保留备选室内活动时段与交通时间缓冲。",
+                  "避免将关键行程安排在连续长时间的户外活动段。"
+                ]
+              }
+            ],
+            "confidence": 0.85
+          },
+          "decision_source": "llm",
+          "decision_fallback_used": false,
+          "decision_normalizer_enabled": false,
+          "decision_normalizer_skipped": false,
+          "decision_parse_status": "passed",
+          "decision_validation_status": "passed",
+          "decision_errors": [],
+          "llm_decision_parse_status": "passed",
+          "llm_decision_validation_status": "passed",
+          "llm_decision_errors": [],
+          "usage": {
+            "prompt_tokens": 871,
+            "completion_tokens": 1196,
+            "total_tokens": 2067
+          },
+          "prompt_tokens": 871,
+          "completion_tokens": 1196,
+          "total_tokens": 2067,
+          "duration_ms": 14220.47,
+          "llm_call_count": 1
+        }
+      },
+      "attractions": [],
+      "trip_days": 3,
+      "daily_itinerary": [],
+      "budget": null,
+      "weather": {
+        "city": "西安",
+        "city_id": "xian",
+        "date": "2026-08-09",
+        "scenario_type": "rain",
+        "requested_scenario_type": "sunny",
+        "scenario_selection": "city_date_hash",
+        "risk_level": "medium",
+        "daily_weather": [
+          {
+            "day_index": 1,
+            "date": "2026-08-09",
+            "state": "rain",
+            "weather": "雨天",
+            "temperature_min_c": 14,
+            "temperature_max_c": 21,
+            "precipitation_mm": 8.0,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain"
+            ],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          },
+          {
+            "day_index": 2,
+            "date": "2026-08-10",
+            "state": "rain",
+            "weather": "雨天",
+            "temperature_min_c": 13,
+            "temperature_max_c": 20,
+            "precipitation_mm": 18.0,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain"
+            ],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          },
+          {
+            "day_index": 3,
+            "date": "2026-08-11",
+            "state": "rain",
+            "weather": "雨天",
+            "temperature_min_c": 15,
+            "temperature_max_c": 22,
+            "precipitation_mm": 12.0,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain"
+            ],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          }
+        ],
+        "planning_constraints": {
+          "dynamic_adjustment_required": true,
+          "indoor_preference": true,
+          "minimum_indoor_activity_ratio": 0.6,
+          "avoid_time_windows": [],
+          "maximum_continuous_outdoor_hours": 1,
+          "mandatory_actions": [
+            "提供博物馆和室内遗址展示替代方案",
+            "降低城墙骑行和长距离露天步行优先级"
+          ]
+        },
+        "weather_adjustment_required": true,
+        "agent_weather_decision": {
+          "risk_days": [],
+          "adjustment_required": false,
+          "source": "weather"
+        }
+      },
+      "weather_adjustments": [
+        {
+          "day": 1,
+          "day_index": 1,
+          "reason": "rain",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        },
+        {
+          "day": 2,
+          "day_index": 2,
+          "reason": "rain",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        },
+        {
+          "day": 3,
+          "day_index": 3,
+          "reason": "rain",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        }
+      ],
+      "execution_status": "completed",
+      "final_answer": "天气证据：rain",
+      "tool_results": {
+        "weather_query": {
+          "schema_version": "research_tool_result_v1",
+          "tool_contract_version": "ctp-research-tools-v1.0",
+          "tool_name": "weather_query",
+          "status": "success",
+          "success": true,
+          "input": {
+            "city": "xian",
+            "date": "2026-08-09",
+            "days": 3,
+            "scenario_type": "sunny"
+          },
+          "data": {
+            "city": "西安",
+            "city_id": "xian",
+            "date": "2026-08-09",
+            "scenario_type": "rain",
+            "requested_scenario_type": "sunny",
+            "scenario_selection": "city_date_hash",
+            "risk_level": "medium",
+            "daily_weather": [
+              {
+                "day_index": 1,
+                "date": "2026-08-09",
+                "state": "rain",
+                "weather": "雨天",
+                "temperature_min_c": 14,
+                "temperature_max_c": 21,
+                "precipitation_mm": 8.0,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "afternoon"
+                ],
+                "avoid_periods": []
+              },
+              {
+                "day_index": 2,
+                "date": "2026-08-10",
+                "state": "rain",
+                "weather": "雨天",
+                "temperature_min_c": 13,
+                "temperature_max_c": 20,
+                "precipitation_mm": 18.0,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "afternoon"
+                ],
+                "avoid_periods": []
+              },
+              {
+                "day_index": 3,
+                "date": "2026-08-11",
+                "state": "rain",
+                "weather": "雨天",
+                "temperature_min_c": 15,
+                "temperature_max_c": 22,
+                "precipitation_mm": 12.0,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "afternoon"
+                ],
+                "avoid_periods": []
+              }
+            ],
+            "planning_constraints": {
+              "dynamic_adjustment_required": true,
+              "indoor_preference": true,
+              "minimum_indoor_activity_ratio": 0.6,
+              "avoid_time_windows": [],
+              "maximum_continuous_outdoor_hours": 1,
+              "mandatory_actions": [
+                "提供博物馆和室内遗址展示替代方案",
+                "降低城墙骑行和长距离露天步行优先级"
+              ]
+            },
+            "weather_adjustment_required": true
+          },
+          "error": null,
+          "metadata": {
+            "offline": true,
+            "source_mode": "frozen_offline",
+            "real_time_api_allowed": false,
+            "dataset_version": "CTP-WEATHER-v1.0",
+            "source_file_id": "ctp_weather_xian_v1_0",
+            "record_count": 3,
+            "canonical_city_id": "xian",
+            "weather_date_mapping_rule": "sha256(canonical_city_id + date) selects one fixed scenario when date is provided"
+          }
+        }
+      },
+      "metadata": {
+        "research_method": "adaptive_multi_agent",
+        "output_contract": "ctp-experiment-output-v1",
+        "generation_tool_contract": "ctp-research-tools-v1.0",
+        "method_input_schema_version": "ctp-method-input-v1",
+        "goal_state_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-09",
+          "duration_days": 3,
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "result_agents": [
+          "weather"
+        ],
+        "agent_output_schema_version": "ctp-research-agent-output-v1",
+        "agent_decision_schema_version": "ctp-research-agent-decision-v1",
+        "agent_prompt_version": "ctp-research-agent-prompts-v1",
+        "agent_outputs": {
+          "weather": {
+            "schema_version": "ctp-research-agent-output-v1",
+            "agent_name": "weather",
+            "status": "completed",
+            "success": true,
+            "reused": false,
+            "prompt_version": "ctp-research-agent-prompts-v1",
+            "evidence_tools": [
+              "weather_query"
+            ],
+            "upstream_agents": [],
+            "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"weather\",\n  \"summary\": \"基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。\",\n  \"decisions\": {\n    \"attraction\": {\n      \"selected_poi_ids\": [],\n      \"notes\": \"用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。\"\n    },\n    \"weather\": {\n      \"risk_days\": [\n        {\n          \"day_index\": 1,\n          \"date\": \"2026-08-09\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 14,\n          \"temperature_max_c\": 21,\n          \"precipitation_mm\": 8.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 2,\n          \"date\": \"2026-08-10\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 13,\n          \"temperature_max_c\": 20,\n          \"precipitation_mm\": 18.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 3,\n          \"date\": \"2026-08-11\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 15,\n          \"temperature_max_c\": 22,\n          \"precipitation_mm\": 12.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        }\n      ],\n      \"adjustment_required\": true,\n      \"adjustment_notes\": \"工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。\"\n    },\n    \"itinerary\": {\n      \"daily_itinerary\": [\n        {\n          \"day\": 1,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 2,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 3,\n          \"attraction_poi_ids\": []\n        }\n      ],\n      \"notes\": \"应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。\"\n    },\n    \"budget\": {\n      \"feasibility\": true,\n      \"budget_notes\": \"天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。\",\n      \"recommended_total\": null\n    }\n  },\n  \"risks\": [\n    {\n      \"type\": \"weather\",\n      \"description\": \"连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"将活动安排以室内为主（工具建议至少60%室内活动）。\",\n        \"限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。\",\n        \"降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。\",\n        \"保持行程弹性，准备根据实时情况动态调整。\"\n      ]\n    },\n    {\n      \"type\": \"planning_constraint\",\n      \"description\": \"工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"保留备选室内活动时段与交通时间缓冲。\",\n        \"避免将关键行程安排在连续长时间的户外活动段。\"\n      ]\n    }\n  ],\n  \"confidence\": 0.85\n}",
+            "decision_schema_version": "ctp-research-agent-decision-v1",
+            "decision": {
+              "schema_version": "ctp-research-agent-decision-v1",
+              "agent_name": "weather",
+              "summary": "基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。",
+              "decisions": {
+                "attraction": {
+                  "selected_poi_ids": [],
+                  "notes": "用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。"
+                },
+                "weather": {
+                  "risk_days": [
+                    {
+                      "day_index": 1,
+                      "date": "2026-08-09",
+                      "weather": "雨天",
+                      "temperature_min_c": 14,
+                      "temperature_max_c": 21,
+                      "precipitation_mm": 8.0,
+                      "risk_level": "medium",
+                      "risk_tags": [
+                        "rain"
+                      ],
+                      "suitable_periods": [
+                        "morning",
+                        "afternoon"
+                      ],
+                      "avoid_periods": []
+                    },
+                    {
+                      "day_index": 2,
+                      "date": "2026-08-10",
+                      "weather": "雨天",
+                      "temperature_min_c": 13,
+                      "temperature_max_c": 20,
+                      "precipitation_mm": 18.0,
+                      "risk_level": "medium",
+                      "risk_tags": [
+                        "rain"
+                      ],
+                      "suitable_periods": [
+                        "morning",
+                        "afternoon"
+                      ],
+                      "avoid_periods": []
+                    },
+                    {
+                      "day_index": 3,
+                      "date": "2026-08-11",
+                      "weather": "雨天",
+                      "temperature_min_c": 15,
+                      "temperature_max_c": 22,
+                      "precipitation_mm": 12.0,
+                      "risk_level": "medium",
+                      "risk_tags": [
+                        "rain"
+                      ],
+                      "suitable_periods": [
+                        "morning",
+                        "afternoon"
+                      ],
+                      "avoid_periods": []
+                    }
+                  ],
+                  "adjustment_required": true,
+                  "adjustment_notes": "工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。"
+                },
+                "itinerary": {
+                  "daily_itinerary": [
+                    {
+                      "day": 1,
+                      "attraction_poi_ids": []
+                    },
+                    {
+                      "day": 2,
+                      "attraction_poi_ids": []
+                    },
+                    {
+                      "day": 3,
+                      "attraction_poi_ids": []
+                    }
+                  ],
+                  "notes": "应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。"
+                },
+                "budget": {
+                  "feasibility": true,
+                  "budget_notes": "天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。",
+                  "recommended_total": null
+                }
+              },
+              "risks": [
+                {
+                  "type": "weather",
+                  "description": "连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。",
+                  "likelihood": "medium",
+                  "impact": "medium",
+                  "mitigation": [
+                    "将活动安排以室内为主（工具建议至少60%室内活动）。",
+                    "限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。",
+                    "降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。",
+                    "保持行程弹性，准备根据实时情况动态调整。"
+                  ]
+                },
+                {
+                  "type": "planning_constraint",
+                  "description": "工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。",
+                  "likelihood": "medium",
+                  "impact": "medium",
+                  "mitigation": [
+                    "保留备选室内活动时段与交通时间缓冲。",
+                    "避免将关键行程安排在连续长时间的户外活动段。"
+                  ]
+                }
+              ],
+              "confidence": 0.85
+            },
+            "decision_source": "llm",
+            "decision_fallback_used": false,
+            "decision_normalizer_enabled": false,
+            "decision_normalizer_skipped": false,
+            "decision_parse_status": "passed",
+            "decision_validation_status": "passed",
+            "decision_errors": [],
+            "llm_decision_parse_status": "passed",
+            "llm_decision_validation_status": "passed",
+            "llm_decision_errors": [],
+            "usage": {
+              "prompt_tokens": 871,
+              "completion_tokens": 1196,
+              "total_tokens": 2067
+            },
+            "prompt_tokens": 871,
+            "completion_tokens": 1196,
+            "total_tokens": 2067,
+            "duration_ms": 14220.47,
+            "llm_call_count": 1
+          }
+        },
+        "agent_decision_audit": {
+          "weather": {
+            "status": "completed",
+            "reused": false,
+            "decision_source": "llm",
+            "decision_fallback_used": false,
+            "decision_normalizer_enabled": false,
+            "decision_normalizer_skipped": false,
+            "decision_parse_status": "passed",
+            "decision_validation_status": "passed",
+            "llm_decision_error_count": 0,
+            "decision_error_count": 0,
+            "has_applicable_decision": true
+          }
+        },
+        "adaptive_scheduler": {
+          "name": "goal_state_scheduler",
+          "ticket": {
+            "schema_version": "ctp-goal-state-ticket-v1",
+            "task_type": "weather_query",
+            "current_slots": {
+              "destination": "xian",
+              "start_date": "2026-08-09",
+              "duration_days": 3,
+              "special_requirements": [
+                "avoidance_constraint"
+              ]
+            },
+            "previous_slots": {},
+            "changed_slots": [
+              "destination",
+              "start_date",
+              "duration_days",
+              "special_requirements"
+            ],
+            "preserved_slots": [],
+            "missing_slots": [],
+            "required_capabilities": [
+              "weather_evidence"
+            ],
+            "dependency_policy": {},
+            "clarification_required": false,
+            "clarification_fields": [],
+            "goal_change_type": "new_request"
+          },
+          "decision": {
+            "schema_version": "ctp-scheduler-decision-v1",
+            "planned_agents": [
+              "weather"
+            ],
+            "planned_tools": [
+              "weather_query"
+            ],
+            "reused_agents": [],
+            "invalidated_agents": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "decision_reasons": [
+              "single_capability_request"
+            ],
+            "reuse_validation": {}
+          },
+          "reuse_execution": {
+            "previous_state_provided": false,
+            "expected_reused_agents": [],
+            "reused_agent_results": [],
+            "missing_reused_agent_results": [],
+            "expected_reused_agent_count": 0,
+            "reused_agent_result_count": 0,
+            "missing_reused_agent_result_count": 0,
+            "expected_reused_tools": [],
+            "reused_tool_results": [],
+            "missing_reused_tool_results": [],
+            "expected_reused_tool_count": 0,
+            "reused_tool_result_count": 0,
+            "missing_reused_tool_result_count": 0,
+            "reuse_hit_rate": null,
+            "agent_reuse_hit_rate": null
+          },
+          "result_fingerprints": {
+            "weather": {
+              "destination": "xian",
+              "start_date": "2026-08-09",
+              "duration_days": 3
+            }
+          }
+        },
+        "scheduler": {
+          "name": "goal_state_scheduler",
+          "ticket": {
+            "schema_version": "ctp-goal-state-ticket-v1",
+            "task_type": "weather_query",
+            "current_slots": {
+              "destination": "xian",
+              "start_date": "2026-08-09",
+              "duration_days": 3,
+              "special_requirements": [
+                "avoidance_constraint"
+              ]
+            },
+            "previous_slots": {},
+            "changed_slots": [
+              "destination",
+              "start_date",
+              "duration_days",
+              "special_requirements"
+            ],
+            "preserved_slots": [],
+            "missing_slots": [],
+            "required_capabilities": [
+              "weather_evidence"
+            ],
+            "dependency_policy": {},
+            "clarification_required": false,
+            "clarification_fields": [],
+            "goal_change_type": "new_request"
+          },
+          "decision": {
+            "schema_version": "ctp-scheduler-decision-v1",
+            "planned_agents": [
+              "weather"
+            ],
+            "planned_tools": [
+              "weather_query"
+            ],
+            "reused_agents": [],
+            "invalidated_agents": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "decision_reasons": [
+              "single_capability_request"
+            ],
+            "reuse_validation": {}
+          },
+          "reuse_execution": {
+            "previous_state_provided": false,
+            "expected_reused_agents": [],
+            "reused_agent_results": [],
+            "missing_reused_agent_results": [],
+            "expected_reused_agent_count": 0,
+            "reused_agent_result_count": 0,
+            "missing_reused_agent_result_count": 0,
+            "expected_reused_tools": [],
+            "reused_tool_results": [],
+            "missing_reused_tool_results": [],
+            "expected_reused_tool_count": 0,
+            "reused_tool_result_count": 0,
+            "missing_reused_tool_result_count": 0,
+            "reuse_hit_rate": null,
+            "agent_reuse_hit_rate": null
+          },
+          "result_fingerprints": {
+            "weather": {
+              "destination": "xian",
+              "start_date": "2026-08-09",
+              "duration_days": 3
+            }
+          }
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        }
+      }
+    },
+    "metadata": {
+      "research_method": "adaptive_multi_agent",
+      "output_contract": "ctp-experiment-output-v1",
+      "generation_tool_contract": "ctp-research-tools-v1.0",
+      "method_input_schema_version": "ctp-method-input-v1",
+      "goal_state_slots": {
+        "destination": "xian",
+        "start_date": "2026-08-09",
+        "duration_days": 3,
+        "special_requirements": [
+          "avoidance_constraint"
+        ]
+      },
+      "result_agents": [
+        "weather"
+      ],
+      "agent_output_schema_version": "ctp-research-agent-output-v1",
+      "agent_decision_schema_version": "ctp-research-agent-decision-v1",
+      "agent_prompt_version": "ctp-research-agent-prompts-v1",
+      "agent_outputs": {
+        "weather": {
+          "schema_version": "ctp-research-agent-output-v1",
+          "agent_name": "weather",
+          "status": "completed",
+          "success": true,
+          "reused": false,
+          "prompt_version": "ctp-research-agent-prompts-v1",
+          "evidence_tools": [
+            "weather_query"
+          ],
+          "upstream_agents": [],
+          "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"weather\",\n  \"summary\": \"基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。\",\n  \"decisions\": {\n    \"attraction\": {\n      \"selected_poi_ids\": [],\n      \"notes\": \"用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。\"\n    },\n    \"weather\": {\n      \"risk_days\": [\n        {\n          \"day_index\": 1,\n          \"date\": \"2026-08-09\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 14,\n          \"temperature_max_c\": 21,\n          \"precipitation_mm\": 8.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 2,\n          \"date\": \"2026-08-10\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 13,\n          \"temperature_max_c\": 20,\n          \"precipitation_mm\": 18.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 3,\n          \"date\": \"2026-08-11\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 15,\n          \"temperature_max_c\": 22,\n          \"precipitation_mm\": 12.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        }\n      ],\n      \"adjustment_required\": true,\n      \"adjustment_notes\": \"工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。\"\n    },\n    \"itinerary\": {\n      \"daily_itinerary\": [\n        {\n          \"day\": 1,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 2,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 3,\n          \"attraction_poi_ids\": []\n        }\n      ],\n      \"notes\": \"应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。\"\n    },\n    \"budget\": {\n      \"feasibility\": true,\n      \"budget_notes\": \"天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。\",\n      \"recommended_total\": null\n    }\n  },\n  \"risks\": [\n    {\n      \"type\": \"weather\",\n      \"description\": \"连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"将活动安排以室内为主（工具建议至少60%室内活动）。\",\n        \"限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。\",\n        \"降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。\",\n        \"保持行程弹性，准备根据实时情况动态调整。\"\n      ]\n    },\n    {\n      \"type\": \"planning_constraint\",\n      \"description\": \"工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"保留备选室内活动时段与交通时间缓冲。\",\n        \"避免将关键行程安排在连续长时间的户外活动段。\"\n      ]\n    }\n  ],\n  \"confidence\": 0.85\n}",
+          "decision_schema_version": "ctp-research-agent-decision-v1",
+          "decision": {
+            "schema_version": "ctp-research-agent-decision-v1",
+            "agent_name": "weather",
+            "summary": "基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。",
+            "decisions": {
+              "attraction": {
+                "selected_poi_ids": [],
+                "notes": "用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。"
+              },
+              "weather": {
+                "risk_days": [
+                  {
+                    "day_index": 1,
+                    "date": "2026-08-09",
+                    "weather": "雨天",
+                    "temperature_min_c": 14,
+                    "temperature_max_c": 21,
+                    "precipitation_mm": 8.0,
+                    "risk_level": "medium",
+                    "risk_tags": [
+                      "rain"
+                    ],
+                    "suitable_periods": [
+                      "morning",
+                      "afternoon"
+                    ],
+                    "avoid_periods": []
+                  },
+                  {
+                    "day_index": 2,
+                    "date": "2026-08-10",
+                    "weather": "雨天",
+                    "temperature_min_c": 13,
+                    "temperature_max_c": 20,
+                    "precipitation_mm": 18.0,
+                    "risk_level": "medium",
+                    "risk_tags": [
+                      "rain"
+                    ],
+                    "suitable_periods": [
+                      "morning",
+                      "afternoon"
+                    ],
+                    "avoid_periods": []
+                  },
+                  {
+                    "day_index": 3,
+                    "date": "2026-08-11",
+                    "weather": "雨天",
+                    "temperature_min_c": 15,
+                    "temperature_max_c": 22,
+                    "precipitation_mm": 12.0,
+                    "risk_level": "medium",
+                    "risk_tags": [
+                      "rain"
+                    ],
+                    "suitable_periods": [
+                      "morning",
+                      "afternoon"
+                    ],
+                    "avoid_periods": []
+                  }
+                ],
+                "adjustment_required": true,
+                "adjustment_notes": "工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。"
+              },
+              "itinerary": {
+                "daily_itinerary": [
+                  {
+                    "day": 1,
+                    "attraction_poi_ids": []
+                  },
+                  {
+                    "day": 2,
+                    "attraction_poi_ids": []
+                  },
+                  {
+                    "day": 3,
+                    "attraction_poi_ids": []
+                  }
+                ],
+                "notes": "应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。"
+              },
+              "budget": {
+                "feasibility": true,
+                "budget_notes": "天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。",
+                "recommended_total": null
+              }
+            },
+            "risks": [
+              {
+                "type": "weather",
+                "description": "连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。",
+                "likelihood": "medium",
+                "impact": "medium",
+                "mitigation": [
+                  "将活动安排以室内为主（工具建议至少60%室内活动）。",
+                  "限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。",
+                  "降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。",
+                  "保持行程弹性，准备根据实时情况动态调整。"
+                ]
+              },
+              {
+                "type": "planning_constraint",
+                "description": "工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。",
+                "likelihood": "medium",
+                "impact": "medium",
+                "mitigation": [
+                  "保留备选室内活动时段与交通时间缓冲。",
+                  "避免将关键行程安排在连续长时间的户外活动段。"
+                ]
+              }
+            ],
+            "confidence": 0.85
+          },
+          "decision_source": "llm",
+          "decision_fallback_used": false,
+          "decision_normalizer_enabled": false,
+          "decision_normalizer_skipped": false,
+          "decision_parse_status": "passed",
+          "decision_validation_status": "passed",
+          "decision_errors": [],
+          "llm_decision_parse_status": "passed",
+          "llm_decision_validation_status": "passed",
+          "llm_decision_errors": [],
+          "usage": {
+            "prompt_tokens": 871,
+            "completion_tokens": 1196,
+            "total_tokens": 2067
+          },
+          "prompt_tokens": 871,
+          "completion_tokens": 1196,
+          "total_tokens": 2067,
+          "duration_ms": 14220.47,
+          "llm_call_count": 1
+        }
+      },
+      "agent_decision_audit": {
+        "weather": {
+          "status": "completed",
+          "reused": false,
+          "decision_source": "llm",
+          "decision_fallback_used": false,
+          "decision_normalizer_enabled": false,
+          "decision_normalizer_skipped": false,
+          "decision_parse_status": "passed",
+          "decision_validation_status": "passed",
+          "llm_decision_error_count": 0,
+          "decision_error_count": 0,
+          "has_applicable_decision": true
+        }
+      },
+      "adaptive_scheduler": {
+        "name": "goal_state_scheduler",
+        "ticket": {
+          "schema_version": "ctp-goal-state-ticket-v1",
+          "task_type": "weather_query",
+          "current_slots": {
+            "destination": "xian",
+            "start_date": "2026-08-09",
+            "duration_days": 3,
+            "special_requirements": [
+              "avoidance_constraint"
+            ]
+          },
+          "previous_slots": {},
+          "changed_slots": [
+            "destination",
+            "start_date",
+            "duration_days",
+            "special_requirements"
+          ],
+          "preserved_slots": [],
+          "missing_slots": [],
+          "required_capabilities": [
+            "weather_evidence"
+          ],
+          "dependency_policy": {},
+          "clarification_required": false,
+          "clarification_fields": [],
+          "goal_change_type": "new_request"
+        },
+        "decision": {
+          "schema_version": "ctp-scheduler-decision-v1",
+          "planned_agents": [
+            "weather"
+          ],
+          "planned_tools": [
+            "weather_query"
+          ],
+          "reused_agents": [],
+          "invalidated_agents": [],
+          "clarification_required": false,
+          "clarification_fields": [],
+          "decision_reasons": [
+            "single_capability_request"
+          ],
+          "reuse_validation": {}
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        },
+        "result_fingerprints": {
+          "weather": {
+            "destination": "xian",
+            "start_date": "2026-08-09",
+            "duration_days": 3
+          }
+        }
+      },
+      "scheduler": {
+        "name": "goal_state_scheduler",
+        "ticket": {
+          "schema_version": "ctp-goal-state-ticket-v1",
+          "task_type": "weather_query",
+          "current_slots": {
+            "destination": "xian",
+            "start_date": "2026-08-09",
+            "duration_days": 3,
+            "special_requirements": [
+              "avoidance_constraint"
+            ]
+          },
+          "previous_slots": {},
+          "changed_slots": [
+            "destination",
+            "start_date",
+            "duration_days",
+            "special_requirements"
+          ],
+          "preserved_slots": [],
+          "missing_slots": [],
+          "required_capabilities": [
+            "weather_evidence"
+          ],
+          "dependency_policy": {},
+          "clarification_required": false,
+          "clarification_fields": [],
+          "goal_change_type": "new_request"
+        },
+        "decision": {
+          "schema_version": "ctp-scheduler-decision-v1",
+          "planned_agents": [
+            "weather"
+          ],
+          "planned_tools": [
+            "weather_query"
+          ],
+          "reused_agents": [],
+          "invalidated_agents": [],
+          "clarification_required": false,
+          "clarification_fields": [],
+          "decision_reasons": [
+            "single_capability_request"
+          ],
+          "reuse_validation": {}
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        },
+        "result_fingerprints": {
+          "weather": {
+            "destination": "xian",
+            "start_date": "2026-08-09",
+            "duration_days": 3
+          }
+        }
+      },
+      "reuse_execution": {
+        "previous_state_provided": false,
+        "expected_reused_agents": [],
+        "reused_agent_results": [],
+        "missing_reused_agent_results": [],
+        "expected_reused_agent_count": 0,
+        "reused_agent_result_count": 0,
+        "missing_reused_agent_result_count": 0,
+        "expected_reused_tools": [],
+        "reused_tool_results": [],
+        "missing_reused_tool_results": [],
+        "expected_reused_tool_count": 0,
+        "reused_tool_result_count": 0,
+        "missing_reused_tool_result_count": 0,
+        "reuse_hit_rate": null,
+        "agent_reuse_hit_rate": null
+      },
+      "adaptive_scheduler_metrics": {
+        "m3_scheduler_name": "goal_state_scheduler",
+        "m3_task_type": "weather_query",
+        "m3_clarification_required": false,
+        "m3_clarification_fields": [],
+        "m3_clarification_field_count": 0,
+        "m3_decision_reasons": [
+          "single_capability_request"
+        ],
+        "m3_planned_agents": [
+          "weather"
+        ],
+        "m3_reused_agents": [],
+        "m3_invalidated_agents": [],
+        "m3_planned_tools": [
+          "weather_query"
+        ],
+        "m3_expected_reused_tools": [],
+        "m3_reused_tool_results": [],
+        "m3_missing_reused_tool_results": [],
+        "m3_previous_state_provided": false,
+        "m3_m2_reference_agent_count": 4,
+        "m3_m2_reference_tool_count": 3,
+        "m3_planned_agent_count": 1,
+        "m3_executed_agent_count": 1,
+        "m3_reused_agent_count": 0,
+        "m3_invalidated_agent_count": 0,
+        "m3_planned_tool_count": 1,
+        "m3_executed_tool_count": 1,
+        "m3_expected_reused_tool_count": 0,
+        "m3_reused_tool_result_count": 0,
+        "m3_missing_reused_tool_result_count": 0,
+        "m3_agent_reuse_rate": 0.0,
+        "m3_tool_reuse_rate": 0.0,
+        "m3_reuse_hit_rate": null,
+        "m3_agent_call_savings_vs_m2": 3,
+        "m3_tool_call_savings_vs_m2": 2,
+        "m3_agent_call_reduction_rate_vs_m2": 0.75,
+        "m3_tool_call_reduction_rate_vs_m2": 0.6667
+      },
+      "run_audit_schema_version": "ctp-run-audit-v1"
+    }
+  },
+  "constraint_report": {
+    "schema_version": "research_tool_result_v1",
+    "tool_contract_version": "ctp-research-tools-v1.0",
+    "tool_name": "constraint_checker",
+    "status": "success",
+    "success": true,
+    "input": {
+      "request": {
+        "destination": "xian",
+        "start_date": "2026-08-09",
+        "duration_days": 3,
+        "special_requirements": [
+          "avoidance_constraint"
+        ],
+        "case_id": "ctp_dev_007_xian_weather_only",
+        "user_input": "只查询西安2026年8月9日开始3天的天气预报，不要推荐景点。",
+        "city": "xian",
+        "budget": null
+      },
+      "constraints": {}
+    },
+    "data": {
+      "all_passed": true,
+      "applicable_count": 2,
+      "passed_count": 2,
+      "failed_count": 0,
+      "checks": [
+        {
+          "name": "trip_days",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "expected": null,
+            "actual": 0
+          }
+        },
+        {
+          "name": "budget_limit",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "limit": null,
+            "actual": null
+          }
+        },
+        {
+          "name": "weather_adjustment",
+          "status": "passed",
+          "passed": true,
+          "details": {
+            "required": true,
+            "adjustment_count": 3
+          }
+        },
+        {
+          "name": "min_attractions",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "minimum": null,
+            "actual": 0
+          }
+        },
+        {
+          "name": "max_attractions",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "maximum": null,
+            "actual": 0
+          }
+        },
+        {
+          "name": "poi_existence",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "attraction_count": 0
+          }
+        },
+        {
+          "name": "duplicate_attractions",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "attraction_count": 0
+          }
+        },
+        {
+          "name": "must_include_pois",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "required": []
+          }
+        },
+        {
+          "name": "forbidden_pois",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "forbidden": []
+          }
+        },
+        {
+          "name": "rain_attraction_suitability",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "rain_detected": true,
+            "attraction_count": 0
+          }
+        },
+        {
+          "name": "senior_accessibility",
+          "status": "NA",
+          "passed": null,
+          "details": {
+            "senior_request": false
+          }
+        },
+        {
+          "name": "tool_evidence",
+          "status": "passed",
+          "passed": true,
+          "details": {
+            "required": false,
+            "required_tools": [
+              "weather_query"
+            ],
+            "missing_or_failed": []
+          }
+        }
+      ]
+    },
+    "error": null,
+    "metadata": {
+      "offline": true,
+      "source_mode": "deterministic_evaluator",
+      "real_time_api_allowed": false,
+      "contract": "ctp-research-tools-v1.0"
+    }
+  },
+  "hard_constraint_applicable_count": 2,
+  "hard_constraint_passed_count": 2,
+  "hard_constraint_failed_count": 0,
+  "hard_constraints_all_satisfied": true,
+  "hcsr": 1.0,
+  "raw_output": {
+    "schema_version": "ctp-experiment-output-v1",
+    "case_id": "ctp_dev_007_xian_weather_only",
+    "method": "adaptive_multi_agent",
+    "task_type": "weather_query",
+    "planned_agents": [
+      "weather"
+    ],
+    "used_agents": [
+      "weather"
+    ],
+    "planned_tools": [
+      "weather_query"
+    ],
+    "called_tools": [
+      {
+        "call_id": "weather-weather_query-2a3ab3",
+        "name": "weather_query",
+        "tool_name": "weather_query",
+        "agent_name": "weather",
+        "agent": "weather",
+        "component": "weather",
+        "params": {
+          "city": "xian",
+          "date": "2026-08-09",
+          "days": 3,
+          "scenario_type": "sunny"
+        },
+        "duration": 9.0,
+        "duration_ms": 9.0,
+        "status": "completed",
+        "success": true,
+        "error": null,
+        "cache_hit": null,
+        "fallback_used": null
+      }
+    ],
+    "agent_outputs": {
+      "weather": {
+        "schema_version": "ctp-research-agent-output-v1",
+        "agent_name": "weather",
+        "status": "completed",
+        "success": true,
+        "reused": false,
+        "prompt_version": "ctp-research-agent-prompts-v1",
+        "evidence_tools": [
+          "weather_query"
+        ],
+        "upstream_agents": [],
+        "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"weather\",\n  \"summary\": \"基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。\",\n  \"decisions\": {\n    \"attraction\": {\n      \"selected_poi_ids\": [],\n      \"notes\": \"用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。\"\n    },\n    \"weather\": {\n      \"risk_days\": [\n        {\n          \"day_index\": 1,\n          \"date\": \"2026-08-09\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 14,\n          \"temperature_max_c\": 21,\n          \"precipitation_mm\": 8.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 2,\n          \"date\": \"2026-08-10\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 13,\n          \"temperature_max_c\": 20,\n          \"precipitation_mm\": 18.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 3,\n          \"date\": \"2026-08-11\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 15,\n          \"temperature_max_c\": 22,\n          \"precipitation_mm\": 12.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        }\n      ],\n      \"adjustment_required\": true,\n      \"adjustment_notes\": \"工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。\"\n    },\n    \"itinerary\": {\n      \"daily_itinerary\": [\n        {\n          \"day\": 1,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 2,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 3,\n          \"attraction_poi_ids\": []\n        }\n      ],\n      \"notes\": \"应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。\"\n    },\n    \"budget\": {\n      \"feasibility\": true,\n      \"budget_notes\": \"天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。\",\n      \"recommended_total\": null\n    }\n  },\n  \"risks\": [\n    {\n      \"type\": \"weather\",\n      \"description\": \"连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"将活动安排以室内为主（工具建议至少60%室内活动）。\",\n        \"限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。\",\n        \"降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。\",\n        \"保持行程弹性，准备根据实时情况动态调整。\"\n      ]\n    },\n    {\n      \"type\": \"planning_constraint\",\n      \"description\": \"工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"保留备选室内活动时段与交通时间缓冲。\",\n        \"避免将关键行程安排在连续长时间的户外活动段。\"\n      ]\n    }\n  ],\n  \"confidence\": 0.85\n}",
+        "decision_schema_version": "ctp-research-agent-decision-v1",
+        "decision": {
+          "schema_version": "ctp-research-agent-decision-v1",
+          "agent_name": "weather",
+          "summary": "基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。",
+          "decisions": {
+            "attraction": {
+              "selected_poi_ids": [],
+              "notes": "用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。"
+            },
+            "weather": {
+              "risk_days": [
+                {
+                  "day_index": 1,
+                  "date": "2026-08-09",
+                  "weather": "雨天",
+                  "temperature_min_c": 14,
+                  "temperature_max_c": 21,
+                  "precipitation_mm": 8.0,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "afternoon"
+                  ],
+                  "avoid_periods": []
+                },
+                {
+                  "day_index": 2,
+                  "date": "2026-08-10",
+                  "weather": "雨天",
+                  "temperature_min_c": 13,
+                  "temperature_max_c": 20,
+                  "precipitation_mm": 18.0,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "afternoon"
+                  ],
+                  "avoid_periods": []
+                },
+                {
+                  "day_index": 3,
+                  "date": "2026-08-11",
+                  "weather": "雨天",
+                  "temperature_min_c": 15,
+                  "temperature_max_c": 22,
+                  "precipitation_mm": 12.0,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "afternoon"
+                  ],
+                  "avoid_periods": []
+                }
+              ],
+              "adjustment_required": true,
+              "adjustment_notes": "工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。"
+            },
+            "itinerary": {
+              "daily_itinerary": [
+                {
+                  "day": 1,
+                  "attraction_poi_ids": []
+                },
+                {
+                  "day": 2,
+                  "attraction_poi_ids": []
+                },
+                {
+                  "day": 3,
+                  "attraction_poi_ids": []
+                }
+              ],
+              "notes": "应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。"
+            },
+            "budget": {
+              "feasibility": true,
+              "budget_notes": "天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。",
+              "recommended_total": null
+            }
+          },
+          "risks": [
+            {
+              "type": "weather",
+              "description": "连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。",
+              "likelihood": "medium",
+              "impact": "medium",
+              "mitigation": [
+                "将活动安排以室内为主（工具建议至少60%室内活动）。",
+                "限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。",
+                "降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。",
+                "保持行程弹性，准备根据实时情况动态调整。"
+              ]
+            },
+            {
+              "type": "planning_constraint",
+              "description": "工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。",
+              "likelihood": "medium",
+              "impact": "medium",
+              "mitigation": [
+                "保留备选室内活动时段与交通时间缓冲。",
+                "避免将关键行程安排在连续长时间的户外活动段。"
+              ]
+            }
+          ],
+          "confidence": 0.85
+        },
+        "decision_source": "llm",
+        "decision_fallback_used": false,
+        "decision_normalizer_enabled": false,
+        "decision_normalizer_skipped": false,
+        "decision_parse_status": "passed",
+        "decision_validation_status": "passed",
+        "decision_errors": [],
+        "llm_decision_parse_status": "passed",
+        "llm_decision_validation_status": "passed",
+        "llm_decision_errors": [],
+        "usage": {
+          "prompt_tokens": 871,
+          "completion_tokens": 1196,
+          "total_tokens": 2067
+        },
+        "prompt_tokens": 871,
+        "completion_tokens": 1196,
+        "total_tokens": 2067,
+        "duration_ms": 14220.47,
+        "llm_call_count": 1
+      }
+    },
+    "attractions": [],
+    "trip_days": 3,
+    "daily_itinerary": [],
+    "budget": null,
+    "weather": {
+      "city": "西安",
+      "city_id": "xian",
+      "date": "2026-08-09",
+      "scenario_type": "rain",
+      "requested_scenario_type": "sunny",
+      "scenario_selection": "city_date_hash",
+      "risk_level": "medium",
+      "daily_weather": [
+        {
+          "day_index": 1,
+          "date": "2026-08-09",
+          "state": "rain",
+          "weather": "雨天",
+          "temperature_min_c": 14,
+          "temperature_max_c": 21,
+          "precipitation_mm": 8.0,
+          "risk_level": "medium",
+          "risk_tags": [
+            "rain"
+          ],
+          "suitable_periods": [
+            "morning",
+            "afternoon"
+          ],
+          "avoid_periods": []
+        },
+        {
+          "day_index": 2,
+          "date": "2026-08-10",
+          "state": "rain",
+          "weather": "雨天",
+          "temperature_min_c": 13,
+          "temperature_max_c": 20,
+          "precipitation_mm": 18.0,
+          "risk_level": "medium",
+          "risk_tags": [
+            "rain"
+          ],
+          "suitable_periods": [
+            "morning",
+            "afternoon"
+          ],
+          "avoid_periods": []
+        },
+        {
+          "day_index": 3,
+          "date": "2026-08-11",
+          "state": "rain",
+          "weather": "雨天",
+          "temperature_min_c": 15,
+          "temperature_max_c": 22,
+          "precipitation_mm": 12.0,
+          "risk_level": "medium",
+          "risk_tags": [
+            "rain"
+          ],
+          "suitable_periods": [
+            "morning",
+            "afternoon"
+          ],
+          "avoid_periods": []
+        }
+      ],
+      "planning_constraints": {
+        "dynamic_adjustment_required": true,
+        "indoor_preference": true,
+        "minimum_indoor_activity_ratio": 0.6,
+        "avoid_time_windows": [],
+        "maximum_continuous_outdoor_hours": 1,
+        "mandatory_actions": [
+          "提供博物馆和室内遗址展示替代方案",
+          "降低城墙骑行和长距离露天步行优先级"
+        ]
+      },
+      "weather_adjustment_required": true,
+      "agent_weather_decision": {
+        "risk_days": [],
+        "adjustment_required": false,
+        "source": "weather"
+      }
+    },
+    "weather_adjustments": [
+      {
+        "day": 1,
+        "day_index": 1,
+        "reason": "rain",
+        "action": "减少长时间户外活动，优先安排室内或低风险景点",
+        "candidate_indoor_pois": []
+      },
+      {
+        "day": 2,
+        "day_index": 2,
+        "reason": "rain",
+        "action": "减少长时间户外活动，优先安排室内或低风险景点",
+        "candidate_indoor_pois": []
+      },
+      {
+        "day": 3,
+        "day_index": 3,
+        "reason": "rain",
+        "action": "减少长时间户外活动，优先安排室内或低风险景点",
+        "candidate_indoor_pois": []
+      }
+    ],
+    "execution_status": "completed",
+    "final_answer": "天气证据：rain",
+    "raw_output": {
+      "task_type": "weather_query",
+      "planned_agents": [
+        "weather"
+      ],
+      "used_agents": [
+        "weather"
+      ],
+      "planned_tools": [
+        "weather_query"
+      ],
+      "called_tools": [
+        {
+          "call_id": "weather-weather_query-2a3ab3",
+          "name": "weather_query",
+          "tool_name": "weather_query",
+          "agent_name": "weather",
+          "agent": "weather",
+          "component": "weather",
+          "params": {
+            "city": "xian",
+            "date": "2026-08-09",
+            "days": 3,
+            "scenario_type": "sunny"
+          },
+          "duration": 9.0,
+          "duration_ms": 9.0,
+          "status": "completed",
+          "success": true,
+          "error": null,
+          "cache_hit": null,
+          "fallback_used": null
+        }
+      ],
+      "agent_outputs": {
+        "weather": {
+          "schema_version": "ctp-research-agent-output-v1",
+          "agent_name": "weather",
+          "status": "completed",
+          "success": true,
+          "reused": false,
+          "prompt_version": "ctp-research-agent-prompts-v1",
+          "evidence_tools": [
+            "weather_query"
+          ],
+          "upstream_agents": [],
+          "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"weather\",\n  \"summary\": \"基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。\",\n  \"decisions\": {\n    \"attraction\": {\n      \"selected_poi_ids\": [],\n      \"notes\": \"用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。\"\n    },\n    \"weather\": {\n      \"risk_days\": [\n        {\n          \"day_index\": 1,\n          \"date\": \"2026-08-09\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 14,\n          \"temperature_max_c\": 21,\n          \"precipitation_mm\": 8.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 2,\n          \"date\": \"2026-08-10\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 13,\n          \"temperature_max_c\": 20,\n          \"precipitation_mm\": 18.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 3,\n          \"date\": \"2026-08-11\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 15,\n          \"temperature_max_c\": 22,\n          \"precipitation_mm\": 12.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        }\n      ],\n      \"adjustment_required\": true,\n      \"adjustment_notes\": \"工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。\"\n    },\n    \"itinerary\": {\n      \"daily_itinerary\": [\n        {\n          \"day\": 1,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 2,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 3,\n          \"attraction_poi_ids\": []\n        }\n      ],\n      \"notes\": \"应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。\"\n    },\n    \"budget\": {\n      \"feasibility\": true,\n      \"budget_notes\": \"天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。\",\n      \"recommended_total\": null\n    }\n  },\n  \"risks\": [\n    {\n      \"type\": \"weather\",\n      \"description\": \"连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"将活动安排以室内为主（工具建议至少60%室内活动）。\",\n        \"限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。\",\n        \"降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。\",\n        \"保持行程弹性，准备根据实时情况动态调整。\"\n      ]\n    },\n    {\n      \"type\": \"planning_constraint\",\n      \"description\": \"工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"保留备选室内活动时段与交通时间缓冲。\",\n        \"避免将关键行程安排在连续长时间的户外活动段。\"\n      ]\n    }\n  ],\n  \"confidence\": 0.85\n}",
+          "decision_schema_version": "ctp-research-agent-decision-v1",
+          "decision": {
+            "schema_version": "ctp-research-agent-decision-v1",
+            "agent_name": "weather",
+            "summary": "基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。",
+            "decisions": {
+              "attraction": {
+                "selected_poi_ids": [],
+                "notes": "用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。"
+              },
+              "weather": {
+                "risk_days": [
+                  {
+                    "day_index": 1,
+                    "date": "2026-08-09",
+                    "weather": "雨天",
+                    "temperature_min_c": 14,
+                    "temperature_max_c": 21,
+                    "precipitation_mm": 8.0,
+                    "risk_level": "medium",
+                    "risk_tags": [
+                      "rain"
+                    ],
+                    "suitable_periods": [
+                      "morning",
+                      "afternoon"
+                    ],
+                    "avoid_periods": []
+                  },
+                  {
+                    "day_index": 2,
+                    "date": "2026-08-10",
+                    "weather": "雨天",
+                    "temperature_min_c": 13,
+                    "temperature_max_c": 20,
+                    "precipitation_mm": 18.0,
+                    "risk_level": "medium",
+                    "risk_tags": [
+                      "rain"
+                    ],
+                    "suitable_periods": [
+                      "morning",
+                      "afternoon"
+                    ],
+                    "avoid_periods": []
+                  },
+                  {
+                    "day_index": 3,
+                    "date": "2026-08-11",
+                    "weather": "雨天",
+                    "temperature_min_c": 15,
+                    "temperature_max_c": 22,
+                    "precipitation_mm": 12.0,
+                    "risk_level": "medium",
+                    "risk_tags": [
+                      "rain"
+                    ],
+                    "suitable_periods": [
+                      "morning",
+                      "afternoon"
+                    ],
+                    "avoid_periods": []
+                  }
+                ],
+                "adjustment_required": true,
+                "adjustment_notes": "工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。"
+              },
+              "itinerary": {
+                "daily_itinerary": [
+                  {
+                    "day": 1,
+                    "attraction_poi_ids": []
+                  },
+                  {
+                    "day": 2,
+                    "attraction_poi_ids": []
+                  },
+                  {
+                    "day": 3,
+                    "attraction_poi_ids": []
+                  }
+                ],
+                "notes": "应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。"
+              },
+              "budget": {
+                "feasibility": true,
+                "budget_notes": "天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。",
+                "recommended_total": null
+              }
+            },
+            "risks": [
+              {
+                "type": "weather",
+                "description": "连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。",
+                "likelihood": "medium",
+                "impact": "medium",
+                "mitigation": [
+                  "将活动安排以室内为主（工具建议至少60%室内活动）。",
+                  "限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。",
+                  "降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。",
+                  "保持行程弹性，准备根据实时情况动态调整。"
+                ]
+              },
+              {
+                "type": "planning_constraint",
+                "description": "工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。",
+                "likelihood": "medium",
+                "impact": "medium",
+                "mitigation": [
+                  "保留备选室内活动时段与交通时间缓冲。",
+                  "避免将关键行程安排在连续长时间的户外活动段。"
+                ]
+              }
+            ],
+            "confidence": 0.85
+          },
+          "decision_source": "llm",
+          "decision_fallback_used": false,
+          "decision_normalizer_enabled": false,
+          "decision_normalizer_skipped": false,
+          "decision_parse_status": "passed",
+          "decision_validation_status": "passed",
+          "decision_errors": [],
+          "llm_decision_parse_status": "passed",
+          "llm_decision_validation_status": "passed",
+          "llm_decision_errors": [],
+          "usage": {
+            "prompt_tokens": 871,
+            "completion_tokens": 1196,
+            "total_tokens": 2067
+          },
+          "prompt_tokens": 871,
+          "completion_tokens": 1196,
+          "total_tokens": 2067,
+          "duration_ms": 14220.47,
+          "llm_call_count": 1
+        }
+      },
+      "attractions": [],
+      "trip_days": 3,
+      "daily_itinerary": [],
+      "budget": null,
+      "weather": {
+        "city": "西安",
+        "city_id": "xian",
+        "date": "2026-08-09",
+        "scenario_type": "rain",
+        "requested_scenario_type": "sunny",
+        "scenario_selection": "city_date_hash",
+        "risk_level": "medium",
+        "daily_weather": [
+          {
+            "day_index": 1,
+            "date": "2026-08-09",
+            "state": "rain",
+            "weather": "雨天",
+            "temperature_min_c": 14,
+            "temperature_max_c": 21,
+            "precipitation_mm": 8.0,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain"
+            ],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          },
+          {
+            "day_index": 2,
+            "date": "2026-08-10",
+            "state": "rain",
+            "weather": "雨天",
+            "temperature_min_c": 13,
+            "temperature_max_c": 20,
+            "precipitation_mm": 18.0,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain"
+            ],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          },
+          {
+            "day_index": 3,
+            "date": "2026-08-11",
+            "state": "rain",
+            "weather": "雨天",
+            "temperature_min_c": 15,
+            "temperature_max_c": 22,
+            "precipitation_mm": 12.0,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain"
+            ],
+            "suitable_periods": [
+              "morning",
+              "afternoon"
+            ],
+            "avoid_periods": []
+          }
+        ],
+        "planning_constraints": {
+          "dynamic_adjustment_required": true,
+          "indoor_preference": true,
+          "minimum_indoor_activity_ratio": 0.6,
+          "avoid_time_windows": [],
+          "maximum_continuous_outdoor_hours": 1,
+          "mandatory_actions": [
+            "提供博物馆和室内遗址展示替代方案",
+            "降低城墙骑行和长距离露天步行优先级"
+          ]
+        },
+        "weather_adjustment_required": true,
+        "agent_weather_decision": {
+          "risk_days": [],
+          "adjustment_required": false,
+          "source": "weather"
+        }
+      },
+      "weather_adjustments": [
+        {
+          "day": 1,
+          "day_index": 1,
+          "reason": "rain",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        },
+        {
+          "day": 2,
+          "day_index": 2,
+          "reason": "rain",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        },
+        {
+          "day": 3,
+          "day_index": 3,
+          "reason": "rain",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        }
+      ],
+      "execution_status": "completed",
+      "final_answer": "天气证据：rain",
+      "tool_results": {
+        "weather_query": {
+          "schema_version": "research_tool_result_v1",
+          "tool_contract_version": "ctp-research-tools-v1.0",
+          "tool_name": "weather_query",
+          "status": "success",
+          "success": true,
+          "input": {
+            "city": "xian",
+            "date": "2026-08-09",
+            "days": 3,
+            "scenario_type": "sunny"
+          },
+          "data": {
+            "city": "西安",
+            "city_id": "xian",
+            "date": "2026-08-09",
+            "scenario_type": "rain",
+            "requested_scenario_type": "sunny",
+            "scenario_selection": "city_date_hash",
+            "risk_level": "medium",
+            "daily_weather": [
+              {
+                "day_index": 1,
+                "date": "2026-08-09",
+                "state": "rain",
+                "weather": "雨天",
+                "temperature_min_c": 14,
+                "temperature_max_c": 21,
+                "precipitation_mm": 8.0,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "afternoon"
+                ],
+                "avoid_periods": []
+              },
+              {
+                "day_index": 2,
+                "date": "2026-08-10",
+                "state": "rain",
+                "weather": "雨天",
+                "temperature_min_c": 13,
+                "temperature_max_c": 20,
+                "precipitation_mm": 18.0,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "afternoon"
+                ],
+                "avoid_periods": []
+              },
+              {
+                "day_index": 3,
+                "date": "2026-08-11",
+                "state": "rain",
+                "weather": "雨天",
+                "temperature_min_c": 15,
+                "temperature_max_c": 22,
+                "precipitation_mm": 12.0,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "afternoon"
+                ],
+                "avoid_periods": []
+              }
+            ],
+            "planning_constraints": {
+              "dynamic_adjustment_required": true,
+              "indoor_preference": true,
+              "minimum_indoor_activity_ratio": 0.6,
+              "avoid_time_windows": [],
+              "maximum_continuous_outdoor_hours": 1,
+              "mandatory_actions": [
+                "提供博物馆和室内遗址展示替代方案",
+                "降低城墙骑行和长距离露天步行优先级"
+              ]
+            },
+            "weather_adjustment_required": true
+          },
+          "error": null,
+          "metadata": {
+            "offline": true,
+            "source_mode": "frozen_offline",
+            "real_time_api_allowed": false,
+            "dataset_version": "CTP-WEATHER-v1.0",
+            "source_file_id": "ctp_weather_xian_v1_0",
+            "record_count": 3,
+            "canonical_city_id": "xian",
+            "weather_date_mapping_rule": "sha256(canonical_city_id + date) selects one fixed scenario when date is provided"
+          }
+        }
+      },
+      "metadata": {
+        "research_method": "adaptive_multi_agent",
+        "output_contract": "ctp-experiment-output-v1",
+        "generation_tool_contract": "ctp-research-tools-v1.0",
+        "method_input_schema_version": "ctp-method-input-v1",
+        "goal_state_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-09",
+          "duration_days": 3,
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "result_agents": [
+          "weather"
+        ],
+        "agent_output_schema_version": "ctp-research-agent-output-v1",
+        "agent_decision_schema_version": "ctp-research-agent-decision-v1",
+        "agent_prompt_version": "ctp-research-agent-prompts-v1",
+        "agent_outputs": {
+          "weather": {
+            "schema_version": "ctp-research-agent-output-v1",
+            "agent_name": "weather",
+            "status": "completed",
+            "success": true,
+            "reused": false,
+            "prompt_version": "ctp-research-agent-prompts-v1",
+            "evidence_tools": [
+              "weather_query"
+            ],
+            "upstream_agents": [],
+            "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"weather\",\n  \"summary\": \"基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。\",\n  \"decisions\": {\n    \"attraction\": {\n      \"selected_poi_ids\": [],\n      \"notes\": \"用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。\"\n    },\n    \"weather\": {\n      \"risk_days\": [\n        {\n          \"day_index\": 1,\n          \"date\": \"2026-08-09\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 14,\n          \"temperature_max_c\": 21,\n          \"precipitation_mm\": 8.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 2,\n          \"date\": \"2026-08-10\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 13,\n          \"temperature_max_c\": 20,\n          \"precipitation_mm\": 18.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 3,\n          \"date\": \"2026-08-11\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 15,\n          \"temperature_max_c\": 22,\n          \"precipitation_mm\": 12.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        }\n      ],\n      \"adjustment_required\": true,\n      \"adjustment_notes\": \"工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。\"\n    },\n    \"itinerary\": {\n      \"daily_itinerary\": [\n        {\n          \"day\": 1,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 2,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 3,\n          \"attraction_poi_ids\": []\n        }\n      ],\n      \"notes\": \"应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。\"\n    },\n    \"budget\": {\n      \"feasibility\": true,\n      \"budget_notes\": \"天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。\",\n      \"recommended_total\": null\n    }\n  },\n  \"risks\": [\n    {\n      \"type\": \"weather\",\n      \"description\": \"连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"将活动安排以室内为主（工具建议至少60%室内活动）。\",\n        \"限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。\",\n        \"降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。\",\n        \"保持行程弹性，准备根据实时情况动态调整。\"\n      ]\n    },\n    {\n      \"type\": \"planning_constraint\",\n      \"description\": \"工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"保留备选室内活动时段与交通时间缓冲。\",\n        \"避免将关键行程安排在连续长时间的户外活动段。\"\n      ]\n    }\n  ],\n  \"confidence\": 0.85\n}",
+            "decision_schema_version": "ctp-research-agent-decision-v1",
+            "decision": {
+              "schema_version": "ctp-research-agent-decision-v1",
+              "agent_name": "weather",
+              "summary": "基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。",
+              "decisions": {
+                "attraction": {
+                  "selected_poi_ids": [],
+                  "notes": "用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。"
+                },
+                "weather": {
+                  "risk_days": [
+                    {
+                      "day_index": 1,
+                      "date": "2026-08-09",
+                      "weather": "雨天",
+                      "temperature_min_c": 14,
+                      "temperature_max_c": 21,
+                      "precipitation_mm": 8.0,
+                      "risk_level": "medium",
+                      "risk_tags": [
+                        "rain"
+                      ],
+                      "suitable_periods": [
+                        "morning",
+                        "afternoon"
+                      ],
+                      "avoid_periods": []
+                    },
+                    {
+                      "day_index": 2,
+                      "date": "2026-08-10",
+                      "weather": "雨天",
+                      "temperature_min_c": 13,
+                      "temperature_max_c": 20,
+                      "precipitation_mm": 18.0,
+                      "risk_level": "medium",
+                      "risk_tags": [
+                        "rain"
+                      ],
+                      "suitable_periods": [
+                        "morning",
+                        "afternoon"
+                      ],
+                      "avoid_periods": []
+                    },
+                    {
+                      "day_index": 3,
+                      "date": "2026-08-11",
+                      "weather": "雨天",
+                      "temperature_min_c": 15,
+                      "temperature_max_c": 22,
+                      "precipitation_mm": 12.0,
+                      "risk_level": "medium",
+                      "risk_tags": [
+                        "rain"
+                      ],
+                      "suitable_periods": [
+                        "morning",
+                        "afternoon"
+                      ],
+                      "avoid_periods": []
+                    }
+                  ],
+                  "adjustment_required": true,
+                  "adjustment_notes": "工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。"
+                },
+                "itinerary": {
+                  "daily_itinerary": [
+                    {
+                      "day": 1,
+                      "attraction_poi_ids": []
+                    },
+                    {
+                      "day": 2,
+                      "attraction_poi_ids": []
+                    },
+                    {
+                      "day": 3,
+                      "attraction_poi_ids": []
+                    }
+                  ],
+                  "notes": "应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。"
+                },
+                "budget": {
+                  "feasibility": true,
+                  "budget_notes": "天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。",
+                  "recommended_total": null
+                }
+              },
+              "risks": [
+                {
+                  "type": "weather",
+                  "description": "连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。",
+                  "likelihood": "medium",
+                  "impact": "medium",
+                  "mitigation": [
+                    "将活动安排以室内为主（工具建议至少60%室内活动）。",
+                    "限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。",
+                    "降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。",
+                    "保持行程弹性，准备根据实时情况动态调整。"
+                  ]
+                },
+                {
+                  "type": "planning_constraint",
+                  "description": "工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。",
+                  "likelihood": "medium",
+                  "impact": "medium",
+                  "mitigation": [
+                    "保留备选室内活动时段与交通时间缓冲。",
+                    "避免将关键行程安排在连续长时间的户外活动段。"
+                  ]
+                }
+              ],
+              "confidence": 0.85
+            },
+            "decision_source": "llm",
+            "decision_fallback_used": false,
+            "decision_normalizer_enabled": false,
+            "decision_normalizer_skipped": false,
+            "decision_parse_status": "passed",
+            "decision_validation_status": "passed",
+            "decision_errors": [],
+            "llm_decision_parse_status": "passed",
+            "llm_decision_validation_status": "passed",
+            "llm_decision_errors": [],
+            "usage": {
+              "prompt_tokens": 871,
+              "completion_tokens": 1196,
+              "total_tokens": 2067
+            },
+            "prompt_tokens": 871,
+            "completion_tokens": 1196,
+            "total_tokens": 2067,
+            "duration_ms": 14220.47,
+            "llm_call_count": 1
+          }
+        },
+        "agent_decision_audit": {
+          "weather": {
+            "status": "completed",
+            "reused": false,
+            "decision_source": "llm",
+            "decision_fallback_used": false,
+            "decision_normalizer_enabled": false,
+            "decision_normalizer_skipped": false,
+            "decision_parse_status": "passed",
+            "decision_validation_status": "passed",
+            "llm_decision_error_count": 0,
+            "decision_error_count": 0,
+            "has_applicable_decision": true
+          }
+        },
+        "adaptive_scheduler": {
+          "name": "goal_state_scheduler",
+          "ticket": {
+            "schema_version": "ctp-goal-state-ticket-v1",
+            "task_type": "weather_query",
+            "current_slots": {
+              "destination": "xian",
+              "start_date": "2026-08-09",
+              "duration_days": 3,
+              "special_requirements": [
+                "avoidance_constraint"
+              ]
+            },
+            "previous_slots": {},
+            "changed_slots": [
+              "destination",
+              "start_date",
+              "duration_days",
+              "special_requirements"
+            ],
+            "preserved_slots": [],
+            "missing_slots": [],
+            "required_capabilities": [
+              "weather_evidence"
+            ],
+            "dependency_policy": {},
+            "clarification_required": false,
+            "clarification_fields": [],
+            "goal_change_type": "new_request"
+          },
+          "decision": {
+            "schema_version": "ctp-scheduler-decision-v1",
+            "planned_agents": [
+              "weather"
+            ],
+            "planned_tools": [
+              "weather_query"
+            ],
+            "reused_agents": [],
+            "invalidated_agents": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "decision_reasons": [
+              "single_capability_request"
+            ],
+            "reuse_validation": {}
+          },
+          "reuse_execution": {
+            "previous_state_provided": false,
+            "expected_reused_agents": [],
+            "reused_agent_results": [],
+            "missing_reused_agent_results": [],
+            "expected_reused_agent_count": 0,
+            "reused_agent_result_count": 0,
+            "missing_reused_agent_result_count": 0,
+            "expected_reused_tools": [],
+            "reused_tool_results": [],
+            "missing_reused_tool_results": [],
+            "expected_reused_tool_count": 0,
+            "reused_tool_result_count": 0,
+            "missing_reused_tool_result_count": 0,
+            "reuse_hit_rate": null,
+            "agent_reuse_hit_rate": null
+          },
+          "result_fingerprints": {
+            "weather": {
+              "destination": "xian",
+              "start_date": "2026-08-09",
+              "duration_days": 3
+            }
+          }
+        },
+        "scheduler": {
+          "name": "goal_state_scheduler",
+          "ticket": {
+            "schema_version": "ctp-goal-state-ticket-v1",
+            "task_type": "weather_query",
+            "current_slots": {
+              "destination": "xian",
+              "start_date": "2026-08-09",
+              "duration_days": 3,
+              "special_requirements": [
+                "avoidance_constraint"
+              ]
+            },
+            "previous_slots": {},
+            "changed_slots": [
+              "destination",
+              "start_date",
+              "duration_days",
+              "special_requirements"
+            ],
+            "preserved_slots": [],
+            "missing_slots": [],
+            "required_capabilities": [
+              "weather_evidence"
+            ],
+            "dependency_policy": {},
+            "clarification_required": false,
+            "clarification_fields": [],
+            "goal_change_type": "new_request"
+          },
+          "decision": {
+            "schema_version": "ctp-scheduler-decision-v1",
+            "planned_agents": [
+              "weather"
+            ],
+            "planned_tools": [
+              "weather_query"
+            ],
+            "reused_agents": [],
+            "invalidated_agents": [],
+            "clarification_required": false,
+            "clarification_fields": [],
+            "decision_reasons": [
+              "single_capability_request"
+            ],
+            "reuse_validation": {}
+          },
+          "reuse_execution": {
+            "previous_state_provided": false,
+            "expected_reused_agents": [],
+            "reused_agent_results": [],
+            "missing_reused_agent_results": [],
+            "expected_reused_agent_count": 0,
+            "reused_agent_result_count": 0,
+            "missing_reused_agent_result_count": 0,
+            "expected_reused_tools": [],
+            "reused_tool_results": [],
+            "missing_reused_tool_results": [],
+            "expected_reused_tool_count": 0,
+            "reused_tool_result_count": 0,
+            "missing_reused_tool_result_count": 0,
+            "reuse_hit_rate": null,
+            "agent_reuse_hit_rate": null
+          },
+          "result_fingerprints": {
+            "weather": {
+              "destination": "xian",
+              "start_date": "2026-08-09",
+              "duration_days": 3
+            }
+          }
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        }
+      }
+    },
+    "tool_results": {
+      "weather_query": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "weather_query",
+        "status": "success",
+        "success": true,
+        "input": {
+          "city": "xian",
+          "date": "2026-08-09",
+          "days": 3,
+          "scenario_type": "sunny"
+        },
+        "data": {
+          "city": "西安",
+          "city_id": "xian",
+          "date": "2026-08-09",
+          "scenario_type": "rain",
+          "requested_scenario_type": "sunny",
+          "scenario_selection": "city_date_hash",
+          "risk_level": "medium",
+          "daily_weather": [
+            {
+              "day_index": 1,
+              "date": "2026-08-09",
+              "state": "rain",
+              "weather": "雨天",
+              "temperature_min_c": 14,
+              "temperature_max_c": 21,
+              "precipitation_mm": 8.0,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain"
+              ],
+              "suitable_periods": [
+                "morning",
+                "afternoon"
+              ],
+              "avoid_periods": []
+            },
+            {
+              "day_index": 2,
+              "date": "2026-08-10",
+              "state": "rain",
+              "weather": "雨天",
+              "temperature_min_c": 13,
+              "temperature_max_c": 20,
+              "precipitation_mm": 18.0,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain"
+              ],
+              "suitable_periods": [
+                "morning",
+                "afternoon"
+              ],
+              "avoid_periods": []
+            },
+            {
+              "day_index": 3,
+              "date": "2026-08-11",
+              "state": "rain",
+              "weather": "雨天",
+              "temperature_min_c": 15,
+              "temperature_max_c": 22,
+              "precipitation_mm": 12.0,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain"
+              ],
+              "suitable_periods": [
+                "morning",
+                "afternoon"
+              ],
+              "avoid_periods": []
+            }
+          ],
+          "planning_constraints": {
+            "dynamic_adjustment_required": true,
+            "indoor_preference": true,
+            "minimum_indoor_activity_ratio": 0.6,
+            "avoid_time_windows": [],
+            "maximum_continuous_outdoor_hours": 1,
+            "mandatory_actions": [
+              "提供博物馆和室内遗址展示替代方案",
+              "降低城墙骑行和长距离露天步行优先级"
+            ]
+          },
+          "weather_adjustment_required": true
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "frozen_offline",
+          "real_time_api_allowed": false,
+          "dataset_version": "CTP-WEATHER-v1.0",
+          "source_file_id": "ctp_weather_xian_v1_0",
+          "record_count": 3,
+          "canonical_city_id": "xian",
+          "weather_date_mapping_rule": "sha256(canonical_city_id + date) selects one fixed scenario when date is provided"
+        }
+      }
+    },
+    "metadata": {
+      "research_method": "adaptive_multi_agent",
+      "output_contract": "ctp-experiment-output-v1",
+      "generation_tool_contract": "ctp-research-tools-v1.0",
+      "method_input_schema_version": "ctp-method-input-v1",
+      "goal_state_slots": {
+        "destination": "xian",
+        "start_date": "2026-08-09",
+        "duration_days": 3,
+        "special_requirements": [
+          "avoidance_constraint"
+        ]
+      },
+      "result_agents": [
+        "weather"
+      ],
+      "agent_output_schema_version": "ctp-research-agent-output-v1",
+      "agent_decision_schema_version": "ctp-research-agent-decision-v1",
+      "agent_prompt_version": "ctp-research-agent-prompts-v1",
+      "agent_outputs": {
+        "weather": {
+          "schema_version": "ctp-research-agent-output-v1",
+          "agent_name": "weather",
+          "status": "completed",
+          "success": true,
+          "reused": false,
+          "prompt_version": "ctp-research-agent-prompts-v1",
+          "evidence_tools": [
+            "weather_query"
+          ],
+          "upstream_agents": [],
+          "content": "{\n  \"schema_version\": \"ctp-research-agent-decision-v1\",\n  \"agent_name\": \"weather\",\n  \"summary\": \"基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。\",\n  \"decisions\": {\n    \"attraction\": {\n      \"selected_poi_ids\": [],\n      \"notes\": \"用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。\"\n    },\n    \"weather\": {\n      \"risk_days\": [\n        {\n          \"day_index\": 1,\n          \"date\": \"2026-08-09\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 14,\n          \"temperature_max_c\": 21,\n          \"precipitation_mm\": 8.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 2,\n          \"date\": \"2026-08-10\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 13,\n          \"temperature_max_c\": 20,\n          \"precipitation_mm\": 18.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        },\n        {\n          \"day_index\": 3,\n          \"date\": \"2026-08-11\",\n          \"weather\": \"雨天\",\n          \"temperature_min_c\": 15,\n          \"temperature_max_c\": 22,\n          \"precipitation_mm\": 12.0,\n          \"risk_level\": \"medium\",\n          \"risk_tags\": [\n            \"rain\"\n          ],\n          \"suitable_periods\": [\n            \"morning\",\n            \"afternoon\"\n          ],\n          \"avoid_periods\": []\n        }\n      ],\n      \"adjustment_required\": true,\n      \"adjustment_notes\": \"工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。\"\n    },\n    \"itinerary\": {\n      \"daily_itinerary\": [\n        {\n          \"day\": 1,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 2,\n          \"attraction_poi_ids\": []\n        },\n        {\n          \"day\": 3,\n          \"attraction_poi_ids\": []\n        }\n      ],\n      \"notes\": \"应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。\"\n    },\n    \"budget\": {\n      \"feasibility\": true,\n      \"budget_notes\": \"天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。\",\n      \"recommended_total\": null\n    }\n  },\n  \"risks\": [\n    {\n      \"type\": \"weather\",\n      \"description\": \"连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"将活动安排以室内为主（工具建议至少60%室内活动）。\",\n        \"限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。\",\n        \"降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。\",\n        \"保持行程弹性，准备根据实时情况动态调整。\"\n      ]\n    },\n    {\n      \"type\": \"planning_constraint\",\n      \"description\": \"工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。\",\n      \"likelihood\": \"medium\",\n      \"impact\": \"medium\",\n      \"mitigation\": [\n        \"保留备选室内活动时段与交通时间缓冲。\",\n        \"避免将关键行程安排在连续长时间的户外活动段。\"\n      ]\n    }\n  ],\n  \"confidence\": 0.85\n}",
+          "decision_schema_version": "ctp-research-agent-decision-v1",
+          "decision": {
+            "schema_version": "ctp-research-agent-decision-v1",
+            "agent_name": "weather",
+            "summary": "基于离线天气工具返回的西安（city_id: xian）2026-08-09起三天预报：三日均为雨天，最低/最高温度分别为14–21°C（8日）、13–20°C（10日）、15–22°C（11日）。降水量分别约8.0 mm、18.0 mm、12.0 mm。总体风险等级为中等，工具同时建议需要动态调整计划并偏好室内活动，限制连续室外时长，降低城墙骑行和长距离露天步行优先级。",
+            "decisions": {
+              "attraction": {
+                "selected_poi_ids": [],
+                "notes": "用户明确要求不要推荐景点；仅根据天气建议提高室内活动比例并准备替代方案（例如博物馆和室内遗址展示），但不列出具体地点。"
+              },
+              "weather": {
+                "risk_days": [
+                  {
+                    "day_index": 1,
+                    "date": "2026-08-09",
+                    "weather": "雨天",
+                    "temperature_min_c": 14,
+                    "temperature_max_c": 21,
+                    "precipitation_mm": 8.0,
+                    "risk_level": "medium",
+                    "risk_tags": [
+                      "rain"
+                    ],
+                    "suitable_periods": [
+                      "morning",
+                      "afternoon"
+                    ],
+                    "avoid_periods": []
+                  },
+                  {
+                    "day_index": 2,
+                    "date": "2026-08-10",
+                    "weather": "雨天",
+                    "temperature_min_c": 13,
+                    "temperature_max_c": 20,
+                    "precipitation_mm": 18.0,
+                    "risk_level": "medium",
+                    "risk_tags": [
+                      "rain"
+                    ],
+                    "suitable_periods": [
+                      "morning",
+                      "afternoon"
+                    ],
+                    "avoid_periods": []
+                  },
+                  {
+                    "day_index": 3,
+                    "date": "2026-08-11",
+                    "weather": "雨天",
+                    "temperature_min_c": 15,
+                    "temperature_max_c": 22,
+                    "precipitation_mm": 12.0,
+                    "risk_level": "medium",
+                    "risk_tags": [
+                      "rain"
+                    ],
+                    "suitable_periods": [
+                      "morning",
+                      "afternoon"
+                    ],
+                    "avoid_periods": []
+                  }
+                ],
+                "adjustment_required": true,
+                "adjustment_notes": "工具指出需动态调整计划、提高室内活动比例（建议最少60%室内活动），限制最长连续户外时长为1小时，并提供室内替代方案与降低城墙骑行和长距离露天步行优先级。"
+              },
+              "itinerary": {
+                "daily_itinerary": [
+                  {
+                    "day": 1,
+                    "attraction_poi_ids": []
+                  },
+                  {
+                    "day": 2,
+                    "attraction_poi_ids": []
+                  },
+                  {
+                    "day": 3,
+                    "attraction_poi_ids": []
+                  }
+                ],
+                "notes": "应根据天气偏好安排以室内活动为主的行程（至少60%室内）。用户要求不提供具体景点，因此仅保留空白POI列表以便后续由用户或其他授权模块填充。"
+              },
+              "budget": {
+                "feasibility": true,
+                "budget_notes": "天气为雨天且建议以室内活动为主，未提供价格或具体活动信息，无法精确估算费用。若偏好博物馆和室内展览，通常不会显著增加中等预算水平的总体可行性。建议用户按既定中等预算准备，留出少量应急交通/雨具费用。",
+                "recommended_total": null
+              }
+            },
+            "risks": [
+              {
+                "type": "weather",
+                "description": "连续三日降雨，可能造成出行不便、室外活动受限以及短时视线或路面湿滑风险。",
+                "likelihood": "medium",
+                "impact": "medium",
+                "mitigation": [
+                  "将活动安排以室内为主（工具建议至少60%室内活动）。",
+                  "限制连续户外暴露时间，不超过1小时；在必须户外时段随身携带雨具与防滑鞋。",
+                  "降低城墙骑行和长距离露天空步行的优先级，改为室内替代方案（如博物馆、室内遗址展示）。",
+                  "保持行程弹性，准备根据实时情况动态调整。"
+                ]
+              },
+              {
+                "type": "planning_constraint",
+                "description": "工具标注需动态调整计划（dynamic_adjustment_required），若行程预先固定且难以调整，遇雨可能导致活动受限。",
+                "likelihood": "medium",
+                "impact": "medium",
+                "mitigation": [
+                  "保留备选室内活动时段与交通时间缓冲。",
+                  "避免将关键行程安排在连续长时间的户外活动段。"
+                ]
+              }
+            ],
+            "confidence": 0.85
+          },
+          "decision_source": "llm",
+          "decision_fallback_used": false,
+          "decision_normalizer_enabled": false,
+          "decision_normalizer_skipped": false,
+          "decision_parse_status": "passed",
+          "decision_validation_status": "passed",
+          "decision_errors": [],
+          "llm_decision_parse_status": "passed",
+          "llm_decision_validation_status": "passed",
+          "llm_decision_errors": [],
+          "usage": {
+            "prompt_tokens": 871,
+            "completion_tokens": 1196,
+            "total_tokens": 2067
+          },
+          "prompt_tokens": 871,
+          "completion_tokens": 1196,
+          "total_tokens": 2067,
+          "duration_ms": 14220.47,
+          "llm_call_count": 1
+        }
+      },
+      "agent_decision_audit": {
+        "weather": {
+          "status": "completed",
+          "reused": false,
+          "decision_source": "llm",
+          "decision_fallback_used": false,
+          "decision_normalizer_enabled": false,
+          "decision_normalizer_skipped": false,
+          "decision_parse_status": "passed",
+          "decision_validation_status": "passed",
+          "llm_decision_error_count": 0,
+          "decision_error_count": 0,
+          "has_applicable_decision": true
+        }
+      },
+      "adaptive_scheduler": {
+        "name": "goal_state_scheduler",
+        "ticket": {
+          "schema_version": "ctp-goal-state-ticket-v1",
+          "task_type": "weather_query",
+          "current_slots": {
+            "destination": "xian",
+            "start_date": "2026-08-09",
+            "duration_days": 3,
+            "special_requirements": [
+              "avoidance_constraint"
+            ]
+          },
+          "previous_slots": {},
+          "changed_slots": [
+            "destination",
+            "start_date",
+            "duration_days",
+            "special_requirements"
+          ],
+          "preserved_slots": [],
+          "missing_slots": [],
+          "required_capabilities": [
+            "weather_evidence"
+          ],
+          "dependency_policy": {},
+          "clarification_required": false,
+          "clarification_fields": [],
+          "goal_change_type": "new_request"
+        },
+        "decision": {
+          "schema_version": "ctp-scheduler-decision-v1",
+          "planned_agents": [
+            "weather"
+          ],
+          "planned_tools": [
+            "weather_query"
+          ],
+          "reused_agents": [],
+          "invalidated_agents": [],
+          "clarification_required": false,
+          "clarification_fields": [],
+          "decision_reasons": [
+            "single_capability_request"
+          ],
+          "reuse_validation": {}
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        },
+        "result_fingerprints": {
+          "weather": {
+            "destination": "xian",
+            "start_date": "2026-08-09",
+            "duration_days": 3
+          }
+        }
+      },
+      "scheduler": {
+        "name": "goal_state_scheduler",
+        "ticket": {
+          "schema_version": "ctp-goal-state-ticket-v1",
+          "task_type": "weather_query",
+          "current_slots": {
+            "destination": "xian",
+            "start_date": "2026-08-09",
+            "duration_days": 3,
+            "special_requirements": [
+              "avoidance_constraint"
+            ]
+          },
+          "previous_slots": {},
+          "changed_slots": [
+            "destination",
+            "start_date",
+            "duration_days",
+            "special_requirements"
+          ],
+          "preserved_slots": [],
+          "missing_slots": [],
+          "required_capabilities": [
+            "weather_evidence"
+          ],
+          "dependency_policy": {},
+          "clarification_required": false,
+          "clarification_fields": [],
+          "goal_change_type": "new_request"
+        },
+        "decision": {
+          "schema_version": "ctp-scheduler-decision-v1",
+          "planned_agents": [
+            "weather"
+          ],
+          "planned_tools": [
+            "weather_query"
+          ],
+          "reused_agents": [],
+          "invalidated_agents": [],
+          "clarification_required": false,
+          "clarification_fields": [],
+          "decision_reasons": [
+            "single_capability_request"
+          ],
+          "reuse_validation": {}
+        },
+        "reuse_execution": {
+          "previous_state_provided": false,
+          "expected_reused_agents": [],
+          "reused_agent_results": [],
+          "missing_reused_agent_results": [],
+          "expected_reused_agent_count": 0,
+          "reused_agent_result_count": 0,
+          "missing_reused_agent_result_count": 0,
+          "expected_reused_tools": [],
+          "reused_tool_results": [],
+          "missing_reused_tool_results": [],
+          "expected_reused_tool_count": 0,
+          "reused_tool_result_count": 0,
+          "missing_reused_tool_result_count": 0,
+          "reuse_hit_rate": null,
+          "agent_reuse_hit_rate": null
+        },
+        "result_fingerprints": {
+          "weather": {
+            "destination": "xian",
+            "start_date": "2026-08-09",
+            "duration_days": 3
+          }
+        }
+      },
+      "reuse_execution": {
+        "previous_state_provided": false,
+        "expected_reused_agents": [],
+        "reused_agent_results": [],
+        "missing_reused_agent_results": [],
+        "expected_reused_agent_count": 0,
+        "reused_agent_result_count": 0,
+        "missing_reused_agent_result_count": 0,
+        "expected_reused_tools": [],
+        "reused_tool_results": [],
+        "missing_reused_tool_results": [],
+        "expected_reused_tool_count": 0,
+        "reused_tool_result_count": 0,
+        "missing_reused_tool_result_count": 0,
+        "reuse_hit_rate": null,
+        "agent_reuse_hit_rate": null
+      }
+    }
+  },
+  "latency": 14613.32,
+  "latency_ms": 14613.32,
+  "ttft_ms": null,
+  "trace": {
+    "schema_version": "1.8",
+    "created_at": "2026-08-03T14:14:39.588834+00:00",
+    "request_id": "ctp_dev_007_xian_weather_only_adaptive_multi_agent_2b69108d",
+    "session_id": "exp-ctp_dev_007_xian_weather_only-adaptive_multi_agent-run-day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST-r0",
+    "case_id": "ctp_dev_007_xian_weather_only",
+    "run_id": "day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST",
+    "experiment_case_id": "ctp_dev_007_xian_weather_only",
+    "experiment_group": null,
+    "repeat_index": 0,
+    "system_variant": "adaptive_multi_agent",
+    "method": "adaptive_multi_agent",
+    "evaluation_mode": "end_to_end",
+    "model_config_name": "day7-dev-real-m3-no-normalizer",
+    "input_hash": "162543e8c715bdd3d3cb1ee4181cf00783661e85e42f7ad7afcb659d98f29369",
+    "user_message_hash": "162543e8c715bdd3d3cb1ee4181cf00783661e85e42f7ad7afcb659d98f29369",
+    "user_message": null,
+    "result_hash": "e5d46dbfaecdecfc741aff34c5f943e4d5beb7653b0bab055aab90c1e278e938",
+    "offline_data": {
+      "schema_version": "fixed_data_manifest_v2",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+      "city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "snapshot_dirs": [
+        "pois",
+        "weather",
+        "restaurants",
+        "accommodation",
+        "transport"
+      ],
+      "file_count": 25,
+      "expected_file_count": 25,
+      "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "expected_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "missing_files": [],
+      "files": [
+        {
+          "kind": "accommodation",
+          "city_id": "beijing",
+          "path": "data/accommodation/beijing.json",
+          "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "guilin",
+          "path": "data/accommodation/guilin.json",
+          "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "hangzhou",
+          "path": "data/accommodation/hangzhou.json",
+          "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "shenzhen",
+          "path": "data/accommodation/shenzhen.json",
+          "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "xian",
+          "path": "data/accommodation/xian.json",
+          "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "beijing",
+          "path": "data/pois/beijing.json",
+          "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "guilin",
+          "path": "data/pois/guilin.json",
+          "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "hangzhou",
+          "path": "data/pois/hangzhou.json",
+          "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "shenzhen",
+          "path": "data/pois/shenzhen.json",
+          "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "xian",
+          "path": "data/pois/xian.json",
+          "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "beijing",
+          "path": "data/restaurants/beijing.json",
+          "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "guilin",
+          "path": "data/restaurants/guilin.json",
+          "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "hangzhou",
+          "path": "data/restaurants/hangzhou.json",
+          "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "shenzhen",
+          "path": "data/restaurants/shenzhen.json",
+          "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "xian",
+          "path": "data/restaurants/xian.json",
+          "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "beijing",
+          "path": "data/transport/beijing.json",
+          "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "guilin",
+          "path": "data/transport/guilin.json",
+          "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "hangzhou",
+          "path": "data/transport/hangzhou.json",
+          "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "shenzhen",
+          "path": "data/transport/shenzhen.json",
+          "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "xian",
+          "path": "data/transport/xian.json",
+          "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "beijing",
+          "path": "data/weather/beijing.json",
+          "sha256": "a6b32944050cc2a638d09a67be8d7747ca2b0153527f856d85b4813651c91d0a",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "guilin",
+          "path": "data/weather/guilin.json",
+          "sha256": "450d86b2f7121f970e7c48e5a38ad113c8e4289c0356f448221ce1d63d412f94",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "hangzhou",
+          "path": "data/weather/hangzhou.json",
+          "sha256": "e4ea7c0b10b350cd4c7ba739746e0634d0aa86d77378d858104c0f789f6f64fd",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "shenzhen",
+          "path": "data/weather/shenzhen.json",
+          "sha256": "533e74a25a72fdc58a0f31746f10dd405611b3ab007f18d0319566deaec5e281",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "xian",
+          "path": "data/weather/xian.json",
+          "sha256": "7d9e244e1bd64d129cb75b641a09adc8521d9ce082b4a28de7bbb2aadb92cef4",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        }
+      ]
+    },
+    "status": "completed",
+    "mode": "planning",
+    "intent": "general_chat",
+    "route": "GENERAL_CHAT",
+    "extracted_info": {},
+    "constraints": [],
+    "missing_fields": [],
+    "planned_agents": [
+      "weather"
+    ],
+    "executed_agents": [
+      "weather"
+    ],
+    "planned_tools": [
+      "weather_query"
+    ],
+    "executed_tools": [
+      "weather_query"
+    ],
+    "selected_agents": [
+      "weather"
+    ],
+    "selected_tools": [
+      "weather_query"
+    ],
+    "goal": {
+      "intent": "general_chat",
+      "route": "GENERAL_CHAT",
+      "slots": {},
+      "constraints": [],
+      "planned_agents": [
+        "weather"
+      ],
+      "selected_agents": [
+        "weather"
+      ]
+    },
+    "stage_timings": {},
+    "agent_timings": {},
+    "agent_runs": [
+      {
+        "agent_run_id": "d0f7c6dc345f4e269b17fcd651750945",
+        "agent_name": "weather",
+        "started_at": "2026-08-03T14:14:39.589827+00:00",
+        "completed_at": "2026-08-03T14:14:54.092779+00:00",
+        "duration_ms": 14503.18,
+        "status": "completed",
+        "tokens": 2067,
+        "tool_count": 1,
+        "error": null,
+        "usage": {
+          "prompt_tokens": 871,
+          "completion_tokens": 1196,
+          "total_tokens": 2067
+        },
+        "prompt_tokens": 871,
+        "completion_tokens": 1196,
+        "total_tokens": 2067,
+        "llm_call_count": 1
+      }
+    ],
+    "llm_calls": [
+      {
+        "call_id": "6ee45a7e7bd54ea0bc9a6c14cf6d0a2a",
+        "id": "6ee45a7e7bd54ea0bc9a6c14cf6d0a2a",
+        "agent_name": "weather",
+        "component": "weather",
+        "provider": "openrouter",
+        "model": "gpt-5-mini",
+        "streaming": false,
+        "duration_ms": 14219.12,
+        "ttft_ms": null,
+        "tokens": {
+          "prompt_tokens": 871,
+          "completion_tokens": 1196,
+          "total_tokens": 2067
+        },
+        "usage": {
+          "prompt_tokens": 871,
+          "completion_tokens": 1196,
+          "total_tokens": 2067
+        },
+        "cached_source_usage": null,
+        "chunk_count": null,
+        "mock_used": false,
+        "fallback_used": false,
+        "cache_hit": false,
+        "mock": false,
+        "fallback": false,
+        "success": true,
+        "error": null,
+        "message_count": 2,
+        "message_chars": 2862,
+        "tool_count": 0,
+        "prompt_version": "ctp-research-agent-prompts-v1",
+        "prompt_hash": "2ed8171c41c1848a6a4c7ca621a6df114c21534dcb693187b6a6100e82834098",
+        "request_options": {
+          "schema_version": "ctp-llm-runtime-options-v1",
+          "model": "gpt-5-mini",
+          "base_url": "https://api.vectorengine.ai/v1",
+          "temperature": 0.0,
+          "max_tokens": 4096,
+          "timeout_seconds": 60,
+          "reasoning_effort": "minimal",
+          "tool_count": 0,
+          "tool_choice": null,
+          "streaming": false,
+          "sdk_max_retries": 0
+        },
+        "retry": {
+          "schema_version": "ctp-llm-retry-audit-v1",
+          "max_attempts": 3,
+          "attempt_count": 1,
+          "retry_count": 0,
+          "error_count": 0,
+          "succeeded": true,
+          "attempts": [
+            {
+              "attempt_index": 1,
+              "success": true,
+              "duration_ms": 14218.83,
+              "finish_reason": "stop",
+              "output_chars": 3178,
+              "usage": {
+                "prompt_tokens": 871,
+                "completion_tokens": 1196,
+                "total_tokens": 2067,
+                "completion_tokens_details": "[REDACTED]",
+                "prompt_tokens_details": "[REDACTED]"
+              }
+            }
+          ]
+        },
+        "cost_schema_version": "ctp-llm-costing-v1",
+        "cost_currency": "USD",
+        "estimated_cost": 0.00260975,
+        "standardized_estimated_cost": 0.00260975,
+        "estimated_cost_cny": null,
+        "standardized_estimated_cost_cny": null,
+        "actual_cost": null,
+        "actual_cost_status": "not_reported_by_provider",
+        "input_token_unit_price": 0.00025,
+        "output_token_unit_price": 0.002,
+        "price_unit": "per_1k_tokens",
+        "price_snapshot_date": "2026-08-01",
+        "price_source_url": "https://api.vectorengine.ai/pricing",
+        "pricing_mode": "frozen_default_token_estimate",
+        "price_snapshot": {
+          "schema_version": "ctp-llm-costing-v1",
+          "provider": "openrouter",
+          "model": "gpt-5-mini",
+          "price_snapshot_date": "2026-08-01",
+          "price_source_url": "https://api.vectorengine.ai/pricing",
+          "currency": "USD",
+          "price_unit": "per_1k_tokens",
+          "input_token_unit_price": 0.00025,
+          "output_token_unit_price": 0.002,
+          "pricing_mode": "frozen_default_token_estimate"
+        },
+        "temperature": 0.0,
+        "max_tokens": 4096,
+        "timeout_seconds": 60,
+        "reasoning_effort": "minimal",
+        "retry_max_attempts": 3,
+        "retry_attempt_count": 1,
+        "retry_count": 0,
+        "retry_error_count": 0,
+        "output_chars": 3178
+      }
+    ],
+    "tool_calls": [
+      {
+        "call_id": "weather-weather_query-2a3ab3",
+        "name": "weather_query",
+        "tool_name": "weather_query",
+        "agent_name": "weather",
+        "agent": "weather",
+        "component": "weather",
+        "params": {
+          "city": "xian",
+          "date": "2026-08-09",
+          "days": 3,
+          "scenario_type": "sunny"
+        },
+        "duration": 9.0,
+        "duration_ms": 9.0,
+        "status": "completed",
+        "success": true,
+        "error": null,
+        "cache_hit": null,
+        "fallback_used": null
+      }
+    ],
+    "api_calls": [],
+    "adaptive_scheduler": {
+      "name": "goal_state_scheduler",
+      "ticket": {
+        "schema_version": "ctp-goal-state-ticket-v1",
+        "task_type": "weather_query",
+        "current_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-09",
+          "duration_days": 3,
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "previous_slots": {},
+        "changed_slots": [
+          "destination",
+          "start_date",
+          "duration_days",
+          "special_requirements"
+        ],
+        "preserved_slots": [],
+        "missing_slots": [],
+        "required_capabilities": [
+          "weather_evidence"
+        ],
+        "dependency_policy": {},
+        "clarification_required": false,
+        "clarification_fields": [],
+        "goal_change_type": "new_request"
+      },
+      "decision": {
+        "schema_version": "ctp-scheduler-decision-v1",
+        "planned_agents": [
+          "weather"
+        ],
+        "planned_tools": [
+          "weather_query"
+        ],
+        "reused_agents": [],
+        "invalidated_agents": [],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "single_capability_request"
+        ],
+        "reuse_validation": {}
+      },
+      "reuse_execution": {
+        "previous_state_provided": false,
+        "expected_reused_agents": [],
+        "reused_agent_results": [],
+        "missing_reused_agent_results": [],
+        "expected_reused_agent_count": 0,
+        "reused_agent_result_count": 0,
+        "missing_reused_agent_result_count": 0,
+        "expected_reused_tools": [],
+        "reused_tool_results": [],
+        "missing_reused_tool_results": [],
+        "expected_reused_tool_count": 0,
+        "reused_tool_result_count": 0,
+        "missing_reused_tool_result_count": 0,
+        "reuse_hit_rate": null,
+        "agent_reuse_hit_rate": null
+      },
+      "result_fingerprints": {
+        "weather": {
+          "destination": "xian",
+          "start_date": "2026-08-09",
+          "duration_days": 3
+        }
+      }
+    },
+    "scheduler": {
+      "name": "goal_state_scheduler",
+      "ticket": {
+        "schema_version": "ctp-goal-state-ticket-v1",
+        "task_type": "weather_query",
+        "current_slots": {
+          "destination": "xian",
+          "start_date": "2026-08-09",
+          "duration_days": 3,
+          "special_requirements": [
+            "avoidance_constraint"
+          ]
+        },
+        "previous_slots": {},
+        "changed_slots": [
+          "destination",
+          "start_date",
+          "duration_days",
+          "special_requirements"
+        ],
+        "preserved_slots": [],
+        "missing_slots": [],
+        "required_capabilities": [
+          "weather_evidence"
+        ],
+        "dependency_policy": {},
+        "clarification_required": false,
+        "clarification_fields": [],
+        "goal_change_type": "new_request"
+      },
+      "decision": {
+        "schema_version": "ctp-scheduler-decision-v1",
+        "planned_agents": [
+          "weather"
+        ],
+        "planned_tools": [
+          "weather_query"
+        ],
+        "reused_agents": [],
+        "invalidated_agents": [],
+        "clarification_required": false,
+        "clarification_fields": [],
+        "decision_reasons": [
+          "single_capability_request"
+        ],
+        "reuse_validation": {}
+      },
+      "reuse_execution": {
+        "previous_state_provided": false,
+        "expected_reused_agents": [],
+        "reused_agent_results": [],
+        "missing_reused_agent_results": [],
+        "expected_reused_agent_count": 0,
+        "reused_agent_result_count": 0,
+        "missing_reused_agent_result_count": 0,
+        "expected_reused_tools": [],
+        "reused_tool_results": [],
+        "missing_reused_tool_results": [],
+        "expected_reused_tool_count": 0,
+        "reused_tool_result_count": 0,
+        "missing_reused_tool_result_count": 0,
+        "reuse_hit_rate": null,
+        "agent_reuse_hit_rate": null
+      },
+      "result_fingerprints": {
+        "weather": {
+          "destination": "xian",
+          "start_date": "2026-08-09",
+          "duration_days": 3
+        }
+      }
+    },
+    "total_duration_ms": 14601.24,
+    "first_body_token_ms": null,
+    "first_token_ms": null,
+    "error": null,
+    "llm_call_count": 1,
+    "tool_call_count": 1,
+    "successful_tool_call_count": 1,
+    "failed_tool_call_count": 0,
+    "tool_call_success_rate": 1.0,
+    "planned_tool_count": 1,
+    "executed_tool_count": 1,
+    "selected_tool_count": 1,
+    "api_call_count": 0,
+    "agent_call_count": 1,
+    "failed_agent_count": 0,
+    "cache_hit_count": 0,
+    "fallback_count": 0,
+    "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\day7_m3_ablation\\day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST\\traces\\20260803T141454192941Z_ctp_dev_007_xian_weather_only_adaptive_multi_agent_2b69108d_1c42bae7.jsonl"
+  },
+  "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\day7_m3_ablation\\day7_m3_no_normalizer_gpt5mini_final_20260803T1515CST\\traces\\20260803T141454192941Z_ctp_dev_007_xian_weather_only_adaptive_multi_agent_2b69108d_1c42bae7.jsonl",
+  "evaluation": {
+    "schema_version": "ctp-independent-evaluation-v1",
+    "catalog_id": "day5_independent_evaluator_rules",
+    "case_id": "ctp_dev_007_xian_weather_only",
+    "task_type": "weather_query",
+    "output_task_type": "weather_query",
+    "rules": [
+      {
+        "id": "G_SCHEMA_VALID",
+        "usage": "stsr_gate",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "schema_version": "ctp-experiment-output-v1",
+          "expected": "ctp-experiment-output-v1"
+        }
+      },
+      {
+        "id": "G_EXECUTION_STATUS_VALID",
+        "usage": "stsr_gate",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "execution_status": "completed",
+          "trace_status": "completed",
+          "failed_evidence": false,
+          "issues": []
+        }
+      },
+      {
+        "id": "G_FINAL_ANSWER_CONSISTENT",
+        "usage": "stsr_gate",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "issues": [],
+          "missing_pois": [],
+          "unselected_pois_mentioned": [],
+          "budget_total": null,
+          "weather_terms": [
+            "rain",
+            "雨",
+            "雨天"
+          ],
+          "missing_clarification_fields": []
+        }
+      },
+      {
+        "id": "G_TASK_TYPE_MATCH",
+        "usage": "stsr_gate",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "expected": "weather_query",
+          "actual": "weather_query"
+        }
+      },
+      {
+        "id": "H_TRIP_DAYS",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_ATTRACTION_COUNT_BOUNDS",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_DAILY_LOAD_LIMIT",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_BUDGET_LIMIT",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_POI_GROUNDED",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_NO_DUPLICATE_POIS",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_MUST_INCLUDE_POIS",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_FORBIDDEN_POIS",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_RAIN_SUITABILITY",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_SENIOR_ACCESSIBILITY",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_WEATHER_ADJUSTMENT_REQUIRED",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_WEATHER_EVIDENCE",
+        "usage": "hcsr",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "required_tools": [
+            "weather_query"
+          ],
+          "missing_or_failed": []
+        }
+      },
+      {
+        "id": "H_BUDGET_EVIDENCE",
+        "usage": "hcsr",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "H_TOOL_EVIDENCE",
+        "usage": "hcsr",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "required_tools": [
+            "weather_query"
+          ],
+          "missing_or_failed": []
+        }
+      },
+      {
+        "id": "T_CLARIFICATION_MISSING_FIELDS",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_CLARIFICATION_NO_PREMATURE_PLAN",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_GENERAL_CHAT_NO_BUSINESS_EXECUTION",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_GENERAL_CHAT_NO_TRIP_ARTIFACT",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_ATTRACTION_SINGLE_SCOPE",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_WEATHER_SINGLE_SCOPE",
+        "usage": "stsr_gate",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "artifact_present": true,
+          "unrelated_tools": [],
+          "unrelated_agents": []
+        }
+      },
+      {
+        "id": "T_BUDGET_SINGLE_SCOPE",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_PARTIAL_REUSE_VALIDITY",
+        "usage": "agent_tool_metric",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+        "usage": "stsr_gate",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {
+          "reason": "task_not_applicable"
+        }
+      },
+      {
+        "id": "S_AGENT_SET_MATCH",
+        "usage": "agent_tool_metric",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "accepted": [
+            [
+              "weather"
+            ]
+          ],
+          "actual": [
+            "weather"
+          ]
+        }
+      },
+      {
+        "id": "S_TOOL_SET_MATCH",
+        "usage": "agent_tool_metric",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "accepted": [
+            [
+              "weather_query"
+            ]
+          ],
+          "actual": [
+            "weather_query"
+          ]
+        }
+      },
+      {
+        "id": "S_PLANNED_ACTUAL_AGENT_CONSISTENCY",
+        "usage": "agent_tool_metric",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "planned": [
+            "weather"
+          ],
+          "actual": [
+            "weather"
+          ]
+        }
+      },
+      {
+        "id": "S_PLANNED_ACTUAL_TOOL_CONSISTENCY",
+        "usage": "agent_tool_metric",
+        "status": "passed",
+        "passed": true,
+        "failure_code": null,
+        "details": {
+          "planned": [
+            "weather_query"
+          ],
+          "actual": [
+            "weather_query"
+          ]
+        }
+      },
+      {
+        "id": "S_FORBIDDEN_GENERATION_TOOLS",
+        "usage": "agent_tool_metric",
+        "status": "na",
+        "passed": null,
+        "failure_code": null,
+        "details": {}
+      }
+    ],
+    "metrics": {
+      "stsr": true,
+      "stsr_gate_applicable_count": 5,
+      "stsr_gate_passed_count": 5,
+      "stsr_gate_failed_count": 0,
+      "evaluation_hcsr": 1.0,
+      "evaluation_hcsr_applicable_count": 2,
+      "evaluation_hcsr_passed_count": 2,
+      "evaluation_hcsr_failed_count": 0,
+      "evaluation_failed_rule_ids": [],
+      "evaluation_failed_rule_count": 0,
+      "agent_selection_precision": 1.0,
+      "agent_selection_recall": 1.0,
+      "agent_selection_f1": 1.0,
+      "agent_set_exact_match": true,
+      "necessary_agent_coverage": 1.0,
+      "extra_agent_count": 0,
+      "missing_agent_count": 0,
+      "duplicate_agent_count": 0,
+      "planned_actual_agent_consistency": 1.0,
+      "agent_execution_success_rate": 1.0,
+      "tool_selection_precision": 1.0,
+      "tool_selection_recall": 1.0,
+      "tool_selection_f1": 1.0,
+      "tool_set_exact_match": true,
+      "necessary_tool_coverage": 1.0,
+      "extra_tool_count": 0,
+      "missing_tool_count": 0,
+      "duplicate_tool_count": 0,
+      "forbidden_tool_call_count": 0,
+      "planned_actual_tool_consistency": 1.0,
+      "tool_call_success_rate": 1.0,
+      "tool_failure_count": 0,
+      "tool_failure_types": [],
+      "total_tokens": 2067.0,
+      "estimated_cost": 0.0026,
+      "standardized_estimated_cost": 0.0026,
+      "actual_cost": null,
+      "cost_per_success": 0.0026
+    },
+    "guards": [
+      "method_blind",
+      "no_llm_or_live_api",
+      "no_output_repair",
+      "structured_fields_only",
+      "append_only_evidence"
+    ]
+  },
+  "run_audit": {
+    "schema_version": "ctp-run-audit-v1",
+    "method": "adaptive_multi_agent",
+    "planned_agents": [
+      "weather"
+    ],
+    "used_agents": [
+      "weather"
+    ],
+    "executed_agents": [
+      "weather"
+    ],
+    "planned_tools": [
+      "weather_query"
+    ],
+    "called_tools": [
+      "weather_query"
+    ],
+    "executed_tools": [
+      "weather_query"
+    ],
+    "cost": {
+      "estimated_cost": 0.0026,
+      "standardized_estimated_cost": 0.0026,
+      "actual_cost": null,
+      "actual_cost_available": false,
+      "actual_cost_statuses": [
+        "not_reported_by_provider"
+      ],
+      "price_snapshots": [
+        {
+          "schema_version": "ctp-llm-costing-v1",
+          "provider": "openrouter",
+          "model": "gpt-5-mini",
+          "price_snapshot_date": "2026-08-01",
+          "price_source_url": "https://api.vectorengine.ai/pricing",
+          "currency": "USD",
+          "price_unit": "per_1k_tokens",
+          "input_token_unit_price": 0.00025,
+          "output_token_unit_price": 0.002,
+          "pricing_mode": "frozen_default_token_estimate"
+        }
+      ]
+    },
+    "metrics": {
+      "planned_agent_count": 1,
+      "used_agent_count": 1,
+      "executed_agent_count": 1,
+      "agent_call_count": 1,
+      "successful_agent_call_count": 1,
+      "failed_agent_call_count": 0,
+      "duplicate_agent_call_count": 0,
+      "planned_executed_agent_coverage": 1.0,
+      "planned_actual_agent_consistency": 1.0,
+      "agent_execution_success_rate": 1.0,
+      "planned_tool_count": 1,
+      "called_tool_count": 1,
+      "executed_tool_count": 1,
+      "successful_tool_call_count": 1,
+      "failed_tool_call_count": 0,
+      "duplicate_tool_call_count": 0,
+      "planned_executed_tool_coverage": 1.0,
+      "planned_actual_tool_consistency": 1.0,
+      "tool_call_success_rate": 1.0,
+      "llm_call_count": 1,
+      "llm_retry_attempt_count": 1.0,
+      "llm_retry_count": 0.0,
+      "llm_retry_error_count": 0.0,
+      "agent_llm_call_count": 1,
+      "api_call_count": 0,
+      "prompt_tokens": 871.0,
+      "completion_tokens": 1196.0,
+      "total_tokens": 2067.0,
+      "agent_prompt_tokens": 871.0,
+      "agent_completion_tokens": 1196.0,
+      "agent_total_tokens": 2067.0,
+      "estimated_cost": 0.0026,
+      "standardized_estimated_cost": 0.0026,
+      "latency_ms": 14613.32,
+      "trace_total_duration_ms": 14601.24,
+      "llm_total_duration_ms": 14219.12,
+      "agent_total_duration_ms": 14503.18,
+      "tool_total_duration_ms": 9.0
+    }
+  },
+  "audit": {
+    "schema_version": "ctp-run-audit-v1",
+    "method": "adaptive_multi_agent",
+    "planned_agents": [
+      "weather"
+    ],
+    "used_agents": [
+      "weather"
+    ],
+    "executed_agents": [
+      "weather"
+    ],
+    "planned_tools": [
+      "weather_query"
+    ],
+    "called_tools": [
+      "weather_query"
+    ],
+    "executed_tools": [
+      "weather_query"
+    ],
+    "cost": {
+      "estimated_cost": 0.0026,
+      "standardized_estimated_cost": 0.0026,
+      "actual_cost": null,
+      "actual_cost_available": false,
+      "actual_cost_statuses": [
+        "not_reported_by_provider"
+      ],
+      "price_snapshots": [
+        {
+          "schema_version": "ctp-llm-costing-v1",
+          "provider": "openrouter",
+          "model": "gpt-5-mini",
+          "price_snapshot_date": "2026-08-01",
+          "price_source_url": "https://api.vectorengine.ai/pricing",
+          "currency": "USD",
+          "price_unit": "per_1k_tokens",
+          "input_token_unit_price": 0.00025,
+          "output_token_unit_price": 0.002,
+          "pricing_mode": "frozen_default_token_estimate"
+        }
+      ]
+    },
+    "metrics": {
+      "planned_agent_count": 1,
+      "used_agent_count": 1,
+      "executed_agent_count": 1,
+      "agent_call_count": 1,
+      "successful_agent_call_count": 1,
+      "failed_agent_call_count": 0,
+      "duplicate_agent_call_count": 0,
+      "planned_executed_agent_coverage": 1.0,
+      "planned_actual_agent_consistency": 1.0,
+      "agent_execution_success_rate": 1.0,
+      "planned_tool_count": 1,
+      "called_tool_count": 1,
+      "executed_tool_count": 1,
+      "successful_tool_call_count": 1,
+      "failed_tool_call_count": 0,
+      "duplicate_tool_call_count": 0,
+      "planned_executed_tool_coverage": 1.0,
+      "planned_actual_tool_consistency": 1.0,
+      "tool_call_success_rate": 1.0,
+      "llm_call_count": 1,
+      "llm_retry_attempt_count": 1.0,
+      "llm_retry_count": 0.0,
+      "llm_retry_error_count": 0.0,
+      "agent_llm_call_count": 1,
+      "api_call_count": 0,
+      "prompt_tokens": 871.0,
+      "completion_tokens": 1196.0,
+      "total_tokens": 2067.0,
+      "agent_prompt_tokens": 871.0,
+      "agent_completion_tokens": 1196.0,
+      "agent_total_tokens": 2067.0,
+      "estimated_cost": 0.0026,
+      "standardized_estimated_cost": 0.0026,
+      "latency_ms": 14613.32,
+      "trace_total_duration_ms": 14601.24,
+      "llm_total_duration_ms": 14219.12,
+      "agent_total_duration_ms": 14503.18,
+      "tool_total_duration_ms": 9.0
+    }
+  },
+  "status": "completed",
+  "metrics": {
+    "expected_tools": [],
+    "selected_tools": [
+      "weather_query"
+    ],
+    "expected_tool_count": 0,
+    "correct_tool_count": null,
+    "tool_selection_accuracy": null,
+    "intent_correct": null,
+    "route_correct": null,
+    "agents_correct": null,
+    "constraint_report": {
+      "schema_version": "research_tool_result_v1",
+      "tool_contract_version": "ctp-research-tools-v1.0",
+      "tool_name": "constraint_checker",
+      "status": "success",
+      "success": true,
+      "input": {
+        "request": {
+          "destination": "xian",
+          "start_date": "2026-08-09",
+          "duration_days": 3,
+          "special_requirements": [
+            "avoidance_constraint"
+          ],
+          "case_id": "ctp_dev_007_xian_weather_only",
+          "user_input": "只查询西安2026年8月9日开始3天的天气预报，不要推荐景点。",
+          "city": "xian",
+          "budget": null
+        },
+        "constraints": {}
+      },
+      "data": {
+        "all_passed": true,
+        "applicable_count": 2,
+        "passed_count": 2,
+        "failed_count": 0,
+        "checks": [
+          {
+            "name": "trip_days",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "expected": null,
+              "actual": 0
+            }
+          },
+          {
+            "name": "budget_limit",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "limit": null,
+              "actual": null
+            }
+          },
+          {
+            "name": "weather_adjustment",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "required": true,
+              "adjustment_count": 3
+            }
+          },
+          {
+            "name": "min_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "minimum": null,
+              "actual": 0
+            }
+          },
+          {
+            "name": "max_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "maximum": null,
+              "actual": 0
+            }
+          },
+          {
+            "name": "poi_existence",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "attraction_count": 0
+            }
+          },
+          {
+            "name": "duplicate_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "attraction_count": 0
+            }
+          },
+          {
+            "name": "must_include_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": []
+            }
+          },
+          {
+            "name": "forbidden_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "forbidden": []
+            }
+          },
+          {
+            "name": "rain_attraction_suitability",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "rain_detected": true,
+              "attraction_count": 0
+            }
+          },
+          {
+            "name": "senior_accessibility",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "senior_request": false
+            }
+          },
+          {
+            "name": "tool_evidence",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "required": false,
+              "required_tools": [
+                "weather_query"
+              ],
+              "missing_or_failed": []
+            }
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "offline": true,
+        "source_mode": "deterministic_evaluator",
+        "real_time_api_allowed": false,
+        "contract": "ctp-research-tools-v1.0"
+      }
+    },
+    "hard_constraint_applicable_count": 2,
+    "hard_constraint_passed_count": 2,
+    "hard_constraint_failed_count": 0,
+    "hard_constraints_all_satisfied": true,
+    "hcsr": 1.0,
+    "m3_scheduler_name": "goal_state_scheduler",
+    "m3_task_type": "weather_query",
+    "m3_clarification_required": false,
+    "m3_clarification_fields": [],
+    "m3_clarification_field_count": 0,
+    "m3_decision_reasons": [
+      "single_capability_request"
+    ],
+    "m3_planned_agents": [
+      "weather"
+    ],
+    "m3_reused_agents": [],
+    "m3_invalidated_agents": [],
+    "m3_planned_tools": [
+      "weather_query"
+    ],
+    "m3_expected_reused_tools": [],
+    "m3_reused_tool_results": [],
+    "m3_missing_reused_tool_results": [],
+    "m3_previous_state_provided": false,
+    "m3_m2_reference_agent_count": 4,
+    "m3_m2_reference_tool_count": 3,
+    "m3_planned_agent_count": 1,
+    "m3_executed_agent_count": 1,
+    "m3_reused_agent_count": 0,
+    "m3_invalidated_agent_count": 0,
+    "m3_planned_tool_count": 1,
+    "m3_executed_tool_count": 1,
+    "m3_expected_reused_tool_count": 0,
+    "m3_reused_tool_result_count": 0,
+    "m3_missing_reused_tool_result_count": 0,
+    "m3_agent_reuse_rate": 0.0,
+    "m3_tool_reuse_rate": 0.0,
+    "m3_reuse_hit_rate": null,
+    "m3_agent_call_savings_vs_m2": 3,
+    "m3_tool_call_savings_vs_m2": 2,
+    "m3_agent_call_reduction_rate_vs_m2": 0.75,
+    "m3_tool_call_reduction_rate_vs_m2": 0.6667,
+    "stsr": true,
+    "stsr_gate_applicable_count": 5,
+    "stsr_gate_passed_count": 5,
+    "stsr_gate_failed_count": 0,
+    "evaluation_hcsr": 1.0,
+    "evaluation_hcsr_applicable_count": 2,
+    "evaluation_hcsr_passed_count": 2,
+    "evaluation_hcsr_failed_count": 0,
+    "evaluation_failed_rule_ids": [],
+    "evaluation_failed_rule_count": 0,
+    "agent_selection_precision": 1.0,
+    "agent_selection_recall": 1.0,
+    "agent_selection_f1": 1.0,
+    "agent_set_exact_match": true,
+    "necessary_agent_coverage": 1.0,
+    "extra_agent_count": 0,
+    "missing_agent_count": 0,
+    "duplicate_agent_count": 0,
+    "planned_actual_agent_consistency": 1.0,
+    "agent_execution_success_rate": 1.0,
+    "tool_selection_precision": 1.0,
+    "tool_selection_recall": 1.0,
+    "tool_selection_f1": 1.0,
+    "tool_set_exact_match": true,
+    "necessary_tool_coverage": 1.0,
+    "extra_tool_count": 0,
+    "missing_tool_count": 0,
+    "duplicate_tool_count": 0,
+    "forbidden_tool_call_count": 0,
+    "planned_actual_tool_consistency": 1.0,
+    "tool_call_success_rate": 1.0,
+    "tool_failure_count": 0,
+    "tool_failure_types": [],
+    "total_tokens": 2067.0,
+    "estimated_cost": 0.0026,
+    "standardized_estimated_cost": 0.0026,
+    "actual_cost": null,
+    "cost_per_success": 0.0026,
+    "planned_agent_count": 1,
+    "used_agent_count": 1,
+    "executed_agent_count": 1,
+    "agent_call_count": 1,
+    "successful_agent_call_count": 1,
+    "failed_agent_call_count": 0,
+    "duplicate_agent_call_count": 0,
+    "planned_executed_agent_coverage": 1.0,
+    "planned_tool_count": 1,
+    "called_tool_count": 1,
+    "executed_tool_count": 1,
+    "successful_tool_call_count": 1,
+    "failed_tool_call_count": 0,
+    "duplicate_tool_call_count": 0,
+    "planned_executed_tool_coverage": 1.0,
+    "llm_call_count": 1,
+    "llm_retry_attempt_count": 1.0,
+    "llm_retry_count": 0.0,
+    "llm_retry_error_count": 0.0,
+    "agent_llm_call_count": 1,
+    "api_call_count": 0,
+    "prompt_tokens": 871.0,
+    "completion_tokens": 1196.0,
+    "agent_prompt_tokens": 871.0,
+    "agent_completion_tokens": 1196.0,
+    "agent_total_tokens": 2067.0,
+    "latency_ms": 14613.32,
+    "trace_total_duration_ms": 14601.24,
+    "llm_total_duration_ms": 14219.12,
+    "agent_total_duration_ms": 14503.18,
+    "tool_total_duration_ms": 9.0
+  },
+  "error": null
+}

@@ -1,0 +1,44 @@
+{
+  "case_id": "ctp_dev_016_beijing_duration_change",
+  "case_type": "multi_turn",
+  "description": "北京完整规划后，把两天延长为三天。",
+  "turn_id": "t1_full_plan",
+  "target_turn": false,
+  "user_input": "给2个成人做北京2026年8月15日出发的两天游，预算6500元，包含景点、天气、行程和预算。",
+  "expected": {
+    "task_type": "trip_planning",
+    "required_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ],
+    "accepted_agent_sets": [
+      [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ]
+    ],
+    "accepted_tool_sets": [
+      [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ]
+    ],
+    "hard_constraints": {
+      "destination": "beijing",
+      "start_date": "2026-08-15",
+      "duration_days": 2,
+      "people_count": 2,
+      "min_attractions": 3,
+      "max_pois_per_day": 2,
+      "budget_limit": 6500
+    }
+  },
+  "scenario_id": "ctp_dev_016_beijing_duration_change",
+  "turn_index": 0,
+  "scenario_turn_count": 2,
+  "dialogue_history": []
+}
