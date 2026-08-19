@@ -1,0 +1,132 @@
+{
+  "schema_version": "ctp100-formal-v2-dataset-audit-v1",
+  "generated_at": "2026-08-19T07:06:00.358336+00:00",
+  "dataset_path": "experiments\\ctp100_formal_v2.json",
+  "dataset_id": "ctp100_formal_v2",
+  "dataset_version": "2026-08-18-day8-formal-v2-weather-gold-fix",
+  "dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
+  "case_count": 100,
+  "turn_count": 130,
+  "quality_report_status": "passed",
+  "quality_report_error_count": 0,
+  "quality_report_warning_count": 0,
+  "targeted_checks": [
+    {
+      "check_id": "ctp100_v2_016_origin_slot",
+      "status": "passed",
+      "actual": "wuhan"
+    },
+    {
+      "check_id": "ctp100_v2_016_origin_expected",
+      "status": "passed",
+      "actual": "wuhan"
+    },
+    {
+      "check_id": "ctp100_v2_016_origin_hard_constraint",
+      "status": "passed",
+      "actual": "wuhan"
+    },
+    {
+      "check_id": "ctp100_v2_016_intercity_scope",
+      "status": "passed",
+      "actual": {
+        "budget_scope": "local_plus_round_trip_intercity",
+        "intercity_transport_included": true
+      }
+    },
+    {
+      "check_id": "ctp100_v2_057_t2_current_people",
+      "status": "passed",
+      "actual": 3
+    },
+    {
+      "check_id": "ctp100_v2_057_t2_slots_people",
+      "status": "passed",
+      "actual": 3
+    },
+    {
+      "check_id": "ctp100_v2_057_t2_expected_people",
+      "status": "passed",
+      "actual": 3
+    },
+    {
+      "check_id": "ctp100_v2_057_t2_hard_people",
+      "status": "passed",
+      "actual": 3
+    },
+    {
+      "check_id": "day8_explicit_date_trip_planning_requires_weather",
+      "status": "passed",
+      "actual": {
+        "count": 32,
+        "violations": []
+      }
+    },
+    {
+      "check_id": "day8_no_date_trip_planning_requires_weather_reminder",
+      "status": "passed",
+      "actual": {
+        "count": 18,
+        "violations": []
+      }
+    },
+    {
+      "check_id": "day8_weather_query_count_and_ctp100_v2_039_fix",
+      "status": "passed",
+      "actual": {
+        "weather_query_count": 8,
+        "ctp100_v2_039_task_type": "weather_query",
+        "violations": []
+      }
+    },
+    {
+      "check_id": "day8_weather_sensitive_partial_replan_requires_weather",
+      "status": "passed",
+      "actual": {
+        "count": 8,
+        "violations": []
+      }
+    },
+    {
+      "check_id": "day8_weather_adjustment_reuses_first_turn_weather",
+      "status": "passed",
+      "actual": {
+        "count": 5,
+        "violations": []
+      }
+    }
+  ],
+  "budget_gold_audit": {
+    "path": "experiments\\generated\\ctp100_budget_gold_v2.json",
+    "exists": true,
+    "schema_version": "ctp100-budget-gold-v2-formal-v1",
+    "schema_version_matches": true,
+    "gold_status": "formal_frozen",
+    "gold_status_matches": true,
+    "review_status": "confirmed",
+    "review_status_matches": true,
+    "manual_review_status": "confirmed",
+    "manual_review_scope": [
+      "economy",
+      "intercity_transport",
+      "budget_policy_v2"
+    ],
+    "manual_review_scope_matches": true,
+    "manual_review_formal_tiers": [
+      "economy"
+    ],
+    "manual_review_formal_tiers_match": true,
+    "manual_review_excluded_scope": [
+      "comfort",
+      "premium"
+    ],
+    "manual_review_excludes_comfort_premium": true,
+    "expected_source_dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
+    "source_dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
+    "source_dataset_sha256_matches": true,
+    "source_slot_repair_count": 0,
+    "source_slot_repair_units": []
+  },
+  "issue_counts": {},
+  "status": "passed"
+}

@@ -18,6 +18,11 @@ from typing import Any, AsyncGenerator, Dict, List, Optional
 from app.agents.base import AgentConfig, AgentResponse, AgentStatus, BaseAgent
 from app.agents.registry import get_registry
 from app.core.context import ExecutionContext, SessionContext
+from app.core.experiment_method_input import (
+    DAY8_REFERENCE_DATE,
+    parse_visible_request_slots,
+    parse_visible_request_understanding,
+)
 from app.core.experiment_metrics import (
     CollaborationMode,
     ExperimentContext,
@@ -29,6 +34,7 @@ from app.core.llm.client import LLMManager, LLMMessage, ToolDefinition
 from app.core.llm.emotion_detector import emotion_detector, EmotionDetector
 from app.core.llm.mode_detector import mode_detector, DialogModeDetector
 from app.core.logger import get_logger
+from app.core.no_date_weather_policy import append_no_date_weather_reminder
 from app.core.tracing import (
     mark_trace_status,
     record_planned_tools,
@@ -46,10 +52,413 @@ from app.schemas import (
 
 logger = get_logger(__name__)
 
+LOCATION_ID_TO_DISPLAY_NAME = {
+    "beijing": "北京",
+    "hangzhou": "杭州",
+    "xian": "西安",
+    "guilin": "桂林",
+    "shenzhen": "深圳",
+    "lhasa": "拉萨",
+    "guangzhou": "广州",
+    "shanghai": "上海",
+    "chengdu": "成都",
+    "chongqing": "重庆",
+    "wuhan": "武汉",
+    "changsha": "长沙",
+    "nanjing": "南京",
+    "zhengzhou": "郑州",
+    "nanchang": "南昌",
+    "guiyang": "贵阳",
+}
+
+LOCATION_ALIAS_TO_ID = {
+    city_id.casefold(): city_id
+    for city_id in LOCATION_ID_TO_DISPLAY_NAME
+}
+LOCATION_ALIAS_TO_ID.update(
+    {
+        display_name.casefold(): city_id
+        for city_id, display_name in LOCATION_ID_TO_DISPLAY_NAME.items()
+    }
+)
+LOCATION_ALIAS_TO_ID.update(
+    {
+        "北京市": "beijing",
+        "杭州市": "hangzhou",
+        "西安市": "xian",
+        "桂林市": "guilin",
+        "深圳市": "shenzhen",
+        "xi'an": "xian",
+        "xi an": "xian",
+    }
+)
+
+
+LOCATION_ALIAS_TO_ID.update(
+    {
+        "\u5317\u4eac": "beijing",
+        "\u5317\u4eac\u5e02": "beijing",
+        "\u676d\u5dde": "hangzhou",
+        "\u676d\u5dde\u5e02": "hangzhou",
+        "\u897f\u5b89": "xian",
+        "\u897f\u5b89\u5e02": "xian",
+        "\u6df1\u5733": "shenzhen",
+        "\u6df1\u5733\u5e02": "shenzhen",
+        "\u6842\u6797": "guilin",
+        "\u6842\u6797\u5e02": "guilin",
+        "\u5e7f\u5dde": "guangzhou",
+        "\u4e0a\u6d77": "shanghai",
+        "\u6210\u90fd": "chengdu",
+        "\u6b66\u6c49": "wuhan",
+        "\u957f\u6c99": "changsha",
+        "\u5357\u4eac": "nanjing",
+        "\u90d1\u5dde": "zhengzhou",
+        "\u5357\u660c": "nanchang",
+        "\u8d35\u9633": "guiyang",
+    }
+)
+
+
+def _canonical_location_id(value: Any) -> str:
+    text = str(value or "").strip()
+    if not text:
+        return ""
+    return LOCATION_ALIAS_TO_ID.get(text.casefold(), "")
+
+
+def _display_location_name(value: Any) -> str:
+    canonical = _canonical_location_id(value)
+    if canonical:
+        return LOCATION_ID_TO_DISPLAY_NAME.get(canonical, str(value or "").strip())
+    return str(value or "").strip()
+
+
+def _has_any_text(text: str, terms: tuple[str, ...]) -> bool:
+    return any(term in text for term in terms)
+
+
+def _has_day8_weather_text(text: str) -> bool:
+    return _has_any_text(
+        text.casefold(),
+        (
+            "\u5929\u6c14",
+            "\u5929\u6c14\u9884\u62a5",
+            "\u9884\u62a5",
+            "\u4e0b\u96e8",
+            "\u964d\u96e8",
+            "\u9ad8\u6e29",
+            "\u4f4e\u6e29",
+            "weather",
+            "forecast",
+            "rain",
+        ),
+    )
+
+
+def _is_day8_weather_climate_question(user_message: str) -> bool:
+    text = str(user_message or "").strip().casefold()
+    climate_terms = (
+        "\u51b7\u4e0d\u51b7",
+        "\u70ed\u4e0d\u70ed",
+        "\u7a7f\u4ec0\u4e48",
+        "\u8863\u670d",
+        "\u6c14\u6e29",
+        "\u6e29\u5ea6",
+    )
+    if not (_has_day8_weather_text(text) or _has_any_text(text, climate_terms)):
+        return False
+    month_pattern = r"(?:\d{1,2}|\u5341\u4e00|\u5341\u4e8c|\u5341[\u4e00\u4e8c]?)\u6708(?:\u4efd)?"
+    return bool(re.search(month_pattern, text)) and _has_any_text(
+        text,
+        (
+            "\u901a\u5e38",
+            "\u4e00\u822c",
+            "\u5168\u5e74",
+            "\u5b63\u8282",
+            "\u51b7\u4e0d\u51b7",
+            "\u70ed\u4e0d\u70ed",
+            "\u7a7f\u4ec0\u4e48",
+            "\u9700\u8981\u51c6\u5907\u4ec0\u4e48\u8863\u670d",
+        ),
+    )
+
+
+def _is_day8_weather_only_request(user_message: str) -> bool:
+    text = str(user_message or "").strip()
+    if not text:
+        return False
+    if "天气" not in text and "预报" not in text:
+        return False
+    planning_terms = (
+        "规划",
+        "计划",
+        "行程",
+        "安排",
+        "攻略",
+        "路线",
+        "预算",
+        "费用",
+        "多少钱",
+        "够不够",
+        "调整",
+        "改",
+    )
+    if any(term in text for term in planning_terms):
+        return False
+    return True
+
+
+def _is_day8_weather_only_request_v2(user_message: str) -> bool:
+    """Day8 intent guard for real Chinese weather-only requests."""
+    text = str(user_message or "").strip()
+    if not text or not _has_day8_weather_text(text):
+        return False
+    if _is_day8_weather_climate_question(text):
+        return False
+
+    weather_only_terms = (
+        "\u53ea\u67e5\u5929\u6c14",
+        "\u4ec5\u67e5\u5929\u6c14",
+        "\u53ea\u770b\u5929\u6c14",
+        "\u53ea\u8981\u5929\u6c14",
+        "\u4e0d\u7528\u5b89\u6392\u884c\u7a0b",
+        "\u4e0d\u7528\u6392\u884c\u7a0b",
+        "\u4e0d\u7528\u505a\u8def\u7ebf",
+        "\u4e0d\u7528\u7b97\u9884\u7b97",
+        "\u5929\u6c14\u5c31\u884c",
+    )
+    if _has_any_text(text, weather_only_terms):
+        return True
+
+    direct_weather_questions = (
+        "\u5929\u6c14\u600e\u4e48\u6837",
+        "\u5929\u6c14\u5982\u4f55",
+        "\u4f1a\u4e0d\u4f1a\u4e0b\u96e8",
+        "\u6709\u6ca1\u6709\u96e8",
+        "\u80fd\u67e5\u5230\u5929\u6c14",
+        "\u67e5\u4e00\u4e0b\u5929\u6c14",
+        "\u9700\u8981\u51c6\u5907\u4ec0\u4e48",
+        "\u9002\u4e0d\u9002\u5408\u5b89\u6392\u6237\u5916",
+        "\u9002\u5408\u51fa\u95e8",
+    )
+    if _has_any_text(text, direct_weather_questions):
+        return True
+
+    non_weather_work_terms = (
+        "\u89c4\u5212",
+        "\u8ba1\u5212",
+        "\u884c\u7a0b",
+        "\u5b89\u6392",
+        "\u653b\u7565",
+        "\u8def\u7ebf",
+        "\u9884\u7b97",
+        "\u8d39\u7528",
+        "\u82b1\u8d39",
+        "\u591a\u5c11\u94b1",
+        "\u591f\u4e0d\u591f",
+        "\u8c03\u6574",
+        "\u91cd\u65b0",
+        "\u666f\u70b9",
+        "\u573a\u9986",
+        "\u9152\u5e97",
+        "\u4f4f\u5bbf",
+    )
+    return not _has_any_text(text, non_weather_work_terms)
+
+
+def _is_day8_attraction_only_request_v2(user_message: str) -> bool:
+    """Day8 guard for attraction/POI-only requests that should not become full plans."""
+    text = str(user_message or "").strip()
+    if not text:
+        return False
+
+    attraction_terms = (
+        "\u666f\u70b9",
+        "\u573a\u9986",
+        "\u535a\u7269\u9986",
+        "\u5ba4\u5185",
+        "\u4eb2\u5b50",
+        "\u53c2\u89c2",
+        "\u503c\u5f97\u770b",
+        "\u503c\u5f97\u53bb",
+        "\u6709\u54ea\u4e9b",
+        "\u54ea\u4e9b",
+        "\u63a8\u8350",
+    )
+    if not _has_any_text(text, attraction_terms):
+        return False
+
+    scope_limiter_terms = (
+        "\u5148\u522b\u7b97\u8d39\u7528",
+        "\u522b\u7b97\u8d39\u7528",
+        "\u4e0d\u7528\u7b97\u8d39\u7528",
+        "\u4e0d\u7528\u7b97\u9884\u7b97",
+        "\u5148\u4e0d\u7b97\u9884\u7b97",
+        "\u5148\u4e0d\u6392\u8def\u7ebf",
+        "\u4e0d\u7528\u6392\u8def\u7ebf",
+        "\u4e0d\u7528\u505a\u8def\u7ebf",
+        "\u4e0d\u7528\u5b89\u6392\u884c\u7a0b",
+        "\u4e0d\u8981\u5b8c\u6574\u884c\u7a0b",
+        "\u53ea\u63a8\u8350",
+        "\u53ea\u770b\u666f\u70b9",
+        "\u53ea\u8981\u666f\u70b9",
+    )
+    if _has_any_text(text, scope_limiter_terms):
+        return True
+
+    full_plan_terms = (
+        "\u5e2e\u6211\u5b89\u6392",
+        "\u5b89\u6392\u4e00\u4e0b",
+        "\u5b8c\u6574\u884c\u7a0b",
+        "\u5236\u5b9a\u884c\u7a0b",
+        "\u65c5\u6e38\u653b\u7565",
+        "\u73a9\u51e0\u5929",
+        "\u9884\u7b97",
+        "\u5929\u6c14",
+    )
+    return not _has_any_text(text, full_plan_terms)
+
+
+def _is_day8_budget_only_request_v2(user_message: str) -> bool:
+    """Day8 guard for cost-estimation-only requests."""
+    text = str(user_message or "").strip()
+    if not text:
+        return False
+
+    budget_terms = (
+        "\u9884\u7b97",
+        "\u8d39\u7528",
+        "\u82b1\u8d39",
+        "\u6210\u672c",
+        "\u591a\u5c11\u94b1",
+        "\u591f\u4e0d\u591f",
+        "\u591f\u5417",
+        "\u4e0a\u9650",
+        "\u63a7\u5236\u5728",
+        "budget",
+        "cost",
+        "price",
+    )
+    if not _has_any_text(text.casefold(), budget_terms):
+        return False
+
+    budget_only_terms = (
+        "\u53ea\u7b97\u8d39\u7528",
+        "\u53ea\u770b\u9884\u7b97",
+        "\u53ea\u7b97\u9884\u7b97",
+        "\u5148\u4e0d\u6392\u8def\u7ebf",
+        "\u4e0d\u7528\u6392\u8def\u7ebf",
+        "\u4e0d\u7528\u505a\u8def\u7ebf",
+        "\u4e0d\u7528\u6392\u884c\u7a0b",
+        "\u4e0d\u7528\u5b89\u6392\u884c\u7a0b",
+        "\u5927\u6982\u9700\u8981\u591a\u5c11\u94b1",
+        "\u5927\u6982\u82b1\u591a\u5c11",
+        "\u770b\u770b\u5927\u6982\u9700\u8981\u591a\u5c11",
+        "\u591f\u4e0d\u591f",
+        "\u591f\u5417",
+        "\u662f\u5426\u591f\u7528",
+    )
+    if _has_any_text(text, budget_only_terms):
+        return True
+
+    full_plan_terms = (
+        "\u5e2e\u6211\u5b89\u6392",
+        "\u5b89\u6392\u4e00\u4e0b",
+        "\u505a\u4e2a\u884c\u7a0b",
+        "\u5236\u5b9a\u884c\u7a0b",
+        "\u65c5\u6e38\u653b\u7565",
+        "\u8def\u7ebf",
+        "\u666f\u70b9",
+        "\u5929\u6c14",
+        "\u51fa\u53d1",
+        "\u53bb",
+        "\u73a9",
+        "\u65c5\u6e38",
+        "\u51fa\u6e38",
+    )
+    return not _has_any_text(text, full_plan_terms)
+
+
+def _day8_budget_request_needs_limit(user_message: str) -> bool:
+    text = str(user_message or "").strip()
+    return _has_any_text(
+        text,
+        (
+            "\u591f\u4e0d\u591f",
+            "\u591f\u5417",
+            "\u80fd\u4e0d\u80fd\u591f",
+            "\u63a7\u5236\u5728",
+            "\u4e0d\u8d85\u8fc7",
+            "\u4e0a\u9650",
+            "\u603b\u9884\u7b97",
+        ),
+    )
+
+
+def _is_day8_destination_recommendation_request_v2(
+    user_message: str,
+    extracted_info: Optional[Dict[str, Any]] = None,
+) -> bool:
+    """Requests asking for destination ideas should stay no-tool/general."""
+    text = str(user_message or "").strip()
+    if not text:
+        return False
+    if extracted_info and extracted_info.get("destination"):
+        return False
+
+    recommendation_terms = (
+        "\u63a8\u8350\u51e0\u4e2a\u76ee\u7684\u5730",
+        "\u63a8\u8350\u76ee\u7684\u5730",
+        "\u63a8\u8350\u51e0\u4e2a\u57ce\u5e02",
+        "\u53bb\u54ea\u91cc",
+        "\u53bb\u54ea\u73a9",
+        "\u54ea\u91cc\u9002\u5408",
+        "\u51e0\u4e2a\u9002\u5408\u7684\u76ee\u7684\u5730",
+    )
+    travel_context_terms = (
+        "\u60f3\u51fa\u53bb\u73a9",
+        "\u60f3\u53bb\u73a9",
+        "\u51fa\u6e38",
+        "\u65c5\u6e38",
+        "\u73a9",
+        "\u81ea\u7136\u98ce\u666f",
+        "\u4e0d\u60f3\u592a\u7d2f",
+    )
+    return _has_any_text(text, recommendation_terms) and _has_any_text(text, travel_context_terms)
+
+
 COMMON_DESTINATION_CANDIDATES = [
     "杭州", "北京", "上海", "成都", "西安", "桂林", "深圳", "广州", "厦门", "丽江",
     "苏州", "南京", "武汉", "重庆", "青岛", "大连", "三亚", "昆明", "哈尔滨", "长沙",
 ]
+for _day8_intercity_city in ("郑州", "南昌", "贵阳"):
+    if _day8_intercity_city not in COMMON_DESTINATION_CANDIDATES:
+        COMMON_DESTINATION_CANDIDATES.append(_day8_intercity_city)
+
+
+def _day8_cli_intent_from_shared_task_type(
+    task_type: str,
+    *,
+    missing_slots: Optional[List[str]] = None,
+) -> Optional[IntentType]:
+    """Map the shared research task label to the CLI intent enum."""
+    normalized = str(task_type or "").strip()
+    if normalized in {"trip_planning", "trip_plan", "weather_aware_trip_plan", "partial_replan"}:
+        return IntentType.TRIP_PLANNING
+    if normalized == "attraction_recommendation":
+        return IntentType.ATTRACTION_RECOMMENDATION
+    if normalized in {"weather_query", "weather_forecast_query"}:
+        return IntentType.WEATHER_ADJUSTMENT
+    if normalized == "budget_query":
+        return IntentType.BUDGET_CONTROL
+    if normalized == "clarification":
+        missing = set(missing_slots or [])
+        if missing == {"budget_amount"}:
+            return IntentType.BUDGET_CONTROL
+        return IntentType.TRIP_PLANNING
+    if normalized in {"general_chat", "destination_recommendation", "weather_climate_question"}:
+        return IntentType.GENERAL_CHAT
+    return None
 
 
 class ExecutionPhase(str, Enum):
@@ -495,7 +904,7 @@ class TaskPlanner:
         },
         IntentType.BUDGET_CONTROL: {
             "primary_agent": "budget",
-            "sub_agents": [],
+            "sub_agents": ["budget"],
             "requires_review": False,
         },
         IntentType.WEATHER_ADJUSTMENT: {
@@ -540,7 +949,16 @@ class TaskPlanner:
         route: Optional[str] = None,
     ) -> PlanSchema:
         """创建任务计划"""
+        weather_only_request = intent == IntentType.WEATHER_ADJUSTMENT and _is_day8_weather_only_request_v2(user_message)
         if route == "GENERAL_CHAT":
+            return PlanSchema(
+                intent=IntentType.GENERAL_CHAT,
+                tasks=[],
+                requires_clarification=False,
+                requires_review=False,
+            )
+
+        if intent == IntentType.GENERAL_CHAT:
             return PlanSchema(
                 intent=IntentType.GENERAL_CHAT,
                 tasks=[],
@@ -562,7 +980,10 @@ class TaskPlanner:
             self.INTENT_TASK_MAP[IntentType.GENERAL_CHAT]
         )
 
-        tasks = self._build_tasks(task_config.get("sub_agents", []))
+        if weather_only_request:
+            tasks = self._build_tasks(["weather"])
+        else:
+            tasks = self._build_tasks(task_config.get("sub_agents", []))
 
         recommendation_intents = {
             IntentType.ATTRACTION_RECOMMENDATION,
@@ -579,8 +1000,17 @@ class TaskPlanner:
         duration = extracted_info.get("duration") or (session_trip_context.duration_days if session_trip_context else None)
         start_date = extracted_info.get("start_date") or (session_trip_context.start_date if session_trip_context else None)
         end_date = extracted_info.get("end_date") or (session_trip_context.end_date if session_trip_context else None)
-        # 人数保持既有默认逻辑（默认 1 人），避免无必要追问。
-        num_travelers = extracted_info.get("num_travelers") or (session.trip_context.num_travelers if session else None)
+        if intent == IntentType.TRIP_PLANNING and not weather_only_request and not (start_date or end_date):
+            tasks = self._build_tasks(["attraction", "itinerary", "budget"])
+        # Day8 规则：新规划没有明确人数时应追问；只有已有行程上下文时才继承人数。
+        num_travelers = extracted_info.get("num_travelers")
+        if (
+            num_travelers is None
+            and session_trip_context is not None
+            and session is not None
+            and session.has_committed_trip()
+        ):
+            num_travelers = session_trip_context.num_travelers
 
         clarification_questions: List[str] = []
         follow_up_questions: List[str] = []
@@ -589,31 +1019,71 @@ class TaskPlanner:
         strict_planning_intents = {
             IntentType.TRIP_PLANNING,
             IntentType.ITINERARY_PLANNING,
-            IntentType.WEATHER_ADJUSTMENT,
         }
+        if not weather_only_request:
+            strict_planning_intents.add(IntentType.WEATHER_ADJUSTMENT)
         lightweight_recommendation_intents = {
             IntentType.ATTRACTION_RECOMMENDATION,
             IntentType.ROUTE_CONSULTATION,
         }
 
         # A 级核心字段，按优先级排序
-        if not destination:
+        requested_missing_fields = extracted_info.get("explicit_clarification_fields")
+        if isinstance(requested_missing_fields, list) and requested_missing_fields:
+            question_by_field = {
+                "destination": "你想去哪个城市或目的地旅游？",
+                "start_date": "大概什么时候出发？",
+                "duration": "你计划玩几天？",
+                "budget": "预算大概是多少？",
+                "people": "几个人一起出行？",
+            }
+            for field_name in requested_missing_fields:
+                if field_name == "destination" and destination:
+                    continue
+                if field_name == "start_date" and (start_date or end_date):
+                    continue
+                if field_name == "duration" and duration:
+                    continue
+                if field_name == "budget" and self._has_budget_info(
+                    extracted_info,
+                    session if allow_session_core_fallback else None,
+                ):
+                    continue
+                if field_name == "people" and num_travelers:
+                    continue
+                question = question_by_field.get(field_name)
+                if question and field_name not in missing_fields:
+                    missing_fields.append(field_name)
+                    clarification_questions.append(question)
+
+        if not destination and "destination" not in missing_fields:
             missing_fields.append("destination")
             clarification_questions.append("你想去哪个城市或目的地旅游？")
 
         if intent in strict_planning_intents:
-            if not duration and not start_date and not end_date:
-                missing_fields.append("travel_time")
-                clarification_questions.append("你计划玩几天，或者大概什么时候出发？")
+            if not duration and "duration" not in missing_fields:
+                missing_fields.append("duration")
+                clarification_questions.append("你计划玩几天？")
 
-            budget_session = session if allow_session_core_fallback else None
-            if not self._has_budget_info(extracted_info, budget_session):
-                missing_fields.append("budget")
-                clarification_questions.append("预算大概是多少？")
-
-            if not num_travelers:
+            if not num_travelers and "people" not in missing_fields:
                 missing_fields.append("people")
                 clarification_questions.append("几个人一起出行？")
+        elif intent == IntentType.BUDGET_CONTROL:
+            if not duration and "duration" not in missing_fields:
+                missing_fields.append("duration")
+                clarification_questions.append("浣犺鍒掔帺鍑犲ぉ锛?")
+
+            if not num_travelers and "people" not in missing_fields:
+                missing_fields.append("people")
+                clarification_questions.append("鍑犱釜浜轰竴璧峰嚭琛岋紵")
+
+            if (
+                _day8_budget_request_needs_limit(user_message)
+                and not self._has_budget_info(extracted_info, session if allow_session_core_fallback else None)
+                and "budget" not in missing_fields
+            ):
+                missing_fields.append("budget")
+                clarification_questions.append("棰勭畻澶ф鏄灏戯紵")
         elif intent in lightweight_recommendation_intents:
             # 推荐类请求不因 budget / people / duration 缺失而阻塞
             pass
@@ -633,7 +1103,7 @@ class TaskPlanner:
             clarification_questions=clarification_questions,
             missing_fields=missing_fields,
             follow_up_questions=follow_up_questions,
-            requires_review=self._is_complex_planning_intent(intent, extracted_info, task_config),
+            requires_review=False if weather_only_request else self._is_complex_planning_intent(intent, extracted_info, task_config),
         )
 
     def _build_tasks(self, agent_names: List[str]) -> List[TaskSchema]:
@@ -737,6 +1207,8 @@ class TaskPlanner:
     ) -> bool:
         if task_config.get("requires_review"):
             return True
+        if intent == IntentType.BUDGET_CONTROL:
+            return False
         if intent in {IntentType.TRIP_PLANNING, IntentType.ITINERARY_PLANNING, IntentType.WEATHER_ADJUSTMENT}:
             return True
         return bool(extracted_info.get("duration") and int(extracted_info["duration"]) > 1)
@@ -1142,7 +1614,9 @@ class AgentOrchestrator:
             intent_parse_duration_ms += (time.perf_counter() - fast_parse_start) * 1000
 
         # 如果规则解析置信度低，使用 LLM
-        if intent == IntentType.UNKNOWN or not extracted_info.get("destination"):
+        if intent != IntentType.GENERAL_CHAT and not extracted_info.get("force_clarification") and (
+            intent == IntentType.UNKNOWN or not extracted_info.get("destination")
+        ):
             llm_intent_start = time.perf_counter()
             intent, extracted_info = await self.intent_parser.parse(
                 user_message, session
@@ -1228,7 +1702,11 @@ class AgentOrchestrator:
             session.committed_trip_snapshot = None
 
         # 【本轮新增】执行消息路由
-        route = self._route_message(user_message, session, extracted_info)
+        route = (
+            "GENERAL_CHAT"
+            if intent == IntentType.GENERAL_CHAT
+            else self._route_message(user_message, session, extracted_info)
+        )
         set_trace_route(route)
         logger.info(f"[MULTITURN_TRACE] Route decision: {route} request_id={request_id}")
 
@@ -1869,12 +2347,20 @@ class AgentOrchestrator:
         metrics_summary = []
         for name, m in context.agent_metrics.items():
             metrics_summary.append(f"  • {name}: {m.execution_time_ms:.0f}ms, {m.tokens_used} tokens")
+        failed_agent_names = [
+            name
+            for name, result in context.agent_results.items()
+            if getattr(getattr(result, "status", None), "value", getattr(result, "status", None)) == AgentStatus.FAILED.value
+        ]
+        execution_status = "completed_with_warnings" if failed_agent_names else "completed"
+        execution_title = "⚠️ Agent 执行结束（含失败）" if failed_agent_names else "✅ 所有 Agent 执行完成"
+        failure_detail = f"\n❌ 失败 Agent：{', '.join(failed_agent_names)}" if failed_agent_names else ""
 
         context.add_thinking_step(
             agent_name="编排器",
             step="执行完成",
-            detail=f"✅ 所有 Agent 执行完成\n📊 执行摘要：\n" + "\n".join(metrics_summary),
-            status="completed",
+            detail=f"{execution_title}{failure_detail}\n📊 执行摘要：\n" + "\n".join(metrics_summary),
+            status=execution_status,
             reasoning_chain=[
                 {"content": f"共执行 {len(agent_results)} 个Agent", "reasoning_type": "fact"},
             ],
@@ -1882,7 +2368,7 @@ class AgentOrchestrator:
 
         yield {
             "phase": phase.value,
-            "status": "completed",
+            "status": execution_status,
             "results": [
                 {
                     "agent": r.agent_name,
@@ -1897,6 +2383,8 @@ class AgentOrchestrator:
             "budget": self._serialize_budget_result(context),
             "itinerary": self._serialize_itinerary_result(context),
             "attraction": self._serialize_attraction_result(context),
+            "failed_agents": failed_agent_names,
+            "errors": context.errors,
             "thinking_steps": [s.to_dict() for s in context.thinking_steps],
         }
 
@@ -1921,16 +2409,23 @@ class AgentOrchestrator:
         final_content = planner_response.content if planner_response else planner_streaming_content
         if route == "FOLLOW_UP" and final_content:
             final_content = f"{self._build_follow_up_lead_in(user_message, extracted_info, session)}\n\n{final_content}"
+        if self._needs_no_date_weather_disclaimer(plan, extracted_info) and final_content:
+            final_content = self._append_no_date_weather_disclaimer(str(final_content))
 
         final_content_already_streamed = bool(
             isinstance(final_content, str)
             and final_content
             and planner_streaming_content == final_content
         )
+        final_status = (
+            "failed"
+            if planner_response and planner_response.status == AgentStatus.FAILED
+            else ("completed_with_warnings" if failed_agent_names else "completed")
+        )
 
         result = {
             "phase": phase.value,
-            "status": "completed",
+            "status": final_status,
             "content": final_content,
             "final_content_already_streamed": final_content_already_streamed,
             "execution_time_ms": elapsed_time,
@@ -1940,6 +2435,8 @@ class AgentOrchestrator:
             "budget": self._serialize_budget_result(context),
             "itinerary": self._serialize_itinerary_result(context),
             "attraction": self._serialize_attraction_result(context),
+            "failed_agents": failed_agent_names,
+            "errors": context.errors,
             "thinking_steps": [s.to_dict() for s in context.thinking_steps],
         }
         
@@ -1954,7 +2451,8 @@ class AgentOrchestrator:
         yield result
 
         # 【本轮新增】成功完成后提交 committed trip snapshot
-        self._commit_trip_on_completion(session, context, extracted_info, request_id)
+        if final_status == "completed":
+            self._commit_trip_on_completion(session, context, extracted_info, request_id)
 
     def _commit_trip_on_completion(
         self,
@@ -2205,16 +2703,63 @@ class AgentOrchestrator:
         """
         import re
         extracted_info: Dict[str, Any] = {}
+        visible_understanding = parse_visible_request_understanding(user_message)
+        visible_slots = dict(visible_understanding.get("slots") or parse_visible_request_slots(user_message))
+        visible_task_type = str(visible_understanding.get("task_type") or "")
+        if visible_slots.get("destination"):
+            extracted_info["destination"] = visible_slots["destination"]
+        if visible_slots.get("origin"):
+            extracted_info["origin"] = visible_slots["origin"]
+            extracted_info["departure_place"] = visible_slots["origin"]
+        if visible_slots.get("start_date"):
+            extracted_info["start_date"] = visible_slots["start_date"]
+        if visible_slots.get("end_date"):
+            extracted_info["end_date"] = visible_slots["end_date"]
+        if visible_slots.get("duration_days") is not None:
+            extracted_info["duration"] = visible_slots["duration_days"]
+            extracted_info["duration_days"] = visible_slots["duration_days"]
+        if visible_slots.get("people_count") is not None:
+            extracted_info["num_travelers"] = visible_slots["people_count"]
+            extracted_info["people_count"] = visible_slots["people_count"]
+        if visible_slots.get("budget_amount") is not None:
+            budget_amount_from_visible = visible_slots["budget_amount"]
+            extracted_info["budget_amount"] = budget_amount_from_visible
+            extracted_info["budget"] = budget_amount_from_visible
+        if visible_slots.get("budget_level"):
+            extracted_info["budget_level"] = visible_slots["budget_level"]
+        for scalar_key in (
+            "budget_basis",
+            "requested_budget_scope",
+            "budget_scope",
+            "intercity_transport_included",
+            "mandatory_budget_disclaimer",
+            "hotel_level",
+            "food_level",
+            "intercity_transport_mode",
+            "intercity_seat_class",
+        ):
+            if scalar_key in visible_slots:
+                extracted_info[scalar_key] = visible_slots[scalar_key]
+        for list_key in ("preferences", "special_requirements"):
+            if visible_slots.get(list_key):
+                extracted_info[list_key] = visible_slots[list_key]
+        if visible_slots.get("traveler_group"):
+            extracted_info["traveler_group"] = visible_slots["traveler_group"]
+
+        if self._is_day8_general_chat_only(user_message):
+            return IntentType.GENERAL_CHAT, {}
+        force_clarification_request = self._is_day8_explicit_clarification_request(user_message)
 
         # 【本轮修复】检测是否是 follow-up：当前有 session destination 且消息不包含新目的地
-        session_destination = session.trip_context.destination if session else None
+        raw_session_destination = session.trip_context.destination if session else None
+        session_destination = _canonical_location_id(raw_session_destination) or raw_session_destination
 
         # 检测目的地
         destinations = COMMON_DESTINATION_CANDIDATES
-        found_destination = None
+        found_destination = extracted_info.get("destination")
         for dest in destinations:
             if dest in user_message:
-                found_destination = dest
+                found_destination = _canonical_location_id(dest) or dest
                 break
 
         # 仅在“未出现新目的地/同目的地”的场景继承旧上下文，
@@ -2233,8 +2778,11 @@ class AgentOrchestrator:
         explicit_location_info = self._extract_origin_destination_from_text(user_message, session=session)
         if explicit_location_info.get("origin"):
             extracted_info["origin"] = explicit_location_info["origin"]
+            extracted_info["departure_place"] = explicit_location_info["origin"]
         if explicit_location_info.get("destination"):
             extracted_info["destination"] = explicit_location_info["destination"]
+        elif extracted_info.get("origin") and extracted_info.get("destination") == extracted_info.get("origin"):
+            extracted_info.pop("destination", None)
 
         # 【本轮修复】follow-up 场景下继承 session 的天数
         if is_follow_up and session.trip_context.duration_days:
@@ -2249,16 +2797,17 @@ class AgentOrchestrator:
         duration_days = self._extract_duration_from_text(user_message)
         if duration_days is not None:
             extracted_info["duration"] = duration_days
+            extracted_info["duration_days"] = duration_days
 
         num_travelers = self._extract_num_travelers_from_text(user_message)
         if num_travelers is not None:
             extracted_info["num_travelers"] = num_travelers
+            extracted_info["people_count"] = num_travelers
 
         budget_amount = self._extract_budget_amount_from_text(user_message)
-        if budget_amount is not None:
+        if budget_amount is not None and extracted_info.get("budget_basis") != "per_person":
             extracted_info["budget_amount"] = budget_amount
             extracted_info["budget"] = int(budget_amount) if float(budget_amount).is_integer() else budget_amount
-            extracted_info["budget_level"] = self._infer_budget_level_from_amount(budget_amount)
 
         stripped_message = user_message.strip()
         numeric_only_match = re.fullmatch(r"(\d{3,7})(?:\.0+)?", stripped_message)
@@ -2285,6 +2834,17 @@ class AgentOrchestrator:
             extracted_info["budget_amount"] = numeric_budget
             extracted_info["budget"] = numeric_budget
 
+        shared_cli_intent = _day8_cli_intent_from_shared_task_type(
+            visible_task_type,
+            missing_slots=visible_understanding.get("missing_slots"),
+        )
+        if shared_cli_intent is not None and not has_existing_trip_context:
+            if shared_cli_intent == IntentType.GENERAL_CHAT and visible_task_type == "general_chat":
+                return IntentType.GENERAL_CHAT, {}
+            if shared_cli_intent == IntentType.GENERAL_CHAT:
+                extracted_info["suppress_legacy_date_parse"] = True
+            return shared_cli_intent, extracted_info
+
         # 检测旅行风格
         style_keywords = {
             "休闲": ["休闲", "放松", "度假", "慢节奏"],
@@ -2304,26 +2864,136 @@ class AgentOrchestrator:
         # 【本轮修复】follow-up 场景下，即使消息中没有新目的地，只要有 session 目的地就视为有效规划
         inherited_destination = extracted_info.get("destination")
         recommendation_keywords = ("推荐", "适合", "哪里", "哪些地方", "景点", "散步地点")
-        planning_keywords = ("规划", "行程", "计划", "攻略")
+        planning_keywords = ("规划", "行程", "计划", "攻略", "安排")
 
-        has_recommendation_signal = any(keyword in user_message for keyword in recommendation_keywords)
-        has_planning_signal = any(keyword in user_message for keyword in planning_keywords)
+        has_recommendation_signal = any(keyword in user_message for keyword in recommendation_keywords) or _has_any_text(
+            user_message,
+            (
+                "\u63a8\u8350",
+                "\u9002\u5408",
+                "\u54ea\u91cc",
+                "\u54ea\u4e9b\u5730\u65b9",
+                "\u666f\u70b9",
+                "\u573a\u9986",
+            ),
+        )
+        has_planning_signal = any(keyword in user_message for keyword in planning_keywords) or _has_any_text(
+            user_message,
+            (
+                "\u89c4\u5212",
+                "\u884c\u7a0b",
+                "\u8ba1\u5212",
+                "\u653b\u7565",
+                "\u5b89\u6392",
+                "\u91cd\u65b0\u5b89\u6392",
+            ),
+        )
 
         duration_value = extracted_info.get("duration")
-        has_budget_signal = extracted_info.get("budget") is not None or extracted_info.get("budget_amount") is not None
+        has_budget_signal = (
+            extracted_info.get("budget") is not None
+            or extracted_info.get("budget_amount") is not None
+            or _is_day8_budget_only_request_v2(user_message)
+        )
         has_multi_day_signal = bool(duration_value and int(duration_value) > 1)
 
-        if found_destination or inherited_destination:
+        if force_clarification_request:
+            extracted_info["force_clarification"] = True
+            extracted_info["explicit_clarification_fields"] = self._day8_explicit_clarification_fields(user_message)
+            intent = IntentType.TRIP_PLANNING
+        elif _is_day8_weather_climate_question(user_message):
+            intent = IntentType.GENERAL_CHAT
+            extracted_info = {}
+        elif _is_day8_destination_recommendation_request_v2(user_message, extracted_info):
+            intent = IntentType.GENERAL_CHAT
+            extracted_info = {}
+        elif _is_day8_weather_only_request_v2(user_message) and inherited_destination:
+            intent = IntentType.WEATHER_ADJUSTMENT
+        elif _is_day8_attraction_only_request_v2(user_message) and inherited_destination:
+            intent = IntentType.ATTRACTION_RECOMMENDATION
+        elif _is_day8_budget_only_request_v2(user_message) and inherited_destination:
+            intent = IntentType.BUDGET_CONTROL
+        elif inherited_destination:
             if has_recommendation_signal and not has_planning_signal and not has_budget_signal and not has_multi_day_signal:
                 intent = IntentType.ATTRACTION_RECOMMENDATION
             elif has_budget_signal or has_multi_day_signal or has_planning_signal:
                 intent = IntentType.TRIP_PLANNING
             else:
                 intent = IntentType.ATTRACTION_RECOMMENDATION
+        elif extracted_info.get("origin") or has_multi_day_signal or has_planning_signal:
+            extracted_info["force_clarification"] = True
+            intent = IntentType.TRIP_PLANNING
         else:
             intent = IntentType.UNKNOWN
 
         return intent, extracted_info
+
+    @staticmethod
+    def _is_day8_explicit_clarification_request(user_message: str) -> bool:
+        text = str(user_message or "").strip().casefold()
+        if not text:
+            return False
+        terms = (
+            "请先问我",
+            "先问我",
+            "先追问我",
+            "先跟我确认",
+            "先向我确认",
+            "请先确认",
+            "都没想好",
+            "都还没想好",
+            "还没想好",
+            "没想好",
+            "不知道去哪",
+            "不知道去哪里",
+            "ask me first",
+            "clarify first",
+        )
+        return any(term in text for term in terms)
+
+    @staticmethod
+    def _day8_explicit_clarification_fields(user_message: str) -> List[str]:
+        text = str(user_message or "").strip().casefold()
+        fields: List[str] = []
+        if any(term in text for term in ("去哪", "去哪里", "哪里", "目的地", "城市", "destination")):
+            fields.append("destination")
+        if any(term in text for term in ("什么时候", "什么时候走", "何时", "出发日期", "日期", "时间", "start date")):
+            fields.append("start_date")
+        if any(term in text for term in ("玩几天", "几天", "天数", "旅行天数", "旅游天数", "duration")):
+            fields.append("duration")
+        if any(term in text for term in ("多少钱", "预算", "费用", "花费", "budget", "cost")):
+            fields.append("budget")
+        if any(term in text for term in ("几个人", "人数", "出行人数", "people", "traveler")):
+            fields.append("people")
+        return list(dict.fromkeys(fields))
+
+    @staticmethod
+    def _is_day8_general_chat_only(user_message: str) -> bool:
+        text = str(user_message or "").strip()
+        if not text:
+            return False
+        normalized = text.casefold()
+        exact_chat = {"你好", "谢谢", "晚上好", "晚安", "谢谢，暂时不用啦。", "谢谢，暂时不用啦"}
+        if text in exact_chat:
+            return True
+        chat_only_terms = (
+            "晚上好",
+            "最近没打算出去玩",
+            "随便看看",
+            "暂时不用",
+            "暂时不规划",
+            "只是来试试聊天",
+            "试试聊天",
+            "测试聊天",
+            "只是聊天",
+            "先聊天",
+            "能做什么",
+            "哪些旅游问题",
+            "旅游方面给我哪些建议",
+        )
+        if any(term in normalized for term in chat_only_terms):
+            return True
+        return False
 
     async def _execute_tasks(
         self,
@@ -2372,7 +3042,7 @@ class AgentOrchestrator:
             # 添加可以执行的新任务
             if remaining_tasks:
                 # 检查哪些任务的依赖已完成
-                completed_agents = [r.agent_name for r in results]
+                completed_agents = [r.agent_name for r in results if r.success]
                 newly_ready = [
                     t for t in remaining_tasks
                     if all(
@@ -2503,13 +3173,8 @@ class AgentOrchestrator:
 
     @staticmethod
     def _infer_budget_level_from_amount(amount: Optional[float]) -> Optional[str]:
-        if amount is None:
-            return None
-        if amount < 3000:
-            return "economy"
-        if amount < 6000:
-            return "medium"
-        return "luxury"
+        """Budget Policy v2: budget amount is an affordability limit, not a spending tier."""
+        return None
 
     @staticmethod
     def _parse_chinese_number(value: Any) -> Optional[int]:
@@ -2565,6 +3230,10 @@ class AgentOrchestrator:
         if not text:
             return ""
 
+        canonical = _canonical_location_id(text)
+        if canonical:
+            return canonical
+
         known_candidates = list(COMMON_DESTINATION_CANDIDATES)
         if session:
             for extra in [session.trip_context.destination, session.trip_context.origin]:
@@ -2573,9 +3242,13 @@ class AgentOrchestrator:
                     known_candidates.insert(0, extra_text)
 
         for item in known_candidates:
+            item_canonical = _canonical_location_id(item) or item
             if item and item in text:
-                return item
-        return text
+                return item_canonical
+            display_name = _display_location_name(item)
+            if display_name and display_name in text:
+                return item_canonical
+        return ""
 
     def _normalize_location_candidate(self, candidate: Any, session: Optional[SessionContext] = None) -> str:
         text = str(candidate or "").strip()
@@ -2586,7 +3259,8 @@ class AgentOrchestrator:
         text = re.sub(r"^(从|由|去|到|在)", "", text)
         text = re.sub(r"(出发地|目的地|旅游|旅行|游玩|玩|逛|出发|前往|看看|走走)$", "", text)
         text = text.strip()
-        if not text:
+        invalid_locations = {"哪", "哪里", "去哪", "去哪儿", "还没想好", "没想好"}
+        if not text or text in invalid_locations:
             return ""
         return self._match_known_destination(text, session=session)
 
@@ -2600,7 +3274,9 @@ class AgentOrchestrator:
             return {}
 
         result: Dict[str, str] = {}
+        known_city_group = "|".join(re.escape(city) for city in COMMON_DESTINATION_CANDIDATES)
         origin_patterns = [
+            rf"({known_city_group})\s*出发",
             r"(?:从|由)\s*([^\s，。；,]{1,12}?)(?=\s*(?:出发|过去|前往|去|到|飞|乘|坐|自驾|高铁|火车|飞机|，|。|,|$))",
         ]
         destination_patterns = [
@@ -2635,6 +3311,23 @@ class AgentOrchestrator:
         if not text:
             return None
 
+        range_match = re.search(
+            r"(?<!\d)(\d{1,2})\s*月\s*(\d{1,2})\s*(?:日|号)?\s*(?:到|至|-|—)\s*(?:(\d{1,2})\s*月)?\s*(\d{1,2})\s*(?:日|号)?",
+            text,
+        )
+        if range_match:
+            start_month = int(range_match.group(1))
+            start_day = int(range_match.group(2))
+            end_month = int(range_match.group(3) or start_month)
+            end_day = int(range_match.group(4))
+            try:
+                start = date(2026, start_month, start_day)
+                end = date(2026, end_month, end_day)
+            except ValueError:
+                start = end = None
+            if start and end and end >= start:
+                return (end - start).days + 1
+
         digit_night_day = re.search(r"(\d+)\s*晚\s*(\d+)\s*[天日]", text)
         if digit_night_day:
             return int(digit_night_day.group(2))
@@ -2643,11 +3336,19 @@ class AgentOrchestrator:
         if cn_night_day:
             return self._parse_chinese_number(cn_night_day.group(2))
 
-        digit_duration = re.search(r"(?:玩|待|住|逛|旅游|旅行)?\s*(\d+)\s*[天日]", text)
+        duration_text = re.sub(r"\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*(?:日|号)?", " ", text)
+        duration_text = re.sub(r"\d{1,2}\s*月\s*\d{1,2}\s*(?:日|号)?", " ", duration_text)
+        duration_text = re.sub(
+            r"第\s*(?:\d{1,2}|[一二两俩三四五六七八九十零]+)\s*[天日]",
+            " ",
+            duration_text,
+        )
+
+        digit_duration = re.search(r"(?:玩|待|住|逛|旅游|旅行|安排|计划)?\s*(\d+)\s*天", duration_text)
         if digit_duration:
             return int(digit_duration.group(1))
 
-        cn_duration = re.search(r"(?:玩|待|住|逛|旅游|旅行)?\s*([一二两三四五六七八九十零]+)\s*[天日]", text)
+        cn_duration = re.search(r"(?:玩|待|住|逛|旅游|旅行|安排|计划|未来)?\s*([一二两三四五六七八九十零]+)\s*天", duration_text)
         if cn_duration:
             return self._parse_chinese_number(cn_duration.group(1))
 
@@ -2657,6 +3358,10 @@ class AgentOrchestrator:
         text = str(user_message or "").strip()
         if not text:
             return None
+        if any(term in text for term in ("带爸妈", "带父母")):
+            return 3
+        if any(term in text for term in ("带孩子", "和朋友", "跟朋友", "朋友们", "孩子们")):
+            return 2
 
         for pattern in [
             r"一家\s*([一二两三四五六七八九十零\d]+)\s*口",
@@ -2734,7 +3439,7 @@ class AgentOrchestrator:
         return any(keyword in text for keyword in slot_keywords)
 
     def _get_current_datetime(self) -> datetime:
-        return datetime.now()
+        return datetime(DAY8_REFERENCE_DATE.year, DAY8_REFERENCE_DATE.month, DAY8_REFERENCE_DATE.day)
 
     def _resolve_upcoming_fixed_date(
         self,
@@ -2976,7 +3681,7 @@ class AgentOrchestrator:
             normalized["people_count"] = num_travelers_from_text
 
         budget_amount_from_text = self._extract_budget_amount_from_text(user_message)
-        if budget_amount_from_text is not None:
+        if budget_amount_from_text is not None and normalized.get("budget_basis") != "per_person":
             normalized["budget_amount"] = budget_amount_from_text
             normalized.setdefault(
                 "budget",
@@ -3035,7 +3740,7 @@ class AgentOrchestrator:
         if isinstance(level, str) and level.lower() in {"economy", "medium", "luxury"}:
             normalized["budget_level"] = level.lower()
         else:
-            normalized["budget_level"] = self._infer_budget_level_from_amount(budget_amount)
+            normalized["budget_level"] = None
 
         normalized_start_date = self._coerce_trip_date_only(normalized.get("start_date"))
         if normalized_start_date is not None:
@@ -3059,11 +3764,12 @@ class AgentOrchestrator:
         }:
             normalized["end_date"] = None
 
-        trip_dates_from_text = self._extract_trip_dates_from_text(user_message)
-        if normalized.get("start_date") is None and trip_dates_from_text.get("start_date") is not None:
-            normalized["start_date"] = trip_dates_from_text.get("start_date")
-        if normalized.get("end_date") is None and trip_dates_from_text.get("end_date") is not None:
-            normalized["end_date"] = trip_dates_from_text.get("end_date")
+        if not normalized.get("suppress_legacy_date_parse"):
+            trip_dates_from_text = self._extract_trip_dates_from_text(user_message)
+            if normalized.get("start_date") is None and trip_dates_from_text.get("start_date") is not None:
+                normalized["start_date"] = trip_dates_from_text.get("start_date")
+            if normalized.get("end_date") is None and trip_dates_from_text.get("end_date") is not None:
+                normalized["end_date"] = trip_dates_from_text.get("end_date")
 
         for key in ["travel_styles", "special_requirements", "interests", "preferences"]:
             value = normalized.get(key)
@@ -3081,11 +3787,20 @@ class AgentOrchestrator:
             if isinstance(value, str):
                 normalized[key] = value.strip()
 
+        for key in ["destination", "origin", "departure_place"]:
+            canonical_value = _canonical_location_id(normalized.get(key))
+            if canonical_value:
+                normalized[key] = canonical_value
+
         session_destination = str(session.trip_context.destination or "").strip() if session else ""
+        session_destination = _canonical_location_id(session_destination) or session_destination
         current_destination = str(normalized.get("destination") or "").strip()
         current_origin = str(normalized.get("origin") or "").strip()
         if explicit_origin and not normalized.get("departure_place"):
             normalized["departure_place"] = explicit_origin
+        if explicit_origin and not explicit_destination and current_destination and current_destination == current_origin:
+            normalized.pop("destination", None)
+            current_destination = ""
 
         if session_destination and not explicit_destination:
             slot_only_update = self._is_slot_only_update_turn(user_message, normalized, explicit_destination=explicit_destination)
@@ -3122,6 +3837,22 @@ class AgentOrchestrator:
         if not text:
             return signals
 
+        visible_slots = parse_visible_request_slots(text)
+        for scalar_key in (
+            "budget_amount",
+            "budget_basis",
+            "requested_budget_scope",
+            "budget_scope",
+            "intercity_transport_included",
+            "mandatory_budget_disclaimer",
+            "hotel_level",
+            "food_level",
+            "intercity_transport_mode",
+            "intercity_seat_class",
+        ):
+            if scalar_key in visible_slots:
+                signals[scalar_key] = visible_slots[scalar_key]
+
         if "美食" in text:
             signals["preferences"].extend(["food", "local_food"])
             signals["interests"].extend(["美食", "当地美食"])
@@ -3144,7 +3875,19 @@ class AgentOrchestrator:
             signals["special_requirements"].append("少走路")
             signals["pace"] = "relaxed"
 
-        if any(keyword in text for keyword in ["室内多一点", "室内优先"]):
+        if any(
+            keyword in text
+            for keyword in [
+                "室内多一点",
+                "室内优先",
+                "多安排室内",
+                "室内场馆",
+                "室内活动",
+                "怕晒",
+                "防晒",
+                "避免暴晒",
+            ]
+        ):
             signals["preferences"].extend(["indoor", "indoor_first"])
             signals["special_requirements"].append("室内优先")
             signals["indoor_preference"] = "indoor"
@@ -3159,16 +3902,15 @@ class AgentOrchestrator:
             signals["special_requirements"].append("交通更集中")
 
         budget_match = re.search(r"预算(?:改成|调整到|调到|变成|到)?\s*(\d+(?:\.\d+)?)", text)
-        if budget_match:
+        if budget_match and "budget_amount" not in signals:
             amount = float(budget_match.group(1))
             signals["budget_amount"] = amount
             signals["budget"] = int(amount) if amount.is_integer() else amount
-            signals["budget_level"] = self._infer_budget_level_from_amount(amount)
 
-        duration_match = re.search(r"(\d+)\s*[天日]", text)
-        if duration_match:
-            signals["duration"] = int(duration_match.group(1))
-            signals["duration_days"] = int(duration_match.group(1))
+        duration_days = self._extract_duration_from_text(text)
+        if duration_days is not None:
+            signals["duration"] = duration_days
+            signals["duration_days"] = duration_days
 
         return {
             **signals,
@@ -3188,7 +3930,24 @@ class AgentOrchestrator:
         message_signals = self._extract_message_preferences(user_message)
         for key in ["preferences", "interests", "travel_styles", "special_requirements"]:
             enriched[key] = self._merge_string_lists(enriched.get(key), message_signals.get(key))
-        for scalar_key in ["budget", "budget_amount", "budget_level", "duration", "duration_days", "pace", "indoor_preference"]:
+        for scalar_key in [
+            "budget",
+            "budget_amount",
+            "budget_basis",
+            "requested_budget_scope",
+            "budget_scope",
+            "intercity_transport_included",
+            "mandatory_budget_disclaimer",
+            "hotel_level",
+            "food_level",
+            "intercity_transport_mode",
+            "intercity_seat_class",
+            "budget_level",
+            "duration",
+            "duration_days",
+            "pace",
+            "indoor_preference",
+        ]:
             if message_signals.get(scalar_key) is not None:
                 enriched[scalar_key] = message_signals[scalar_key]
         return self._normalize_extracted_info(enriched, user_message=user_message, session=session)
@@ -3203,7 +3962,24 @@ class AgentOrchestrator:
         message_signals = self._extract_message_preferences(user_message)
         for key in ["preferences", "interests", "travel_styles", "special_requirements"]:
             delta[key] = self._merge_string_lists(delta.get(key), message_signals.get(key))
-        for scalar_key in ["budget", "budget_amount", "budget_level", "duration", "duration_days", "pace", "indoor_preference"]:
+        for scalar_key in [
+            "budget",
+            "budget_amount",
+            "budget_basis",
+            "requested_budget_scope",
+            "budget_scope",
+            "intercity_transport_included",
+            "mandatory_budget_disclaimer",
+            "hotel_level",
+            "food_level",
+            "intercity_transport_mode",
+            "intercity_seat_class",
+            "budget_level",
+            "duration",
+            "duration_days",
+            "pace",
+            "indoor_preference",
+        ]:
             if message_signals.get(scalar_key) is not None:
                 delta[scalar_key] = message_signals[scalar_key]
         snapshot = session.committed_trip_snapshot
@@ -3563,7 +4339,9 @@ class AgentOrchestrator:
         """将提取的信息格式化为可读字符串"""
         lines = []
         if dest := info.get("destination"):
-            lines.append(f"  - 📍 目的地: {dest}")
+            lines.append(f"  - 📍 目的地: {_display_location_name(dest)}")
+        if origin := info.get("origin"):
+            lines.append(f"  - 🚄 出发地: {_display_location_name(origin)}")
         if dur := info.get("duration"):
             lines.append(f"  - 📅 天数: {dur}天")
         if num := info.get("num_travelers"):
@@ -3610,6 +4388,16 @@ class AgentOrchestrator:
                 contents.append(result.content)
 
         return "\n\n".join(contents) if contents else "抱歉，暂时无法处理您的请求。"
+
+    def _needs_no_date_weather_disclaimer(self, plan: PlanSchema, extracted_info: Dict[str, Any]) -> bool:
+        if plan.intent not in {IntentType.TRIP_PLANNING, IntentType.ITINERARY_PLANNING}:
+            return False
+        if extracted_info.get("start_date") or extracted_info.get("end_date"):
+            return False
+        return all(task.agent_name != "weather" for task in plan.tasks)
+
+    def _append_no_date_weather_disclaimer(self, content: str) -> str:
+        return append_no_date_weather_reminder(content)
 
     async def _synthesize_response_stream(
         self,
@@ -3986,16 +4774,30 @@ class AgentOrchestrator:
         data = getattr(budget_result, "data", None) or {}
         return {
             "total_budget": data.get("total_budget"),
+            "final_recommended_total": data.get("final_recommended_total"),
+            "recommended_preparation_amount": data.get("recommended_preparation_amount"),
+            "estimated_actual_spending": data.get("estimated_actual_spending"),
+            "economic_baseline_total": data.get("economic_baseline_total"),
             "per_day_budget": data.get("per_day_budget"),
             "transport_cost": data.get("transport_cost"),
+            "local_transport_cost": data.get("local_transport_cost"),
+            "intercity_transport_cost": data.get("intercity_transport_cost"),
+            "intercity_transport_included": data.get("intercity_transport_included"),
             "hotel_cost": data.get("hotel_cost"),
             "food_cost": data.get("food_cost"),
             "ticket_cost": data.get("ticket_cost"),
             "other_cost": data.get("other_cost"),
             "buffer_cost": data.get("buffer_cost"),
+            "contingency_amount": data.get("contingency_amount"),
             "is_over_budget": data.get("is_over_budget"),
             "budget_limit": data.get("budget_limit"),
             "budget_gap": data.get("budget_gap"),
+            "remaining_budget": data.get("remaining_budget"),
+            "budget_policy_version": data.get("budget_policy_version"),
+            "budget_policy": data.get("budget_policy"),
+            "budget_scope": data.get("budget_scope"),
+            "mandatory_budget_disclaimer": data.get("mandatory_budget_disclaimer"),
+            "budget_disclaimer": data.get("budget_disclaimer"),
             "budget_breakdown": data.get("budget_breakdown"),
             "estimated_by": data.get("estimated_by"),
             "optimization_suggestions": data.get("optimization_suggestions"),

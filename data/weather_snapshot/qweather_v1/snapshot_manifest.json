@@ -1,0 +1,155 @@
+{
+  "schema_version": "ctp-qweather-snapshot-manifest-v1",
+  "provider": "qweather",
+  "snapshot_id": "ctp_qweather_20260807_v1",
+  "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+  "reference_date": "2026-08-07",
+  "fetched_at": "2026-08-07T22:59:29+08:00",
+  "timezone": "Asia/Shanghai",
+  "forecast_endpoint": "/v7/weather/30d",
+  "forecast_start_date": "2026-08-07",
+  "forecast_end_date": "2026-09-05",
+  "forecast_horizon_days": 30,
+  "cities": [
+    "beijing",
+    "hangzhou",
+    "xian",
+    "shenzhen",
+    "guilin"
+  ],
+  "city_summaries": {
+    "beijing": {
+      "city_name": "北京",
+      "location_id": "101010100",
+      "forecast_start_date": "2026-08-07",
+      "forecast_end_date": "2026-09-05",
+      "forecast_horizon_days": 30,
+      "raw_path": "data/weather_snapshot/qweather_v1/raw/beijing.json",
+      "normalized_path": "data/weather_snapshot/qweather_v1/normalized/beijing.json"
+    },
+    "hangzhou": {
+      "city_name": "杭州",
+      "location_id": "101210101",
+      "forecast_start_date": "2026-08-07",
+      "forecast_end_date": "2026-09-05",
+      "forecast_horizon_days": 30,
+      "raw_path": "data/weather_snapshot/qweather_v1/raw/hangzhou.json",
+      "normalized_path": "data/weather_snapshot/qweather_v1/normalized/hangzhou.json"
+    },
+    "xian": {
+      "city_name": "西安",
+      "location_id": "101110101",
+      "forecast_start_date": "2026-08-07",
+      "forecast_end_date": "2026-09-05",
+      "forecast_horizon_days": 30,
+      "raw_path": "data/weather_snapshot/qweather_v1/raw/xian.json",
+      "normalized_path": "data/weather_snapshot/qweather_v1/normalized/xian.json"
+    },
+    "shenzhen": {
+      "city_name": "深圳",
+      "location_id": "101280601",
+      "forecast_start_date": "2026-08-07",
+      "forecast_end_date": "2026-09-05",
+      "forecast_horizon_days": 30,
+      "raw_path": "data/weather_snapshot/qweather_v1/raw/shenzhen.json",
+      "normalized_path": "data/weather_snapshot/qweather_v1/normalized/shenzhen.json"
+    },
+    "guilin": {
+      "city_name": "桂林",
+      "location_id": "101300501",
+      "forecast_start_date": "2026-08-07",
+      "forecast_end_date": "2026-09-05",
+      "forecast_horizon_days": 30,
+      "raw_path": "data/weather_snapshot/qweather_v1/raw/guilin.json",
+      "normalized_path": "data/weather_snapshot/qweather_v1/normalized/guilin.json"
+    }
+  },
+  "location_resolution": "fixed_location_id",
+  "location_ids": {
+    "beijing": "101010100",
+    "hangzhou": "101210101",
+    "xian": "101110101",
+    "shenzhen": "101280601",
+    "guilin": "101300501"
+  },
+  "raw_dir": "data/weather_snapshot/qweather_v1/raw",
+  "normalized_dir": "data/weather_snapshot/qweather_v1/normalized",
+  "real_time_api_allowed": false,
+  "runtime_online_refresh_allowed": false,
+  "api_key_recorded": false,
+  "formal_experiment_policy": "M1/M2/M3 read this frozen local snapshot; formal runs must not refresh weather online.",
+  "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+  "combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+  "files": [
+    {
+      "kind": "normalized",
+      "city_id": "beijing",
+      "path": "data/weather_snapshot/qweather_v1/normalized/beijing.json",
+      "sha256": "dfd38d2d39a627d73d256ed576e8d73331c304fcd4d65c2baf0b1ce4d3ec7d4b",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    },
+    {
+      "kind": "normalized",
+      "city_id": "guilin",
+      "path": "data/weather_snapshot/qweather_v1/normalized/guilin.json",
+      "sha256": "14022989eb04c4b712db76d49143357cd44e808ca9283f91ec25fa205bcc77cf",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    },
+    {
+      "kind": "normalized",
+      "city_id": "hangzhou",
+      "path": "data/weather_snapshot/qweather_v1/normalized/hangzhou.json",
+      "sha256": "d9601d8208a9c77d29da16f87b01977ee1c2411dfe8686f9877cb0e28febd0d5",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    },
+    {
+      "kind": "normalized",
+      "city_id": "shenzhen",
+      "path": "data/weather_snapshot/qweather_v1/normalized/shenzhen.json",
+      "sha256": "86d5c7b06d17281fd23e068d4df0f22bb2245a6ce99797ccb90ec80a6590d101",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    },
+    {
+      "kind": "normalized",
+      "city_id": "xian",
+      "path": "data/weather_snapshot/qweather_v1/normalized/xian.json",
+      "sha256": "a5c9b36abe49bfd76331c4245156b5f8c6b4dbb5b66897c331d1ef63c6a9a093",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    },
+    {
+      "kind": "raw",
+      "city_id": "beijing",
+      "path": "data/weather_snapshot/qweather_v1/raw/beijing.json",
+      "sha256": "e04e32c56b2a691b1d5a130c97bbdaa6afe59368595580eac8d20d6c6ff39b96",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    },
+    {
+      "kind": "raw",
+      "city_id": "guilin",
+      "path": "data/weather_snapshot/qweather_v1/raw/guilin.json",
+      "sha256": "9385f17006eaf9cd0e9df9d463efd8c2ef5deb9ed179f6b5ed1b7627972ac3c6",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    },
+    {
+      "kind": "raw",
+      "city_id": "hangzhou",
+      "path": "data/weather_snapshot/qweather_v1/raw/hangzhou.json",
+      "sha256": "1264ea5ac3a8ae33c611f6d97e7484ccaf21687b5755abe9f20ec85052b5c0c6",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    },
+    {
+      "kind": "raw",
+      "city_id": "shenzhen",
+      "path": "data/weather_snapshot/qweather_v1/raw/shenzhen.json",
+      "sha256": "9f12d31c5b4e714d767de107a207e36acaaee91897dc15d75a10da0cec810d3d",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    },
+    {
+      "kind": "raw",
+      "city_id": "xian",
+      "path": "data/weather_snapshot/qweather_v1/raw/xian.json",
+      "sha256": "ce3a7bca976f142e1a3c115b4cdab2b82a6c0aea279532d310d9e4fa019cbe66",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    }
+  ]
+}

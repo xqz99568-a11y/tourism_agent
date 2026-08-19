@@ -1,9 +1,9 @@
 """
-Real-weather agent for itinerary collaboration.
+Frozen-weather agent for itinerary collaboration.
 
-It fetches real weather from QWeather, converts it
-into stable structured fields, assesses travel risk with explicit rules, and
-returns data that itinerary planning can consume directly.
+Formal experiments use the frozen QWeather snapshot only.  The online
+collection step lives outside the runtime path, so this agent must not depend
+on QWeather credentials or live HTTP clients when it is instantiated.
 """
 from __future__ import annotations
 
@@ -13,9 +13,13 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from app.agents.base import AgentCapability, AgentConfig, AgentResponse, AgentStatus, BaseAgent
 from app.core.context import ExecutionContext, SessionContext
-from app.core.fixed_data import FixedDataError, get_fixed_tourism_data, is_formal_offline_mode
 from app.core.logger import get_logger
-from app.services.weather_client import QWeatherWeatherClient
+from app.core.qweather_snapshot import (
+    QWEATHER_DEFAULT_WEATHER_QUERY_DAYS,
+    QWeatherSnapshotError,
+    load_qweather_snapshot_manifest,
+    query_qweather_snapshot,
+)
 
 logger = get_logger(__name__)
 
@@ -90,7 +94,7 @@ def _build_day_advice(item: Dict[str, Any]) -> str:
     return "，".join(parts)
 
 WEATHER_POLICY = {
-    "max_supported_days": 7,
+    "max_supported_days": 30,
     "heat_temp_c": 33,
     "extreme_heat_temp_c": 36,
     "large_temp_gap_c": 8,
@@ -117,7 +121,6 @@ class WeatherAgent(BaseAgent):
 
     def __init__(self, llm=None, **kwargs):
         super().__init__(WEATHER_CONFIG, llm)
-        self._client = QWeatherWeatherClient()
 
     async def plan(self, session: SessionContext, context: ExecutionContext) -> List[str]:
         return ["resolve_location", "fetch_weather", "assess_risk", "build_guidance"]
@@ -126,8 +129,14 @@ class WeatherAgent(BaseAgent):
         request = self._resolve_weather_request(session, context)
         destination = request["label"]
         if not destination and request["coordinates"] is None:
-            data = self._build_fallback_weather_result("", request["requested_days"], "缺少目的地信息，无法调用真实天气接口。")
-            return AgentResponse(agent_name=self.name, status=AgentStatus.COMPLETED, content="请先提供目的地城市、区域或坐标，我再为你查询真实天气。", data=data)
+            data = self._build_fallback_weather_result("", request["requested_days"], "缺少目的地信息，无法查询冻结天气快照。")
+            return AgentResponse(
+                agent_name=self.name,
+                status=AgentStatus.WAITING,
+                content="请先提供目的地城市，我再为你查询冻结天气快照。目前快照支持：北京、杭州、西安、深圳、桂林。",
+                data=data,
+                metadata={"provider": "qweather_snapshot", "offline": True, "waiting_for": "destination"},
+            )
 
         self._record_thinking_reasoning(
             context,
@@ -136,101 +145,105 @@ class WeatherAgent(BaseAgent):
             reasoning_type="fact",
         )
 
-        if is_formal_offline_mode():
-            scenario_type = (
-                context.extracted_info.get("weather_scenario")
-                or context.extracted_info.get("scenario_type")
-                or context.extracted_info.get("weather_type")
-                or "sunny"
-            )
-            self._record_tool_usage(
-                context,
-                step_name="读取固定天气场景",
-                tool_name="fixed_weather_dataset",
-                arguments={
-                    "city": destination,
-                    "scenario_type": scenario_type,
-                    "requested_days": request["requested_days"],
-                },
-            )
-            try:
-                result = get_fixed_tourism_data().weather_query(
-                    city=destination,
-                    scenario_type=scenario_type,
-                    days=request["requested_days"],
-                )
-                self._record_thinking_reasoning(
-                    context,
-                    step_name="固定天气风险评估",
-                    reasoning_content=f"天气场景：{result.get('scenario_type')}\n风险等级：{result.get('risk_level')}\n覆盖天数：{result.get('coverage_days', 0)} 天",
-                    reasoning_type="analysis",
-                )
-                self._record_thinking_complete(
-                    context,
-                    step_name="固定天气风险评估",
-                    result_summary=f"固定天气处理完成：{result.get('scenario_type')} / {result.get('risk_level')} 风险。",
-                )
-                return AgentResponse(
-                    agent_name=self.name,
-                    status=AgentStatus.COMPLETED,
-                    content=self._build_weather_summary(result),
-                    data=result,
-                    metadata={
-                        "provider": "fixed_weather_dataset",
-                        "offline": True,
-                        "degraded": False,
-                        "coverage_days": result.get("coverage_days", 0),
-                    },
-                )
-            except FixedDataError as exc:
-                return AgentResponse(
-                    agent_name=self.name,
-                    status=AgentStatus.FAILED,
-                    content=f"固定天气场景不可用：{exc}",
-                    data={
-                        "provider": "fixed_weather_dataset",
-                        "offline": True,
-                        "fixed_weather_required": True,
-                        "error_type": "fixed_weather_unavailable",
-                        "error": str(exc),
-                    },
-                    error=str(exc),
-                    metadata={
-                        "provider": "fixed_weather_dataset",
-                        "offline": True,
-                        "degraded": False,
-                        "fixed_weather_required": True,
-                    },
-                )
-
+        scenario_type = (
+            context.extracted_info.get("weather_scenario")
+            or context.extracted_info.get("scenario_type")
+            or context.extracted_info.get("weather_type")
+            or "qweather_snapshot"
+        )
         self._record_tool_usage(
             context,
-            step_name="调用天气接口",
-            tool_name="qweather_weather_api",
-            arguments={"label": destination, "coordinates": request["coordinates"], "requested_days": request["requested_days"]},
+            step_name="读取冻结天气快照",
+            tool_name="qweather_snapshot",
+            arguments={
+                "city": destination,
+                "scenario_type": scenario_type,
+                "requested_days": request["requested_days"],
+                "start_date": request["start_date"] or None,
+                "runtime_online_refresh_allowed": False,
+            },
         )
 
         try:
-            provider_payload = await self._client.fetch_weather(label=destination, coordinates=request["coordinates"], context=context)
-            result = self._normalize_weather(request, provider_payload) if provider_payload else self._build_fallback_weather_result(destination, request["requested_days"], "天气接口返回空数据，已返回结构化降级结果。")
+            start_date = self._snapshot_start_date(request, default_if_missing=True)
+            result = query_qweather_snapshot(
+                city=destination,
+                start_date=start_date,
+                days=request["requested_days"],
+            )
             self._record_thinking_reasoning(
                 context,
-                step_name="天气风险评估",
-                reasoning_content=f"天气类型：{result.get('weather_type')}\n风险等级：{result.get('risk_level')}\n预报覆盖：{result.get('coverage_days', 0)} 天",
+                step_name="冻结天气风险评估",
+                reasoning_content=f"快照ID：{result.get('snapshot_id')}\n覆盖状态：{result.get('coverage_status')}\n风险等级：{result.get('risk_level')}\n覆盖天数：{result.get('coverage_days', 0)} 天",
                 reasoning_type="analysis",
             )
-            self._record_thinking_complete(context, step_name="天气风险评估", result_summary=f"天气处理完成：{result.get('weather_type')} / {result.get('risk_level')} 风险。")
+            self._record_thinking_complete(
+                context,
+                step_name="冻结天气风险评估",
+                result_summary=f"冻结天气处理完成：{result.get('coverage_status')} / {result.get('risk_level')} 风险。",
+            )
             return AgentResponse(
                 agent_name=self.name,
                 status=AgentStatus.COMPLETED,
                 content=self._build_weather_summary(result),
                 data=result,
-                metadata={"provider": "qweather", "degraded": result.get("degraded", False), "coverage_days": result.get("coverage_days", 0)},
+                metadata={
+                    "provider": "qweather_snapshot",
+                    "offline": True,
+                    "degraded": result.get("coverage_status") != "full",
+                    "coverage_days": result.get("coverage_days", 0),
+                    "coverage_status": result.get("coverage_status"),
+                    "snapshot_id": result.get("snapshot_id"),
+                    "snapshot_combined_sha256": result.get("snapshot_combined_sha256"),
+                    "real_time_api_allowed": False,
+                    "runtime_online_refresh_allowed": False,
+                },
+            )
+        except QWeatherSnapshotError as exc:
+            return AgentResponse(
+                agent_name=self.name,
+                status=AgentStatus.FAILED,
+                content=f"冻结天气快照不可用：{exc}",
+                data={
+                    "provider": "qweather_snapshot",
+                    "offline": True,
+                    "fixed_weather_required": False,
+                    "error_type": "qweather_snapshot_unavailable",
+                    "error": str(exc),
+                    "real_time_api_allowed": False,
+                    "runtime_online_refresh_allowed": False,
+                },
+                error=str(exc),
+                metadata={
+                    "provider": "qweather_snapshot",
+                    "offline": True,
+                    "degraded": False,
+                    "fixed_weather_required": False,
+                    "real_time_api_allowed": False,
+                    "runtime_online_refresh_allowed": False,
+                },
             )
         except Exception as exc:
-            logger.exception(f"Weather agent failed, returning degraded result: {exc}")
+            logger.exception(f"Weather agent failed: {exc}")
             result = self._build_fallback_weather_result(destination, request["requested_days"], f"天气处理异常：{exc}")
-            return AgentResponse(agent_name=self.name, status=AgentStatus.COMPLETED, content=self._build_weather_summary(result), data=result, metadata={"provider": "qweather", "degraded": True})
+            result["provider"] = "qweather_snapshot"
+            result["applied_rules"] = ["qweather_snapshot_exception"]
+            result["real_time_api_allowed"] = False
+            result["runtime_online_refresh_allowed"] = False
+            return AgentResponse(
+                agent_name=self.name,
+                status=AgentStatus.FAILED,
+                content=self._build_weather_summary(result),
+                data=result,
+                error=str(exc),
+                metadata={
+                    "provider": "qweather_snapshot",
+                    "offline": True,
+                    "degraded": False,
+                    "real_time_api_allowed": False,
+                    "runtime_online_refresh_allowed": False,
+                },
+            )
 
     def _resolve_weather_request(self, session: SessionContext, context: ExecutionContext) -> Dict[str, Any]:
         extracted = context.extracted_info or {}
@@ -266,7 +279,16 @@ class WeatherAgent(BaseAgent):
         if start_date and end_date and end_date >= start_date:
             return min((end_date - start_date).days + 1, WEATHER_POLICY["max_supported_days"])
         trip_days = self._coerce_int(session.trip_context.duration_days)
-        return min(trip_days or 3, WEATHER_POLICY["max_supported_days"])
+        return min(trip_days or QWEATHER_DEFAULT_WEATHER_QUERY_DAYS, WEATHER_POLICY["max_supported_days"])
+
+    def _snapshot_start_date(self, request: Dict[str, Any], *, default_if_missing: bool = False) -> Optional[str]:
+        parsed = self._parse_date(request.get("start_date"))
+        if parsed:
+            return parsed.isoformat()
+        if not default_if_missing:
+            return None
+        snapshot_start = self._parse_date(load_qweather_snapshot_manifest().get("forecast_start_date"))
+        return snapshot_start.isoformat() if snapshot_start else None
 
     def _normalize_weather(self, request: Dict[str, Any], provider_payload: Dict[str, Any]) -> Dict[str, Any]:
         location = provider_payload.get("location") or {}
@@ -481,7 +503,12 @@ class WeatherAgent(BaseAgent):
     def _build_weather_summary(self, result: Dict[str, Any]) -> str:
         temp = result.get("temperature_range") or {}
         temp_text = f"{temp.get('min')} - {temp.get('max')}°C" if temp.get("min") is not None and temp.get("max") is not None else "暂无温度区间"
-        source_text = "固定天气场景数据集" if result.get("provider") == "fixed_weather_dataset" else "和风天气（QWeather）"
+        if result.get("provider") == "fixed_weather_dataset":
+            source_text = "固定天气场景数据集"
+        elif result.get("provider") == "qweather_snapshot":
+            source_text = "和风天气冻结快照（QWeather Snapshot）"
+        else:
+            source_text = "和风天气（QWeather）"
         lines = [f"## {(result.get('destination') or '目的地')} 天气", f"- 数据来源：{source_text}", f"- 天气类型：{result.get('weather_type')}", f"- 风险等级：{result.get('risk_level')}", f"- 温度区间：{temp_text}"]
         if result.get("warnings"):
             lines.append(f"- 降级说明：{'；'.join(str(item) for item in result['warnings'])}")

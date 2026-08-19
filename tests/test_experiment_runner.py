@@ -1,4 +1,4 @@
-import asyncio
+﻿import asyncio
 import csv
 import hashlib
 import json
@@ -13,6 +13,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.core.experiment_runner import (
+    BENCHMARK_RESUME_STATE_NAME,
+    BENCHMARK_CHECKPOINT_JSON_NAME,
     RESEARCH_AGENT_DECISION_SCHEMA_VERSION,
     RESEARCH_AGENT_OUTPUT_SCHEMA_VERSION,
     ExperimentRunner,
@@ -27,8 +29,15 @@ from app.core.independent_evaluator import (
     EVALUATION_SUMMARY_SCHEMA_VERSION,
 )
 from app.core.llm.client import ToolCall
+from app.core.intercity_transport_snapshot import load_intercity_transport_snapshot_manifest
+from app.core.no_date_weather_policy import NO_DATE_WEATHER_REMINDER
+from app.core.qweather_snapshot import load_qweather_snapshot_manifest
 from app.core.tracing import get_current_trace, record_selected_tool, set_trace_selected_agents
 from app.tools.research_tools import GENERATION_TOOL_NAMES
+
+
+def _qweather_snapshot_start_date() -> str:
+    return str(load_qweather_snapshot_manifest()["forecast_start_date"])
 
 
 def test_runner_runs_same_case_through_four_methods_and_exports_csv(
@@ -98,7 +107,7 @@ def test_runner_runs_same_case_through_four_methods_and_exports_csv(
         assert result["metrics"]["intent_correct"] is False
         assert result["metrics"]["route_correct"] is False
         assert result["evaluation"]["schema_version"] == EVALUATION_SCHEMA_VERSION
-        assert result["evaluation"]["catalog_id"] == "day5_independent_evaluator_rules"
+        assert result["evaluation"]["catalog_id"] == "day8_formal_independent_evaluator_rules"
         assert "stsr" in result["metrics"]
 
     csv_path = tmp_path / "results" / runner.run_id / "benchmark_results.csv"
@@ -254,7 +263,7 @@ def test_experiment_manifest_dataset_hash_ignores_json_formatting(tmp_path: Path
     assert lf_manifest["dataset"]["hash_strategy"] == CANONICAL_JSON_SHA256_STRATEGY
     assert lf_manifest["evaluation"]["schema_version"] == EVALUATION_SCHEMA_VERSION
     assert lf_manifest["evaluation"]["summary_schema_version"] == EVALUATION_SUMMARY_SCHEMA_VERSION
-    assert lf_manifest["evaluation"]["catalog_id"] == "day5_independent_evaluator_rules"
+    assert lf_manifest["evaluation"]["catalog_id"] == "day8_formal_independent_evaluator_rules"
     assert lf_manifest["evaluation"]["catalog_sha256"] == crlf_manifest["evaluation"]["catalog_sha256"]
 
 
@@ -440,7 +449,11 @@ def test_single_agent_uses_tourism_tools_and_separates_planned_from_executed(
     result = runner.run(
         {
             "case_id": "single-tools",
+            "evaluation_mode": "oracle_slots",
             "user_input": "Plan a three-day Hangzhou trip for two people.",
+            "expected": {
+                "required_tools": ["budget_calculator"],
+            },
         },
         method="single_agent",
     )
@@ -486,6 +499,50 @@ def test_single_agent_uses_tourism_tools_and_separates_planned_from_executed(
     assert trace["tool_calls"][0]["status"] == "completed"
     assert result["output"]["called_tools"][0]["tool_name"] == "budget_calculator"
     assert result["output"]["called_tools"][0]["status"] == "completed"
+
+
+def test_runner_appends_no_date_weather_reminder_from_gold_policy(tmp_path: Path) -> None:
+    async def fake_handler(case):
+        return {
+            "task_type": "trip_planning",
+            "planned_agents": ["attraction", "itinerary", "budget"],
+            "used_agents": ["attraction", "itinerary", "budget"],
+            "planned_tools": ["poi_search", "budget_calculator"],
+            "called_tools": [
+                {"tool_name": "poi_search", "status": "completed", "success": True},
+                {"tool_name": "budget_calculator", "status": "completed", "success": True},
+            ],
+            "tool_results": {},
+            "attractions": [{"poi_id": "poi_a", "name": "POI A"}],
+            "trip_days": 1,
+            "daily_itinerary": [{"day": 1, "attractions": [{"poi_id": "poi_a", "name": "POI A"}]}],
+            "budget": {"total": 1000},
+            "weather": None,
+            "weather_adjustments": [],
+            "execution_status": "completed",
+            "final_answer": "已安排一版无日期行程，包含 POI A，预算总计 1000 元。",
+        }
+
+    runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces",
+        method_handlers={"adaptive_multi_agent": fake_handler},
+    )
+    result = runner.run(
+        {
+            "case_id": "no-date-reminder-runner-policy",
+            "user_input": "桂林玩1天，预算1000元，帮我安排一下。",
+            "expected": {
+                "task_type": "trip_planning",
+                "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+                "no_date_weather_reminder_required": True,
+            },
+        },
+        method="adaptive_multi_agent",
+    )
+
+    assert NO_DATE_WEATHER_REMINDER in result["output"]["final_answer"]
+    assert NO_DATE_WEATHER_REMINDER in result["output"]["raw_output"]["final_answer"]
+    assert result["output"]["metadata"]["no_date_weather_output_policy"]["applied"] is True
 
 
 def test_single_agent_deterministic_experiment_answer_skips_final_llm_call(
@@ -559,6 +616,75 @@ def test_budget_amount_does_not_imply_luxury_spending_level(tmp_path: Path) -> N
         )
         == "luxury"
     )
+
+
+def test_budget_tool_arguments_forward_natural_language_budget_slots(
+    tmp_path: Path,
+) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces")
+    case = {
+        "case_id": "budget-policy-slot-forwarding",
+        "user_input": "two people per-person budget 3000, Guangzhou to Guilin, local budget only",
+        "slots": {
+            "origin": "guangzhou",
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6000,
+            "budget_basis": "per_person",
+            "requested_budget_scope": "destination_local_only",
+            "intercity_transport_included": False,
+            "hotel_level": "comfort",
+            "food_level": "economy",
+        },
+    }
+
+    args = runner._research_tool_arguments(
+        "budget_calculator",
+        case,
+        tool_results={},
+        agent_outputs={},
+    )
+
+    assert args["budget_limit"] == 6000.0
+    assert args["budget_basis"] == "per_person"
+    assert args["requested_budget_scope"] == "destination_local_only"
+    assert args["intercity_transport_included"] is False
+    assert args["mandatory_budget_disclaimer"] is False
+    assert args["origin"] == "guangzhou"
+    assert args["hotel_level"] == "comfort"
+    assert args["food_level"] == "economy"
+
+
+def test_budget_tool_arguments_without_origin_use_local_scope_with_disclaimer(
+    tmp_path: Path,
+) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces")
+    case = {
+        "case_id": "budget-no-origin-local-disclaimer",
+        "user_input": "Guilin 3 days for 2 people, is budget 7130 enough?",
+        "slots": {
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 7130,
+            "budget_basis": "total",
+        },
+    }
+
+    args = runner._research_tool_arguments(
+        "budget_calculator",
+        case,
+        tool_results={},
+        agent_outputs={},
+    )
+
+    assert args["origin"] == ""
+    assert args["budget_limit"] == 7130.0
+    assert args["budget_basis"] == "total"
+    assert args["requested_budget_scope"] == "destination_local_only"
+    assert args["intercity_transport_included"] is False
+    assert args["mandatory_budget_disclaimer"] is True
 
 
 def test_previous_budget_can_be_carried_without_budget_reexecution(tmp_path: Path) -> None:
@@ -635,6 +761,92 @@ def test_reused_itinerary_carries_previous_daily_plan_without_agent_output(
 
     assert daily == previous_state["output"]["daily_itinerary"]
 
+
+def test_planned_itinerary_keeps_agent_daily_plan_without_weather(
+    tmp_path: Path,
+) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces")
+    attractions = [
+        {
+            "poi_id": "bj001",
+            "name": "Forbidden City",
+            "category": "heritage",
+            "indoor_outdoor": "outdoor",
+        },
+        {
+            "poi_id": "bj002",
+            "name": "National Museum",
+            "category": "museum",
+            "indoor_outdoor": "indoor",
+        },
+    ]
+    agent_outputs = {
+        "itinerary": {
+            "status": "completed",
+            "success": True,
+            "decision_validation_status": "passed",
+            "decision": {
+                "decisions": {
+                    "daily_itinerary": [
+                        {"day": 1, "attraction_poi_ids": ["bj001"]},
+                        {"day": 2, "attraction_poi_ids": ["bj002"]},
+                    ]
+                }
+            },
+        }
+    }
+
+    daily = runner._daily_itinerary_for_research_output(
+        case={"case_id": "no-date-trip", "expected": {"task_type": "trip_planning"}},
+        trip_days=2,
+        attractions=attractions,
+        weather={},
+        planned_agents=["attraction", "itinerary", "budget"],
+        reused_agents=[],
+        agent_outputs=agent_outputs,
+        previous_state=None,
+    )
+
+    assert [[item["poi_id"] for item in day["attractions"]] for day in daily] == [
+        ["bj001"],
+        ["bj002"],
+    ]
+
+
+
+def test_weather_evidence_summary_explains_missing_dates_and_snapshot_range(
+    tmp_path: Path,
+) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces")
+    weather = {
+        "provider": "qweather_snapshot",
+        "coverage_status": "out_of_range",
+        "scenario_type": "out_of_range",
+        "start_date": "2026-10-01",
+        "end_date": "2026-10-03",
+        "requested_days": 3,
+        "coverage_days": 0,
+        "missing_dates": ["2026-10-01", "2026-10-02", "2026-10-03"],
+        "snapshot_forecast_start_date": "2026-08-07",
+        "snapshot_forecast_end_date": "2026-09-05",
+        "daily_weather": [],
+    }
+
+    answer = runner._answer_with_research_evidence_summary(
+        "",
+        attractions=[],
+        budget={},
+        weather=weather,
+    )
+
+    assert "out_of_range" in answer
+    assert "2026-10-01" in answer
+    assert "2026-10-02" in answer
+    assert "2026-10-03" in answer
+    assert "2026-08-07" in answer
+    assert "2026-09-05" in answer
+    assert "不能提供逐日天气" in answer
+    assert "不编造" in answer
 
 def test_weather_adjustment_falls_back_to_previous_daily_plan_when_itinerary_missing(
     tmp_path: Path,
@@ -885,6 +1097,9 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
         "json": (run_output_dir / "benchmark_results.json").as_posix(),
         "summary": (run_output_dir / "evaluation_summary.json").as_posix(),
         "paper_tables": (run_output_dir / "paper_tables.md").as_posix(),
+        "resume_state": (run_output_dir / "benchmark_resume_state.json").as_posix(),
+        "checkpoint_csv": (run_output_dir / "benchmark_results.checkpoint.csv").as_posix(),
+        "checkpoint_json": (run_output_dir / "benchmark_results.checkpoint.json").as_posix(),
     }
     assert all(
         "\\" not in path
@@ -924,6 +1139,9 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     assert manifest["repeats"] == 2
     assert manifest["model_config_name"] == "offline-static"
     assert manifest["method_order_seed"] == runner.method_order_seed
+    assert manifest["resume"]["state_saved"] is True
+    assert manifest["resume"]["status"] == "completed"
+    assert manifest["resume"]["progress"]["remaining_result_count"] == 0
     assert manifest["prompt_versions"]["structured_llm_output"] == "ctp-structured-llm-output-prompts-v1"
     assert manifest["prompt_versions"]["research_agent"] == "ctp-research-agent-prompts-v1"
     assert manifest["method_controls"]["deterministic_research_final_answer"] is False
@@ -933,9 +1151,39 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     assert manifest["costing"]["output_token_unit_price"] == 0.0
     assert manifest["offline_data"]["snapshot"]["hash_strategy"] == CANONICAL_JSON_SHA256_STRATEGY
     assert manifest["offline_data"]["snapshot"]["combined_sha256"] == FIXED_DATA_EXPECTED_COMBINED_SHA256
+    qweather_manifest = load_qweather_snapshot_manifest()
+    assert manifest["offline_data"]["qweather_snapshot"]["snapshot_id"] == qweather_manifest["snapshot_id"]
+    assert (
+        manifest["offline_data"]["qweather_snapshot"]["combined_sha256"]
+        == qweather_manifest["combined_sha256"]
+    )
+    assert manifest["offline_data"]["qweather_snapshot"]["real_time_api_allowed"] is False
+    intercity_manifest = load_intercity_transport_snapshot_manifest()
+    assert (
+        manifest["offline_data"]["intercity_transport_snapshot"]["snapshot_id"]
+        == intercity_manifest["snapshot_id"]
+    )
+    assert (
+        manifest["offline_data"]["intercity_transport_snapshot"]["combined_sha256"]
+        == intercity_manifest["combined_sha256"]
+    )
+    assert (
+        manifest["offline_data"]["intercity_transport_snapshot"]["fare_snapshot_date"]
+        == intercity_manifest["fare_snapshot_date"]
+    )
+    assert manifest["offline_data"]["intercity_transport_snapshot"]["route_count"] == 50
+    assert manifest["offline_data"]["intercity_transport_snapshot"]["real_time_api_allowed"] is False
+    assert (
+        manifest["offline_data"]["intercity_transport_snapshot"]["runtime_online_refresh_allowed"]
+        is False
+    )
+    assert (
+        manifest["offline_data"]["intercity_transport_snapshot"]["real_time_price_claim_allowed"]
+        is False
+    )
     assert manifest["evaluation"]["schema_version"] == EVALUATION_SCHEMA_VERSION
     assert manifest["evaluation"]["summary_schema_version"] == EVALUATION_SUMMARY_SCHEMA_VERSION
-    assert manifest["evaluation"]["catalog_id"] == "day5_independent_evaluator_rules"
+    assert manifest["evaluation"]["catalog_id"] == "day8_formal_independent_evaluator_rules"
     assert manifest["evaluation"]["catalog_hash_strategy"] == CANONICAL_JSON_SHA256_STRATEGY
     assert len(manifest["evaluation"]["catalog_sha256"]) == 64
     assert "\\" not in manifest["evaluation"]["catalog_path"]
@@ -953,6 +1201,256 @@ def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     assert "actual_cost" in csv_rows[0]
     assert "audit_standardized_estimated_cost" in csv_rows[0]
     assert "audit_actual_cost" in csv_rows[0]
+
+
+def test_benchmark_resume_skips_completed_checkpoint_results(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    class IntentionalInterrupt(BaseException):
+        pass
+
+    _formal_env_for_runner_resume(monkeypatch)
+    first_call_count = {"count": 0}
+
+    async def interrupting_handler(case: dict) -> dict:
+        first_call_count["count"] += 1
+        if first_call_count["count"] > 20:
+            raise IntentionalInterrupt("stop after twenty completed results")
+        trace = get_current_trace()
+        assert trace is not None
+        trace.mark_first_body_token()
+        return {
+            "task_type": "general_chat",
+            "planned_agents": [],
+            "used_agents": [],
+            "planned_tools": [],
+            "called_tools": [],
+            "tool_results": {},
+            "attractions": [],
+            "daily_itinerary": [],
+            "budget": None,
+            "weather": None,
+            "weather_adjustments": [],
+            "execution_status": "completed",
+            "final_answer": f"done {case['case_id']}",
+        }
+
+    benchmark_path = tmp_path / "resume_benchmark.json"
+    benchmark_path.write_text(
+        json.dumps(
+            {
+                "dataset_id": "resume-dev",
+                "dataset_version": "v1",
+                "cases": [
+                    {"case_id": f"resume_{index:03d}", "user_input": "你好"}
+                    for index in range(1, 7)
+                ],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    output_dir = tmp_path / "results"
+    first_runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces_first",
+        output_dir=output_dir,
+        method_handlers={method: interrupting_handler for method in ExperimentRunner.METHODS},
+        run_id="resume-run",
+        model_config_name="offline-static",
+    )
+
+    with pytest.raises(IntentionalInterrupt):
+        first_runner.run_benchmark(benchmark_path)
+
+    run_output_dir = output_dir / "resume-run"
+    checkpoint_path = run_output_dir / BENCHMARK_CHECKPOINT_JSON_NAME
+    resume_state_path = run_output_dir / BENCHMARK_RESUME_STATE_NAME
+    checkpoint_results = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+    first_state = json.loads(resume_state_path.read_text(encoding="utf-8"))
+    assert len(checkpoint_results) == 20
+    assert first_state["status"] == "running"
+    assert first_state["progress"]["completed_result_count"] == 20
+    assert first_state["policy"]["failed_results_are_preserved"] is True
+
+    resumed_call_count = {"count": 0}
+
+    async def resuming_handler(case: dict) -> dict:
+        resumed_call_count["count"] += 1
+        trace = get_current_trace()
+        assert trace is not None
+        trace.mark_first_body_token()
+        return {
+            "task_type": "general_chat",
+            "planned_agents": [],
+            "used_agents": [],
+            "planned_tools": [],
+            "called_tools": [],
+            "tool_results": {},
+            "attractions": [],
+            "daily_itinerary": [],
+            "budget": None,
+            "weather": None,
+            "weather_adjustments": [],
+            "execution_status": "completed",
+            "final_answer": f"resumed {case['case_id']}",
+        }
+
+    resumed_runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces_resumed",
+        output_dir=output_dir,
+        method_handlers={method: resuming_handler for method in ExperimentRunner.METHODS},
+        run_id="resume-run",
+        model_config_name="offline-static",
+    )
+    results = resumed_runner.run_benchmark(benchmark_path, resume=True)
+
+    keys = {
+        (
+            result["case_id"],
+            result.get("turn_id") or "",
+            result["method"],
+            result["repeat_index"],
+        )
+        for result in results
+    }
+    final_state = json.loads(resume_state_path.read_text(encoding="utf-8"))
+    manifest = json.loads((run_output_dir / "experiment_manifest.json").read_text(encoding="utf-8"))
+    assert len(results) == 24
+    assert len(keys) == 24
+    assert resumed_call_count["count"] == 4
+    assert final_state["status"] == "completed"
+    assert final_state["progress"]["remaining_result_count"] == 0
+    assert final_state["resume_enabled_for_this_invocation"] is True
+    assert final_state["resume_events"][-1]["loaded_result_count"] == 20
+    assert manifest["resume"]["state_saved"] is True
+    assert manifest["resume"]["status"] == "completed"
+    assert manifest["resume"]["progress"]["completed_unique_key_count"] == 24
+    assert manifest["results"]["resume_state"] == resume_state_path.as_posix()
+
+
+def test_scenario_resume_restores_previous_turn_state(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    class IntentionalInterrupt(BaseException):
+        pass
+
+    _formal_env_for_runner_resume(monkeypatch)
+    seen_after_resume: list[dict[str, object]] = []
+
+    async def interrupting_handler(case: dict) -> dict:
+        if case.get("turn_id") == "t2":
+            raise IntentionalInterrupt("stop at second turn")
+        trace = get_current_trace()
+        assert trace is not None
+        trace.mark_first_body_token()
+        return {
+            "task_type": "general_chat",
+            "planned_agents": [],
+            "used_agents": [],
+            "planned_tools": [],
+            "called_tools": [],
+            "tool_results": {},
+            "attractions": [],
+            "daily_itinerary": [],
+            "budget": None,
+            "weather": None,
+            "weather_adjustments": [],
+            "execution_status": "completed",
+            "final_answer": "first turn complete",
+        }
+
+    async def resuming_handler(case: dict) -> dict:
+        previous_state = case.get("previous_state")
+        seen_after_resume.append(
+            {
+                "turn_id": case.get("turn_id"),
+                "previous_turn_id": (
+                    previous_state.get("turn_id")
+                    if isinstance(previous_state, dict)
+                    else None
+                ),
+                "previous_method": (
+                    previous_state.get("method")
+                    if isinstance(previous_state, dict)
+                    else None
+                ),
+            }
+        )
+        trace = get_current_trace()
+        assert trace is not None
+        trace.mark_first_body_token()
+        return {
+            "task_type": "general_chat",
+            "planned_agents": [],
+            "used_agents": [],
+            "planned_tools": [],
+            "called_tools": [],
+            "tool_results": {},
+            "attractions": [],
+            "daily_itinerary": [],
+            "budget": None,
+            "weather": None,
+            "weather_adjustments": [],
+            "execution_status": "completed",
+            "final_answer": "second turn resumed",
+        }
+
+    benchmark_path = tmp_path / "scenario_resume.json"
+    benchmark_path.write_text(
+        json.dumps(
+            {
+                "dataset_id": "scenario-resume-dev",
+                "cases": [
+                    {
+                        "case_id": "scenario_resume_001",
+                        "turns": [
+                            {"turn_id": "t1", "user_input": "你好"},
+                            {"turn_id": "t2", "user_input": "继续刚才的问题"},
+                        ],
+                    }
+                ],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    output_dir = tmp_path / "results"
+    first_runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces_first",
+        output_dir=output_dir,
+        method_handlers={"adaptive_multi_agent": interrupting_handler},
+        run_id="scenario-resume-run",
+        model_config_name="offline-static",
+    )
+    with pytest.raises(IntentionalInterrupt):
+        first_runner.run_benchmark(benchmark_path, methods=["adaptive_multi_agent"])
+
+    checkpoint_path = output_dir / "scenario-resume-run" / BENCHMARK_CHECKPOINT_JSON_NAME
+    assert len(json.loads(checkpoint_path.read_text(encoding="utf-8"))) == 1
+
+    resumed_runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces_resumed",
+        output_dir=output_dir,
+        method_handlers={"adaptive_multi_agent": resuming_handler},
+        run_id="scenario-resume-run",
+        model_config_name="offline-static",
+    )
+    results = resumed_runner.run_benchmark(
+        benchmark_path,
+        methods=["adaptive_multi_agent"],
+        resume=True,
+    )
+
+    assert len(results) == 2
+    assert seen_after_resume == [
+        {
+            "turn_id": "t2",
+            "previous_turn_id": "t1",
+            "previous_method": "adaptive_multi_agent",
+        }
+    ]
 
 
 def test_phase1_offline_acceptance_script_checks_sixteen_runs(
@@ -978,6 +1476,19 @@ def test_phase1_offline_acceptance_script_checks_sixteen_runs(
     assert payload["expected_count"] == 16
     assert Path(payload["output_dir"]).name == payload["run_id"]
     assert Path(payload["manifest"]).parent == Path(payload["output_dir"])
+
+
+def _formal_env_for_runner_resume(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("EXPERIMENT_STRICT_MODE", "true")
+    monkeypatch.setenv("EXPERIMENT_DISABLE_CACHE", "true")
+    monkeypatch.setenv("TRACE_SAVE_USER_MESSAGE", "false")
+    monkeypatch.setenv("LLM_MODEL", "offline-static-model")
+    monkeypatch.setenv("LLM_TEMPERATURE", "0")
+    monkeypatch.setenv("LLM_MAX_TOKENS", "4096")
+    monkeypatch.setenv("LLM_TIMEOUT", "60")
+    monkeypatch.setenv("LLM_RETRY_MAX_ATTEMPTS", "3")
+    monkeypatch.setenv("LLM_REASONING_EFFORT", "minimal")
+    monkeypatch.setenv("EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER", "true")
 
 
 def test_real_runner_passes_successful_tool_results_to_constraint_checker(
@@ -1111,6 +1622,7 @@ class _CountingResearchLLM:
 def test_m2_runs_four_business_agent_llm_steps_and_records_agent_tokens(
     tmp_path: Path,
 ) -> None:
+    snapshot_start = _qweather_snapshot_start_date()
     fake_llm = _CountingResearchLLM()
     runner = ExperimentRunner(
         trace_dir=tmp_path / "traces",
@@ -1120,12 +1632,12 @@ def test_m2_runs_four_business_agent_llm_steps_and_records_agent_tokens(
     result = runner.run(
         {
             "case_id": "m2-agent-llm",
-            "user_input": "Plan a two-day Hangzhou trip on 2026-08-01 for two people.",
+            "user_input": f"Plan a two-day Hangzhou trip on {snapshot_start} for two people.",
             "slots": {
                 "destination": "hangzhou",
                 "duration": 2,
                 "people_count": 2,
-                "start_date": "2026-08-01",
+                "start_date": snapshot_start,
             },
         },
         method="fixed_multi_agent",
@@ -1338,6 +1850,217 @@ def test_m3_reuse_skips_reused_agent_llm_step(
     assert second["metrics"]["agent_prompt_tokens"] == 49.0
     assert second["metrics"]["agent_completion_tokens"] == 9.0
     assert second["metrics"]["agent_total_tokens"] == 58.0
+
+
+def test_m3_origin_delta_reuses_trip_artifacts_and_executes_budget_only(
+    tmp_path: Path,
+) -> None:
+    snapshot_start = _qweather_snapshot_start_date()
+    fake_llm = _CountingResearchLLM()
+    runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces",
+        llm_factory=lambda: fake_llm,
+    )
+    first = runner.run(
+        {
+            "case_id": "m3-origin-turn1",
+            "user_input": f"Plan a three-day Guilin trip on {snapshot_start} for two people with a 5000 yuan budget.",
+            "slots": {
+                "destination": "guilin",
+                "duration": 3,
+                "people_count": 2,
+                "start_date": snapshot_start,
+                "budget_amount": 5000,
+            },
+        },
+        method="adaptive_multi_agent",
+    )
+    first_call_count = len(fake_llm.calls)
+
+    second = runner.run(
+        {
+            "case_id": "m3-origin-turn2",
+            "user_input": "从广州出发",
+            "slots": {"origin": "guangzhou"},
+            "previous_state": first,
+        },
+        method="adaptive_multi_agent",
+    )
+
+    assert [call["agent_name"] for call in fake_llm.calls[first_call_count:]] == [
+        "budget",
+        "final",
+    ]
+    assert second["trace"]["planned_agents"] == ["budget"]
+    assert second["trace"]["executed_agents"] == ["budget"]
+    assert second["trace"]["planned_tools"] == ["budget_calculator"]
+    assert second["trace"]["executed_tools"] == ["budget_calculator"]
+    assert [call["tool_name"] for call in second["trace"]["tool_calls"]] == [
+        "budget_calculator"
+    ]
+    assert "poi_search" not in second["trace"]["executed_tools"]
+    assert "weather_query" not in second["trace"]["executed_tools"]
+
+    scheduler = second["output"]["metadata"]["adaptive_scheduler"]
+    assert scheduler["ticket"]["changed_slots"] == ["origin"]
+    assert scheduler["decision"]["decision_reasons"] == ["origin_changed_budget_only"]
+    assert scheduler["decision"]["planned_agents"] == ["budget"]
+    assert scheduler["decision"]["planned_tools"] == ["budget_calculator"]
+    assert scheduler["decision"]["reused_agents"] == [
+        "attraction",
+        "weather",
+        "itinerary",
+    ]
+    assert scheduler["decision"]["invalidated_agents"] == ["budget"]
+    assert scheduler["reuse_execution"]["reused_agent_results"] == [
+        "attraction",
+        "weather",
+        "itinerary",
+    ]
+    assert scheduler["reuse_execution"]["reused_tool_results"] == [
+        "poi_search",
+        "weather_query",
+    ]
+
+    agent_outputs = second["output"]["agent_outputs"]
+    assert agent_outputs["attraction"]["status"] == "reused"
+    assert agent_outputs["weather"]["status"] == "reused"
+    assert agent_outputs["itinerary"]["status"] == "reused"
+    assert agent_outputs["budget"]["status"] == "completed"
+
+
+def test_m3_weather_adjustment_reuses_weather_and_recomputes_budget(
+    tmp_path: Path,
+) -> None:
+    snapshot_start = _qweather_snapshot_start_date()
+    fake_llm = _CountingResearchLLM()
+    runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces",
+        llm_factory=lambda: fake_llm,
+    )
+    first = runner.run(
+        {
+            "case_id": "m3-weather-adjust-turn1",
+            "user_input": f"Plan a three-day Shenzhen trip on {snapshot_start} for two people with a 6000 yuan budget and outdoor activities.",
+            "slots": {
+                "destination": "shenzhen",
+                "duration": 3,
+                "people_count": 2,
+                "start_date": snapshot_start,
+                "budget_amount": 6000,
+                "preferences": ["nature"],
+            },
+        },
+        method="adaptive_multi_agent",
+    )
+    first_call_count = len(fake_llm.calls)
+
+    second = runner.run(
+        {
+            "case_id": "m3-weather-adjust-turn2",
+            "user_input": "It will be hot; reduce midday outdoor activities and keep the other conditions unchanged.",
+            "previous_state": first,
+        },
+        method="adaptive_multi_agent",
+    )
+
+    assert [call["agent_name"] for call in fake_llm.calls[first_call_count:]] == [
+        "itinerary",
+        "budget",
+        "final",
+    ]
+    assert second["trace"]["planned_agents"] == ["itinerary", "budget"]
+    assert second["trace"]["executed_agents"] == ["itinerary", "budget"]
+    assert second["trace"]["planned_tools"] == ["budget_calculator"]
+    assert second["trace"]["executed_tools"] == ["budget_calculator"]
+    assert [call["tool_name"] for call in second["trace"]["tool_calls"]] == [
+        "budget_calculator"
+    ]
+    assert "poi_search" not in second["trace"]["executed_tools"]
+    assert "weather_query" not in second["trace"]["executed_tools"]
+
+    scheduler = second["output"]["metadata"]["adaptive_scheduler"]
+    assert scheduler["ticket"]["task_type"] == "weather_adjustment"
+    assert scheduler["decision"]["decision_reasons"] == [
+        "weather_adjustment_reuses_previous_weather"
+    ]
+    assert scheduler["decision"]["reused_agents"] == ["attraction", "weather"]
+    assert scheduler["decision"]["invalidated_agents"] == ["itinerary", "budget"]
+    assert scheduler["reuse_execution"]["reused_agent_results"] == [
+        "attraction",
+        "weather",
+    ]
+    assert scheduler["reuse_execution"]["reused_tool_results"] == [
+        "poi_search",
+        "weather_query",
+    ]
+
+    agent_outputs = second["output"]["agent_outputs"]
+    assert agent_outputs["attraction"]["status"] == "reused"
+    assert agent_outputs["weather"]["status"] == "reused"
+    assert agent_outputs["itinerary"]["status"] == "completed"
+    assert agent_outputs["budget"]["status"] == "completed"
+    assert second["output"]["used_agents"] == ["itinerary", "budget"]
+    assert set(second["output"]["metadata"]["result_agents"]) == {
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget",
+    }
+
+
+def test_m3_complete_plan_without_date_executes_itinerary_without_weather(
+    tmp_path: Path,
+) -> None:
+    fake_llm = _CountingResearchLLM()
+    runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces",
+        llm_factory=lambda: fake_llm,
+    )
+
+    result = runner.run(
+        {
+            "case_id": "m3-no-date-trip-plan",
+            "user_input": "Plan a three-day Guilin trip for two people with a 5000 yuan budget.",
+            "slots": {
+                "destination": "guilin",
+                "duration_days": 3,
+                "people_count": 2,
+                "budget_amount": 5000,
+            },
+        },
+        method="adaptive_multi_agent",
+    )
+
+    assert result["status"] == "completed"
+    assert result["output"]["execution_status"] == "completed"
+
+    scheduler = result["output"]["metadata"]["adaptive_scheduler"]
+    assert scheduler["ticket"]["task_type"] == "trip_plan"
+    assert scheduler["decision"]["planned_agents"] == ["attraction", "itinerary", "budget"]
+    assert scheduler["decision"]["planned_tools"] == ["poi_search", "budget_calculator"]
+    assert scheduler["result_fingerprints"].keys() >= {"attraction", "itinerary", "budget"}
+    assert "weather" not in scheduler["result_fingerprints"]
+
+    assert result["trace"]["planned_agents"] == ["attraction", "itinerary", "budget"]
+    assert result["trace"]["executed_agents"] == ["attraction", "itinerary", "budget"]
+    assert result["trace"]["planned_tools"] == ["poi_search", "budget_calculator"]
+    assert result["trace"]["executed_tools"] == ["poi_search", "budget_calculator"]
+    assert [call["tool_name"] for call in result["trace"]["tool_calls"]] == [
+        "poi_search",
+        "budget_calculator",
+    ]
+
+    assert result["output"]["planned_agents"] == ["attraction", "itinerary", "budget"]
+    assert result["output"]["used_agents"] == result["trace"]["executed_agents"]
+    assert result["output"]["weather"] is None
+    assert "weather_query" not in result["output"]["tool_results"]
+    assert len(result["output"]["daily_itinerary"]) == 3
+
+    itinerary_output = result["output"]["agent_outputs"]["itinerary"]
+    assert itinerary_output["status"] == "completed"
+    assert itinerary_output["evidence_tools"] == ["poi_search"]
+    assert itinerary_output["upstream_agents"] == ["attraction"]
 
 
 def test_business_agent_invalid_json_uses_evidence_normalizer(tmp_path: Path) -> None:
@@ -2026,7 +2749,7 @@ def test_senior_visible_request_limits_selected_pois_without_gold_constraints(
     assert all(item["visit_intensity"] != "high" for item in selected)
 
 
-def test_budget_level_for_research_tool_uses_economy_when_default_exceeds_budget(
+def test_budget_level_for_research_tool_does_not_auto_downgrade_for_budget_limit(
     tmp_path: Path,
 ) -> None:
     runner = ExperimentRunner(trace_dir=tmp_path / "traces")
@@ -2045,7 +2768,104 @@ def test_budget_level_for_research_tool_uses_economy_when_default_exceeds_budget
         selected_poi_ids=["bj004", "bj002", "bj005", "bj006"],
     )
 
-    assert level == "economy"
+    assert level == "medium"
+
+
+def test_budget_tool_arguments_use_normalized_final_itinerary(
+    tmp_path: Path,
+) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces")
+    tool_results = {
+        "poi_search": {
+            "tool_name": "poi_search",
+            "status": "success",
+            "success": True,
+            "data": {
+                "city": "beijing",
+                "attractions": [
+                    {"poi_id": "bj001", "name": "A", "indoor_outdoor": "outdoor"},
+                    {"poi_id": "bj002", "name": "B", "indoor_outdoor": "indoor"},
+                    {"poi_id": "bj003", "name": "C", "indoor_outdoor": "mixed"},
+                    {"poi_id": "bj004", "name": "D", "indoor_outdoor": "outdoor"},
+                ],
+            },
+        },
+        "weather_query": {
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": True,
+            "data": {
+                "daily_weather": [{"day_index": 1, "condition": "sunny"}],
+            },
+        },
+    }
+    agent_outputs = {
+        "itinerary": {
+            "status": "completed",
+            "success": True,
+            "decision_validation_status": "passed",
+            "decision": {
+                "decisions": {
+                    "daily_itinerary": [
+                        {"day": 1, "attraction_poi_ids": ["bj001", "bj002", "bj003"]},
+                        {"day": 2, "attraction_poi_ids": ["bj003", "bj004"]},
+                    ]
+                }
+            },
+        }
+    }
+    case = {
+        "case_id": "budget-final-itinerary-consistency",
+        "user_input": "北京两天，最多每天两个景点，预算5000。",
+        "slots": {
+            "destination": "beijing",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5000,
+        },
+        "expected": {
+            "hard_constraints": {
+                "max_pois_per_day": 2,
+                "max_attractions": 3,
+            }
+        },
+    }
+    weather = runner._tool_data(tool_results["weather_query"])
+    attractions = runner._attractions_for_research_output(
+        case=case,
+        tool_results=tool_results,
+        agent_outputs=agent_outputs,
+        weather=weather,
+    )
+    final_itinerary = runner._daily_itinerary_for_research_output(
+        case=case,
+        trip_days=2,
+        attractions=attractions,
+        weather=weather,
+        planned_agents=["itinerary", "budget"],
+        reused_agents=[],
+        agent_outputs=agent_outputs,
+        previous_state=None,
+    )
+    final_itinerary, _audit = runner._normalize_daily_itinerary_for_evidence_constraints(
+        trip_days=2,
+        attractions=attractions,
+        weather=weather,
+        case=case,
+        daily_itinerary=final_itinerary,
+    )
+
+    args = runner._research_tool_arguments(
+        "budget_calculator",
+        case,
+        tool_results,
+        agent_outputs=agent_outputs,
+    )
+
+    assert runner._daily_itinerary_day_poi_ids(args["daily_itinerary"]) == (
+        runner._daily_itinerary_day_poi_ids(final_itinerary)
+    )
+    assert args["attractions"] == runner._daily_itinerary_poi_ids(final_itinerary)
 
 
 def test_research_answer_summary_filters_unselected_poi_mentions(

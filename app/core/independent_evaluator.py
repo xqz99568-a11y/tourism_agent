@@ -13,6 +13,13 @@ from app.schemas.experiment import (
     EXPERIMENT_OUTPUT_SCHEMA_VERSION,
     ExperimentMethodOutput,
 )
+from app.core.budget_gold import budget_gold_record_for_case
+from app.core.fixed_data import FixedDataError, get_fixed_tourism_data
+from app.core.no_date_weather_policy import (
+    answer_has_no_date_weather_reminder,
+    gold_requires_no_date_weather_reminder,
+)
+from app.core.qweather_snapshot import QWeatherSnapshotError, query_qweather_snapshot
 
 
 EVALUATION_SCHEMA_VERSION = "ctp-independent-evaluation-v1"
@@ -36,6 +43,28 @@ _CITY_VALUE_ALIASES = {
     "shenzhen": "shenzhen",
     "\u6842\u6797": "guilin",
     "guilin": "guilin",
+    "\u4e0a\u6d77": "shanghai",
+    "shanghai": "shanghai",
+    "\u5e7f\u5dde": "guangzhou",
+    "guangzhou": "guangzhou",
+    "\u6210\u90fd": "chengdu",
+    "chengdu": "chengdu",
+    "\u91cd\u5e86": "chongqing",
+    "chongqing": "chongqing",
+    "\u6b66\u6c49": "wuhan",
+    "wuhan": "wuhan",
+    "\u957f\u6c99": "changsha",
+    "changsha": "changsha",
+    "\u5357\u4eac": "nanjing",
+    "nanjing": "nanjing",
+    "\u90d1\u5dde": "zhengzhou",
+    "zhengzhou": "zhengzhou",
+    "\u5357\u660c": "nanchang",
+    "nanchang": "nanchang",
+    "\u8d35\u9633": "guiyang",
+    "guiyang": "guiyang",
+    "\u62c9\u8428": "lhasa",
+    "lhasa": "lhasa",
 }
 _CONSTRAINT_RULES = {
     "H_POI_GROUNDED": "poi_existence",
@@ -47,11 +76,30 @@ _SCOPE_RULES = {
     "T_WEATHER_SINGLE_SCOPE": ("weather_query", "weather", {"weather"}),
     "T_BUDGET_SINGLE_SCOPE": ("budget_calculator", "budget", {"budget"}),
 }
+_BUDGET_POLICY_VERSION_EXPECTED = "budget_policy_v2_0"
+_BUDGET_CONTINGENCY_RATIO_EXPECTED = 0.10
+_BUDGET_NUMERIC_TOLERANCE = 0.02
+_BPCR_RULE_IDS = frozenset(
+    {
+        "H_BUDGET_EVIDENCE",
+        "H_INTERCITY_SCOPE",
+        "H_INTERCITY_COST",
+        "H_INTERCITY_EVIDENCE",
+        "H_BUDGET_POLICY_VERSION",
+        "H_BUDGET_ACCOMMODATION_NIGHTS",
+        "H_BUDGET_CONTINGENCY_LOCAL_ONLY",
+        "H_BUDGET_TOTAL_FORMULA",
+        "H_BUDGET_ITINERARY_CONSISTENCY",
+        "H_BUDGET_UPGRADE_POLICY",
+        "H_BUDGET_INDEPENDENT_RECALCULATION",
+    }
+)
 _BOOTSTRAP_SAMPLES = 2000
 _BOOTSTRAP_SEED = 20260725
 _DESCRIPTIVE_METRICS = (
     ("stsr", ("metrics", "stsr")),
     ("evaluation_hcsr", ("metrics", "evaluation_hcsr")),
+    ("bpcr", ("metrics", "bpcr")),
     ("agent_selection_f1", ("metrics", "agent_selection_f1")),
     ("tool_selection_f1", ("metrics", "tool_selection_f1")),
     ("agent_set_exact_match", ("metrics", "agent_set_exact_match")),
@@ -95,6 +143,8 @@ _DESCRIPTIVE_METRICS = (
 _PAIRED_METRICS = (
     ("stsr", ("metrics", "stsr"), True),
     ("evaluation_hcsr", ("metrics", "evaluation_hcsr"), False),
+    ("itcsr", ("metrics", "itcsr"), False),
+    ("bpcr", ("metrics", "bpcr"), False),
     ("agent_selection_f1", ("metrics", "agent_selection_f1"), False),
     ("tool_selection_f1", ("metrics", "tool_selection_f1"), False),
     ("agent_set_exact_match", ("metrics", "agent_set_exact_match"), True),
@@ -126,6 +176,9 @@ _PAIRED_METRICS = (
     ("tool_call_count", ("trace", "tool_call_count"), False),
 )
 _METHOD_SUMMARY_METRICS = (
+    "bpcr",
+    "bpcr_applicable_count",
+    "bpcr_failed_count",
     "agent_set_exact_match",
     "necessary_agent_coverage",
     "extra_agent_count",
@@ -175,7 +228,7 @@ _METHOD_SUMMARY_METRICS = (
 _METHOD_LABELS = {
     "llm_direct": "M0 Direct LLM",
     "single_agent": "M1 Single Agent",
-    "fixed_multi_agent": "M2 Fixed Multi-Agent",
+    "fixed_multi_agent": "M2 Fixed Template Multi-Agent",
     "adaptive_multi_agent": "M3 Proposed",
 }
 _MISSING = object()
@@ -252,14 +305,15 @@ def render_paper_tables(summary: Dict[str, Any]) -> str:
         "",
         "## Method-level results",
         "",
-        "| Method | Cases | STSR | HCSR | Agent F1 | Tool F1 | Latency ms | Agent calls | Tool calls |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| Method | Cases | STSR | HCSR | BPCR | Agent F1 | Tool F1 | Latency ms | Agent calls | Tool calls |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for method in _method_order(methods):
         row = methods.get(method) or {}
         lines.append(
             f"| {_method_label(method)} | {row.get('case_count', 0)} | {_fmt(row.get('stsr_rate'))} "
-            f"| {_fmt(row.get('evaluation_hcsr_mean'))} | {_fmt(row.get('agent_selection_f1_mean'))} "
+            f"| {_fmt(row.get('evaluation_hcsr_mean'))} | {_fmt(row.get('bpcr_mean'))} "
+            f"| {_fmt(row.get('agent_selection_f1_mean'))} "
             f"| {_fmt(row.get('tool_selection_f1_mean'))} | {_fmt(row.get('latency_ms_mean'))} "
             f"| {_fmt(row.get('agent_call_count_mean'))} | {_fmt(row.get('tool_call_count_mean'))} |"
         )
@@ -347,6 +401,7 @@ def evaluate_case(
     catalog = catalog or load_rule_catalog()
     trace = trace or {}
     gold = _gold(case)
+    gold = _merge_formal_budget_gold(case, gold)
     gold_task_type = _canon(gold.get("task_type") or case.get("task_type"), catalog)
     output_task_type = _canon(output.get("task_type") or gold_task_type, catalog)
     scoring_task_type = gold_task_type if gold_task_type != "unknown" else output_task_type
@@ -374,6 +429,7 @@ def _method_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
         "raw_run_count": sum(_first_int(row.get("repeat_count")) or 1 for row in rows),
         "stsr_rate": _mean_metric(rows, "stsr"),
         "evaluation_hcsr_mean": _mean_num((row.get("metrics") or {}).get("evaluation_hcsr") for row in rows),
+        "itcsr_mean": _mean_num((row.get("metrics") or {}).get("itcsr") for row in rows),
         "agent_selection_f1_mean": _mean_num((row.get("metrics") or {}).get("agent_selection_f1") for row in rows),
         "tool_selection_f1_mean": _mean_num((row.get("metrics") or {}).get("tool_selection_f1") for row in rows),
         "latency_ms_mean": _mean_num(row.get("latency_ms") for row in rows),
@@ -404,6 +460,8 @@ def _paired_summary(m3_rows: List[Dict[str, Any]], m2_rows: List[Dict[str, Any]]
         "pair_count": len(pairs),
         "stsr_rate_delta": _mean_num(_num((m3.get("metrics") or {}).get("stsr")) - _num((m2.get("metrics") or {}).get("stsr")) for m3, m2 in pairs),
         "evaluation_hcsr_delta_mean": _mean_delta(pairs, "evaluation_hcsr"),
+        "itcsr_delta_mean": _mean_delta(pairs, "itcsr"),
+        "bpcr_delta_mean": _mean_delta(pairs, "bpcr"),
         "agent_call_count_delta_mean": _mean_num(_num((m3.get("trace") or {}).get("agent_call_count")) - _num((m2.get("trace") or {}).get("agent_call_count")) for m3, m2 in pairs),
         "tool_call_count_delta_mean": _mean_num(_num((m3.get("trace") or {}).get("tool_call_count")) - _num((m2.get("trace") or {}).get("tool_call_count")) for m3, m2 in pairs),
     }
@@ -541,9 +599,31 @@ def _check(
         required = bool(gold.get("weather_adjustment_required") or _contains_rain(output.get("weather")))
         return ("na", {}) if not required else ("passed" if output.get("weather_adjustments") else "failed", {"adjustment_count": len(output.get("weather_adjustments") or [])})
     if rule_id == "H_WEATHER_EVIDENCE":
-        return _tool_rule(output, trace, ["weather_query"]) if output.get("weather") or "weather_query" in _list(gold.get("required_tools")) else ("na", {})
+        return _weather_evidence_rule(gold, output, trace)
+    if rule_id == "H_NO_DATE_WEATHER_REMINDER":
+        return _no_date_weather_reminder_rule(gold, output, trace)
     if rule_id == "H_BUDGET_EVIDENCE":
         return _tool_rule(output, trace, ["budget_calculator"]) if output.get("budget") or "budget_calculator" in _list(gold.get("required_tools")) else ("na", {})
+    if rule_id == "H_BUDGET_POLICY_VERSION":
+        return _budget_policy_version_rule(gold, output)
+    if rule_id == "H_BUDGET_ACCOMMODATION_NIGHTS":
+        return _budget_accommodation_nights_rule(gold, output)
+    if rule_id == "H_BUDGET_CONTINGENCY_LOCAL_ONLY":
+        return _budget_contingency_local_only_rule(gold, output)
+    if rule_id == "H_BUDGET_TOTAL_FORMULA":
+        return _budget_total_formula_rule(gold, output)
+    if rule_id == "H_BUDGET_ITINERARY_CONSISTENCY":
+        return _budget_itinerary_consistency_rule(gold, output)
+    if rule_id == "H_BUDGET_UPGRADE_POLICY":
+        return _budget_upgrade_policy_rule(gold, output)
+    if rule_id == "H_BUDGET_INDEPENDENT_RECALCULATION":
+        return _budget_independent_recalculation_rule(case, gold, output)
+    if rule_id == "H_INTERCITY_SCOPE":
+        return _intercity_scope_rule(gold, output)
+    if rule_id == "H_INTERCITY_COST":
+        return _intercity_cost_rule(output)
+    if rule_id == "H_INTERCITY_EVIDENCE":
+        return _intercity_evidence_rule(output)
     if rule_id == "H_TOOL_EVIDENCE":
         required = _list(gold.get("required_tools"))
         return _tool_rule(output, trace, required) if required else ("na", {})
@@ -601,8 +681,22 @@ def _check(
 def _metrics(rules: List[Dict[str, Any]], gold: Dict[str, Any], output: Dict[str, Any], trace: Dict[str, Any]) -> Dict[str, Any]:
     gates = [item for item in rules if item["usage"] == "stsr_gate" and item["status"] != "na"]
     hcsr = [item for item in rules if item["usage"] == "hcsr" and item["status"] != "na"]
+    intercity_rules = [
+        item
+        for item in rules
+        if item["id"].startswith("H_INTERCITY_") and item["status"] != "na"
+    ]
+    bpcr_rules = [
+        item
+        for item in rules
+        if item["id"] in _BPCR_RULE_IDS and item["status"] != "na"
+    ]
     h_pass = sum(item["status"] == "passed" for item in hcsr)
     h_fail = sum(item["status"] == "failed" for item in hcsr)
+    intercity_pass = sum(item["status"] == "passed" for item in intercity_rules)
+    intercity_fail = sum(item["status"] == "failed" for item in intercity_rules)
+    bpcr_pass = sum(item["status"] == "passed" for item in bpcr_rules)
+    bpcr_fail = sum(item["status"] == "failed" for item in bpcr_rules)
     failed_ids = [item["id"] for item in rules if item["status"] == "failed"]
     agents = _agents(output, trace)
     tools = _called_tools(output, trace)
@@ -628,6 +722,14 @@ def _metrics(rules: List[Dict[str, Any]], gold: Dict[str, Any], output: Dict[str
         "evaluation_hcsr_applicable_count": len(hcsr),
         "evaluation_hcsr_passed_count": h_pass,
         "evaluation_hcsr_failed_count": h_fail,
+        "itcsr": None if not intercity_rules else round(intercity_pass / len(intercity_rules), 4),
+        "itcsr_applicable_count": len(intercity_rules),
+        "itcsr_passed_count": intercity_pass,
+        "itcsr_failed_count": intercity_fail,
+        "bpcr": None if not bpcr_rules else round(bpcr_pass / len(bpcr_rules), 4),
+        "bpcr_applicable_count": len(bpcr_rules),
+        "bpcr_passed_count": bpcr_pass,
+        "bpcr_failed_count": bpcr_fail,
         "evaluation_failed_rule_ids": failed_ids,
         "evaluation_failed_rule_count": len(failed_ids),
         "agent_selection_precision": agent_scores["precision"],
@@ -724,9 +826,136 @@ def _gold(case: Dict[str, Any]) -> Dict[str, Any]:
     return gold
 
 
+def _merge_formal_budget_gold(case: Dict[str, Any], gold: Dict[str, Any]) -> Dict[str, Any]:
+    record = budget_gold_record_for_case(case)
+    if not record:
+        return gold
+    merged = dict(gold)
+    merged["budget_gold_record"] = record
+    merged.setdefault("input_slots", record.get("input_slots") or {})
+    budget_policy = record.get("budget_policy_v2")
+    if isinstance(budget_policy, dict):
+        merged["budget_policy_v2"] = budget_policy
+        for key in (
+            "budget_scope",
+            "requested_budget_scope",
+            "computed_budget_scope",
+            "scope_complete",
+            "sufficiency_status",
+            "intercity_transport_included",
+            "mandatory_budget_disclaimer",
+            "budget_limit",
+            "duration_days",
+            "people_count",
+            "origin",
+            "destination",
+        ):
+            if key in budget_policy:
+                merged.setdefault(key, budget_policy.get(key))
+    expected_scope = record.get("expected_scope_from_dataset")
+    if isinstance(expected_scope, dict):
+        for key, value in expected_scope.items():
+            if value is not None:
+                merged.setdefault(key, value)
+    input_slots = record.get("input_slots")
+    if isinstance(input_slots, dict):
+        for key, value in input_slots.items():
+            if value is not None:
+                merged.setdefault(key, value)
+    return merged
+
+
 def _tool_rule(output: Dict[str, Any], trace: Dict[str, Any], required: List[str]) -> tuple[str, Dict[str, Any]]:
     missing = [name for name in required if not _tool_ok(name, output, trace)]
     return "passed" if not missing else "failed", {"required_tools": required, "missing_or_failed": missing}
+
+
+def _weather_evidence_rule(gold: Dict[str, Any], output: Dict[str, Any], trace: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+    if not _weather_evidence_applicable(gold, output):
+        return "na", {"reason": "weather_not_required"}
+    tool_status, tool_details = _tool_rule(output, trace, ["weather_query"])
+    weather = output.get("weather") if isinstance(output.get("weather"), dict) else {}
+    tool_data = _tool_result_data(output, "weather_query")
+    mismatch_issues = _weather_payload_mismatch_issues(weather, tool_data) if weather and tool_data else []
+    snapshot_issues = _weather_snapshot_mismatch_issues(tool_data) if tool_data else []
+    expected_issues = _weather_expected_gold_issues(gold, weather or tool_data)
+    fabrication_issues = _weather_fabrication_issues(weather or tool_data)
+    issues: List[str] = []
+    if tool_status != "passed":
+        issues.append("weather_tool_evidence_missing_or_invalid")
+    if weather and not tool_data:
+        issues.append("weather_output_without_tool_data")
+    if mismatch_issues:
+        issues.append("output_tool_weather_mismatch")
+    if snapshot_issues:
+        issues.append("tool_weather_snapshot_mismatch")
+    issues.extend(expected_issues)
+    issues.extend(fabrication_issues)
+    return (
+        "passed" if not issues else "failed",
+        {
+            "issues": issues,
+            "tool_evidence": tool_details,
+            "mismatch_issues": mismatch_issues,
+            "snapshot_issues": snapshot_issues,
+            "expected_issues": expected_issues,
+            "fabrication_issues": fabrication_issues,
+            "expected_coverage_status": _expected_weather_coverage_status(gold),
+            "actual_coverage_status": (weather or tool_data).get("coverage_status"),
+            "expected_missing_dates": _expected_weather_missing_dates(gold),
+            "actual_missing_dates": _weather_missing_dates(weather or tool_data),
+        },
+    )
+
+
+def _no_date_weather_reminder_rule(
+    gold: Dict[str, Any],
+    output: Dict[str, Any],
+    trace: Dict[str, Any],
+) -> tuple[str, Dict[str, Any]]:
+    if not gold_requires_no_date_weather_reminder(gold):
+        return "na", {"reason": "no_date_weather_reminder_not_required"}
+
+    called_tools = _called_tools(output, trace)
+    tool_results = output.get("tool_results") if isinstance(output.get("tool_results"), dict) else {}
+    weather_output = output.get("weather") if isinstance(output.get("weather"), dict) else {}
+    weather_tool_data = _tool_result_data(output, "weather_query")
+    issues: List[str] = []
+
+    if not answer_has_no_date_weather_reminder(output.get("final_answer")):
+        issues.append("no_date_weather_reminder_missing")
+    if "weather_query" in called_tools:
+        issues.append("no_date_weather_query_forbidden")
+    if "weather_query" in tool_results:
+        issues.append("no_date_weather_tool_result_forbidden")
+    if _meaningful_weather_payload(weather_output) or _meaningful_weather_payload(weather_tool_data):
+        issues.append("concrete_weather_fabricated")
+
+    return (
+        "passed" if not issues else "failed",
+        {
+            "issues": issues,
+            "called_tools": called_tools,
+            "weather_output_present": _meaningful_weather_payload(weather_output),
+            "weather_tool_result_present": "weather_query" in tool_results,
+            "weather_tool_data_present": _meaningful_weather_payload(weather_tool_data),
+        },
+    )
+
+
+def _meaningful_weather_payload(value: Any) -> bool:
+    if not isinstance(value, dict) or not value:
+        return False
+    return any(raw not in (None, "", [], {}) for raw in value.values())
+
+
+def _weather_evidence_applicable(gold: Dict[str, Any], output: Dict[str, Any]) -> bool:
+    return bool(
+        output.get("weather")
+        or "weather_query" in _list(gold.get("required_tools"))
+        or gold.get("weather_required") is True
+        or _expected_weather_coverage_status(gold)
+    )
 
 
 def _tool_ok(name: str, output: Dict[str, Any], trace: Dict[str, Any]) -> bool:
@@ -804,9 +1033,170 @@ def _weather_tool_matches_output(result: Dict[str, Any], output: Dict[str, Any])
     if not isinstance(weather, dict) or not weather:
         return True
     data = result.get("data") if isinstance(result.get("data"), dict) else {}
-    output_terms = set(_weather_terms(weather))
-    evidence_terms = set(_weather_terms(data))
-    return bool(evidence_terms) and (not output_terms or output_terms <= evidence_terms)
+    return not _weather_payload_mismatch_issues(weather, data)
+
+
+def _weather_payload_mismatch_issues(actual: Dict[str, Any], expected: Dict[str, Any]) -> List[str]:
+    if not isinstance(actual, dict) or not isinstance(expected, dict) or not expected:
+        return ["weather_evidence_missing"]
+    issues: List[str] = []
+    for key in (
+        "provider",
+        "city_id",
+        "location_id",
+        "start_date",
+        "end_date",
+        "date",
+        "requested_days",
+        "coverage_days",
+        "coverage_status",
+        "scenario_type",
+        "weather_type",
+        "risk_level",
+        "snapshot_id",
+        "snapshot_combined_sha256",
+    ):
+        if key in actual and actual.get(key) not in (None, "", [], {}):
+            if not _same_value(actual.get(key), expected.get(key)):
+                issues.append(f"{key}_mismatch")
+    for key in ("covered_dates", "missing_dates", "risk_tags"):
+        if key in actual and actual.get(key) not in (None, "", [], {}):
+            if _ordered_norm(_list(actual.get(key))) != _ordered_norm(_list(expected.get(key))):
+                issues.append(f"{key}_mismatch")
+    actual_terms = set(_weather_terms(actual))
+    expected_terms = set(_weather_terms(expected))
+    if actual_terms and not (expected_terms and actual_terms <= expected_terms):
+        issues.append("weather_term_mismatch")
+    issues.extend(_daily_weather_mismatch_issues(actual, expected))
+    return _unique(issues)
+
+
+def _daily_weather_mismatch_issues(actual: Dict[str, Any], expected: Dict[str, Any]) -> List[str]:
+    actual_days = _weather_daily_items(actual)
+    if not actual_days:
+        return []
+    expected_days = _weather_daily_items(expected)
+    if not expected_days:
+        return ["daily_weather_fabricated_without_evidence"]
+    expected_by_date = {
+        str(day.get("date") or ""): day
+        for day in expected_days
+        if isinstance(day, dict) and day.get("date")
+    }
+    issues: List[str] = []
+    for index, actual_day in enumerate(actual_days):
+        expected_day: Dict[str, Any] = {}
+        actual_date = str(actual_day.get("date") or "")
+        if actual_date and actual_date in expected_by_date:
+            expected_day = expected_by_date[actual_date]
+        elif index < len(expected_days):
+            expected_day = expected_days[index]
+        else:
+            issues.append("daily_weather_extra_day")
+            continue
+        for key in (
+            "date",
+            "day_index",
+            "request_day_index",
+            "state",
+            "weather",
+            "day_weather",
+            "night_weather",
+            "temperature_min_c",
+            "temperature_max_c",
+            "precipitation_mm",
+            "precipitation_probability",
+            "wind_scale_day",
+            "wind_speed_day_kmh",
+            "humidity_percent",
+            "uv_index",
+            "risk_level",
+        ):
+            if key in actual_day and actual_day.get(key) not in (None, "", [], {}):
+                if not _same_value(actual_day.get(key), expected_day.get(key)):
+                    issues.append("daily_weather_value_mismatch")
+                    break
+        if "risk_tags" in actual_day and actual_day.get("risk_tags") not in (None, "", [], {}):
+            if _ordered_norm(_list(actual_day.get("risk_tags"))) != _ordered_norm(_list(expected_day.get("risk_tags"))):
+                issues.append("daily_weather_value_mismatch")
+    return _unique(issues)
+
+
+def _weather_snapshot_mismatch_issues(tool_data: Dict[str, Any]) -> List[str]:
+    if not isinstance(tool_data, dict) or not tool_data:
+        return []
+    if str(tool_data.get("provider") or "") != "qweather_snapshot":
+        return []
+    city = tool_data.get("city_id") or tool_data.get("city")
+    start_date = tool_data.get("start_date") or tool_data.get("date")
+    days = _first_int(tool_data.get("requested_days"), tool_data.get("days"), len(_weather_daily_items(tool_data)) or None)
+    if not city or not start_date or days is None:
+        return []
+    try:
+        expected = query_qweather_snapshot(city=city, start_date=str(start_date), days=days)
+    except QWeatherSnapshotError as exc:
+        return [f"snapshot_requery_failed:{exc}"]
+    return _weather_payload_mismatch_issues(tool_data, expected)
+
+
+def _weather_expected_gold_issues(gold: Dict[str, Any], weather: Dict[str, Any]) -> List[str]:
+    if not isinstance(weather, dict) or not weather:
+        return ["weather_missing"] if gold.get("weather_required") is True else []
+    issues: List[str] = []
+    expected_status = _expected_weather_coverage_status(gold)
+    if expected_status and str(weather.get("coverage_status") or "") != expected_status:
+        issues.append("expected_coverage_status_mismatch")
+    expected_missing = _expected_weather_missing_dates(gold)
+    if expected_missing is not None and _ordered_norm(_weather_missing_dates(weather)) != _ordered_norm(expected_missing):
+        issues.append("expected_missing_dates_mismatch")
+    return issues
+
+
+def _weather_fabrication_issues(weather: Dict[str, Any]) -> List[str]:
+    if not isinstance(weather, dict) or not weather:
+        return []
+    coverage_status = str(weather.get("coverage_status") or "")
+    missing_dates = set(_weather_missing_dates(weather))
+    daily_dates = {
+        str(day.get("date") or "")
+        for day in _weather_daily_items(weather)
+        if isinstance(day, dict) and day.get("date")
+    }
+    issues: List[str] = []
+    if coverage_status == "out_of_range" and _weather_daily_items(weather):
+        issues.append("out_of_range_daily_weather_fabricated")
+    if missing_dates & daily_dates:
+        issues.append("missing_date_weather_fabricated")
+    return issues
+
+
+def _expected_weather_coverage_status(gold: Dict[str, Any]) -> str:
+    return str(
+        gold.get("expected_weather_coverage_status")
+        or gold.get("weather_coverage")
+        or gold.get("coverage_status")
+        or ""
+    ).strip()
+
+
+def _expected_weather_missing_dates(gold: Dict[str, Any]) -> Optional[List[str]]:
+    if "expected_weather_missing_dates" not in gold:
+        return None
+    return _list(gold.get("expected_weather_missing_dates"))
+
+
+def _weather_missing_dates(weather: Dict[str, Any]) -> List[str]:
+    return _list(weather.get("missing_dates")) if isinstance(weather, dict) else []
+
+
+def _weather_daily_items(weather: Dict[str, Any]) -> List[Dict[str, Any]]:
+    if not isinstance(weather, dict):
+        return []
+    for key in ("daily_weather", "daily_forecasts", "forecast"):
+        value = weather.get(key)
+        if isinstance(value, list):
+            return [item for item in value if isinstance(item, dict)]
+    return []
 
 
 def _budget_tool_matches_output(result: Dict[str, Any], output: Dict[str, Any]) -> bool:
@@ -984,6 +1374,945 @@ def _budget_total(value: Any) -> Optional[float]:
     )
 
 
+def _budget_policy_version_rule(gold: Dict[str, Any], output: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+    if not _budget_policy_applicable(gold, output):
+        return "na", {"reason": "budget_policy_not_applicable"}
+    budget = _budget_payload(output)
+    if not budget:
+        return "failed", {"reason": "budget_missing"}
+    expected = str(
+        _nested(gold, "budget_policy_v2", "budget_policy_version")
+        or gold.get("budget_policy_version")
+        or _BUDGET_POLICY_VERSION_EXPECTED
+    )
+    actual = str(
+        budget.get("budget_policy_version")
+        or _nested(budget, "budget_policy", "version")
+        or ""
+    )
+    return (
+        "passed" if actual == expected else "failed",
+        {"expected": expected, "actual": actual},
+    )
+
+
+def _budget_accommodation_nights_rule(gold: Dict[str, Any], output: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+    if not _budget_policy_applicable(gold, output):
+        return "na", {"reason": "budget_policy_not_applicable"}
+    budget = _budget_payload(output)
+    if not budget:
+        return "failed", {"reason": "budget_missing"}
+    duration = _first_int(gold.get("duration_days"), output.get("trip_days"), len(output.get("daily_itinerary") or []))
+    if duration is None:
+        return "failed", {"reason": "duration_missing"}
+    people_count = _first_int(
+        gold.get("people_count"),
+        budget.get("people_count"),
+        budget.get("num_travelers"),
+        _nested(budget, "intercity_transport", "people_count"),
+    )
+    expected_nights = max(duration - 1, 0)
+    expected_rooms = math.ceil(people_count / 2) if people_count else None
+    accommodation = _budget_breakdown_section(budget, "accommodation")
+    actual_nights = _first_int(accommodation.get("night_count"), budget.get("nights"))
+    actual_rooms = _first_int(accommodation.get("room_count"), budget.get("rooms"))
+    reference_price = _first_float(accommodation.get("reference_price_cny"))
+    actual_cost = _first_float(accommodation.get("recommended"), accommodation.get("estimated_cost"))
+    issues: List[str] = []
+    if actual_nights is None or actual_nights != expected_nights:
+        issues.append("night_count_mismatch")
+    if expected_rooms is not None and actual_rooms is not None and actual_rooms != expected_rooms:
+        issues.append("room_count_mismatch")
+    expected_accommodation_cost = None
+    if reference_price is not None and expected_rooms is not None:
+        expected_accommodation_cost = round(reference_price * expected_rooms * expected_nights, 2)
+        if actual_cost is None or not _money_close(actual_cost, expected_accommodation_cost):
+            issues.append("accommodation_cost_formula_mismatch")
+    return (
+        "passed" if not issues else "failed",
+        {
+            "duration_days": duration,
+            "people_count": people_count,
+            "expected_nights": expected_nights,
+            "actual_nights": actual_nights,
+            "expected_rooms": expected_rooms,
+            "actual_rooms": actual_rooms,
+            "reference_price_cny": reference_price,
+            "expected_accommodation_cost": expected_accommodation_cost,
+            "actual_accommodation_cost": actual_cost,
+            "issues": issues,
+        },
+    )
+
+
+def _budget_contingency_local_only_rule(gold: Dict[str, Any], output: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+    if not _budget_policy_applicable(gold, output):
+        return "na", {"reason": "budget_policy_not_applicable"}
+    budget = _budget_payload(output)
+    if not budget:
+        return "failed", {"reason": "budget_missing"}
+    local_basic = _budget_local_basic_cost(budget)
+    contingency = _budget_contingency_amount(budget)
+    ratio = _first_float(_nested(budget, "budget_policy", "contingency_ratio"))
+    if local_basic is None or contingency is None:
+        return "failed", {
+            "reason": "missing_formula_field",
+            "local_basic_cost": local_basic,
+            "contingency_amount": contingency,
+        }
+    expected = round(local_basic * _BUDGET_CONTINGENCY_RATIO_EXPECTED, 2)
+    issues: List[str] = []
+    if not _money_close(contingency, expected):
+        issues.append("contingency_formula_mismatch")
+    if ratio is not None and not _money_close(ratio, _BUDGET_CONTINGENCY_RATIO_EXPECTED):
+        issues.append("contingency_ratio_mismatch")
+    return (
+        "passed" if not issues else "failed",
+        {
+            "local_basic_cost": local_basic,
+            "expected_contingency": expected,
+            "actual_contingency": contingency,
+            "expected_ratio": _BUDGET_CONTINGENCY_RATIO_EXPECTED,
+            "actual_ratio": ratio,
+            "issues": issues,
+        },
+    )
+
+
+def _budget_total_formula_rule(gold: Dict[str, Any], output: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+    if not _budget_policy_applicable(gold, output):
+        return "na", {"reason": "budget_policy_not_applicable"}
+    budget = _budget_payload(output)
+    if not budget:
+        return "failed", {"reason": "budget_missing"}
+    local_basic = _budget_local_basic_cost(budget)
+    contingency = _budget_contingency_amount(budget)
+    intercity_cost = _budget_intercity_cost(budget)
+    total = _budget_recommended_total(budget)
+    local_total = _first_float(budget.get("local_total_recommended"), budget.get("local_total"))
+    if local_basic is None or contingency is None or intercity_cost is None or total is None:
+        return "failed", {
+            "reason": "missing_formula_field",
+            "local_basic_cost": local_basic,
+            "contingency_amount": contingency,
+            "intercity_transport_cost": intercity_cost,
+            "total": total,
+        }
+    expected_local_total = round(local_basic + contingency, 2)
+    expected_total = round(expected_local_total + intercity_cost, 2)
+    issues: List[str] = []
+    if local_total is not None and not _money_close(local_total, expected_local_total):
+        issues.append("local_total_formula_mismatch")
+    if not _money_close(total, expected_total):
+        issues.append("total_formula_mismatch")
+    return (
+        "passed" if not issues else "failed",
+        {
+            "local_basic_cost": local_basic,
+            "contingency_amount": contingency,
+            "intercity_transport_cost": intercity_cost,
+            "expected_local_total": expected_local_total,
+            "actual_local_total": local_total,
+            "expected_total": expected_total,
+            "actual_total": total,
+            "issues": issues,
+        },
+    )
+
+
+def _budget_itinerary_consistency_rule(gold: Dict[str, Any], output: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+    if not _budget_policy_applicable(gold, output):
+        return "na", {"reason": "budget_policy_not_applicable"}
+    budget = _budget_payload(output)
+    if not budget:
+        return "failed", {"reason": "budget_missing"}
+    audit = _nested(output, "metadata", "budget_itinerary_consistency")
+    if isinstance(audit, dict) and "consistent" in audit:
+        return (
+            "passed" if bool(audit.get("consistent")) else "failed",
+            {
+                "source": "metadata_audit",
+                "audit_status": audit.get("status"),
+                "final_itinerary_unique_poi_ids": audit.get("final_itinerary_unique_poi_ids"),
+                "budget_selected_poi_ids": audit.get("budget_selected_poi_ids"),
+                "ticket_source": audit.get("ticket_source"),
+            },
+        )
+    final_refs = _ordered_norm(_planned_poi_refs(output))
+    budget_refs = _ordered_norm(_budget_selected_poi_ids(budget))
+    ticket_source = _budget_ticket_source(budget)
+    if not final_refs and ticket_source == "standard_reference_poi_combo":
+        return "passed", {
+            "source": "computed_from_output",
+            "reason": "standard_reference_no_final_itinerary",
+            "final_itinerary_unique_poi_ids": final_refs,
+            "budget_selected_poi_ids": budget_refs,
+            "ticket_source": ticket_source,
+        }
+    if not final_refs and _norm(output.get("task_type")) == "budget_query":
+        return "passed", {
+            "source": "computed_from_output",
+            "reason": "budget_query_without_final_itinerary",
+            "final_itinerary_unique_poi_ids": final_refs,
+            "budget_selected_poi_ids": budget_refs,
+            "ticket_source": ticket_source,
+        }
+    consistent = bool(final_refs) and final_refs == budget_refs
+    return (
+        "passed" if consistent else "failed",
+        {
+            "source": "computed_from_output",
+            "final_itinerary_unique_poi_ids": final_refs,
+            "budget_selected_poi_ids": budget_refs,
+            "ticket_source": ticket_source,
+            "issues": [] if consistent else ["itinerary_budget_poi_mismatch"],
+        },
+    )
+
+
+def _budget_upgrade_policy_rule(gold: Dict[str, Any], output: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+    if not _budget_policy_applicable(gold, output):
+        return "na", {"reason": "budget_policy_not_applicable"}
+    budget = _budget_payload(output)
+    if not budget:
+        return "failed", {"reason": "budget_missing"}
+    policy = budget.get("budget_policy") if isinstance(budget.get("budget_policy"), dict) else {}
+    if not policy:
+        return "failed", {"reason": "budget_policy_missing"}
+    upgrade_decision = str(policy.get("upgrade_decision") or "")
+    upgrade_applied = _list(policy.get("upgrade_applied"))
+    hotel_tier = str(policy.get("hotel_tier") or _nested(budget, "breakdown", "accommodation", "tier") or "")
+    food_tier = str(policy.get("food_tier") or _nested(budget, "breakdown", "food", "tier") or "")
+    gold_slots = gold.get("input_slots") if isinstance(gold.get("input_slots"), dict) else gold
+    explicit_hotel_preference = bool(gold_slots.get("hotel_level"))
+    explicit_food_preference = bool(gold_slots.get("food_level"))
+    explicit_preference = (
+        upgrade_decision.startswith("explicit_")
+        or explicit_hotel_preference
+        or explicit_food_preference
+    )
+    auto_upgrade = upgrade_decision.startswith("auto_upgrade") or (
+        bool(upgrade_applied) and not explicit_preference
+    )
+    allowed_decisions = {
+        "economic_baseline",
+        "economic_baseline_over_budget",
+        "explicit_preference_applied",
+        "explicit_preference_applied_over_budget",
+    }
+    issues: List[str] = []
+    if policy.get("economic_baseline_first") is not True:
+        issues.append("economic_baseline_first_missing")
+    if auto_upgrade:
+        issues.append("auto_upgrade_forbidden")
+    if policy.get("auto_upgrade_enabled") is True or policy.get("automatic_upgrade_allowed") is True:
+        issues.append("auto_upgrade_enabled_by_policy")
+    if upgrade_decision and upgrade_decision not in allowed_decisions:
+        issues.append("upgrade_decision_not_allowed")
+    if upgrade_decision.startswith("explicit_") and not (
+        explicit_hotel_preference or explicit_food_preference
+    ):
+        issues.append("explicit_preference_without_gold_constraint")
+    if not explicit_hotel_preference and hotel_tier in {"comfort", "premium", "luxury"}:
+        issues.append("non_explicit_hotel_tier")
+    if not explicit_food_preference and food_tier in {"comfort", "premium", "luxury"}:
+        issues.append("non_explicit_food_tier")
+    if policy.get("selected_scheme_id") == "PREF" and not explicit_preference:
+        issues.append("preference_scheme_without_explicit_preference")
+    if not issues and not (explicit_hotel_preference or explicit_food_preference):
+        return "na", {
+            "reason": "no_explicit_tier_constraint",
+            "hotel_tier": hotel_tier,
+            "food_tier": food_tier,
+            "upgrade_decision": upgrade_decision,
+        }
+    return (
+        "passed" if not issues else "failed",
+        {
+            "upgrade_decision": upgrade_decision,
+            "upgrade_applied": upgrade_applied,
+            "hotel_tier": hotel_tier,
+            "food_tier": food_tier,
+            "explicit_hotel_preference": explicit_hotel_preference,
+            "explicit_food_preference": explicit_food_preference,
+            "auto_upgrade_enabled": policy.get("auto_upgrade_enabled"),
+            "automatic_upgrade_allowed": policy.get("automatic_upgrade_allowed"),
+            "issues": issues,
+        },
+    )
+
+
+def _budget_independent_recalculation_rule(
+    case: Dict[str, Any],
+    gold: Dict[str, Any],
+    output: Dict[str, Any],
+) -> tuple[str, Dict[str, Any]]:
+    record = gold.get("budget_gold_record") if isinstance(gold.get("budget_gold_record"), dict) else None
+    if not record:
+        case_id = str(case.get("case_id") or case.get("scenario_id") or "")
+        if case_id.startswith("ctp100_v2_") and _budget_policy_applicable(gold, output):
+            return "failed", {"reason": "formal_budget_gold_record_missing", "case_id": case_id}
+        return "na", {"reason": "formal_budget_gold_not_applicable"}
+    if record.get("status") != "generated":
+        return "na", {"reason": str(record.get("reason") or "budget_gold_record_skipped")}
+    if not _budget_policy_applicable(gold, output):
+        return "na", {"reason": "budget_policy_not_applicable"}
+    budget = _budget_payload(output)
+    if not budget:
+        return "failed", {"reason": "budget_missing"}
+
+    expected_budget, source = _recalculate_budget_from_frozen_data(record, output)
+    if expected_budget is None:
+        return "failed", {
+            "reason": "independent_recalculation_failed",
+            "source": source,
+        }
+
+    issues: List[str] = []
+    _compare_recalculated_budget(
+        issues=issues,
+        actual=budget,
+        expected=expected_budget,
+    )
+    return (
+        "passed" if not issues else "failed",
+        {
+            "source": source,
+            "unit_id": record.get("unit_id"),
+            "issues": issues,
+            "expected": _budget_recalculation_snapshot(expected_budget),
+            "actual": _budget_recalculation_snapshot(budget),
+        },
+    )
+
+
+def _recalculate_budget_from_frozen_data(
+    record: Dict[str, Any],
+    output: Dict[str, Any],
+) -> tuple[Optional[Dict[str, Any]], Dict[str, Any]]:
+    slots = record.get("input_slots") if isinstance(record.get("input_slots"), dict) else {}
+    bp = record.get("budget_policy_v2") if isinstance(record.get("budget_policy_v2"), dict) else {}
+    duration = _first_int(slots.get("duration_days"), bp.get("duration_days"))
+    people_count = _first_int(slots.get("people_count"), bp.get("people_count"))
+    destination = slots.get("destination")
+    if not destination or duration is None or people_count is None:
+        return None, {
+            "mode": "missing_gold_slots",
+            "destination": destination,
+            "duration_days": duration,
+            "people_count": people_count,
+        }
+    final_itinerary = output.get("daily_itinerary") if isinstance(output.get("daily_itinerary"), list) else None
+    final_refs = _planned_poi_refs(output)
+    use_final_itinerary = bool(final_itinerary and final_refs)
+    standard_refs = bp.get("standard_reference_poi_ids") if isinstance(bp.get("standard_reference_poi_ids"), list) else []
+    try:
+        expected = get_fixed_tourism_data().calculate_budget(
+            origin=slots.get("origin"),
+            destination=destination,
+            duration=duration,
+            num_travelers=people_count,
+            budget_limit=slots.get("budget_amount"),
+            budget_level=slots.get("budget_level") or "medium",
+            hotel_level=slots.get("hotel_level"),
+            food_level=slots.get("food_level"),
+            transport_mode=slots.get("transport_mode"),
+            requested_budget_scope=slots.get("requested_budget_scope"),
+            daily_itinerary=final_itinerary if use_final_itinerary else None,
+            poi_ids=None if use_final_itinerary else standard_refs,
+        )
+    except (FixedDataError, ValueError, TypeError) as exc:
+        return None, {
+            "mode": "fixed_data_calculation_error",
+            "error": str(exc),
+            "used_final_itinerary": use_final_itinerary,
+            "final_poi_refs": final_refs,
+            "standard_reference_poi_ids": standard_refs,
+        }
+    return expected, {
+        "mode": "final_itinerary" if use_final_itinerary else "standard_reference",
+        "used_final_itinerary": use_final_itinerary,
+        "final_poi_refs": final_refs,
+        "standard_reference_poi_ids": standard_refs,
+    }
+
+
+def _compare_recalculated_budget(
+    *,
+    issues: List[str],
+    actual: Dict[str, Any],
+    expected: Dict[str, Any],
+) -> None:
+    for field in (
+        "budget_limit",
+        "destination_local_basic_cost",
+        "contingency_amount",
+        "local_total_recommended",
+        "intercity_transport_cost",
+        "final_recommended_total",
+        "recommended_preparation_amount",
+        "remaining_budget",
+        "covered_scope_remaining_budget",
+        "budget_gap",
+    ):
+        _compare_budget_number(
+            issues,
+            f"wrong_{field}",
+            _budget_number_field(actual, field),
+            _budget_number_field(expected, field),
+        )
+
+    for field in (
+        "budget_policy_version",
+        "budget_scope",
+        "requested_budget_scope",
+        "computed_budget_scope",
+        "scope_complete",
+        "sufficiency_status",
+        "intercity_transport_included",
+        "mandatory_budget_disclaimer",
+        "can_judge_budget_sufficiency",
+        "is_over_budget",
+    ):
+        _compare_budget_value(
+            issues,
+            f"wrong_{field}",
+            _budget_value_field(actual, field),
+            _budget_value_field(expected, field),
+        )
+
+    section_specs = {
+        "transport": ("recommended",),
+        "accommodation": (
+            "recommended",
+            "reference_price_cny",
+            "room_count",
+            "night_count",
+            "tier",
+        ),
+        "food": (
+            "recommended",
+            "reference_price_cny",
+            "meal_count_equivalent",
+            "tier",
+        ),
+        "tickets": ("recommended",),
+        "other": ("recommended",),
+        "buffer": ("recommended",),
+        "intercity_transport": ("recommended",),
+    }
+    for section, fields in section_specs.items():
+        actual_section = _budget_breakdown_section(actual, section)
+        expected_section = _budget_breakdown_section(expected, section)
+        for field in fields:
+            code = f"wrong_{section}_{field}"
+            if section == "accommodation" and field == "reference_price_cny":
+                code = "wrong_accommodation_reference_price_cny"
+            elif section == "accommodation" and field == "night_count":
+                code = "wrong_accommodation_night_count"
+            elif section == "accommodation" and field == "room_count":
+                code = "wrong_accommodation_room_count"
+            if field in {"recommended", "reference_price_cny", "meal_count_equivalent"}:
+                _compare_budget_number(
+                    issues,
+                    code,
+                    _first_float(actual_section.get(field)),
+                    _first_float(expected_section.get(field)),
+                )
+            else:
+                _compare_budget_value(
+                    issues,
+                    code,
+                    actual_section.get(field),
+                    expected_section.get(field),
+                )
+
+    actual_ticket_refs = _ordered_norm(_budget_selected_poi_ids(actual))
+    expected_ticket_refs = _ordered_norm(_budget_selected_poi_ids(expected))
+    if actual_ticket_refs != expected_ticket_refs:
+        issues.append("wrong_ticket_selected_poi_ids")
+    _compare_budget_value(
+        issues,
+        "wrong_ticket_source",
+        _budget_ticket_source(actual),
+        _budget_ticket_source(expected),
+    )
+
+    actual_intercity = actual.get("intercity_transport") if isinstance(actual.get("intercity_transport"), dict) else {}
+    expected_intercity = expected.get("intercity_transport") if isinstance(expected.get("intercity_transport"), dict) else {}
+    intercity_number_fields = (
+        "one_way_fare_per_person_cny",
+        "round_trip_multiplier",
+        "people_count",
+        "total_intercity_transport_cost_cny",
+    )
+    for field in intercity_number_fields:
+        code = f"wrong_intercity_{field}"
+        if field == "one_way_fare_per_person_cny":
+            code = "wrong_intercity_one_way_fare_per_person_cny"
+        _compare_budget_number(
+            issues,
+            code,
+            _first_float(actual_intercity.get(field)),
+            _first_float(expected_intercity.get(field)),
+        )
+    for field in (
+        "status",
+        "route_id",
+        "budget_scope",
+        "intercity_transport_included",
+        "mandatory_budget_disclaimer",
+        "origin",
+        "destination",
+    ):
+        _compare_budget_value(
+            issues,
+            f"wrong_intercity_{field}",
+            actual_intercity.get(field),
+            expected_intercity.get(field),
+        )
+
+
+def _budget_number_field(budget: Dict[str, Any], field: str) -> Optional[float]:
+    if field == "final_recommended_total":
+        return _budget_recommended_total(budget)
+    if field == "destination_local_basic_cost":
+        return _budget_local_basic_cost(budget)
+    if field == "contingency_amount":
+        return _budget_contingency_amount(budget)
+    if field == "intercity_transport_cost":
+        return _budget_intercity_cost(budget)
+    return _first_float(budget.get(field))
+
+
+def _budget_value_field(budget: Dict[str, Any], field: str) -> Any:
+    if field == "budget_policy_version":
+        return budget.get("budget_policy_version") or _nested(budget, "budget_policy", "version")
+    return budget.get(field)
+
+
+def _compare_budget_number(
+    issues: List[str],
+    code: str,
+    actual: Optional[float],
+    expected: Optional[float],
+) -> None:
+    if expected is None and actual is None:
+        return
+    if expected is None or actual is None or not _money_close(float(actual), float(expected)):
+        issues.append(code)
+
+
+def _compare_budget_value(
+    issues: List[str],
+    code: str,
+    actual: Any,
+    expected: Any,
+) -> None:
+    if expected is None and actual in (None, ""):
+        return
+    if actual != expected:
+        issues.append(code)
+
+
+def _budget_recalculation_snapshot(budget: Dict[str, Any]) -> Dict[str, Any]:
+    accommodation = _budget_breakdown_section(budget, "accommodation")
+    intercity = budget.get("intercity_transport") if isinstance(budget.get("intercity_transport"), dict) else {}
+    return {
+        "budget_limit": _budget_number_field(budget, "budget_limit"),
+        "destination_local_basic_cost": _budget_number_field(budget, "destination_local_basic_cost"),
+        "contingency_amount": _budget_number_field(budget, "contingency_amount"),
+        "intercity_transport_cost": _budget_number_field(budget, "intercity_transport_cost"),
+        "final_recommended_total": _budget_number_field(budget, "final_recommended_total"),
+        "sufficiency_status": _budget_value_field(budget, "sufficiency_status"),
+        "scope_complete": _budget_value_field(budget, "scope_complete"),
+        "accommodation_reference_price_cny": _first_float(accommodation.get("reference_price_cny")),
+        "accommodation_night_count": _first_int(accommodation.get("night_count")),
+        "accommodation_room_count": _first_int(accommodation.get("room_count")),
+        "intercity_one_way_fare_per_person_cny": _first_float(intercity.get("one_way_fare_per_person_cny")),
+        "intercity_total": _first_float(intercity.get("total_intercity_transport_cost_cny")),
+        "selected_poi_ids": _budget_selected_poi_ids(budget),
+    }
+
+
+def _budget_policy_applicable(gold: Dict[str, Any], output: Dict[str, Any]) -> bool:
+    return bool(
+        _budget_payload(output)
+        or "budget_calculator" in _list(gold.get("required_tools"))
+        or isinstance(gold.get("budget_policy_v2"), dict)
+    )
+
+
+def _budget_payload(output: Dict[str, Any]) -> Dict[str, Any]:
+    budget = output.get("budget") if isinstance(output.get("budget"), dict) else {}
+    if budget:
+        return budget
+    return _tool_result_data(output, "budget_calculator")
+
+
+def _budget_breakdown_section(budget: Dict[str, Any], section: str) -> Dict[str, Any]:
+    breakdown = budget.get("breakdown") if isinstance(budget.get("breakdown"), dict) else {}
+    payload = breakdown.get(section) if isinstance(breakdown.get(section), dict) else {}
+    return payload
+
+
+def _budget_local_basic_cost(budget: Dict[str, Any]) -> Optional[float]:
+    explicit = _first_float(
+        budget.get("destination_local_basic_cost"),
+        budget.get("local_basic_cost"),
+        budget.get("local_subtotal"),
+    )
+    if explicit is not None:
+        return explicit
+    values = []
+    for section in ("transport", "accommodation", "food", "tickets", "other"):
+        value = _first_float(
+            _budget_breakdown_section(budget, section).get("recommended"),
+            _budget_breakdown_section(budget, section).get("estimated_cost"),
+        )
+        if value is not None:
+            values.append(value)
+    return round(sum(values), 2) if values else None
+
+
+def _budget_contingency_amount(budget: Dict[str, Any]) -> Optional[float]:
+    return _first_float(
+        budget.get("contingency_amount"),
+        budget.get("buffer_cost"),
+        _budget_breakdown_section(budget, "buffer").get("recommended"),
+        _budget_breakdown_section(budget, "contingency").get("recommended"),
+    )
+
+
+def _budget_intercity_cost(budget: Dict[str, Any]) -> Optional[float]:
+    return _first_float(
+        budget.get("intercity_transport_cost"),
+        _budget_breakdown_section(budget, "intercity_transport").get("recommended"),
+        _nested(budget, "intercity_transport", "total_intercity_transport_cost_cny"),
+        0.0,
+    )
+
+
+def _budget_recommended_total(budget: Dict[str, Any]) -> Optional[float]:
+    return _first_float(
+        budget.get("total"),
+        budget.get("total_recommended"),
+        budget.get("final_recommended_total"),
+        budget.get("recommended_preparation_amount"),
+        budget.get("confirmed_total_cost"),
+    )
+
+
+def _budget_selected_poi_ids(budget: Dict[str, Any]) -> List[str]:
+    ticket_breakdown = budget.get("ticket_breakdown") if isinstance(budget.get("ticket_breakdown"), dict) else {}
+    summary = ticket_breakdown.get("summary") if isinstance(ticket_breakdown.get("summary"), dict) else {}
+    tickets = _budget_breakdown_section(budget, "tickets")
+    return [
+        str(value)
+        for value in (summary.get("selected_poi_ids") or tickets.get("selected_poi_ids") or [])
+        if str(value or "").strip()
+    ]
+
+
+def _budget_ticket_source(budget: Dict[str, Any]) -> Optional[str]:
+    ticket_breakdown = budget.get("ticket_breakdown") if isinstance(budget.get("ticket_breakdown"), dict) else {}
+    summary = ticket_breakdown.get("summary") if isinstance(ticket_breakdown.get("summary"), dict) else {}
+    tickets = _budget_breakdown_section(budget, "tickets")
+    source = summary.get("source") or tickets.get("source")
+    return str(source) if source is not None else None
+
+
+def _ordered_norm(values: Iterable[Any]) -> List[str]:
+    result: List[str] = []
+    for value in values:
+        text = _norm(value)
+        if text and text not in result:
+            result.append(text)
+    return result
+
+
+def _money_close(actual: float, expected: float) -> bool:
+    return abs(float(actual) - float(expected)) <= _BUDGET_NUMERIC_TOLERANCE
+
+
+def _budget_expected_sufficiency_status(budget: Dict[str, Any]) -> Optional[str]:
+    budget_limit = _first_float(budget.get("budget_limit"))
+    total = _first_float(
+        budget.get("final_recommended_total"),
+        budget.get("recommended_preparation_amount"),
+        budget.get("total_recommended"),
+        budget.get("total"),
+    )
+    if budget_limit is None or total is None:
+        return "indeterminate" if budget.get("sufficiency_status") else None
+    if total > budget_limit + _BUDGET_NUMERIC_TOLERANCE:
+        return "insufficient"
+    return "sufficient" if budget.get("scope_complete") is True else "indeterminate"
+
+
+def _intercity_scope_rule(gold: Dict[str, Any], output: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+    budget = output.get("budget") if isinstance(output.get("budget"), dict) else {}
+    intercity = _intercity_payload(output)
+    if not budget and not intercity:
+        return "na", {"reason": "budget_missing"}
+
+    expected_scope = gold.get("budget_scope")
+    expected_requested_scope = gold.get("requested_budget_scope")
+    expected_computed_scope = gold.get("computed_budget_scope")
+    expected_scope_complete = gold.get("scope_complete")
+    expected_sufficiency_status = gold.get("sufficiency_status")
+    expected_included = gold.get("intercity_transport_included")
+    expected_disclaimer = gold.get("mandatory_budget_disclaimer")
+    if expected_scope is None and expected_included is None and expected_disclaimer is None:
+        if intercity.get("status") == "success":
+            expected_scope = "local_plus_round_trip_intercity"
+            expected_included = True
+            expected_disclaimer = False
+        elif intercity.get("status") == "origin_missing":
+            expected_scope = "destination_local_only"
+            expected_included = False
+            expected_disclaimer = True
+        elif intercity.get("status") == "route_not_supported":
+            expected_scope = "local_only_route_uncovered"
+            expected_included = False
+            expected_disclaimer = True
+        else:
+            return "na", {
+                "reason": "no_gold_or_detectable_intercity_scope",
+                "status": intercity.get("status"),
+            }
+
+    actual_scope = budget.get("budget_scope") or intercity.get("budget_scope")
+    actual_requested_scope = budget.get("requested_budget_scope")
+    actual_computed_scope = budget.get("computed_budget_scope") or actual_scope
+    actual_scope_complete = budget.get("scope_complete")
+    actual_sufficiency_status = budget.get("sufficiency_status")
+    actual_included = _first_bool(
+        budget.get("intercity_transport_included"),
+        intercity.get("intercity_transport_included"),
+    )
+    actual_disclaimer = _first_bool(
+        budget.get("mandatory_budget_disclaimer"),
+        intercity.get("mandatory_budget_disclaimer"),
+    )
+    issues: List[str] = []
+    if expected_scope is not None and actual_scope != expected_scope:
+        issues.append("budget_scope_mismatch")
+    if expected_requested_scope is not None and actual_requested_scope != expected_requested_scope:
+        issues.append("requested_budget_scope_mismatch")
+    if expected_computed_scope is not None and actual_computed_scope != expected_computed_scope:
+        issues.append("computed_budget_scope_mismatch")
+    if expected_scope_complete is not None and actual_scope_complete is not bool(expected_scope_complete):
+        issues.append("scope_complete_mismatch")
+    if expected_sufficiency_status is not None and actual_sufficiency_status != expected_sufficiency_status:
+        issues.append("sufficiency_status_mismatch")
+    computed_sufficiency = _budget_expected_sufficiency_status(budget)
+    if computed_sufficiency and actual_sufficiency_status and actual_sufficiency_status != computed_sufficiency:
+        issues.append("sufficiency_status_formula_mismatch")
+    if computed_sufficiency and _first_bool(budget.get("is_over_budget")) is not None:
+        expected_over = computed_sufficiency == "insufficient"
+        if bool(budget.get("is_over_budget")) is not expected_over:
+            issues.append("is_over_budget_sufficiency_mismatch")
+    if actual_scope_complete is False and actual_sufficiency_status == "indeterminate":
+        if budget.get("remaining_budget") is not None:
+            issues.append("incomplete_scope_remaining_budget_error")
+        if budget.get("covered_scope_remaining_budget") is None:
+            issues.append("covered_scope_remaining_budget_missing")
+    if expected_included is not None and actual_included is not bool(expected_included):
+        issues.append("intercity_inclusion_mismatch")
+    if expected_disclaimer is not None and actual_disclaimer is not bool(expected_disclaimer):
+        issues.append("mandatory_disclaimer_mismatch")
+    if actual_disclaimer and not (
+        budget.get("budget_disclaimer") or intercity.get("disclaimer")
+    ):
+        issues.append("mandatory_disclaimer_text_missing")
+    route_consistency = _intercity_route_consistency(gold, intercity)
+    issues.extend(route_consistency["issues"])
+    return (
+        "passed" if not issues else "failed",
+        {
+            "expected_scope": expected_scope,
+            "actual_scope": actual_scope,
+            "expected_requested_scope": expected_requested_scope,
+            "actual_requested_scope": actual_requested_scope,
+            "expected_computed_scope": expected_computed_scope,
+            "actual_computed_scope": actual_computed_scope,
+            "expected_scope_complete": expected_scope_complete,
+            "actual_scope_complete": actual_scope_complete,
+            "expected_sufficiency_status": expected_sufficiency_status,
+            "actual_sufficiency_status": actual_sufficiency_status,
+            "expected_included": expected_included,
+            "actual_included": actual_included,
+            "expected_disclaimer": expected_disclaimer,
+            "actual_disclaimer": actual_disclaimer,
+            "status": intercity.get("status"),
+            "route_consistency": route_consistency,
+            "issues": issues,
+        },
+    )
+
+
+def _intercity_cost_rule(output: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+    budget = output.get("budget") if isinstance(output.get("budget"), dict) else {}
+    intercity = _intercity_payload(output)
+    included = _first_bool(
+        budget.get("intercity_transport_included"),
+        intercity.get("intercity_transport_included"),
+    )
+    if not included:
+        return "na", {"included": included, "status": intercity.get("status")}
+    one_way = _first_float(intercity.get("one_way_fare_per_person_cny"))
+    multiplier = _first_float(intercity.get("round_trip_multiplier"))
+    people_count = _first_int(intercity.get("people_count"))
+    actual = _first_float(
+        budget.get("intercity_transport_cost"),
+        intercity.get("total_intercity_transport_cost_cny"),
+    )
+    if one_way is None or multiplier is None or people_count is None or actual is None:
+        return "failed", {
+            "reason": "missing_formula_field",
+            "one_way": one_way,
+            "round_trip_multiplier": multiplier,
+            "people_count": people_count,
+            "actual": actual,
+        }
+    expected = round(one_way * multiplier * people_count, 2)
+    return (
+        "passed" if abs(actual - expected) <= 1e-9 else "failed",
+        {
+            "expected": expected,
+            "actual": actual,
+            "one_way": one_way,
+            "round_trip_multiplier": multiplier,
+            "people_count": people_count,
+        },
+    )
+
+
+def _intercity_evidence_rule(output: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:
+    budget = output.get("budget") if isinstance(output.get("budget"), dict) else {}
+    intercity = _intercity_payload(output)
+    included = _first_bool(
+        budget.get("intercity_transport_included"),
+        intercity.get("intercity_transport_included"),
+    )
+    if not included:
+        return "na", {"included": included, "status": intercity.get("status")}
+    evidence = intercity.get("fare_evidence")
+    if not isinstance(evidence, dict):
+        return "failed", {"reason": "fare_evidence_missing"}
+    required = (
+        "evidence_id",
+        "route_id",
+        "departure_station",
+        "arrival_station",
+        "query_platform",
+        "travel_date",
+        "fare_selection_rule_id",
+        "manual_review_status",
+    )
+    missing = [
+        field for field in required if evidence.get(field) in (None, "", [], {})
+    ]
+    status = str(evidence.get("manual_review_status") or "")
+    malformed = []
+    if status not in {"pending", "reviewed"}:
+        malformed.append("invalid_manual_review_status")
+    if evidence.get("route_id") != intercity.get("route_id"):
+        malformed.append("evidence_route_id_mismatch")
+    if status == "reviewed":
+        for field in ("query_date", "reviewed_at"):
+            if evidence.get(field) in (None, "", [], {}):
+                missing.append(field)
+    return (
+        "passed" if not missing and not malformed else "failed",
+        {
+            "evidence_id": evidence.get("evidence_id"),
+            "route_id": evidence.get("route_id"),
+            "intercity_route_id": intercity.get("route_id"),
+            "manual_review_status": status,
+            "missing": missing,
+            "malformed": malformed,
+            "formal_review_complete": status == "reviewed",
+        },
+    )
+
+
+def _intercity_route_consistency(gold: Dict[str, Any], intercity: Dict[str, Any]) -> Dict[str, Any]:
+    expected_origin = _city_id(gold.get("origin"))
+    expected_destination = _city_id(gold.get("destination") or gold.get("city"))
+    actual_origin = _city_id(intercity.get("origin"))
+    actual_destination = _city_id(intercity.get("destination"))
+    requested_origin = _city_id(intercity.get("requested_origin"))
+    requested_destination = _city_id(intercity.get("requested_destination"))
+    lookup_origin = _city_id(intercity.get("lookup_origin"))
+    lookup_destination = _city_id(intercity.get("lookup_destination"))
+    lookup_direction = str(intercity.get("lookup_direction") or "")
+    status = str(intercity.get("status") or "")
+    issues: List[str] = []
+
+    if expected_origin:
+        if requested_origin and requested_origin != expected_origin:
+            issues.append("requested_origin_mismatch")
+        if status != "origin_missing" and actual_origin != expected_origin:
+            issues.append("origin_mismatch")
+    if expected_destination:
+        if requested_destination and requested_destination != expected_destination:
+            issues.append("requested_destination_mismatch")
+        if actual_destination != expected_destination:
+            issues.append("destination_mismatch")
+    if status == "success" and expected_origin and expected_destination:
+        if lookup_direction == "reverse_symmetric":
+            if lookup_origin != expected_destination or lookup_destination != expected_origin:
+                issues.append("lookup_route_mismatch")
+        elif lookup_origin or lookup_destination:
+            if lookup_origin != expected_origin or lookup_destination != expected_destination:
+                issues.append("lookup_route_mismatch")
+
+    return {
+        "expected_origin": expected_origin,
+        "expected_destination": expected_destination,
+        "actual_origin": actual_origin,
+        "actual_destination": actual_destination,
+        "requested_origin": requested_origin,
+        "requested_destination": requested_destination,
+        "lookup_origin": lookup_origin,
+        "lookup_destination": lookup_destination,
+        "lookup_direction": lookup_direction,
+        "status": status,
+        "issues": issues,
+    }
+
+
+def _city_id(value: Any) -> Optional[str]:
+    text = str(value or "").strip()
+    if not text:
+        return None
+    lowered = text.casefold()
+    return _CITY_VALUE_ALIASES.get(lowered, lowered)
+
+
+def _intercity_payload(output: Dict[str, Any]) -> Dict[str, Any]:
+    budget = output.get("budget") if isinstance(output.get("budget"), dict) else {}
+    intercity = budget.get("intercity_transport") if isinstance(budget.get("intercity_transport"), dict) else {}
+    if intercity:
+        return intercity
+    tool_data = _tool_result_data(output, "budget_calculator")
+    intercity = (
+        tool_data.get("intercity_transport")
+        if isinstance(tool_data.get("intercity_transport"), dict)
+        else {}
+    )
+    return intercity if isinstance(intercity, dict) else {}
+
+
+def _first_bool(*values: Any) -> Optional[bool]:
+    for value in values:
+        if isinstance(value, bool):
+            return value
+    return None
+
+
 def _weather_answer_terms(value: Any) -> List[str]:
     weather = value if isinstance(value, dict) else {}
     labels = _unique(
@@ -1031,7 +2360,12 @@ def _scheduler_slots(
 ) -> tuple[str, Dict[str, Any]]:
     if not expected:
         return "na", {}
-    actual = _list(_nested(output, "metadata", "scheduler", "ticket", key) or _nested(output, "metadata", "scheduler", "decision", key))
+    actual = _list(
+        _nested(output, "metadata", "scheduler", "ticket", key)
+        or _nested(output, "metadata", "scheduler", "decision", key)
+        or _nested(output, "metadata", "adaptive_scheduler", "ticket", key)
+        or _nested(output, "metadata", "adaptive_scheduler", "decision", key)
+    )
     missing_claims = [slot for slot in expected if slot not in actual]
     mismatches = []
     for slot in expected:
@@ -1084,6 +2418,17 @@ def _slot_actual(output: Dict[str, Any], slot: str) -> Any:
     budget = output.get("budget") if isinstance(output.get("budget"), dict) else {}
     weather = output.get("weather") if isinstance(output.get("weather"), dict) else {}
     slot = str(slot)
+    if slot in {"origin", "departure_city", "from_city"}:
+        return _first_existing(
+            _nested(output, "metadata", "goal_state_slots", "origin"),
+            _nested(output, "metadata", "scheduler", "ticket", "current_slots", "origin"),
+            _nested(output, "metadata", "adaptive_scheduler", "ticket", "current_slots", "origin"),
+            budget.get("origin"),
+            budget_data.get("origin"),
+            budget_input.get("origin"),
+            budget_input.get("from_city"),
+            budget_input.get("departure_city"),
+        )
     if slot in {"destination", "city"}:
         return _first_existing(weather.get("city"), budget.get("city"), weather_data.get("city"), budget_data.get("city"), poi_data.get("city"), weather_input.get("city"), budget_input.get("city"), poi_input.get("city"))
     if slot in {"start_date", "date"}:
@@ -1097,6 +2442,7 @@ def _slot_actual(output: Dict[str, Any], slot: str) -> Any:
         return _first_existing(
             _nested(output, "metadata", "goal_state_slots", "budget_amount"),
             _nested(output, "metadata", "scheduler", "ticket", "current_slots", "budget_amount"),
+            _nested(output, "metadata", "adaptive_scheduler", "ticket", "current_slots", "budget_amount"),
             budget.get("budget_amount"),
             budget.get("budget_limit"),
             budget.get("max_budget"),
@@ -1111,6 +2457,7 @@ def _slot_actual(output: Dict[str, Any], slot: str) -> Any:
         return _first_existing(
             _nested(output, "metadata", "goal_state_slots", "preferences"),
             _nested(output, "metadata", "scheduler", "ticket", "current_slots", "preferences"),
+            _nested(output, "metadata", "adaptive_scheduler", "ticket", "current_slots", "preferences"),
             poi_data.get("preferences"),
             poi_input.get("preferences"),
         )
@@ -1118,6 +2465,7 @@ def _slot_actual(output: Dict[str, Any], slot: str) -> Any:
         return _first_existing(
             _nested(output, "metadata", "goal_state_slots", "traveler_group"),
             _nested(output, "metadata", "scheduler", "ticket", "current_slots", "traveler_group"),
+            _nested(output, "metadata", "adaptive_scheduler", "ticket", "current_slots", "traveler_group"),
             poi_data.get("traveler_group"),
             poi_input.get("traveler_group"),
             poi_data.get("people"),
@@ -1127,6 +2475,7 @@ def _slot_actual(output: Dict[str, Any], slot: str) -> Any:
         return _first_existing(
             _nested(output, "metadata", "goal_state_slots", "special_requirements"),
             _nested(output, "metadata", "scheduler", "ticket", "current_slots", "special_requirements"),
+            _nested(output, "metadata", "adaptive_scheduler", "ticket", "current_slots", "special_requirements"),
             poi_data.get("special_requirements"),
             poi_input.get("special_requirements"),
         )
@@ -1137,6 +2486,9 @@ def _slot_actual(output: Dict[str, Any], slot: str) -> Any:
 
 def _slot_from_mapping(mapping: Dict[str, Any], slot: str) -> Any:
     aliases = {
+        "origin": ("origin", "departure_city", "from_city"),
+        "departure_city": ("departure_city", "origin", "from_city"),
+        "from_city": ("from_city", "origin", "departure_city"),
         "destination": ("destination", "city"),
         "city": ("city", "destination"),
         "start_date": ("start_date", "date"),
@@ -1198,7 +2550,8 @@ def _weather_unaffected_preserved(case: Dict[str, Any], gold: Dict[str, Any], ou
     previous = gold.get("previous_artifacts") if isinstance(gold.get("previous_artifacts"), dict) else _previous_artifacts_from_state(case.get("previous_state") if isinstance(case.get("previous_state"), dict) else {})
     if not previous:
         return "na", {}
-    affected_days = _affected_days(case, gold)
+    affected_days = set(_affected_days(case, gold))
+    affected_days.update(_weather_adjustment_days_from_output(output))
     issues = []
     previous_itinerary = previous.get("daily_itinerary")
     if isinstance(previous_itinerary, list) and previous_itinerary:
@@ -1209,11 +2562,47 @@ def _weather_unaffected_preserved(case: Dict[str, Any], gold: Dict[str, Any], ou
             current_day = current_by_day.get(day)
             if current_day is None or _day_refs(current_day) != _day_refs(previous_day):
                 issues.append({"field": "daily_itinerary", "day": day})
-    if previous.get("budget") and not _budget_matches(previous.get("budget"), output.get("budget")):
+    if (
+        previous.get("budget")
+        and not _weather_adjustment_expects_budget_recalculation(gold)
+        and not _budget_matches(previous.get("budget"), output.get("budget"))
+    ):
         issues.append({"field": "budget"})
-    if previous.get("attractions") and set(_refs_from_items(previous.get("attractions"))) != set(_refs_from_items(output.get("attractions") or [])):
+    if (
+        previous.get("attractions")
+        and not previous_itinerary
+        and set(_refs_from_items(previous.get("attractions"))) != set(_refs_from_items(output.get("attractions") or []))
+    ):
         issues.append({"field": "attractions"})
     return ("passed" if not issues else "failed"), {"affected_days": sorted(affected_days), "issues": issues}
+
+
+def _weather_adjustment_days_from_output(output: Dict[str, Any]) -> set[int]:
+    adjustments = output.get("weather_adjustments")
+    if not isinstance(adjustments, list):
+        return set()
+    return {
+        day
+        for day in (
+            _first_int(item.get("day"), item.get("day_index"))
+            for item in adjustments
+            if isinstance(item, dict)
+        )
+        if day is not None
+    }
+
+
+def _weather_adjustment_expects_budget_recalculation(gold: Dict[str, Any]) -> bool:
+    if "budget_calculator" in set(_list(gold.get("required_tools"))):
+        return True
+    for accepted in gold.get("accepted_agent_sets") or []:
+        if "budget" in set(_list(accepted)):
+            return True
+    for accepted in gold.get("accepted_tool_sets") or []:
+        if "budget_calculator" in set(_list(accepted)):
+            return True
+    policy = str(gold.get("partial_replan_policy") or "").casefold()
+    return "budget" in policy
 
 
 def _weather_affected_adjusted(case: Dict[str, Any], gold: Dict[str, Any], output: Dict[str, Any]) -> tuple[str, Dict[str, Any]]:

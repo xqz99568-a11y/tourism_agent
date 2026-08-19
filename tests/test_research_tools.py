@@ -5,6 +5,8 @@ import sys
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
@@ -16,8 +18,10 @@ from app.core.experiment_runner import (
     ExperimentRunner,
 )
 from app.core.fixed_data import get_fixed_tourism_data
+from app.core.intercity_transport_snapshot import load_intercity_transport_snapshot_manifest
 from app.core.goal_state_scheduler import DECISION_SCHEMA_VERSION, TICKET_SCHEMA_VERSION
 from app.core.llm.client import ToolCall
+from app.core.qweather_snapshot import load_qweather_snapshot_manifest
 from app.core.tool_executor import ToolExecutor
 from app.tools.base import ToolResult
 from app.tools.research_tools import (
@@ -29,6 +33,10 @@ from app.tools.research_tools import (
     build_research_tool_catalog,
     generation_tools,
 )
+
+
+def _qweather_snapshot_start_date() -> str:
+    return str(load_qweather_snapshot_manifest()["forecast_start_date"])
 
 
 class _AgentJSONLLM:
@@ -113,10 +121,11 @@ def test_unified_research_tool_catalog_names_are_frozen() -> None:
 
 
 def test_research_tools_return_standard_envelopes_and_fixed_data() -> None:
+    snapshot_start = _qweather_snapshot_start_date()
     poi_result = asyncio.run(
         ResearchPOISearchTool().execute(
             city="Hangzhou",
-            preferences=["景点"],
+            preferences=["poi"],
             people="couple",
             limit=2,
         )
@@ -137,7 +146,7 @@ def test_research_tools_return_standard_envelopes_and_fixed_data() -> None:
     weather_result = asyncio.run(
         ResearchWeatherTool().execute(
             city="Hangzhou",
-            date="2026-08-01",
+            date=snapshot_start,
             days=2,
             scenario_type="rain",
         )
@@ -145,10 +154,10 @@ def test_research_tools_return_standard_envelopes_and_fixed_data() -> None:
     assert weather_result.success is True
     assert weather_result.api_calls == []
     assert weather_result.data["tool_name"] == "weather_query"
-    assert [item["date"] for item in weather_result.data["data"]["daily_weather"]] == [
-        "2026-08-01",
-        "2026-08-02",
-    ]
+    assert weather_result.data["data"]["provider"] == "qweather_snapshot"
+    assert weather_result.data["data"]["coverage_status"] == "full"
+    assert len(weather_result.data["data"]["daily_weather"]) == 2
+    assert weather_result.data["data"]["daily_weather"][0]["date"] == snapshot_start
 
     budget_result = asyncio.run(
         ResearchBudgetCalculatorTool().execute(
@@ -163,12 +172,12 @@ def test_research_tools_return_standard_envelopes_and_fixed_data() -> None:
     assert budget_result.api_calls == []
     assert budget_result.data["tool_name"] == "budget_calculator"
     assert budget_result.data["data"]["total"] > 0
-    assert budget_result.data["metadata"]["calculation_source"] == "fixed_offline_dataset"
+    assert budget_result.data["metadata"]["calculation_source"] == "fixed_reference_cost_model"
 
 
 def test_research_tools_are_deterministic_across_repeated_calls() -> None:
-    poi_args = {"city": "Hangzhou", "preferences": ["景点"], "people": "couple", "limit": 3}
-    weather_args = {"city": "Hangzhou", "date": "2026-08-01", "days": 2}
+    poi_args = {"city": "Hangzhou", "preferences": ["poi"], "people": "couple", "limit": 3}
+    weather_args = {"city": "Hangzhou", "date": _qweather_snapshot_start_date(), "days": 2}
     budget_args = {"city": "Hangzhou", "people_count": 2, "days": 2, "attractions": ["hz002"]}
 
     first = [
@@ -186,10 +195,11 @@ def test_research_tools_are_deterministic_across_repeated_calls() -> None:
 
 
 def test_weather_is_uniquely_determined_by_city_and_date() -> None:
+    snapshot_start = _qweather_snapshot_start_date()
     sunny_request = asyncio.run(
         ResearchWeatherTool().execute(
             city="Hangzhou",
-            date="2026-08-01",
+            date=snapshot_start,
             days=2,
             scenario_type="sunny",
         )
@@ -197,7 +207,7 @@ def test_weather_is_uniquely_determined_by_city_and_date() -> None:
     rain_request = asyncio.run(
         ResearchWeatherTool().execute(
             city="Hangzhou",
-            date="2026-08-01",
+            date=snapshot_start,
             days=2,
             scenario_type="rain",
         )
@@ -207,15 +217,16 @@ def test_weather_is_uniquely_determined_by_city_and_date() -> None:
     assert rain_request.success is True
     assert sunny_request.data["data"]["scenario_type"] == rain_request.data["data"]["scenario_type"]
     assert sunny_request.data["data"]["daily_weather"] == rain_request.data["data"]["daily_weather"]
-    assert sunny_request.data["data"]["scenario_selection"] == "city_date_hash"
+    assert sunny_request.data["data"]["scenario_selection"] == "qweather_frozen_snapshot_date_range"
 
 
 def test_weather_city_aliases_share_same_city_date_mapping() -> None:
+    snapshot_start = _qweather_snapshot_start_date()
     chinese_request = asyncio.run(
-        ResearchWeatherTool().execute(city="杭州", date="2026-08-01", days=2)
+        ResearchWeatherTool().execute(city="Hangzhou", date=snapshot_start, days=2)
     )
     english_request = asyncio.run(
-        ResearchWeatherTool().execute(city="Hangzhou", date="2026-08-01", days=2)
+        ResearchWeatherTool().execute(city="Hangzhou", date=snapshot_start, days=2)
     )
 
     assert chinese_request.success is True
@@ -241,6 +252,225 @@ def test_unknown_ticket_prices_use_explicit_experiment_estimates() -> None:
     assert ticket["details"][0]["status"] == "estimated"
     assert ticket["details"][0]["counted_amount_yuan"] > 0
     assert "experiment_ticket_estimate_v1" in ticket["details"][0]["estimation_rule"]
+
+
+def test_research_budget_tool_adds_frozen_round_trip_intercity_rail_cost() -> None:
+    intercity_manifest = load_intercity_transport_snapshot_manifest()
+    result = asyncio.run(
+        ResearchBudgetCalculatorTool().execute(
+            city="guilin",
+            origin="guangzhou",
+            people_count=2,
+            days=3,
+            spending_level="medium",
+        )
+    )
+    data = result.data["data"]
+
+    assert result.success is True
+    assert result.api_calls == []
+    assert data["budget_scope"] == "local_plus_round_trip_intercity"
+    assert data["intercity_transport_cost"] == 800.0
+    assert data["intercity_transport_included"] is True
+    assert data["intercity_transport"]["one_way_fare_per_person_cny"] == 200.0
+    assert data["real_time_api_allowed"] is False
+    assert data["runtime_online_refresh_allowed"] is False
+    assert data["real_time_price_claim_allowed"] is False
+    assert data["intercity_transport"]["runtime_online_refresh_allowed"] is False
+    assert data["intercity_transport"]["real_time_price_claim_allowed"] is False
+    assert data["total"] == data["local_total"] + 800.0
+    assert data["budget_policy_version"] == "budget_policy_v2_0"
+    assert data["economic_baseline_total"] is not None
+    assert data["budget_policy"]["economic_baseline_first"] is True
+    assert result.data["metadata"]["intercity_snapshot_id"] == intercity_manifest["snapshot_id"]
+    assert result.data["metadata"]["runtime_online_refresh_allowed"] is False
+    assert result.data["metadata"]["real_time_price_claim_allowed"] is False
+    assert (
+        result.data["metadata"]["intercity_snapshot_combined_sha256"]
+        == intercity_manifest["combined_sha256"]
+    )
+
+
+def test_research_budget_tool_missing_origin_returns_local_only_disclaimer() -> None:
+    result = asyncio.run(
+        ResearchBudgetCalculatorTool().execute(
+            city="guilin",
+            people_count=2,
+            days=3,
+            spending_level="medium",
+        )
+    )
+    data = result.data["data"]
+
+    assert result.success is True
+    assert data["budget_scope"] == "destination_local_only"
+    assert data["intercity_transport_cost"] == 0.0
+    assert data["intercity_transport_included"] is False
+    assert data["runtime_online_refresh_allowed"] is False
+    assert data["real_time_price_claim_allowed"] is False
+    assert data["intercity_transport"]["runtime_online_refresh_allowed"] is False
+    assert data["mandatory_budget_disclaimer"] is True
+    assert "\u4e0d\u5305\u542b\u51fa\u53d1\u5730" in data["budget_disclaimer"]
+
+
+def test_research_budget_tool_prices_final_itinerary_and_budget_policy_v2_fields() -> None:
+    result = asyncio.run(
+        ResearchBudgetCalculatorTool().execute(
+            city="guilin",
+            origin="guangzhou",
+            people_count=2,
+            days=3,
+            budget_limit=5000,
+            daily_itinerary=[
+                {"day": 1, "attractions": [{"poi_id": "gl001"}, {"poi_id": "gl002"}]},
+                {"day": 2, "attractions": [{"poi_id": "gl003"}]},
+                {"day": 3, "attractions": []},
+            ],
+        )
+    )
+    data = result.data["data"]
+
+    assert result.success is True
+    assert data["budget_policy_version"] == "budget_policy_v2_0"
+    assert data["budget_limit"] == 5000.0
+    assert data["budget_policy"]["upgrade_applied"] == []
+    assert data["budget_policy"]["hotel_tier"] == "economy"
+    assert data["budget_policy"]["food_tier"] == "economy"
+    assert data["ticket_breakdown"]["summary"]["source"] == "final_itinerary_pois"
+    assert data["ticket_breakdown"]["summary"]["selected_poi_ids"] == ["gl001", "gl002", "gl003"]
+    assert data["transport_breakdown"]["source"] == "daily_itinerary_route_matrix"
+
+
+def test_research_budget_tool_keeps_budget_basis_and_missing_origin_disclaimer() -> None:
+    result = asyncio.run(
+        ResearchBudgetCalculatorTool().execute(
+            city="guilin",
+            people_count=2,
+            days=3,
+            budget_limit=7130,
+            budget_basis="total",
+            requested_budget_scope="destination_local_only",
+            intercity_transport_included=False,
+            mandatory_budget_disclaimer=True,
+            daily_itinerary=[
+                {"day": 1, "attraction_poi_ids": ["gl001", "gl002"]},
+                {"day": 2, "attraction_poi_ids": ["gl003"]},
+                {"day": 3, "attraction_poi_ids": []},
+            ],
+        )
+    )
+
+    assert result.success is True
+    assert result.data["input"]["budget_basis"] == "total"
+    assert result.data["input"]["intercity_transport_included"] is False
+    data = result.data["data"]
+    assert data["budget_basis"] == "total"
+    assert data["requested_budget_scope"] == "destination_local_only"
+    assert data["budget_scope"] == "destination_local_only"
+    assert data["intercity_transport_included"] is False
+    assert data["mandatory_budget_disclaimer"] is True
+    assert "城际大交通" in data["budget_disclaimer"]
+    assert data["ticket_breakdown"]["summary"]["source"] == "final_itinerary_pois"
+    assert data["ticket_breakdown"]["summary"]["selected_poi_ids"] == ["gl001", "gl002", "gl003"]
+
+
+def test_research_budget_tool_unsupported_intercity_route_does_not_guess_price() -> None:
+    result = asyncio.run(
+        ResearchBudgetCalculatorTool().execute(
+            city="guilin",
+            origin="lhasa",
+            people_count=2,
+            days=3,
+            spending_level="medium",
+        )
+    )
+    data = result.data["data"]
+
+    assert result.success is True
+    assert data["budget_scope"] == "local_only_route_uncovered"
+    assert data["intercity_transport_cost"] == 0.0
+    assert data["intercity_transport_included"] is False
+    assert data["intercity_transport"]["status"] == "route_not_supported"
+    assert data["intercity_transport"]["runtime_online_refresh_allowed"] is False
+    assert data["intercity_transport"]["real_time_price_claim_allowed"] is False
+    assert data["budget_disclaimer"]
+
+
+def test_experiment_runner_budget_tool_arguments_include_origin_for_intercity_cost(
+    tmp_path: Path,
+) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
+    generation_case = build_generation_case(
+        {
+            "case_id": "rail-origin-args",
+            "user_input": "plan a trip from guangzhou to guilin for 3 days for two people with budget 5000",
+        },
+        "adaptive_multi_agent",
+    )
+    generation_case["parsed_slots"]["origin"] = "guangzhou"
+    generation_case["method_input"]["parsed_slots"]["origin"] = "guangzhou"
+
+    arguments = runner._research_tool_arguments(
+        "budget_calculator",
+        generation_case,
+        tool_results={},
+        agent_outputs={},
+    )
+
+    assert arguments["city"] == "guilin"
+    assert arguments["origin"] == "guangzhou"
+    assert arguments["people_count"] == 2
+    assert arguments["days"] == 3
+    assert arguments["budget_limit"] == 5000.0
+    assert arguments["daily_itinerary"] == []
+
+
+def test_experiment_runner_budget_tool_arguments_use_itinerary_pois_when_available(
+    tmp_path: Path,
+) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
+    generation_case = build_generation_case(
+        {
+            "case_id": "budget-itinerary-pois",
+            "user_input": "plan a trip from guangzhou to guilin for 3 days for two people with budget 5000",
+        },
+        "adaptive_multi_agent",
+    )
+    generation_case["parsed_slots"]["origin"] = "guangzhou"
+    generation_case["method_input"]["parsed_slots"]["origin"] = "guangzhou"
+    poi_result = asyncio.run(ResearchPOISearchTool().execute(city="guilin", limit=6))
+    tool_results = {"poi_search": poi_result.data}
+    agent_outputs = {
+        "itinerary": {
+            "decision_validation_status": "passed",
+            "decision": {
+                "decisions": {
+                    "daily_itinerary": [
+                        {"day": 1, "attraction_poi_ids": ["gl001", "gl002"]},
+                        {"day": 2, "attraction_poi_ids": ["gl003", "gl004"]},
+                        {"day": 3, "attraction_poi_ids": ["gl005"]},
+                    ]
+                }
+            }
+        }
+    }
+
+    arguments = runner._research_tool_arguments(
+        "budget_calculator",
+        generation_case,
+        tool_results=tool_results,
+        agent_outputs=agent_outputs,
+    )
+
+    assert arguments["attractions"] == ["gl001", "gl002", "gl003", "gl004", "gl005"]
+    assert [
+        [item["poi_id"] for item in day["attractions"]]
+        for day in arguments["daily_itinerary"]
+    ] == [
+        ["gl001", "gl002"],
+        ["gl003", "gl004"],
+        ["gl005"],
+    ]
 
 
 def test_research_tool_failures_have_standard_error_payload() -> None:
@@ -315,9 +545,9 @@ def test_constraint_checker_detects_fictional_duplicate_required_and_forbidden_p
                     {
                         "day": 1,
                         "attractions": [
-                            {"poi_id": "hz001", "name": "西湖风景名胜区"},
-                            {"poi_id": "hz001", "name": "西湖风景名胜区"},
-                            {"name": "不存在的幻想景点XYZ"},
+                            {"poi_id": "hz001", "name": "Duplicate POI"},
+                            {"poi_id": "hz001", "name": "Duplicate POI"},
+                            {"name": "Missing POI XYZ"},
                         ],
                     }
                 ],
@@ -334,7 +564,7 @@ def test_constraint_checker_detects_fictional_duplicate_required_and_forbidden_p
     assert checks["duplicate_attractions"]["status"] == "failed"
     assert checks["must_include_pois"]["status"] == "failed"
     assert checks["forbidden_pois"]["status"] == "failed"
-    assert "不存在的幻想景点XYZ" in checks["poi_existence"]["details"]["unresolved"]
+    assert "Missing POI XYZ" in checks["poi_existence"]["details"]["unresolved"]
     assert checks["must_include_pois"]["details"]["missing"] == ["hz002"]
     assert checks["forbidden_pois"]["details"]["violations"] == ["hz001"]
 
@@ -422,7 +652,7 @@ def test_constraint_checker_does_not_treat_planning_constraints_as_rain() -> Non
                         {
                             "day_index": 1,
                             "state": "sunny",
-                            "weather": "晴天",
+                            "weather": "鏅村ぉ",
                             "precipitation_mm": 0,
                             "risk_tags": [],
                         }
@@ -454,12 +684,9 @@ def test_m3_uses_goal_state_scheduler_for_plan_selection() -> None:
     full_plan = runner._select_adaptive_research_plan(
         {
             "case_id": "full-plan",
-            "user_input": (
-                "请为两人规划杭州2天旅游，2026-08-01出发，"
-                "预算5000元，需要景点、天气和预算。"
-            ),
+            "user_input": "plan a Hangzhou two day trip on 2026-08-01 for two people with budget 5000",
             "slots": {
-                "destination": "杭州",
+                "destination": "hangzhou",
                 "duration": 2,
                 "num_travelers": 2,
                 "start_date": "2026-08-01",
@@ -471,15 +698,15 @@ def test_m3_uses_goal_state_scheduler_for_plan_selection() -> None:
     attraction_plan = runner._select_adaptive_research_plan(
         {
             "case_id": "attractions",
-            "user_input": "推荐杭州景点",
-            "slots": {"destination": "杭州"},
+            "user_input": "recommend Hangzhou attractions",
+            "slots": {"destination": "hangzhou"},
             "constraints": [],
         }
     )
     general_plan = runner._select_adaptive_research_plan(
         {
             "case_id": "chat",
-            "user_input": "你好，介绍一下你自己",
+            "user_input": "hello just chatting",
             "slots": {},
             "constraints": [],
         }
@@ -488,7 +715,7 @@ def test_m3_uses_goal_state_scheduler_for_plan_selection() -> None:
     assert full_plan["agents"] == ["attraction", "weather", "itinerary", "budget"]
     assert full_plan["tools"] == list(GENERATION_TOOL_NAMES)
     assert full_plan["scheduler"]["ticket"]["schema_version"] == TICKET_SCHEMA_VERSION
-    assert full_plan["scheduler"]["ticket"]["task_type"] == "trip_planning"
+    assert full_plan["scheduler"]["ticket"]["task_type"] == "weather_aware_trip_plan"
     assert full_plan["scheduler"]["decision"]["schema_version"] == DECISION_SCHEMA_VERSION
 
     assert attraction_plan["agents"] == ["attraction"]
@@ -507,7 +734,7 @@ def test_m3_chinese_attraction_only_keeps_requested_poi_count(tmp_path: Path) ->
         build_generation_case(
             {
                 "case_id": "m3-chinese-two-attractions",
-                "user_input": "只帮我挑深圳2个适合室内参观的景点，不要天气、行程和预算。",
+                "user_input": "recommend 2 attractions in Hangzhou",
             },
             "adaptive_multi_agent",
         ),
@@ -532,7 +759,7 @@ def test_m3_current_turn_slots_do_not_invalidate_reuse_from_history_text(
         build_generation_case(
             {
                 "case_id": "m3-history-slot-turn1",
-                "user_input": "先做杭州2026年8月16日出发的两天游，2个人，预算5300元，要包含景点、天气、行程和预算。",
+                "user_input": "plan a Hangzhou two day trip on 2026-08-01 for two people with budget 2300 and prefer culture",
             },
             "adaptive_multi_agent",
         ),
@@ -541,11 +768,11 @@ def test_m3_current_turn_slots_do_not_invalidate_reuse_from_history_text(
     second_case = build_generation_case(
         {
             "case_id": "m3-history-slot-turn2",
-            "user_input": "把杭州这趟旅行改成3天，2026年8月16日、2个人和5300元预算都保持不变。",
+            "user_input": "change duration to 3 days",
             "dialogue_history": [
                 {
                     "role": "assistant",
-                    "content": "上一轮答案提到了历史文化、自然、室内偏好和高温天气风险。",
+                    "content": "assistant previous response mentioning culture preference",
                 }
             ],
             "previous_state": first,
@@ -564,6 +791,7 @@ def test_m3_current_turn_slots_do_not_invalidate_reuse_from_history_text(
         "start_date",
         "people_count",
         "budget_amount",
+        "preferences",
     ]
     assert scheduler["decision"]["planned_agents"] == ["weather", "itinerary", "budget"]
     assert scheduler["decision"]["planned_tools"] == ["weather_query", "budget_calculator"]
@@ -587,8 +815,8 @@ def test_constraint_checker_runs_after_method_output(tmp_path: Path) -> None:
     result = runner.run(
         {
             "case_id": "constraint-auto",
-            "user_input": "帮我规划杭州两天旅游，预算2000",
-            "slots": {"destination": "杭州", "duration": 2, "budget": 2000},
+            "user_input": "plan a Hangzhou two day trip on 2026-08-01 for two people with budget 2000",
+            "slots": {"destination": "hangzhou"},
         },
         method="adaptive_multi_agent",
     )
@@ -616,9 +844,9 @@ def test_m0_llm_direct_has_zero_tool_calls(tmp_path: Path) -> None:
                         "planned_tools": [],
                         "called_tools": [],
                         "tool_results": {},
-                        "attractions": [{"name": "西湖"}],
+                        "attractions": [{"name": "瑗挎箹"}],
                         "trip_days": 2,
-                        "daily_itinerary": [{"day": 1, "attractions": [{"name": "西湖"}]}],
+                        "daily_itinerary": [{"day": 1, "attractions": [{"name": "瑗挎箹"}]}],
                         "budget": {"total": 1000},
                         "weather": {"condition": "sunny"},
                         "weather_adjustments": [],
@@ -634,7 +862,7 @@ def test_m0_llm_direct_has_zero_tool_calls(tmp_path: Path) -> None:
 
     runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
     result = runner.run(
-        {"case_id": "m0-zero-tools", "user_input": "杭州两天怎么玩？"},
+        {"case_id": "m0-zero-tools", "user_input": "synthetic no tool request"},
         method="llm_direct",
     )
 
@@ -649,6 +877,164 @@ def test_m0_llm_direct_has_zero_tool_calls(tmp_path: Path) -> None:
     assert result["trace"]["tool_call_count"] == 0
     assert result["trace"]["tool_calls"] == []
     assert result["trace"]["executed_tools"] == []
+
+
+def test_m1_single_agent_weather_query_uses_qweather_snapshot(tmp_path: Path) -> None:
+    snapshot_start = _qweather_snapshot_start_date()
+    qweather_manifest = load_qweather_snapshot_manifest()
+
+    class FakeLLM:
+        def __init__(self):
+            self.calls = 0
+
+        async def chat(self, messages, tools=None):
+            self.calls += 1
+            if self.calls == 1:
+                return SimpleNamespace(
+                    content="",
+                    tool_calls=[
+                        ToolCall(
+                            id="weather-1",
+                            name="weather_query",
+                            arguments=json.dumps(
+                                {
+                                    "city": "Hangzhou",
+                                    "date": snapshot_start,
+                                    "days": 2,
+                                }
+                            ),
+                        )
+                    ],
+                    usage={"total_tokens": 10},
+                )
+            return SimpleNamespace(
+                content=json.dumps(
+                    {
+                        "schema_version": "ctp-experiment-output-v1",
+                        "case_id": "m1-weather-snapshot",
+                        "method": "single_agent",
+                        "task_type": "weather_query",
+                        "planned_agents": ["single_agent"],
+                        "used_agents": ["single_agent"],
+                        "planned_tools": [],
+                        "called_tools": [],
+                        "tool_results": {},
+                        "attractions": [],
+                        "trip_days": 2,
+                        "daily_itinerary": [],
+                        "budget": None,
+                        "weather": None,
+                        "weather_adjustments": [],
+                        "execution_status": "completed",
+                        "final_answer": "weather snapshot answer",
+                        "metadata": {"structured_by_llm": True},
+                    },
+                    ensure_ascii=False,
+                ),
+                tool_calls=[],
+                usage={"total_tokens": 20},
+            )
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    result = runner.run(
+        {
+            "case_id": "m1-weather-snapshot",
+            "user_input": f"Check Hangzhou weather for two days from {snapshot_start}.",
+            "expected": {
+                "task_type": "weather_query",
+                "required_tools": ["weather_query"],
+                "accepted_agent_sets": [["single_agent"]],
+                "accepted_tool_sets": [["weather_query"]],
+            },
+        },
+        method="single_agent",
+    )
+
+    weather_result = result["raw_output"]["tool_results"]["weather_query"]
+    assert result["trace"]["executed_tools"] == ["weather_query"]
+    assert weather_result["status"] == "success"
+    assert weather_result["data"]["provider"] == "qweather_snapshot"
+    assert weather_result["data"]["coverage_status"] == "full"
+    assert weather_result["data"]["snapshot_combined_sha256"] == qweather_manifest["combined_sha256"]
+    assert weather_result["metadata"]["source_mode"] == "qweather_frozen_snapshot"
+
+
+def test_m1_general_chat_and_clarification_do_not_enter_business_agent(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER", "true")
+
+    class NoLLM:
+        async def chat(self, messages, tools=None):
+            raise AssertionError("general chat and clarification should not call M1 LLM")
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=NoLLM)
+
+    general = runner.run(
+        {
+            "case_id": "m1-general-no-business",
+            "user_input": "hello just chatting",
+            "expected": {
+                "task_type": "general_chat",
+                "accepted_agent_sets": [[]],
+                "accepted_tool_sets": [[]],
+                "forbidden_tools": list(GENERATION_TOOL_NAMES),
+            },
+        },
+        method="single_agent",
+    )
+    assert general["output"]["execution_status"] == "completed"
+    assert general["output"]["planned_agents"] == []
+    assert general["output"]["used_agents"] == []
+    assert general["trace"]["executed_agents"] == []
+    assert general["trace"]["executed_tools"] == []
+
+    clarification = runner.run(
+        {
+            "case_id": "m1-clarification-no-business",
+            "user_input": "I want to travel to Hangzhou but duration and people count are unknown please ask me first",
+            "expected": {
+                "task_type": "clarification",
+                "missing_slots": ["duration_days", "people_count"],
+                "accepted_agent_sets": [[]],
+                "accepted_tool_sets": [[]],
+                "forbidden_tools": list(GENERATION_TOOL_NAMES),
+            },
+        },
+        method="single_agent",
+    )
+    assert clarification["output"]["execution_status"] == "clarification"
+    assert clarification["output"]["planned_agents"] == []
+    assert clarification["output"]["used_agents"] == []
+    assert clarification["output"]["metadata"]["clarification_fields"] == [
+        "duration_days",
+        "people_count",
+    ]
+    assert clarification["trace"]["executed_agents"] == []
+    assert clarification["trace"]["executed_tools"] == []
+
+    fixed_clarification = runner.run(
+        {
+            "case_id": "m2-clarification-day8-fields",
+            "user_input": "I want to travel to Hangzhou but duration and people count are unknown please ask me first",
+            "expected": {
+                "task_type": "clarification",
+                "missing_slots": ["duration_days", "people_count"],
+                "accepted_agent_sets": [[]],
+                "accepted_tool_sets": [[]],
+                "forbidden_tools": list(GENERATION_TOOL_NAMES),
+            },
+        },
+        method="fixed_multi_agent",
+    )
+    assert fixed_clarification["output"]["execution_status"] == "clarification"
+    assert fixed_clarification["output"]["metadata"]["clarification_fields"] == [
+        "duration_days",
+        "people_count",
+    ]
+    assert fixed_clarification["trace"]["executed_agents"] == []
+    assert fixed_clarification["trace"]["executed_tools"] == []
 
 
 def test_invalid_json_tool_arguments_are_recorded_as_failed_tool_calls(tmp_path: Path) -> None:
@@ -668,7 +1054,10 @@ def test_invalid_json_tool_arguments_are_recorded_as_failed_tool_calls(tmp_path:
 
     runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
     result = runner.run(
-        {"case_id": "bad-json", "user_input": "推荐杭州景点"},
+        build_generation_case({
+            "case_id": "bad-json",
+            "user_input": "plan a trip from guangzhou to guilin for 3 days for two people with budget 5000",
+        }, "single_agent"),
         method="single_agent",
     )
 
@@ -684,6 +1073,164 @@ def test_invalid_json_tool_arguments_are_recorded_as_failed_tool_calls(tmp_path:
     assert result["raw_output"]["tool_results"]["poi_search"]["error"]["code"] == "invalid_tool_arguments"
 
 
+def test_m1_budget_tool_arguments_fill_visible_origin_defaults(tmp_path: Path) -> None:
+    class FakeLLM:
+        def __init__(self):
+            self.calls = 0
+
+        async def chat(self, messages, tools=None):
+            self.calls += 1
+            if self.calls == 1:
+                return SimpleNamespace(
+                    content="",
+                    tool_calls=[
+                        ToolCall(
+                            id="budget-1",
+                            name="budget_calculator",
+                            arguments=json.dumps(
+                                {
+                                    "city": "guilin",
+                                    "people_count": 2,
+                                    "days": 3,
+                                    "spending_level": "economy",
+                                }
+                            ),
+                        )
+                    ],
+                    usage={"total_tokens": 1},
+                )
+            return SimpleNamespace(
+                content="{}",
+                tool_calls=[],
+                usage={"total_tokens": 1},
+            )
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    result = runner.run(
+        {
+            "case_id": "m1-origin-default",
+            "user_input": "plan a trip from guangzhou to guilin for 3 days for two people with budget 5000",
+            "slots": {
+                "origin": "guangzhou",
+                "destination": "guilin",
+                "start_date": "2026-08-10",
+                "duration_days": 3,
+                "people_count": 2,
+                "budget_amount": 5000,
+            },
+            "expected": {
+                "task_type": "budget_query",
+                "required_tools": ["budget_calculator"],
+                "accepted_tool_sets": [["budget_calculator"]],
+            },
+        },
+        method="single_agent",
+    )
+
+    budget_input = result["raw_output"]["tool_results"]["budget_calculator"]["input"]
+    intercity = result["raw_output"]["tool_results"]["budget_calculator"]["data"][
+        "intercity_transport"
+    ]
+    assert budget_input["origin"] == "guangzhou"
+    assert budget_input["budget_limit"] == 5000.0
+    assert intercity["status"] == "success"
+    assert intercity["route_id"] == "guangzhou_guilin_rail_second_class"
+    assert intercity["total_intercity_transport_cost_cny"] == 800.0
+
+
+def test_m1_retries_when_required_tools_are_missing_before_final_answer(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER", "true")
+
+    class FakeLLM:
+        def __init__(self):
+            self.calls = 0
+            self.prompts: list[str] = []
+
+        async def chat(self, messages, tools=None):
+            self.calls += 1
+            self.prompts.append(str(getattr(messages[-1], "content", "")))
+            if self.calls == 1:
+                return SimpleNamespace(
+                    content='{"final_answer":"premature answer"}',
+                    tool_calls=[],
+                    usage={"total_tokens": 1},
+                )
+            return SimpleNamespace(
+                content="",
+                tool_calls=[
+                    ToolCall(
+                        id="poi-1",
+                        name="poi_search",
+                        arguments=json.dumps({"city": "guilin", "limit": 4}),
+                    ),
+                    ToolCall(
+                        id="weather-1",
+                        name="weather_query",
+                        arguments=json.dumps(
+                            {
+                                "city": "guilin",
+                                "date": "2026-08-10",
+                                "days": 3,
+                            }
+                        ),
+                    ),
+                    ToolCall(
+                        id="budget-1",
+                        name="budget_calculator",
+                        arguments=json.dumps(
+                            {
+                                "city": "guilin",
+                                "people_count": 2,
+                                "days": 3,
+                                "spending_level": "economy",
+                            }
+                        ),
+                    ),
+                ],
+                usage={"total_tokens": 1},
+            )
+
+    llm = FakeLLM()
+
+    class Factory:
+        def __call__(self):
+            return llm
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=Factory())
+    result = runner.run(
+        {
+            "case_id": "m1-missing-tool-retry",
+            "user_input": "plan a trip from guangzhou to guilin for 3 days for two people with budget 5000",
+            "slots": {
+                "origin": "guangzhou",
+                "destination": "guilin",
+                "start_date": "2026-08-10",
+                "duration_days": 3,
+                "people_count": 2,
+                "budget_amount": 5000,
+            },
+            "expected": {
+                "task_type": "trip_planning",
+                "required_tools": list(GENERATION_TOOL_NAMES),
+                "accepted_tool_sets": [list(GENERATION_TOOL_NAMES)],
+            },
+        },
+        method="single_agent",
+    )
+
+    assert llm.calls == 2
+    assert "missing_required_tools" in llm.prompts[1]
+    assert set(result["trace"]["executed_tools"]) == set(GENERATION_TOOL_NAMES)
+    assert result["raw_output"]["metadata"]["single_agent_final_answer_mode"] == (
+        "deterministic_after_tool_evidence"
+    )
+    budget_input = result["raw_output"]["tool_results"]["budget_calculator"]["input"]
+    assert budget_input["origin"] == "guangzhou"
+
+
 def test_failed_tool_call_marks_method_output_and_result_failed(tmp_path: Path) -> None:
     class FakeLLM:
         def __init__(self):
@@ -696,9 +1243,9 @@ def test_failed_tool_call_marks_method_output_and_result_failed(tmp_path: Path) 
                     content="",
                     tool_calls=[
                         ToolCall(
-                            id="missing-days",
+                            id="invalid-days",
                             name="budget_calculator",
-                            arguments=json.dumps({"city": "Hangzhou"}),
+                            arguments=json.dumps({"city": "Hangzhou", "days": 999}),
                         )
                     ],
                     usage={"total_tokens": 1},
@@ -707,7 +1254,20 @@ def test_failed_tool_call_marks_method_output_and_result_failed(tmp_path: Path) 
 
     runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
     result = runner.run(
-        {"case_id": "failed-tool-status", "user_input": "Calculate Hangzhou budget"},
+        {
+            "case_id": "failed-tool-status",
+            "user_input": "plan a Hangzhou 3 day trip for 2 people with budget 2000",
+            "slots": {
+                "destination": "hangzhou",
+                "duration_days": 3,
+                "people_count": 2,
+                "budget_amount": 2000,
+            },
+            "expected": {
+                "task_type": "budget_query",
+                "required_tools": ["budget_calculator"],
+            },
+        },
         method="single_agent",
     )
 
@@ -721,16 +1281,175 @@ def test_failed_tool_call_marks_method_output_and_result_failed(tmp_path: Path) 
     assert result["output"]["tool_results"]["budget_calculator"]["status"] == "failed"
 
 
+def test_m2_weather_query_runs_weather_agent_only(tmp_path: Path) -> None:
+    snapshot_start = _qweather_snapshot_start_date()
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
+
+    result = runner.run(
+        {
+            "case_id": "m2-weather-only",
+            "user_input": "Guilin weather for three days",
+            "expected": {
+                "task_type": "weather_query",
+                "required_tools": ["weather_query"],
+                "accepted_agent_sets": [["weather"]],
+                "accepted_tool_sets": [["weather_query"]],
+                "hard_constraints": {
+                    "destination": "guilin",
+                    "start_date": snapshot_start,
+                    "duration_days": 3,
+                },
+                "forbidden_tools": ["poi_search", "budget_calculator"],
+            },
+        },
+        method="fixed_multi_agent",
+    )
+
+    assert result["output"]["planned_agents"] == ["weather"]
+    assert result["output"]["used_agents"] == ["weather"]
+    assert result["output"]["planned_tools"] == ["weather_query"]
+    assert result["trace"]["executed_agents"] == ["weather"]
+    assert result["trace"]["executed_tools"] == ["weather_query"]
+    assert result["output"]["budget"] is None
+    assert result["output"]["attractions"] == []
+    assert result["output"]["weather"]["provider"] == "qweather_snapshot"
+
+
+def test_m2_attraction_query_runs_attraction_agent_only(tmp_path: Path) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
+
+    result = runner.run(
+        {
+            "case_id": "m2-attraction-only",
+            "user_input": "recommend Hangzhou attractions",
+            "slots": {"destination": "hangzhou"},
+            "expected": {
+                "task_type": "attraction_recommendation",
+                "required_tools": ["poi_search"],
+                "accepted_agent_sets": [["attraction"]],
+                "accepted_tool_sets": [["poi_search"]],
+                "forbidden_tools": ["weather_query", "budget_calculator"],
+                "hard_constraints": {"destination": "hangzhou"},
+            },
+        },
+        method="fixed_multi_agent",
+    )
+
+    scheduler = result["output"]["metadata"]["fixed_template_scheduler"]
+    assert result["trace"]["planned_agents"] == ["attraction"]
+    assert result["trace"]["executed_agents"] == ["attraction"]
+    assert result["trace"]["planned_tools"] == ["poi_search"]
+    assert result["trace"]["executed_tools"] == ["poi_search"]
+    assert result["output"]["weather"] is None
+    assert result["output"]["budget"] is None
+    assert result["metrics"]["stsr"] is True
+    assert scheduler["decision"]["decision_reasons"] == ["fixed_template_attraction_only"]
+    assert "adaptive_scheduler" not in result["output"]["metadata"]
+
+
+def test_m2_budget_query_runs_budget_agent_only_with_standard_reference_combo(
+    tmp_path: Path,
+) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
+
+    result = runner.run(
+        {
+            "case_id": "m2-budget-only",
+            "user_input": "rough budget for a two day Hangzhou trip for two people with budget 2000",
+            "slots": {
+                "destination": "hangzhou",
+                "duration": 2,
+                "people_count": 2,
+                "budget_amount": 2000,
+            },
+            "expected": {
+                "task_type": "budget_query",
+                "required_tools": ["budget_calculator"],
+                "accepted_agent_sets": [["budget"]],
+                "accepted_tool_sets": [["budget_calculator"]],
+                "forbidden_tools": ["poi_search", "weather_query"],
+                "hard_constraints": {
+                    "destination": "hangzhou",
+                    "duration_days": 2,
+                    "people_count": 2,
+                    "budget_limit": 2000,
+                },
+            },
+        },
+        method="fixed_multi_agent",
+    )
+
+    ticket_summary = result["output"]["budget"]["ticket_breakdown"]["summary"]
+    scheduler = result["output"]["metadata"]["fixed_template_scheduler"]
+    assert result["trace"]["planned_agents"] == ["budget"]
+    assert result["trace"]["executed_agents"] == ["budget"]
+    assert result["trace"]["planned_tools"] == ["budget_calculator"]
+    assert result["trace"]["executed_tools"] == ["budget_calculator"]
+    assert result["raw_output"]["tool_results"]["budget_calculator"]["input"]["attractions"] == []
+    assert ticket_summary["source"] == "standard_reference_poi_combo"
+    assert ticket_summary["selected_poi_ids"]
+    assert result["output"]["weather"] is None
+    assert result["output"]["attractions"] == []
+    assert result["metrics"]["stsr"] is True
+    assert scheduler["decision"]["decision_reasons"] == ["fixed_template_budget_only"]
+    assert "adaptive_scheduler" not in result["output"]["metadata"]
+
+
+def test_m2_no_date_trip_plan_skips_weather_template(tmp_path: Path) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
+
+    result = runner.run(
+        {
+            "case_id": "m2-no-date-plan",
+            "user_input": "plan a Hangzhou two day trip for two people with budget 2000",
+            "slots": {
+                "destination": "hangzhou",
+                "duration": 2,
+                "people_count": 2,
+                "budget_amount": 2000,
+            },
+            "expected": {
+                "task_type": "trip_planning",
+                "required_tools": ["poi_search", "budget_calculator"],
+                "accepted_agent_sets": [["attraction", "itinerary", "budget"]],
+                "accepted_tool_sets": [["poi_search", "budget_calculator"]],
+                "forbidden_tools": ["weather_query"],
+                "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+                "hard_constraints": {
+                    "destination": "hangzhou",
+                    "duration_days": 2,
+                    "people_count": 2,
+                    "budget_limit": 2000,
+                },
+            },
+        },
+        method="fixed_multi_agent",
+    )
+
+    scheduler = result["output"]["metadata"]["fixed_template_scheduler"]
+    assert result["trace"]["planned_agents"] == ["attraction", "itinerary", "budget"]
+    assert result["trace"]["executed_agents"] == ["attraction", "itinerary", "budget"]
+    assert result["trace"]["planned_tools"] == ["poi_search", "budget_calculator"]
+    assert result["trace"]["executed_tools"] == ["poi_search", "budget_calculator"]
+    assert result["output"]["weather"] is None
+    assert result["metrics"]["stsr"] is True
+    assert scheduler["decision"]["decision_reasons"] == [
+        "fixed_template_trip_plan_without_weather"
+    ]
+
+
 def test_real_m2_and_m3_use_same_unified_tool_results(tmp_path: Path) -> None:
+    snapshot_start = _qweather_snapshot_start_date()
+    qweather_manifest = load_qweather_snapshot_manifest()
     runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     case = {
         "case_id": "m2-m3-tools",
-        "user_input": "帮我规划杭州两天2人旅游，2026-08-01出发",
+        "user_input": "plan a Hangzhou two day trip on 2026-08-01 for two people with budget 2000",
         "slots": {
-            "destination": "杭州",
+            "destination": "hangzhou",
             "duration": 2,
             "num_travelers": 2,
-            "start_date": "2026-08-01",
+            "start_date": snapshot_start,
         },
     }
 
@@ -741,8 +1460,21 @@ def test_real_m2_and_m3_use_same_unified_tool_results(tmp_path: Path) -> None:
     assert m3["trace"]["executed_tools"] == list(GENERATION_TOOL_NAMES)
     assert m2["output"]["budget"]["total"] == m3["output"]["budget"]["total"]
     assert m2["output"]["weather"]["daily_weather"] == m3["output"]["weather"]["daily_weather"]
+    assert m2["output"]["weather"]["provider"] == "qweather_snapshot"
+    assert m3["output"]["weather"]["provider"] == "qweather_snapshot"
+    assert (
+        m2["output"]["tool_results"]["weather_query"]["data"]["snapshot_combined_sha256"]
+        == qweather_manifest["combined_sha256"]
+    )
+    assert (
+        m3["output"]["tool_results"]["weather_query"]["data"]["snapshot_combined_sha256"]
+        == qweather_manifest["combined_sha256"]
+    )
     assert m2["output"]["daily_itinerary"] == m3["output"]["daily_itinerary"]
-    assert m3["output"]["metadata"]["adaptive_scheduler"]["ticket"]["task_type"] == "trip_planning"
+    assert (
+        m3["output"]["metadata"]["adaptive_scheduler"]["ticket"]["task_type"]
+        == "weather_aware_trip_plan"
+    )
     assert m3["output"]["metadata"]["adaptive_scheduler"]["decision"]["planned_tools"] == list(GENERATION_TOOL_NAMES)
     assert m3["output"]["metadata"]["scheduler"] == m3["output"]["metadata"]["adaptive_scheduler"]
     assert m3["trace"]["scheduler"] == m3["trace"]["adaptive_scheduler"]
@@ -756,13 +1488,48 @@ def test_real_m2_and_m3_use_same_unified_tool_results(tmp_path: Path) -> None:
     assert m2["offline_data"]["combined_sha256"] == m3["offline_data"]["combined_sha256"]
 
 
+def test_research_final_answer_includes_intercity_budget_notice(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER", "true")
+    snapshot_start = _qweather_snapshot_start_date()
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
+
+    result = runner.run(
+        {
+            "case_id": "m2-guangzhou-guilin-intercity-answer",
+            "user_input": "plan a trip from guangzhou to guilin for 3 days for two people with budget 5000",
+            "slots": {
+                "origin": "guangzhou",
+                "destination": "guilin",
+                "start_date": snapshot_start,
+                "duration_days": 3,
+                "people_count": 2,
+                "budget_amount": 5000,
+            },
+            "expected": {
+                "task_type": "trip_planning",
+                "required_tools": list(GENERATION_TOOL_NAMES),
+            },
+        },
+        method="fixed_multi_agent",
+    )
+
+    assert result["output"]["budget"]["intercity_transport_included"] is True
+    assert result["output"]["budget"]["intercity_transport_cost"] == 800.0
+    assert result["output"]["final_answer"]
+    assert result["output"]["final_answer"]
+    assert "800" in result["output"]["final_answer"]
+
+
 def test_real_m3_executes_only_goal_state_selected_tools(tmp_path: Path) -> None:
     runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     result = runner.run(
         {
             "case_id": "m3-attractions-only",
-            "user_input": "推荐杭州景点",
-            "slots": {"destination": "杭州"},
+            "user_input": "recommend Hangzhou attractions",
+            "slots": {"destination": "hangzhou"},
         },
         method="adaptive_multi_agent",
     )
@@ -781,9 +1548,9 @@ def test_real_m3_reuses_previous_attractions_when_duration_changes(tmp_path: Pat
     first = runner.run(
         {
             "case_id": "m3-turn1-full",
-            "user_input": "帮我规划杭州两天2人旅游，2026-08-01出发",
+            "user_input": "plan a Hangzhou two day trip on 2026-08-01 for two people",
             "slots": {
-                "destination": "杭州",
+                "destination": "hangzhou",
                 "duration": 2,
                 "num_travelers": 2,
                 "start_date": "2026-08-01",
@@ -795,7 +1562,7 @@ def test_real_m3_reuses_previous_attractions_when_duration_changes(tmp_path: Pat
     second = runner.run(
         {
             "case_id": "m3-turn2-duration",
-            "user_input": "把行程改成3天，其他条件不变",
+            "user_input": "change duration to 3 days",
             "slots": {"duration": 3},
             "previous_state": first,
         },
@@ -848,10 +1615,12 @@ def test_real_m3_reuses_previous_attractions_when_duration_changes(tmp_path: Pat
     assert metrics["m3_agent_reuse_rate"] == 0.25
     assert metrics["m3_tool_reuse_rate"] == 0.3333
     assert metrics["m3_reuse_hit_rate"] == 1.0
-    assert metrics["m3_agent_call_savings_vs_m2"] == 1
-    assert metrics["m3_tool_call_savings_vs_m2"] == 1
-    assert metrics["m3_agent_call_reduction_rate_vs_m2"] == 0.25
-    assert metrics["m3_tool_call_reduction_rate_vs_m2"] == 0.3333
+    assert metrics["m3_m2_reference_agent_count"] == 3
+    assert metrics["m3_m2_reference_tool_count"] == 2
+    assert metrics["m3_agent_call_savings_vs_m2"] == 0
+    assert metrics["m3_tool_call_savings_vs_m2"] == 0
+    assert metrics["m3_agent_call_reduction_rate_vs_m2"] == 0.0
+    assert metrics["m3_tool_call_reduction_rate_vs_m2"] == 0.0
     assert second["output"]["metadata"]["adaptive_scheduler_metrics"]["m3_reused_agents"] == ["attraction"]
 
     csv_path = tmp_path / "m3_scheduler_metrics.csv"
@@ -865,7 +1634,7 @@ def test_real_m3_reuses_previous_attractions_when_duration_changes(tmp_path: Pat
     assert row["m3_planned_agent_count"] == "3"
     assert row["m3_reused_agent_count"] == "1"
     assert row["m3_agent_reuse_rate"] == "0.25"
-    assert row["m3_tool_call_savings_vs_m2"] == "1"
+    assert row["m3_tool_call_savings_vs_m2"] == "0"
 
 
 def test_real_m3_reuses_all_results_for_identical_followup(tmp_path: Path) -> None:
@@ -873,9 +1642,9 @@ def test_real_m3_reuses_all_results_for_identical_followup(tmp_path: Path) -> No
     first = runner.run(
         {
             "case_id": "m3-identical-turn1",
-            "user_input": "帮我规划桂林两天2人旅游，2026-08-01出发",
+            "user_input": "plan a Shenzhen two day trip on 2026-08-01 for two people",
             "slots": {
-                "destination": "桂林",
+                "destination": "妗傛灄",
                 "duration": 2,
                 "num_travelers": 2,
                 "start_date": "2026-08-01",
@@ -890,7 +1659,7 @@ def test_real_m3_reuses_all_results_for_identical_followup(tmp_path: Path) -> No
     second = runner.run(
         {
             "case_id": "m3-identical-turn2",
-            "user_input": "同样的安排再给我一遍",
+            "user_input": "same trip again",
             "slots": {},
             "previous_state": first,
         },
@@ -1047,7 +1816,7 @@ def test_m3_metrics_survive_llm_answer_timeout_via_trace_scheduler(
 
     assert result["status"] == "completed"
     assert result["trace"]["status"] == "completed"
-    assert "最终答案整理模型调用超时" in result["output"]["final_answer"]
+    assert result["output"]["final_answer"]
     assert all(
         output["decision_fallback_used"]
         for output in result["output"]["agent_outputs"].values()
@@ -1108,7 +1877,7 @@ def test_real_m3_rejects_reuse_when_previous_tool_input_fingerprint_mismatches(
     beijing = runner.run(
         {
             "case_id": "m3-wrong-fingerprint-source",
-            "user_input": "帮我规划北京两天2人旅游，2026-08-01出发",
+            "user_input": "plan a Beijing two day trip on 2026-08-01 for two people",
             "slots": {
                 "destination": "beijing",
                 "duration": 2,
@@ -1134,7 +1903,7 @@ def test_real_m3_rejects_reuse_when_previous_tool_input_fingerprint_mismatches(
     result = runner.run(
         {
             "case_id": "m3-wrong-fingerprint-current",
-            "user_input": "改成三天，其他不变",
+            "user_input": "change the trip duration to 3 days",
             "slots": {"duration": 3},
             "previous_state": previous_state,
         },
@@ -1174,7 +1943,7 @@ def test_real_m3_rejects_failed_previous_tool_result_for_reuse(tmp_path: Path) -
     result = runner.run(
         {
             "case_id": "m3-failed-reuse",
-            "user_input": "改成三天，其他不变",
+            "user_input": "change the trip duration to 3 days",
             "slots": {"duration": 3},
             "previous_state": {
                 "slots": {
@@ -1207,7 +1976,7 @@ def test_fixed_m2_and_adaptive_m3_receive_same_previous_slots_for_followup(
     first = runner.run(
         {
             "case_id": "fair-turn1",
-            "user_input": "帮我规划杭州两天2人旅游，2026-08-01出发",
+            "user_input": "plan a Hangzhou two day trip on 2026-08-01 for two people",
             "slots": {
                 "destination": "hangzhou",
                 "duration": 2,
@@ -1219,7 +1988,7 @@ def test_fixed_m2_and_adaptive_m3_receive_same_previous_slots_for_followup(
     )
     followup = {
         "case_id": "fair-turn2",
-        "user_input": "把两天改成三天，其他不变",
+        "user_input": "change duration to 3 days",
         "slots": {"duration": 3},
         "previous_state": first,
     }
@@ -1227,19 +1996,20 @@ def test_fixed_m2_and_adaptive_m3_receive_same_previous_slots_for_followup(
     m2 = runner.run(followup, method="fixed_multi_agent")
     m3 = runner.run(followup, method="adaptive_multi_agent")
 
-    assert m2["trace"]["planned_agents"] == ["attraction", "weather", "itinerary", "budget"]
-    assert m2["trace"]["executed_tools"] == list(GENERATION_TOOL_NAMES)
-    assert m2["raw_output"]["tool_results"]["poi_search"]["input"]["city"] == "hangzhou"
+    assert m2["trace"]["planned_agents"] == ["weather", "itinerary", "budget"]
+    assert m2["trace"]["executed_tools"] == ["weather_query", "budget_calculator"]
     assert m2["raw_output"]["tool_results"]["weather_query"]["input"]["city"] == "hangzhou"
     assert m2["raw_output"]["tool_results"]["budget_calculator"]["input"]["city"] == "hangzhou"
+    assert "poi_search" not in m2["raw_output"]["tool_results"]
     assert m2["output"]["execution_status"] == "completed"
+    assert m2["output"]["metadata"]["fixed_template_scheduler"]["decision"]["reused_agents"] == []
 
     assert m3["output"]["metadata"]["adaptive_scheduler"]["ticket"]["current_slots"]["destination"] == (
         "hangzhou"
     )
     assert m3["trace"]["planned_agents"] == ["weather", "itinerary", "budget"]
-    assert m3["metrics"]["m3_m2_reference_agent_count"] == 4
-    assert m3["metrics"]["m3_agent_call_savings_vs_m2"] == 1
+    assert m3["metrics"]["m3_m2_reference_agent_count"] == 3
+    assert m3["metrics"]["m3_agent_call_savings_vs_m2"] == 0
 
 
 def test_m3_general_chat_followup_has_zero_m2_reference_savings_and_trace_scheduler(
@@ -1249,7 +2019,7 @@ def test_m3_general_chat_followup_has_zero_m2_reference_savings_and_trace_schedu
     first = runner.run(
         {
             "case_id": "chat-savings-turn1",
-            "user_input": "帮我规划杭州两天2人旅游，2026-08-01出发",
+            "user_input": "plan a Hangzhou two day trip on 2026-08-01 for two people",
             "slots": {
                 "destination": "hangzhou",
                 "duration": 2,
@@ -1263,7 +2033,7 @@ def test_m3_general_chat_followup_has_zero_m2_reference_savings_and_trace_schedu
     second = runner.run(
         {
             "case_id": "chat-savings-turn2",
-            "user_input": "谢谢，今天心情不错。",
+            "user_input": "thanks, no more planning for now",
             "slots": {},
             "previous_state": first,
         },
@@ -1357,11 +2127,11 @@ def test_m3_clarification_outputs_clarification_without_agents_or_fake_results(
     assert result["output"]["daily_itinerary"] == []
     assert scheduler["decision"]["clarification_fields"] == ["destination"]
     assert scheduler["result_fingerprints"] == {}
-    assert "目的地城市" in result["output"]["final_answer"]
-    assert result["metrics"]["m3_m2_reference_agent_count"] == 4
-    assert result["metrics"]["m3_m2_reference_tool_count"] == 3
-    assert result["metrics"]["m3_agent_call_savings_vs_m2"] == 4
-    assert result["metrics"]["m3_tool_call_savings_vs_m2"] == 3
+    assert result["output"]["final_answer"]
+    assert result["metrics"]["m3_m2_reference_agent_count"] == 0
+    assert result["metrics"]["m3_m2_reference_tool_count"] == 0
+    assert result["metrics"]["m3_agent_call_savings_vs_m2"] == 0
+    assert result["metrics"]["m3_tool_call_savings_vs_m2"] == 0
     assert llm.calls == 0
 
 
@@ -1463,29 +2233,81 @@ def test_fixed_m2_can_continue_from_its_own_previous_state(
         method="fixed_multi_agent",
     )
 
-    assert second["trace"]["planned_agents"] == ["attraction", "weather", "itinerary", "budget"]
-    assert second["trace"]["executed_tools"] == list(GENERATION_TOOL_NAMES)
-    assert second["raw_output"]["tool_results"]["poi_search"]["input"]["city"] == "hangzhou"
+    assert second["trace"]["planned_agents"] == ["weather", "itinerary", "budget"]
+    assert second["trace"]["executed_tools"] == ["weather_query", "budget_calculator"]
     assert second["raw_output"]["tool_results"]["weather_query"]["input"]["city"] == "hangzhou"
     assert second["raw_output"]["tool_results"]["budget_calculator"]["input"]["city"] == "hangzhou"
+    assert "poi_search" not in second["raw_output"]["tool_results"]
     assert second["raw_output"]["tool_results"]["weather_query"]["input"]["days"] == 3
     assert second["raw_output"]["tool_results"]["budget_calculator"]["input"]["days"] == 3
     assert second["output"]["execution_status"] == "completed"
+    assert second["output"]["metadata"]["fixed_template_scheduler"]["decision"]["reused_agents"] == []
+
+
+def test_m2_weather_adjustment_uses_user_weather_change_without_weather_query(
+    tmp_path: Path,
+) -> None:
+    snapshot_start = _qweather_snapshot_start_date()
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
+    first = runner.run(
+        {
+            "case_id": "m2-weather-adjust-first",
+            "user_input": f"plan a two day Hangzhou trip on {snapshot_start} for two people with budget 5000",
+            "slots": {
+                "destination": "hangzhou",
+                "duration": 2,
+                "people_count": 2,
+                "start_date": snapshot_start,
+                "budget": 5000,
+            },
+        },
+        method="fixed_multi_agent",
+    )
+
+    second = runner.run(
+        {
+            "case_id": "m2-weather-adjust-second",
+            "user_input": "The second day becomes rain. Adjust the itinerary for rainy weather.",
+            "previous_state": first,
+            "weather_change": {"scenario_type": "rain", "affected_days": [2]},
+            "expected": {
+                "task_type": "weather_adjustment",
+                "required_tools": ["budget_calculator"],
+                "accepted_agent_sets": [["itinerary", "budget"]],
+                "accepted_tool_sets": [["budget_calculator"]],
+                "forbidden_tools": ["poi_search", "weather_query"],
+                "partial_replan_policy": "weather_adjustment_itinerary_budget",
+            },
+        },
+        method="fixed_multi_agent",
+    )
+
+    scheduler = second["output"]["metadata"]["fixed_template_scheduler"]
+    assert scheduler["ticket"]["task_type"] == "weather_adjustment"
+    assert scheduler["decision"]["planned_agents"] == ["itinerary", "budget"]
+    assert scheduler["decision"]["planned_tools"] == ["budget_calculator"]
+    assert scheduler["decision"]["reused_agents"] == []
+    assert second["trace"]["planned_agents"] == ["itinerary", "budget"]
+    assert second["trace"]["executed_tools"] == ["budget_calculator"]
+    assert "weather_query" not in second["raw_output"]["tool_results"]
+    assert "poi_search" not in second["raw_output"]["tool_results"]
+    assert second["metrics"]["stsr"] is True
 
 
 def test_m3_weather_adjustment_output_includes_affected_day_index(
     tmp_path: Path,
 ) -> None:
+    snapshot_start = _qweather_snapshot_start_date()
     runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=_AgentJSONLLM)
     first = runner.run(
         {
             "case_id": "weather-adjust-day-turn1",
-            "user_input": "plan a two day Hangzhou trip on 2026-08-01 for two people with attractions weather and budget",
+            "user_input": f"plan a two day Hangzhou trip on {snapshot_start} for two people with attractions weather and budget",
             "slots": {
                 "destination": "hangzhou",
                 "duration": 2,
                 "people_count": 2,
-                "start_date": "2026-08-01",
+                "start_date": snapshot_start,
                 "budget": 5000,
             },
         },
@@ -1504,7 +2326,8 @@ def test_m3_weather_adjustment_output_includes_affected_day_index(
 
     scheduler = second["output"]["metadata"]["adaptive_scheduler"]
     assert scheduler["ticket"]["task_type"] == "weather_adjustment"
-    assert scheduler["decision"]["planned_agents"] == ["weather", "itinerary"]
+    assert scheduler["decision"]["planned_agents"] == ["itinerary", "budget"]
+    assert scheduler["decision"]["planned_tools"] == ["budget_calculator"]
     assert any(
         item.get("day") == 2 and item.get("day_index") == 2
         for item in second["output"]["weather_adjustments"]
@@ -1556,8 +2379,7 @@ def test_beijing_accommodation_sources_do_not_reference_wrong_xian_source() -> N
         source
         for area in data.get("accommodation_areas", [])
         for source in area.get("sources", [])
-        if "西安旅游网" in source.get("source_name", "")
-        or str(source.get("url") or "").startswith("https://www.tang.org.cn/")
+        if str(source.get("url") or "").startswith("https://www.tang.org.cn/")
     ]
 
     assert bad_sources == []

@@ -138,7 +138,11 @@ def test_day6_run_audit_is_attached_to_result_metrics_and_csv(tmp_path: Path) ->
     result = runner.run(
         {
             "case_id": "day6-run-audit-m1",
+            "evaluation_mode": "oracle_slots",
             "user_input": "Plan a two day Hangzhou trip for two people.",
+            "expected": {
+                "required_tools": ["budget_calculator"],
+            },
         },
         method="single_agent",
     )

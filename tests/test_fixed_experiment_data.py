@@ -38,6 +38,18 @@ from app.tools.route_plan import RoutePlanningTool
 from app.tools.weather import WeatherTool
 
 
+class _BudgetLLM:
+    async def chat(self, messages, tools=None, **kwargs):
+        from app.core.llm.client import LLMResponse
+
+        return LLMResponse(
+            content="budget analysis completed",
+            model="fake-budget-llm",
+            usage={"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2},
+            finish_reason="stop",
+        )
+
+
 REQUIRED_METADATA_FIELDS = {
     "file_id",
     "schema_version",
@@ -160,13 +172,13 @@ def test_fixed_five_city_data_and_transport_matrix_are_complete() -> None:
 def test_legacy_shanghai_restaurant_file_is_not_part_of_fixed_experiment() -> None:
     assert Path("data/restaurants/shanghai.json").exists()
     assert "shanghai" not in FIXED_CITY_IDS
-    assert get_fixed_tourism_data().resolve_city_id("上海") is None
+    assert get_fixed_tourism_data().resolve_city_id("shanghai") is None
 
 
 def test_formal_offline_tools_use_fixed_data(monkeypatch) -> None:
     monkeypatch.setenv("TOURISM_FORMAL_EXPERIMENT_OFFLINE", "true")
 
-    search_result = asyncio.run(POISearchTool().execute("景点", "杭州", limit=3))
+    search_result = asyncio.run(POISearchTool().execute("poi", "hangzhou", limit=3))
     assert search_result.success is True
     assert search_result.metadata["offline"] is True
     assert search_result.api_calls == []
@@ -180,19 +192,20 @@ def test_formal_offline_tools_use_fixed_data(monkeypatch) -> None:
     assert detail_result.metadata["offline"] is True
 
     weather_result = asyncio.run(
-        WeatherTool().execute("北京", scenario_type="rain", days=3)
+        WeatherTool().execute("beijing", scenario_type="rain", days=3)
     )
     assert weather_result.success is True
-    assert weather_result.data["provider"] == "fixed_weather_dataset"
-    assert weather_result.data["scenario_type"] == "rain"
+    assert weather_result.data["provider"] == "qweather_snapshot"
+    assert weather_result.data["coverage_status"] == "full"
     assert [day["day_index"] for day in weather_result.data["daily_forecasts"]] == [1, 2, 3]
+    assert weather_result.metadata["data_source"] == "qweather_frozen_snapshot"
     assert weather_result.api_calls == []
 
     route_result = asyncio.run(
         RoutePlanningTool().execute(
             origin=poi_id,
             destination="hz_da001",
-            city="杭州",
+            city="hangzhou",
             mode="public_transit",
         )
     )
@@ -204,16 +217,17 @@ def test_formal_offline_tools_use_fixed_data(monkeypatch) -> None:
 
     budget_result = asyncio.run(
         BudgetCalculatorTool().execute(
-            destination="北京",
+            destination="beijing",
             duration=3,
             num_travelers=2,
             budget_level="medium",
         )
     )
     assert budget_result.success is True
-    assert budget_result.data["calculation_source"] == "fixed_offline_dataset"
+    assert budget_result.data["calculation_source"] == "fixed_reference_cost_model"
+    assert budget_result.data["budget_policy_version"] == "budget_policy_v2_0"
     assert budget_result.data["breakdown"]["food"]["calculation_rule"] == (
-        "total_cost = reference_price_cny * diner_count * meal_count"
+        "meal_count_equivalent = 2 * day_count + 0.5 * night_count; total_cost = reference_price_cny * meal_count_equivalent * diner_count"
     )
     assert "reference_price_cny" in budget_result.data["breakdown"]["accommodation"]["calculation_rule"]
     assert budget_result.api_calls == []
@@ -229,7 +243,7 @@ def test_experiment_runner_enables_formal_offline_mode_for_methods(tmp_path) -> 
         method_handlers={method: handler for method in ExperimentRunner.METHODS},
     )
     result = runner.run(
-        {"case_id": "offline-env", "user_input": "北京三日游"},
+        {"case_id": "offline-env", "user_input": "beijing three day trip"},
         method="full_system",
     )
 
@@ -239,26 +253,27 @@ def test_experiment_runner_enables_formal_offline_mode_for_methods(tmp_path) -> 
     assert result["output"]["raw_output"] == {"case_id": "offline-env", "offline": True}
 
 
-def test_invalid_weather_scenario_fails_without_sunny_fallback(monkeypatch) -> None:
+def test_weather_tool_scenario_no_longer_drives_snapshot_selection(monkeypatch) -> None:
     monkeypatch.setenv("TOURISM_FORMAL_EXPERIMENT_OFFLINE", "true")
 
-    default_result = asyncio.run(WeatherTool().execute("北京", scenario_type="", days=1))
+    default_result = asyncio.run(WeatherTool().execute("beijing", scenario_type="", days=1))
     assert default_result.success is True
-    assert default_result.data["scenario_type"] == "sunny"
+    assert default_result.data["provider"] == "qweather_snapshot"
 
     invalid_result = asyncio.run(
-        WeatherTool().execute("北京", scenario_type="not_a_valid_scenario", days=1)
+        WeatherTool().execute("beijing", scenario_type="not_a_valid_scenario", days=1)
     )
-    assert invalid_result.success is False
+    assert invalid_result.success is True
     assert invalid_result.metadata["offline"] is True
-    assert "unsupported fixed weather scenario" in invalid_result.error
+    assert invalid_result.data["provider"] == "qweather_snapshot"
+    assert invalid_result.data["daily_forecasts"] == default_result.data["daily_forecasts"]
 
 
 def test_concrete_missing_poi_search_returns_empty(monkeypatch) -> None:
     monkeypatch.setenv("TOURISM_FORMAL_EXPERIMENT_OFFLINE", "true")
 
     result = asyncio.run(
-        POISearchTool().execute("完全不存在的具体景点XYZ", "北京", limit=3)
+        POISearchTool().execute("missing concrete POI XYZ", "beijing", limit=3)
     )
 
     assert result.success is True
@@ -274,7 +289,7 @@ def test_guilin_public_transit_does_not_output_subway(monkeypatch) -> None:
         RoutePlanningTool().execute(
             origin="gl001",
             destination="gl_da001",
-            city="桂林",
+            city="guilin",
             mode="public_transit",
         )
     )
@@ -292,7 +307,7 @@ def test_invalid_transport_mode_fails_without_default_fallback(monkeypatch) -> N
         RoutePlanningTool().execute(
             origin="gl001",
             destination="gl_da001",
-            city="桂林",
+            city="guilin",
             mode="flying_car",
         )
     )
@@ -310,7 +325,7 @@ def test_formal_offline_budget_agent_fails_when_fixed_budget_missing(monkeypatch
         request_id="fixed-budget-missing-request",
         session_id=session.session_id,
         extracted_info={
-            "destination": "上海",
+            "destination": "shanghai",
             "duration": 3,
             "num_travelers": 2,
             "budget_level": "medium",
@@ -323,7 +338,7 @@ def test_formal_offline_budget_agent_fails_when_fixed_budget_missing(monkeypatch
     assert response.success is False
     assert response.metadata["offline"] is True
     assert response.metadata["legacy_estimator_used"] is False
-    assert response.data["calculation_source"] == "fixed_offline_dataset"
+    assert response.data["calculation_source"] == "fixed_reference_cost_model"
     assert "unsupported fixed experiment city" in response.error
 
 
@@ -338,22 +353,21 @@ def test_formal_offline_tourism_tools_do_not_use_network(monkeypatch) -> None:
             raise AssertionError("network access is forbidden in formal offline mode")
 
     monkeypatch.setattr(poi_search_module, "_get_poi_http_client", forbidden_poi_client)
-    monkeypatch.setattr(weather_module.httpx, "AsyncClient", ForbiddenAsyncClient)
     monkeypatch.setattr(route_plan_module.httpx, "AsyncClient", ForbiddenAsyncClient)
 
-    search_result = asyncio.run(POISearchTool().execute("景点", "北京", limit=1))
-    weather_result = asyncio.run(WeatherTool().execute("北京", scenario_type="sunny", days=1))
+    search_result = asyncio.run(POISearchTool().execute("poi", "beijing", limit=1))
+    weather_result = asyncio.run(WeatherTool().execute("beijing", scenario_type="sunny", days=1))
     route_result = asyncio.run(
         RoutePlanningTool().execute(
             origin="bj001",
             destination="bj_da001",
-            city="北京",
+            city="beijing",
             mode="public_transit",
         )
     )
     budget_result = asyncio.run(
         BudgetCalculatorTool().execute(
-            destination="北京",
+            destination="beijing",
             duration=2,
             num_travelers=1,
             budget_level="medium",
@@ -368,3 +382,185 @@ def test_formal_offline_tourism_tools_do_not_use_network(monkeypatch) -> None:
     assert weather_result.api_calls == []
     assert route_result.api_calls == []
     assert budget_result.api_calls == []
+
+
+def test_fixed_budget_one_day_trip_has_zero_accommodation_nights() -> None:
+    result = get_fixed_tourism_data().calculate_budget(
+        destination="guilin",
+        duration=1,
+        num_travelers=2,
+        budget_level="medium",
+    )
+
+    accommodation = result["breakdown"]["accommodation"]
+    assert accommodation["night_count"] == 0
+    assert accommodation["recommended"] == 0
+
+
+def test_fixed_budget_multi_day_trip_uses_duration_minus_one_nights() -> None:
+    result = get_fixed_tourism_data().calculate_budget(
+        destination="guilin",
+        duration=3,
+        num_travelers=2,
+        budget_level="medium",
+    )
+
+    accommodation = result["breakdown"]["accommodation"]
+    assert accommodation["night_count"] == 2
+    assert accommodation["recommended"] > 0
+
+
+def test_budget_policy_v2_three_people_use_two_rooms_and_fractional_breakfast() -> None:
+    result = get_fixed_tourism_data().calculate_budget(
+        destination="guilin",
+        duration=3,
+        num_travelers=3,
+        budget_level="medium",
+    )
+
+    accommodation = result["breakdown"]["accommodation"]
+    food = result["breakdown"]["food"]
+    assert result["budget_policy_version"] == "budget_policy_v2_0"
+    assert accommodation["room_count"] == 2
+    assert accommodation["night_count"] == 2
+    assert food["meal_count_equivalent"] == 7.0
+    assert result["breakdown"]["other"]["recommended"] == 0.0
+
+
+def test_budget_policy_v2_budget_limit_never_changes_hotel_or_food_tier() -> None:
+    low = get_fixed_tourism_data().calculate_budget(
+        origin="guangzhou",
+        destination="guilin",
+        duration=3,
+        num_travelers=2,
+        budget_level="medium",
+        budget_limit=3000,
+    )
+    high = get_fixed_tourism_data().calculate_budget(
+        origin="guangzhou",
+        destination="guilin",
+        duration=3,
+        num_travelers=2,
+        budget_level="medium",
+        budget_limit=10000,
+    )
+
+    assert low["economic_baseline_total"] == high["economic_baseline_total"]
+    assert low["final_recommended_total"] == high["final_recommended_total"]
+    assert low["budget_policy"]["upgrade_applied"] == []
+    assert high["budget_policy"]["upgrade_applied"] == []
+    assert high["budget_policy"]["hotel_tier"] == "economy"
+    assert high["budget_policy"]["food_tier"] == "economy"
+    assert high["budget_policy"]["auto_upgrade_enabled"] is False
+
+
+def test_budget_policy_v2_no_origin_blocks_auto_upgrade_and_disclaims_intercity() -> None:
+    result = get_fixed_tourism_data().calculate_budget(
+        destination="guilin",
+        duration=3,
+        num_travelers=2,
+        budget_limit=10000,
+    )
+
+    assert result["budget_scope"] == "destination_local_only"
+    assert result["requested_budget_scope"] == "local_plus_round_trip_intercity"
+    assert result["computed_budget_scope"] == "destination_local_only"
+    assert result["scope_complete"] is False
+    assert result["sufficiency_status"] == "indeterminate"
+    assert result["remaining_budget"] is None
+    assert result["covered_scope_remaining_budget"] is not None
+    assert result["mandatory_budget_disclaimer"] is True
+    assert result["budget_policy"]["upgrade_applied"] == []
+    assert result["budget_policy"]["hotel_tier"] == "economy"
+    assert result["budget_policy"]["food_tier"] == "economy"
+    assert "auto_upgrade_disabled_by_budget_policy_v2_0" in result["budget_policy"]["automatic_upgrade_blocked_reasons"]
+
+
+def test_budget_policy_v2_explicit_local_only_scope_can_judge_without_origin() -> None:
+    result = get_fixed_tourism_data().calculate_budget(
+        destination="guilin",
+        duration=3,
+        num_travelers=2,
+        budget_limit=3000,
+        requested_budget_scope="destination_local_only",
+    )
+
+    assert result["requested_budget_scope"] == "destination_local_only"
+    assert result["computed_budget_scope"] == "destination_local_only"
+    assert result["scope_complete"] is True
+    assert result["sufficiency_status"] == "sufficient"
+    assert result["can_judge_budget_sufficiency"] is True
+    assert result["mandatory_budget_disclaimer"] is False
+    assert result["remaining_budget"] == result["covered_scope_remaining_budget"]
+
+
+def test_budget_policy_v2_explicit_food_preference_uses_comfort_food_when_affordable() -> None:
+    result = get_fixed_tourism_data().calculate_budget(
+        origin="guangzhou",
+        destination="guilin",
+        duration=3,
+        num_travelers=2,
+        budget_limit=5000,
+        food_level="comfort food with local specialties",
+    )
+
+    assert result["budget_policy"]["upgrade_decision"] == "explicit_preference_applied"
+    assert result["breakdown"]["food"]["tier"] == "comfort"
+    assert result["budget_policy"]["upgrade_applied"] == ["food"]
+
+
+def test_budget_agent_cli_path_uses_fixed_intercity_transport_when_origin_supported() -> None:
+    session = SessionContext(session_id="cli-budget-intercity")
+    context = ExecutionContext(
+        request_id="cli-budget-intercity",
+        session_id=session.session_id,
+        extracted_info={
+            "origin": "guangzhou",
+            "destination": "guilin",
+            "duration": 3,
+            "num_travelers": 2,
+            "budget_level": "medium",
+        },
+    )
+
+    response = asyncio.run(BudgetAgent(llm=_BudgetLLM()).execute(session, context))
+
+    assert response.status == AgentStatus.COMPLETED
+    assert response.success is True
+    assert response.data["estimated_by"] == "fixed_reference_cost_model"
+    assert response.data["budget_policy_version"] == "budget_policy_v2_0"
+    assert response.data["intercity_transport_cost"] == 800.0
+    assert response.data["intercity_transport_included"] is True
+    assert response.data["real_time_api_allowed"] is False
+    assert response.data["runtime_online_refresh_allowed"] is False
+    assert response.data["real_time_price_claim_allowed"] is False
+    assert response.data["intercity_transport"]["runtime_online_refresh_allowed"] is False
+    assert response.data["budget_scope"] == "local_plus_round_trip_intercity"
+
+
+def test_budget_agent_cli_path_disclaims_intercity_transport_when_origin_missing() -> None:
+    session = SessionContext(session_id="cli-budget-missing-origin")
+    context = ExecutionContext(
+        request_id="cli-budget-missing-origin",
+        session_id=session.session_id,
+        extracted_info={
+            "destination": "guilin",
+            "duration": 3,
+            "num_travelers": 2,
+            "budget_level": "medium",
+        },
+    )
+
+    response = asyncio.run(BudgetAgent(llm=_BudgetLLM()).execute(session, context))
+
+    assert response.status == AgentStatus.COMPLETED
+    assert response.success is True
+    assert response.data["estimated_by"] == "fixed_reference_cost_model"
+    assert response.data["budget_policy_version"] == "budget_policy_v2_0"
+    assert response.data["intercity_transport_cost"] == 0.0
+    assert response.data["intercity_transport_included"] is False
+    assert response.data["runtime_online_refresh_allowed"] is False
+    assert response.data["real_time_price_claim_allowed"] is False
+    assert response.data["intercity_transport"]["runtime_online_refresh_allowed"] is False
+    assert response.data["mandatory_budget_disclaimer"] is True
+    assert response.data["budget_scope"] == "destination_local_only"

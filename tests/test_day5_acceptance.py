@@ -1,4 +1,4 @@
-import json
+﻿import json
 import sys
 from pathlib import Path
 
@@ -50,7 +50,7 @@ def test_day5_acceptance_script_writes_evaluation_evidence(
     assert "Agent/tool diagnostics" in paper_tables
     assert "Token and cost" in paper_tables
     assert manifest["results"]["paper_tables"] == payload["paper_tables"]
-    assert manifest["evaluation"]["catalog_id"] == "day5_independent_evaluator_rules"
+    assert manifest["evaluation"]["catalog_id"] == "day8_formal_independent_evaluator_rules"
 
 
 def test_day5_acceptance_refuses_to_overwrite_output_dir(monkeypatch, tmp_path: Path) -> None:

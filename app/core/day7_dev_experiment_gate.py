@@ -550,6 +550,20 @@ def _multi_turn_state_isolation(
         if result.get("scenario_id") and _int(result.get("scenario_turn_count"), default=1) > 1
     ]
     scenario_ids = sorted({str(result.get("scenario_id")) for result in scenario_rows})
+    if not scenario_ids:
+        return {
+            "passed": True,
+            "applicable": False,
+            "scenario_case_count": 0,
+            "checked_method_scenario_count": 0,
+            "expected_method_scenario_count": 0,
+            "violation_count": 0,
+            "missing_group_count": 0,
+            "sample_violations": [],
+            "sample_missing_groups": [],
+            "policy": "method_local_previous_state_from_prior_turn_output",
+            "note": "no multi-turn scenario rows; state isolation check is not applicable",
+        }
     by_scenario_method: Dict[tuple[str, str], List[Dict[str, Any]]] = defaultdict(list)
     for result in scenario_rows:
         key = (str(result.get("scenario_id")), str(result.get("method") or "unknown"))

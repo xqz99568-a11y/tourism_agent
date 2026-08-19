@@ -1,0 +1,1584 @@
+{
+  "metadata": {
+    "file_id": "ctp_qweather_xian_ctp_qweather_20260807_v1_normalized",
+    "schema_version": "ctp-qweather-normalized-city-v1",
+    "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+    "provider": "qweather",
+    "snapshot_id": "ctp_qweather_20260807_v1",
+    "reference_date": "2026-08-07",
+    "fetched_at": "2026-08-07T22:59:29+08:00",
+    "timezone": "Asia/Shanghai",
+    "city_id": "xian",
+    "city_name": "西安",
+    "location_id": "101110101",
+    "forecast_endpoint": "/v7/weather/30d",
+    "forecast_start_date": "2026-08-07",
+    "forecast_end_date": "2026-09-05",
+    "forecast_horizon_days": 30,
+    "record_count": 30,
+    "data_mode": "frozen_offline",
+    "source_mode": "qweather_frozen_snapshot",
+    "location_resolution": "fixed_location_id",
+    "real_time_api_allowed": false,
+    "api_key_recorded": false,
+    "source": {
+      "source_name": "QWeather",
+      "source_endpoint": "/v7/weather/30d",
+      "collection_policy": "collected once before formal experiments; runtime reads local snapshot only"
+    }
+  },
+  "daily_forecasts": [
+    {
+      "date": "2026-08-07",
+      "day_index": 1,
+      "snapshot_day_index": 1,
+      "state": "rain",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "小雨",
+      "temperature_min_c": 23,
+      "temperature_max_c": 30,
+      "precipitation_mm": 3.7,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 78,
+      "uv_index": 9,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-07",
+        "tempMin": "23",
+        "tempMax": "30",
+        "textDay": "多云",
+        "textNight": "小雨",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "78",
+        "precip": "3.7",
+        "pop": null,
+        "uvIndex": "9"
+      }
+    },
+    {
+      "date": "2026-08-08",
+      "day_index": 2,
+      "snapshot_day_index": 2,
+      "state": "sunny",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "晴",
+      "temperature_min_c": 23,
+      "temperature_max_c": 30,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 73,
+      "uv_index": 10,
+      "risk_level": "low",
+      "risk_tags": [],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-08",
+        "tempMin": "23",
+        "tempMax": "30",
+        "textDay": "多云",
+        "textNight": "晴",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "73",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-09",
+      "day_index": 3,
+      "snapshot_day_index": 3,
+      "state": "rain",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴",
+      "temperature_min_c": 22,
+      "temperature_max_c": 29,
+      "precipitation_mm": 1.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 68,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-09",
+        "tempMin": "22",
+        "tempMax": "29",
+        "textDay": "晴",
+        "textNight": "晴",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "68",
+        "precip": "1.0",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-10",
+      "day_index": 4,
+      "snapshot_day_index": 4,
+      "state": "sunny",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴",
+      "temperature_min_c": 22,
+      "temperature_max_c": 28,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 65,
+      "uv_index": 10,
+      "risk_level": "low",
+      "risk_tags": [],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-10",
+        "tempMin": "22",
+        "tempMax": "28",
+        "textDay": "晴",
+        "textNight": "晴",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "65",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-11",
+      "day_index": 5,
+      "snapshot_day_index": 5,
+      "state": "rain",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "小雨",
+      "temperature_min_c": 22,
+      "temperature_max_c": 29,
+      "precipitation_mm": 0.3,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 85,
+      "uv_index": 10,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-11",
+        "tempMin": "22",
+        "tempMax": "29",
+        "textDay": "晴",
+        "textNight": "小雨",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "85",
+        "precip": "0.3",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-12",
+      "day_index": 6,
+      "snapshot_day_index": 6,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "晴",
+      "temperature_min_c": 23,
+      "temperature_max_c": 29,
+      "precipitation_mm": 1.8,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 77,
+      "uv_index": 10,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-12",
+        "tempMin": "23",
+        "tempMax": "29",
+        "textDay": "小雨",
+        "textNight": "晴",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "77",
+        "precip": "1.8",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-13",
+      "day_index": 7,
+      "snapshot_day_index": 7,
+      "state": "sunny",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴",
+      "temperature_min_c": 23,
+      "temperature_max_c": 30,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 61,
+      "uv_index": 10,
+      "risk_level": "low",
+      "risk_tags": [],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-13",
+        "tempMin": "23",
+        "tempMax": "30",
+        "textDay": "晴",
+        "textNight": "晴",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "61",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-14",
+      "day_index": 8,
+      "snapshot_day_index": 8,
+      "state": "rain",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "小雨",
+      "temperature_min_c": 19,
+      "temperature_max_c": 26,
+      "precipitation_mm": 3.7,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 71,
+      "uv_index": 10,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-14",
+        "tempMin": "19",
+        "tempMax": "26",
+        "textDay": "多云",
+        "textNight": "小雨",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "71",
+        "precip": "3.7",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-15",
+      "day_index": 9,
+      "snapshot_day_index": 9,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "阴",
+      "temperature_min_c": 19,
+      "temperature_max_c": 28,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 58,
+      "uv_index": 10,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-15",
+        "tempMin": "19",
+        "tempMax": "28",
+        "textDay": "小雨",
+        "textNight": "阴",
+        "windDirDay": "东南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "58",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-16",
+      "day_index": 10,
+      "snapshot_day_index": 10,
+      "state": "cloudy",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "多云",
+      "temperature_min_c": 19,
+      "temperature_max_c": 29,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 60,
+      "uv_index": 8,
+      "risk_level": "medium",
+      "risk_tags": [
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-16",
+        "tempMin": "19",
+        "tempMax": "29",
+        "textDay": "多云",
+        "textNight": "多云",
+        "windDirDay": "东风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "60",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "8"
+      }
+    },
+    {
+      "date": "2026-08-17",
+      "day_index": 11,
+      "snapshot_day_index": 11,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "阴",
+      "temperature_min_c": 18,
+      "temperature_max_c": 28,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 73,
+      "uv_index": 10,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-17",
+        "tempMin": "18",
+        "tempMax": "28",
+        "textDay": "小雨",
+        "textNight": "阴",
+        "windDirDay": "东南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "73",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-18",
+      "day_index": 12,
+      "snapshot_day_index": 12,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 20,
+      "temperature_max_c": 26,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 72,
+      "uv_index": 10,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-18",
+        "tempMin": "20",
+        "tempMax": "26",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "72",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-19",
+      "day_index": 13,
+      "snapshot_day_index": 13,
+      "state": "rain",
+      "weather": "阴",
+      "day_weather": "阴",
+      "night_weather": "阴",
+      "temperature_min_c": 21,
+      "temperature_max_c": 28,
+      "precipitation_mm": 4.5,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 73,
+      "uv_index": 9,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-19",
+        "tempMin": "21",
+        "tempMax": "28",
+        "textDay": "阴",
+        "textNight": "阴",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "73",
+        "precip": "4.5",
+        "pop": null,
+        "uvIndex": "9"
+      }
+    },
+    {
+      "date": "2026-08-20",
+      "day_index": 14,
+      "snapshot_day_index": 14,
+      "state": "rain",
+      "weather": "阴",
+      "day_weather": "阴",
+      "night_weather": "晴",
+      "temperature_min_c": 21,
+      "temperature_max_c": 29,
+      "precipitation_mm": 6.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 74,
+      "uv_index": 2,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-20",
+        "tempMin": "21",
+        "tempMax": "29",
+        "textDay": "阴",
+        "textNight": "晴",
+        "windDirDay": "东风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "74",
+        "precip": "6.0",
+        "pop": null,
+        "uvIndex": "2"
+      }
+    },
+    {
+      "date": "2026-08-21",
+      "day_index": 15,
+      "snapshot_day_index": 15,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "晴",
+      "temperature_min_c": 21,
+      "temperature_max_c": 31,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 66,
+      "uv_index": 4,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-21",
+        "tempMin": "21",
+        "tempMax": "31",
+        "textDay": "小雨",
+        "textNight": "晴",
+        "windDirDay": "东南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "66",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "4"
+      }
+    },
+    {
+      "date": "2026-08-22",
+      "day_index": 16,
+      "snapshot_day_index": 16,
+      "state": "sunny",
+      "weather": "晴间多云",
+      "day_weather": "晴间多云",
+      "night_weather": "多云",
+      "temperature_min_c": 18,
+      "temperature_max_c": 27,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 4.0,
+      "humidity_percent": 70,
+      "uv_index": 9,
+      "risk_level": "medium",
+      "risk_tags": [
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-22",
+        "tempMin": "18",
+        "tempMax": "27",
+        "textDay": "晴间多云",
+        "textNight": "多云",
+        "windDirDay": "东南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "4",
+        "humidity": "70",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "9"
+      }
+    },
+    {
+      "date": "2026-08-23",
+      "day_index": 17,
+      "snapshot_day_index": 17,
+      "state": "sunny",
+      "weather": "少云",
+      "day_weather": "少云",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 19,
+      "temperature_max_c": 28,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 6.0,
+      "humidity_percent": 40,
+      "uv_index": 9,
+      "risk_level": "medium",
+      "risk_tags": [
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-23",
+        "tempMin": "19",
+        "tempMax": "28",
+        "textDay": "少云",
+        "textNight": "晴间多云",
+        "windDirDay": "东南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "6",
+        "humidity": "40",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "9"
+      }
+    },
+    {
+      "date": "2026-08-24",
+      "day_index": 18,
+      "snapshot_day_index": 18,
+      "state": "cloudy",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "多云",
+      "temperature_min_c": 19,
+      "temperature_max_c": 29,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 6.0,
+      "humidity_percent": 67,
+      "uv_index": 3,
+      "risk_level": "medium",
+      "risk_tags": [
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-24",
+        "tempMin": "19",
+        "tempMax": "29",
+        "textDay": "多云",
+        "textNight": "多云",
+        "windDirDay": "东风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "6",
+        "humidity": "67",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "3"
+      }
+    },
+    {
+      "date": "2026-08-25",
+      "day_index": 19,
+      "snapshot_day_index": 19,
+      "state": "rain",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 21,
+      "temperature_max_c": 28,
+      "precipitation_mm": 0.6,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 7.0,
+      "humidity_percent": 66,
+      "uv_index": 4,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-25",
+        "tempMin": "21",
+        "tempMax": "28",
+        "textDay": "多云",
+        "textNight": "晴间多云",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "7",
+        "humidity": "66",
+        "precip": "0.6",
+        "pop": null,
+        "uvIndex": "4"
+      }
+    },
+    {
+      "date": "2026-08-26",
+      "day_index": 20,
+      "snapshot_day_index": 20,
+      "state": "sunny",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 21,
+      "temperature_max_c": 29,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 7.0,
+      "humidity_percent": 70,
+      "uv_index": 3,
+      "risk_level": "medium",
+      "risk_tags": [
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-26",
+        "tempMin": "21",
+        "tempMax": "29",
+        "textDay": "多云",
+        "textNight": "晴间多云",
+        "windDirDay": "东风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "7",
+        "humidity": "70",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "3"
+      }
+    },
+    {
+      "date": "2026-08-27",
+      "day_index": 21,
+      "snapshot_day_index": 21,
+      "state": "rain",
+      "weather": "阵雨",
+      "day_weather": "阵雨",
+      "night_weather": "阵雨",
+      "temperature_min_c": 21,
+      "temperature_max_c": 29,
+      "precipitation_mm": 1.1,
+      "precipitation_probability": null,
+      "wind_direction_day": "东南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 7.0,
+      "humidity_percent": 69,
+      "uv_index": 9,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-27",
+        "tempMin": "21",
+        "tempMax": "29",
+        "textDay": "阵雨",
+        "textNight": "阵雨",
+        "windDirDay": "东南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "7",
+        "humidity": "69",
+        "precip": "1.1",
+        "pop": null,
+        "uvIndex": "9"
+      }
+    },
+    {
+      "date": "2026-08-28",
+      "day_index": 22,
+      "snapshot_day_index": 22,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 21,
+      "temperature_max_c": 28,
+      "precipitation_mm": 7.8,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 4.0,
+      "humidity_percent": 68,
+      "uv_index": 3,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-28",
+        "tempMin": "21",
+        "tempMax": "28",
+        "textDay": "小雨",
+        "textNight": "晴间多云",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "4",
+        "humidity": "68",
+        "precip": "7.8",
+        "pop": null,
+        "uvIndex": "3"
+      }
+    },
+    {
+      "date": "2026-08-29",
+      "day_index": 23,
+      "snapshot_day_index": 23,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 20,
+      "temperature_max_c": 28,
+      "precipitation_mm": 4.5,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 4.0,
+      "humidity_percent": 70,
+      "uv_index": 2,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-29",
+        "tempMin": "20",
+        "tempMax": "28",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "4",
+        "humidity": "70",
+        "precip": "4.5",
+        "pop": null,
+        "uvIndex": "2"
+      }
+    },
+    {
+      "date": "2026-08-30",
+      "day_index": 24,
+      "snapshot_day_index": 24,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 21,
+      "temperature_max_c": 27,
+      "precipitation_mm": 8.4,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 4.0,
+      "humidity_percent": 70,
+      "uv_index": 2,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-30",
+        "tempMin": "21",
+        "tempMax": "27",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "4",
+        "humidity": "70",
+        "precip": "8.4",
+        "pop": null,
+        "uvIndex": "2"
+      }
+    },
+    {
+      "date": "2026-08-31",
+      "day_index": 25,
+      "snapshot_day_index": 25,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 20,
+      "temperature_max_c": 26,
+      "precipitation_mm": 8.5,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 15.0,
+      "humidity_percent": 69,
+      "uv_index": 2,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-31",
+        "tempMin": "20",
+        "tempMax": "26",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "15",
+        "humidity": "69",
+        "precip": "8.5",
+        "pop": null,
+        "uvIndex": "2"
+      }
+    },
+    {
+      "date": "2026-09-01",
+      "day_index": 26,
+      "snapshot_day_index": 26,
+      "state": "rain",
+      "weather": "阵雨",
+      "day_weather": "阵雨",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 20,
+      "temperature_max_c": 26,
+      "precipitation_mm": 1.6,
+      "precipitation_probability": null,
+      "wind_direction_day": "东风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 4.0,
+      "humidity_percent": 69,
+      "uv_index": 2,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-01",
+        "tempMin": "20",
+        "tempMax": "26",
+        "textDay": "阵雨",
+        "textNight": "晴间多云",
+        "windDirDay": "东风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "4",
+        "humidity": "69",
+        "precip": "1.6",
+        "pop": null,
+        "uvIndex": "2"
+      }
+    },
+    {
+      "date": "2026-09-02",
+      "day_index": 27,
+      "snapshot_day_index": 27,
+      "state": "rain",
+      "weather": "阵雨",
+      "day_weather": "阵雨",
+      "night_weather": "阵雨",
+      "temperature_min_c": 20,
+      "temperature_max_c": 26,
+      "precipitation_mm": 1.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 4.0,
+      "humidity_percent": 67,
+      "uv_index": 3,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-02",
+        "tempMin": "20",
+        "tempMax": "26",
+        "textDay": "阵雨",
+        "textNight": "阵雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "4",
+        "humidity": "67",
+        "precip": "1.0",
+        "pop": null,
+        "uvIndex": "3"
+      }
+    },
+    {
+      "date": "2026-09-03",
+      "day_index": 28,
+      "snapshot_day_index": 28,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "阵雨",
+      "temperature_min_c": 19,
+      "temperature_max_c": 26,
+      "precipitation_mm": 4.5,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 4.0,
+      "humidity_percent": 69,
+      "uv_index": 2,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-03",
+        "tempMin": "19",
+        "tempMax": "26",
+        "textDay": "小雨",
+        "textNight": "阵雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "4",
+        "humidity": "69",
+        "precip": "4.5",
+        "pop": null,
+        "uvIndex": "2"
+      }
+    },
+    {
+      "date": "2026-09-04",
+      "day_index": 29,
+      "snapshot_day_index": 29,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "阵雨",
+      "temperature_min_c": 20,
+      "temperature_max_c": 26,
+      "precipitation_mm": 4.5,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 7.0,
+      "humidity_percent": 68,
+      "uv_index": 2,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-04",
+        "tempMin": "20",
+        "tempMax": "26",
+        "textDay": "小雨",
+        "textNight": "阵雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "7",
+        "humidity": "68",
+        "precip": "4.5",
+        "pop": null,
+        "uvIndex": "2"
+      }
+    },
+    {
+      "date": "2026-09-05",
+      "day_index": 30,
+      "snapshot_day_index": 30,
+      "state": "rain",
+      "weather": "阵雨",
+      "day_weather": "阵雨",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 20,
+      "temperature_max_c": 26,
+      "precipitation_mm": 3.7,
+      "precipitation_probability": null,
+      "wind_direction_day": "东风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 7.0,
+      "humidity_percent": 70,
+      "uv_index": 2,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "xian",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-05",
+        "tempMin": "20",
+        "tempMax": "26",
+        "textDay": "阵雨",
+        "textNight": "晴间多云",
+        "windDirDay": "东风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "7",
+        "humidity": "70",
+        "precip": "3.7",
+        "pop": null,
+        "uvIndex": "2"
+      }
+    }
+  ]
+}

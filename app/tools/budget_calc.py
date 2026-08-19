@@ -1,4 +1,4 @@
-"""
+﻿"""
 预算计算工具
 """
 from __future__ import annotations
@@ -18,7 +18,7 @@ class BudgetLevel(str, Enum):
     LUXURY = "luxury"        # 豪华型
 
 
-# 预算参考数据 (每人每天，单位：元)
+# 预算参考数据（每人每天，单位：元）。仅用于非正式实验的旧兜底估算。
 BUDGET_REFERENCE = {
     BudgetLevel.ECONOMY: {
         "transport": {"min": 50, "max": 100},
@@ -96,6 +96,10 @@ class BudgetCalculatorTool(BaseTool):
                 "enum": ["economy", "medium", "luxury"],
                 "default": "medium",
             },
+            "origin": {
+                "type": "string",
+                "description": "出发地；正式实验中用于冻结高铁二等座往返费用",
+            },
             "poi_ids": {
                 "type": "array",
                 "items": {"type": "string"},
@@ -108,6 +112,43 @@ class BudgetCalculatorTool(BaseTool):
             "accommodation_area_id": {
                 "type": "string",
                 "description": "固定住宿区域 ID",
+            },
+            "budget_limit": {
+                "type": "number",
+                "description": "用户总预算上限；默认按总预算理解，不是人均预算",
+            },
+            "budget_basis": {
+                "type": "string",
+                "description": "用户原始预算口径：total 或 per_person；budget_limit 始终是换算后的总预算上限",
+            },
+            "daily_itinerary": {
+                "type": "array",
+                "items": {"type": "object"},
+                "description": "最终逐日行程，用于按实际景点和路线计算门票、市内交通",
+            },
+            "hotel_level": {
+                "type": "string",
+                "description": "住宿偏好，如 economy/comfort/premium 或“住好一点”",
+            },
+            "food_level": {
+                "type": "string",
+                "description": "餐饮偏好，如 economy/comfort/premium 或“吃好一点”",
+            },
+            "transport_mode": {
+                "type": "string",
+                "description": "市内交通偏好，默认公共交通；明确打车时用 taxi",
+            },
+            "requested_budget_scope": {
+                "type": "string",
+                "description": "预算范围：destination_local_only 或 local_plus_round_trip_intercity",
+            },
+            "intercity_transport_included": {
+                "type": "boolean",
+                "description": "用户需求层面是否期望纳入冻结城际往返交通费用",
+            },
+            "mandatory_budget_disclaimer": {
+                "type": "boolean",
+                "description": "是否必须提醒用户当前预算未覆盖城际大交通",
             },
         },
         "required": ["destination", "duration"],
@@ -122,30 +163,79 @@ class BudgetCalculatorTool(BaseTool):
         duration: int,
         num_travelers: int = 1,
         budget_level: str = "medium",
+        origin: Optional[str] = None,
         poi_ids: Optional[List[str]] = None,
         dining_area_id: Optional[str] = None,
         accommodation_area_id: Optional[str] = None,
+        budget_limit: Optional[float] = None,
+        budget_basis: Optional[str] = None,
+        daily_itinerary: Optional[List[Dict[str, Any]]] = None,
+        hotel_level: Optional[str] = None,
+        food_level: Optional[str] = None,
+        transport_mode: Optional[str] = None,
+        requested_budget_scope: Optional[str] = None,
+        intercity_transport_included: Optional[bool] = None,
+        mandatory_budget_disclaimer: Optional[bool] = None,
         **kwargs,
     ) -> ToolResult:
         """计算预算"""
         try:
             if is_formal_offline_mode():
                 result = get_fixed_tourism_data().calculate_budget(
+                    origin=origin,
                     destination=destination,
                     duration=duration,
                     num_travelers=num_travelers,
                     budget_level=budget_level,
+                    budget_limit=budget_limit,
                     poi_ids=poi_ids,
+                    daily_itinerary=daily_itinerary,
                     dining_area_id=dining_area_id,
                     accommodation_area_id=accommodation_area_id,
+                    hotel_level=hotel_level,
+                    food_level=food_level,
+                    transport_mode=transport_mode,
+                    requested_budget_scope=requested_budget_scope,
                 )
+                if budget_basis:
+                    result = {**result, "budget_basis": budget_basis}
+                if intercity_transport_included is not None:
+                    result = {
+                        **result,
+                        "requested_intercity_transport_included": bool(
+                            intercity_transport_included
+                        ),
+                    }
+                if mandatory_budget_disclaimer is not None:
+                    result = {
+                        **result,
+                        "mandatory_budget_disclaimer": bool(
+                            result.get("mandatory_budget_disclaimer")
+                            or mandatory_budget_disclaimer
+                        ),
+                        "budget_disclaimer": result.get("budget_disclaimer")
+                        or (
+                            "当前预算不包含出发地与目的地之间的往返城际大交通。"
+                            if mandatory_budget_disclaimer
+                            else None
+                        ),
+                    }
                 return ToolResult(
                     success=True,
                     data=result,
                     metadata={
                         "offline": True,
-                        "data_source": "fixed_budget_rules",
+                        "data_source": "fixed_reference_cost_model",
+                        "budget_policy_version": result.get("budget_policy_version"),
                         "real_time_api_allowed": False,
+                        "runtime_online_refresh_allowed": False,
+                        "real_time_price_claim_allowed": False,
+                        "intercity_snapshot_id": (result.get("intercity_transport") or {}).get(
+                            "snapshot_id"
+                        ),
+                        "intercity_snapshot_combined_sha256": (
+                            result.get("intercity_transport") or {}
+                        ).get("snapshot_combined_sha256"),
                     },
                     api_calls=[],
                 )
@@ -183,7 +273,16 @@ class BudgetCalculatorTool(BaseTool):
 
         except Exception as e:
             if isinstance(e, FixedDataError):
-                return ToolResult(success=False, error=str(e), metadata={"offline": True})
+                return ToolResult(
+                    success=False,
+                    error=str(e),
+                    metadata={
+                        "offline": True,
+                        "real_time_api_allowed": False,
+                        "runtime_online_refresh_allowed": False,
+                        "real_time_price_claim_allowed": False,
+                    },
+                )
             return ToolResult(success=False, error=str(e))
 
     def _calculate_estimate(
@@ -200,7 +299,7 @@ class BudgetCalculatorTool(BaseTool):
         total_min = 0
         total_max = 0
 
-        # 目的地系数 (大城市系数更高)
+        # 目的地系数（大城市系数更高）
         destination_factor = self._get_destination_factor(destination)
 
         for category, amounts in ref.items():
@@ -217,7 +316,6 @@ class BudgetCalculatorTool(BaseTool):
             total_min += min_cost
             total_max += max_cost
 
-            # 生成预算项目
             items.append(
                 BudgetItem(
                     category=category,
@@ -243,7 +341,6 @@ class BudgetCalculatorTool(BaseTool):
 
     def _get_destination_factor(self, destination: str) -> float:
         """获取目的地系数"""
-        # 大城市系数更高
         major_cities = ["北京", "上海", "广州", "深圳", "杭州", "成都"]
         expensive_cities = ["三亚", "丽江", "大理", "西藏", "新疆"]
 
@@ -374,7 +471,6 @@ class BudgetOptimizerTool(BaseTool):
         return suggestions
 
 
-# 注册工具
 def register_budget_tools(registry):
     """注册预算工具"""
     registry.register(BudgetCalculatorTool())

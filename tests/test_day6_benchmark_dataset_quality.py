@@ -287,10 +287,37 @@ def test_benchmark_manifest_can_expand_dataset_document_case_file() -> None:
     benchmark_path = ROOT / "experiments" / "benchmark.json"
     document, cases = load_benchmark_document(benchmark_path)
 
-    assert document["case_files"] == ["ctp120_test_draft.json"]
-    assert document["comparison_files"] == ["ctp120_dev.json", "benchmark_test.json"]
+    assert document["case_files"] == ["ctp100_formal_v2.json"]
+    assert document["comparison_files"] == [
+        "ctp120_dev.json",
+        "benchmark_test.json",
+        "day8_dev_experiment_cases_v1_3.json",
+    ]
     assert len(cases) == 100
-    assert cases[0]["case_id"] == "ctp_test_001_beijing_full_plan"
+    assert cases[0]["case_id"] == "ctp100_v2_001"
+    assert sum(len(case.get("turns") or [case]) for case in cases) == 130
+
+
+def test_ctp100_formal_v2_dataset_is_strictly_labeled_and_covered() -> None:
+    benchmark_path = ROOT / "experiments" / "ctp100_formal_v2.json"
+    document, cases = load_benchmark_document(benchmark_path)
+
+    report = build_benchmark_dataset_quality_report(
+        document=document,
+        cases=cases,
+        expected_case_count=100,
+        strict_formal=True,
+    )
+
+    assert report["status"] == "passed", report["errors"]
+    assert report["warnings"] == []
+    assert report["dataset"]["case_count"] == 100
+    assert report["dataset"]["scenario_case_count"] == 30
+    assert report["dataset"]["total_unit_count"] == 130
+    assert report["coverage"]["duplicate_visible_input_groups"] == []
+    assert set(report["coverage"]["task_distribution"]) == set(
+        report["coverage"]["recommended_task_types"]
+    )
 
 
 def test_development_sized_dataset_requires_task_and_city_coverage() -> None:

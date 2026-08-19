@@ -45,18 +45,18 @@ MIN_CHINESE_VISIBLE_CHARS = 4
 NEAR_DUPLICATE_SIMILARITY_THRESHOLD = 0.96
 NEAR_DUPLICATE_MIN_TEXT_LENGTH = 18
 TASK_REQUIRED_TOOLS = {
-    "trip_planning": {"poi_search", "weather_query", "budget_calculator"},
+    "trip_planning": {"poi_search", "budget_calculator"},
     "attraction_recommendation": {"poi_search"},
     "weather_query": {"weather_query"},
     "budget_query": {"budget_calculator"},
-    "weather_adjustment": {"weather_query"},
+    "weather_adjustment": set(),
 }
 TASK_REQUIRED_AGENTS = {
-    "trip_planning": {"attraction", "weather", "itinerary", "budget"},
+    "trip_planning": {"attraction", "itinerary", "budget"},
     "attraction_recommendation": {"attraction"},
     "weather_query": {"weather"},
     "budget_query": {"budget"},
-    "weather_adjustment": {"weather", "itinerary"},
+    "weather_adjustment": {"itinerary"},
 }
 AUDITED_PARSE_SLOT_KEYS = {
     "destination",
@@ -110,6 +110,15 @@ def build_benchmark_dataset_quality_report(
     audit_extra_core_slots = bool(
         isinstance(annotation_policy, Mapping)
         and annotation_policy.get("slot_gold_consistency_required")
+    )
+    enforce_day8_weather_policy = bool(
+        isinstance(annotation_policy, Mapping)
+        and annotation_policy.get("day8_weather_policy")
+    )
+    recommended_task_coverage_required = _recommended_task_coverage_required(
+        document_mapping,
+        annotation_policy,
+        errors=errors,
     )
     comparison_units = {
         str(split_name): _flatten_units(
@@ -190,6 +199,7 @@ def build_benchmark_dataset_quality_report(
             task_types=task_types,
             strict_formal=strict_formal,
             audit_extra_core_slots=audit_extra_core_slots,
+            enforce_day8_weather_policy=enforce_day8_weather_policy,
             errors=errors,
             warnings=warnings,
         )
@@ -203,6 +213,7 @@ def build_benchmark_dataset_quality_report(
         task_distribution=task_distribution,
         city_distribution=city_distribution,
         expected_case_count=expected_case_count,
+        recommended_task_coverage_required=recommended_task_coverage_required,
         strict_formal=strict_formal,
         errors=errors,
         warnings=warnings,
@@ -242,6 +253,8 @@ def build_benchmark_dataset_quality_report(
             "fixed_offline_city_only": True,
             "parse_gold_consistency_required": True,
             "extra_core_slot_consistency_required": audit_extra_core_slots,
+            "day8_weather_policy_enforced": enforce_day8_weather_policy,
+            "recommended_task_coverage_required": recommended_task_coverage_required,
             "changed_slot_evidence_required": True,
             "preserved_slot_consistency_required": True,
             "cross_split_duplicate_check": bool(comparison_units),
@@ -303,6 +316,7 @@ def _validate_unit(
     task_types: set[str],
     strict_formal: bool,
     audit_extra_core_slots: bool,
+    enforce_day8_weather_policy: bool,
     errors: list[str],
     warnings: list[str],
 ) -> dict[str, Any]:
@@ -366,6 +380,20 @@ def _validate_unit(
         errors=errors,
         warnings=warnings,
     )
+    if enforce_day8_weather_policy:
+        _validate_day8_weather_policy(
+            gold,
+            gold_slots=gold_slots,
+            required_tools=required_tools,
+            forbidden_tools=forbidden_tools,
+            accepted_agent_sets=accepted_agent_sets,
+            accepted_tool_sets=accepted_tool_sets,
+            task_type=task_type,
+            label=label,
+            strict_formal=strict_formal,
+            errors=errors,
+            warnings=warnings,
+        )
     _validate_city_support(
         city_id,
         task_type=task_type,
@@ -567,6 +595,189 @@ def _validate_task_specific_labels(
     ):
         _label_issue(
             f"{label}: attraction_recommendation requires min_attractions or max_attractions",
+            strict_formal,
+            errors,
+            warnings,
+        )
+
+
+def _validate_day8_weather_policy(
+    gold: Mapping[str, Any],
+    *,
+    gold_slots: Mapping[str, Any],
+    required_tools: set[str],
+    forbidden_tools: set[str],
+    accepted_agent_sets: list[list[str]],
+    accepted_tool_sets: list[list[str]],
+    task_type: str,
+    label: str,
+    strict_formal: bool,
+    errors: list[str],
+    warnings: list[str],
+) -> None:
+    """Validate the Day8 weather-gold contract for the formal CTP-100 set."""
+    has_start_date = bool(gold_slots.get("start_date"))
+    accepts_weather_tool = any("weather_query" in set(group) for group in accepted_tool_sets)
+    accepts_weather_agent = any("weather" in set(group) for group in accepted_agent_sets)
+
+    if task_type == "trip_planning":
+        if has_start_date:
+            _require_weather_tool_gold(
+                label=label,
+                required_tools=required_tools,
+                forbidden_tools=forbidden_tools,
+                accepts_weather_tool=accepts_weather_tool,
+                accepts_weather_agent=accepts_weather_agent,
+                strict_formal=strict_formal,
+                errors=errors,
+                warnings=warnings,
+            )
+            if gold.get("weather_required") is not True:
+                _label_issue(
+                    f"{label}: explicit-date trip_planning must set weather_required=true",
+                    strict_formal,
+                    errors,
+                    warnings,
+                )
+            if gold.get("weather_date_policy") != "explicit_date_use_qweather_snapshot":
+                _label_issue(
+                    f"{label}: explicit-date trip_planning must use explicit_date_use_qweather_snapshot",
+                    strict_formal,
+                    errors,
+                    warnings,
+                )
+        else:
+            if "weather_query" in required_tools or accepts_weather_tool:
+                _label_issue(
+                    f"{label}: no-date trip_planning must not require weather_query",
+                    strict_formal,
+                    errors,
+                    warnings,
+                )
+            if "weather_query" not in forbidden_tools:
+                _label_issue(
+                    f"{label}: no-date trip_planning must forbid weather_query",
+                    strict_formal,
+                    errors,
+                    warnings,
+                )
+            if gold.get("weather_required") is not False:
+                _label_issue(
+                    f"{label}: no-date trip_planning must set weather_required=false",
+                    strict_formal,
+                    errors,
+                    warnings,
+                )
+            if gold.get("weather_date_policy") != "no_date_no_specific_weather_for_trip_plan":
+                _label_issue(
+                    f"{label}: no-date trip_planning must use no_date_no_specific_weather_for_trip_plan",
+                    strict_formal,
+                    errors,
+                    warnings,
+                )
+            if gold.get("no_date_weather_reminder_required") is not True:
+                _label_issue(
+                    f"{label}: no-date trip_planning must require a pre-departure weather reminder",
+                    strict_formal,
+                    errors,
+                    warnings,
+                )
+        return
+
+    if task_type == "weather_query":
+        _require_weather_tool_gold(
+            label=label,
+            required_tools=required_tools,
+            forbidden_tools=forbidden_tools,
+            accepts_weather_tool=accepts_weather_tool,
+            accepts_weather_agent=accepts_weather_agent,
+            strict_formal=strict_formal,
+            errors=errors,
+            warnings=warnings,
+        )
+        if gold.get("weather_required") is not True:
+            _label_issue(
+                f"{label}: weather_query must set weather_required=true",
+                strict_formal,
+                errors,
+                warnings,
+            )
+        return
+
+    if task_type == "partial_replan":
+        changed_slots = {_canonical_slot(slot) for slot in _text_list(gold.get("changed_slots"))}
+        if has_start_date and changed_slots & {"start_date", "duration_days"}:
+            _require_weather_tool_gold(
+                label=label,
+                required_tools=required_tools,
+                forbidden_tools=forbidden_tools,
+                accepts_weather_tool=accepts_weather_tool,
+                accepts_weather_agent=accepts_weather_agent,
+                strict_formal=strict_formal,
+                errors=errors,
+                warnings=warnings,
+            )
+        return
+
+    if task_type == "weather_adjustment" and gold.get("weather_reuse_expected"):
+        if "weather_query" in required_tools or accepts_weather_tool:
+            _label_issue(
+                f"{label}: weather-reuse adjustment must not require weather_query",
+                strict_formal,
+                errors,
+                warnings,
+            )
+        if "weather_query" not in forbidden_tools:
+            _label_issue(
+                f"{label}: weather-reuse adjustment must forbid weather_query",
+                strict_formal,
+                errors,
+                warnings,
+            )
+        if gold.get("weather_query_must_not_rerun") is not True:
+            _label_issue(
+                f"{label}: weather-reuse adjustment must set weather_query_must_not_rerun=true",
+                strict_formal,
+                errors,
+                warnings,
+            )
+
+
+def _require_weather_tool_gold(
+    *,
+    label: str,
+    required_tools: set[str],
+    forbidden_tools: set[str],
+    accepts_weather_tool: bool,
+    accepts_weather_agent: bool,
+    strict_formal: bool,
+    errors: list[str],
+    warnings: list[str],
+) -> None:
+    if "weather_query" not in required_tools:
+        _label_issue(
+            f"{label}: weather_query must be listed in required_tools",
+            strict_formal,
+            errors,
+            warnings,
+        )
+    if not accepts_weather_tool:
+        _label_issue(
+            f"{label}: accepted_tool_sets must include weather_query",
+            strict_formal,
+            errors,
+            warnings,
+        )
+    if not accepts_weather_agent:
+        _label_issue(
+            f"{label}: accepted_agent_sets must include weather",
+            strict_formal,
+            errors,
+            warnings,
+        )
+    if "weather_query" in forbidden_tools:
+        _label_issue(
+            f"{label}: weather_query cannot be forbidden when weather evidence is required",
             strict_formal,
             errors,
             warnings,
@@ -837,6 +1048,7 @@ def _validate_distribution(
     task_distribution: Counter[str],
     city_distribution: Counter[str],
     expected_case_count: int | None,
+    recommended_task_coverage_required: bool,
     strict_formal: bool,
     errors: list[str],
     warnings: list[str],
@@ -846,7 +1058,11 @@ def _validate_distribution(
     ]
     if missing:
         message = f"dataset task coverage is incomplete; missing task types: {missing}"
-        if strict_formal and _requires_development_coverage(expected_case_count):
+        if (
+            strict_formal
+            and recommended_task_coverage_required
+            and _requires_development_coverage(expected_case_count)
+        ):
             errors.append(message)
         else:
             warnings.append(message)
@@ -861,6 +1077,30 @@ def _validate_distribution(
         errors.append(message)
     else:
         warnings.append(message)
+
+
+def _recommended_task_coverage_required(
+    document: Mapping[str, Any],
+    annotation_policy: Any,
+    *,
+    errors: list[str],
+) -> bool:
+    if not (
+        isinstance(annotation_policy, Mapping)
+        and annotation_policy.get("recommended_formal_task_coverage_required") is False
+    ):
+        return True
+
+    split = str(document.get("split") or "").strip().casefold()
+    dataset_id = str(document.get("dataset_id") or "").strip().casefold()
+    if "development" in split or dataset_id.startswith("day8_dev_"):
+        return False
+
+    errors.append(
+        "recommended_formal_task_coverage_required=false is only allowed for "
+        "development/regression datasets"
+    )
+    return True
 
 
 def _requires_development_coverage(expected_case_count: int | None) -> bool:

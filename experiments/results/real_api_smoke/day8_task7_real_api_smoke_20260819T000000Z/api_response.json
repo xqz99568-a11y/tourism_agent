@@ -1,0 +1,80 @@
+{
+  "schema_version": "ctp-real-api-smoke-v1",
+  "status": "completed",
+  "run_id": "day8_task7_real_api_smoke_20260819T000000Z",
+  "case_id": "real_api_smoke_connectivity",
+  "provider": "vectorengine_openai_compatible",
+  "base_url": "https://api.vectorengine.ai/v1",
+  "model": "gpt-5-mini",
+  "response_model": "gpt-5-mini",
+  "finish_reason": "stop",
+  "response_received": true,
+  "content_received": true,
+  "content_sha256": "7fbe9108a9a062fa52024eb9cacdc291e11eee0aff432f1eed801a1d290fdcfb",
+  "content_preview": "{\"ok\": true, \"message\": \"pong\"}",
+  "usage": {
+    "prompt_tokens": 56,
+    "completion_tokens": 21,
+    "total_tokens": 77
+  },
+  "runtime_config": {
+    "schema_version": "ctp-experiment-runtime-config-v1",
+    "provider": "vectorengine_openai_compatible",
+    "base_url": "https://api.vectorengine.ai/v1",
+    "model": "gpt-5-mini",
+    "temperature": 0.0,
+    "max_tokens": 128,
+    "timeout_seconds": 60,
+    "retry_max_attempts": 3,
+    "reasoning_effort": "minimal",
+    "strict_mode": true,
+    "cache_disabled": true,
+    "trace_save_user_message": false,
+    "mock_fallback_allowed": false
+  },
+  "latency_ms": 4071.59,
+  "prompt_version": "ctp-real-api-smoke-prompt-v1",
+  "prompt_hash": "5cfd56991153b10303687be466452ebed2122a72aee5ed60cd80ac437f307b07",
+  "trace_file": "D:/Code/Tourism_Agent/experiments/results/real_api_smoke/day8_task7_real_api_smoke_20260819T000000Z/traces/20260819T093951502312Z_real_api_smoke_connectivity_day8_task7_real_api_smoke_20260819T000000Z_1ba94517.jsonl",
+  "llm_call_id": "5b4b566b1a63464bb11164c11da89af5",
+  "request_options": {
+    "schema_version": "ctp-llm-runtime-options-v1",
+    "model": "gpt-5-mini",
+    "base_url": "https://api.vectorengine.ai/v1",
+    "temperature": 0.0,
+    "max_tokens": 128,
+    "timeout_seconds": 60,
+    "reasoning_effort": "minimal",
+    "tool_count": 0,
+    "tool_choice": null,
+    "streaming": false,
+    "sdk_max_retries": 0
+  },
+  "retry": {
+    "schema_version": "ctp-llm-retry-audit-v1",
+    "max_attempts": 3,
+    "attempt_count": 1,
+    "retry_count": 0,
+    "error_count": 0,
+    "succeeded": true,
+    "attempts": [
+      {
+        "attempt_index": 1,
+        "success": true,
+        "duration_ms": 3941.31,
+        "finish_reason": "stop",
+        "output_chars": 31,
+        "usage": {
+          "prompt_tokens": 56,
+          "completion_tokens": 21,
+          "total_tokens": 77,
+          "completion_tokens_details": "[REDACTED]",
+          "prompt_tokens_details": "[REDACTED]"
+        }
+      }
+    ]
+  },
+  "mock": false,
+  "fallback": false,
+  "error": null
+}

@@ -153,8 +153,12 @@ def test_committed_day7_test_draft_files_are_current_and_pass_gate() -> None:
         ).read_text(encoding="utf-8")
     )
 
-    assert benchmark_document["case_files"] == ["ctp120_test_draft.json"]
-    assert benchmark_document["comparison_files"] == ["ctp120_dev.json", "benchmark_test.json"]
+    assert benchmark_document["case_files"] == ["ctp100_formal_v2.json"]
+    assert benchmark_document["comparison_files"] == [
+        "ctp120_dev.json",
+        "benchmark_test.json",
+        "day8_dev_experiment_cases_v1_3.json",
+    ]
     assert len(benchmark_cases) == 100
     assert gate["status"] == "passed", gate["failed_checks"]
     assert persisted_quota["status"] == "passed"
@@ -259,6 +263,8 @@ def test_benchmark_manifest_preflight_accepts_100_case_test_draft(
         expected_case_count=100,
         require_llm_config=False,
         strict_formal=True,
+        require_day8_delivery_pack=False,
+        require_clean_git=False,
     )
 
     assert report["status"] == "passed", report["errors"]

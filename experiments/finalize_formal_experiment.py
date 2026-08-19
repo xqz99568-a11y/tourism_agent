@@ -11,7 +11,6 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.core.day7_delivery_pack import write_day7_delivery_pack
 from app.core.formal_experiment_gate import write_formal_experiment_gate
 from app.core.paper_draft_pack import write_paper_draft_pack
 from app.core.paper_result_pack import write_paper_result_pack
@@ -77,12 +76,6 @@ def main() -> int:
         required_methods=required_methods,
         allow_mock_llm=args.allow_mock_llm,
     )
-    delivery_pack = write_day7_delivery_pack(
-        args.run_dir,
-        min_cases=args.min_cases,
-        required_methods=required_methods,
-        allow_mock_llm=args.allow_mock_llm,
-    )
     response = {
         "status": payload["status"],
         "gate_status": payload["gate_status"],
@@ -101,17 +94,12 @@ def main() -> int:
         "paper_submission_checklist_md": submission_pack["markdown"],
         "paper_submission_status": submission_pack["submission_status"],
         "paper_submission_claims_allowed": submission_pack["paper_claims_allowed"],
-        "day7_delivery_pack_json": delivery_pack["json"],
-        "day7_delivery_report_md": delivery_pack["markdown"],
-        "day7_delivery_status": delivery_pack["delivery_status"],
-        "day7_delivery_claims_allowed": delivery_pack["paper_claims_allowed"],
         "failed_checks": payload["gate"]["failed_checks"],
     }
     print(json.dumps(response, ensure_ascii=False, indent=2))
     if args.strict and (
         payload["gate_status"] != "passed"
         or submission_pack["submission_status"] != "submission_ready"
-        or delivery_pack["delivery_status"] != "delivery_ready"
     ):
         return 1
     return 0

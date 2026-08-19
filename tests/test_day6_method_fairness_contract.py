@@ -14,6 +14,7 @@ from app.core.experiment_method_contract import (
     METHOD_FAIRNESS_CONTRACT_SCHEMA_VERSION,
     build_method_fairness_contract,
     method_fairness_contract_hash,
+    validate_m2_template_stsr_compatibility,
     validate_method_fairness_contract,
 )
 from app.core.experiment_runner import ExperimentRunner
@@ -46,6 +47,11 @@ def test_day6_contract_freezes_four_method_permissions() -> None:
     assert m1["can_call_generation_tools"] is True
     assert m1["can_reuse_previous_results"] is False
 
+    m2 = methods["fixed_multi_agent"]
+    assert m2["paper_label"] == "M2 Fixed Template Multi-Agent"
+    assert m2["experimental_role"] == "fixed task-template multi-agent baseline"
+    assert "fixed task-type template" in m2["scheduler_policy"]
+
 
 def test_day6_contract_keeps_m2_m3_different_only_by_scheduler_and_reuse() -> None:
     contract = build_method_fairness_contract()
@@ -69,6 +75,43 @@ def test_day6_contract_keeps_m2_m3_different_only_by_scheduler_and_reuse() -> No
 
     assert m2["can_reuse_previous_results"] is False
     assert m3["can_reuse_previous_results"] is True
+    assert contract["m2_fixed_template_policy"]["baseline_definition"] == (
+        "fixed_task_type_template_multi_agent"
+    )
+    assert contract["m2_fixed_template_policy"]["state_reuse"] is False
+    assert contract["m2_fixed_template_policy"]["dynamic_goal_state_scheduling"] is False
+    assert contract["m2_fixed_template_policy"]["templates"]["weather_query"] == {
+        "agents": ["weather"],
+        "tools": ["weather_query"],
+    }
+    assert contract["m2_fixed_template_policy"]["templates"]["attraction_recommendation"] == {
+        "agents": ["attraction"],
+        "tools": ["poi_search"],
+    }
+    assert contract["m2_fixed_template_policy"]["templates"]["budget_query"] == {
+        "agents": ["budget"],
+        "tools": ["budget_calculator"],
+        "budget_evidence_policy": "use_frozen_standard_reference_poi_combo_when_no_current_itinerary_is_supplied",
+    }
+    assert contract["m2_fixed_template_policy"]["templates"][
+        "trip_planning_with_weather_date"
+    ] == {
+        "agents": list(CANONICAL_AGENT_ORDER),
+        "tools": list(GENERATION_TOOL_NAMES),
+    }
+    assert contract["m2_fixed_template_policy"]["templates"][
+        "trip_planning_without_weather_date"
+    ] == {
+        "agents": ["attraction", "itinerary", "budget"],
+        "tools": ["poi_search", "budget_calculator"],
+        "weather_policy": "do_not_query_weather_without_specific_departure_date",
+    }
+    assert contract["m2_fixed_template_policy"]["templates"]["weather_adjustment"] == {
+        "agents": ["itinerary", "budget"],
+        "tools": ["budget_calculator"],
+        "state_reuse": False,
+        "weather_change_source": "user_supplied_weather_change_condition",
+    }
     assert contract["m2_m3_fairness"]["only_allowed_differences"] == [
         "scheduler_policy",
         "state_reuse_policy",
@@ -96,16 +139,19 @@ def test_day6_contract_freezes_visibility_and_dependency_policies() -> None:
     assert dependencies["agent_tool_map"]["weather"] == ["weather_query"]
     assert dependencies["agent_tool_map"]["itinerary"] == []
     assert dependencies["agent_tool_map"]["budget"] == ["budget_calculator"]
-    assert dependencies["slot_change_invalidation"]["people_count"] == ["budget"]
-    assert dependencies["slot_change_invalidation"]["budget_level"] == [
-        "attraction",
+    assert dependencies["slot_change_invalidation"]["people_count"] == ["itinerary", "budget"]
+    assert dependencies["slot_change_invalidation"]["start_date"] == [
+        "weather",
         "itinerary",
         "budget",
     ]
+    assert dependencies["slot_change_invalidation"]["budget_amount"] == ["budget"]
+    assert dependencies["slot_change_invalidation"]["budget_level"] == ["budget"]
     assert (
         dependencies["multi_turn_counting"]["previous_state_source"]
         == "only the same method's own previous turn output"
     )
+    assert "Phase0_实验协议.md" in contract["source_documents"]
 
 
 def test_day6_contract_rejects_unknown_active_methods() -> None:
@@ -143,3 +189,7 @@ def test_experiment_manifest_records_day6_method_contract(tmp_path: Path) -> Non
     assert contract["methods"]["adaptive_multi_agent"]["business_agents"] == list(
         CANONICAL_AGENT_ORDER
     )
+
+
+def test_m2_fixed_templates_are_compatible_with_stsr_single_scope_rules() -> None:
+    validate_m2_template_stsr_compatibility()

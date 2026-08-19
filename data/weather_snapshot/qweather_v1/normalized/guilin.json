@@ -1,0 +1,1641 @@
+{
+  "metadata": {
+    "file_id": "ctp_qweather_guilin_ctp_qweather_20260807_v1_normalized",
+    "schema_version": "ctp-qweather-normalized-city-v1",
+    "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+    "provider": "qweather",
+    "snapshot_id": "ctp_qweather_20260807_v1",
+    "reference_date": "2026-08-07",
+    "fetched_at": "2026-08-07T22:59:29+08:00",
+    "timezone": "Asia/Shanghai",
+    "city_id": "guilin",
+    "city_name": "桂林",
+    "location_id": "101300501",
+    "forecast_endpoint": "/v7/weather/30d",
+    "forecast_start_date": "2026-08-07",
+    "forecast_end_date": "2026-09-05",
+    "forecast_horizon_days": 30,
+    "record_count": 30,
+    "data_mode": "frozen_offline",
+    "source_mode": "qweather_frozen_snapshot",
+    "location_resolution": "fixed_location_id",
+    "real_time_api_allowed": false,
+    "api_key_recorded": false,
+    "source": {
+      "source_name": "QWeather",
+      "source_endpoint": "/v7/weather/30d",
+      "collection_policy": "collected once before formal experiments; runtime reads local snapshot only"
+    }
+  },
+  "daily_forecasts": [
+    {
+      "date": "2026-08-07",
+      "day_index": 1,
+      "snapshot_day_index": 1,
+      "state": "high_temperature",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "晴",
+      "temperature_min_c": 25,
+      "temperature_max_c": 35,
+      "precipitation_mm": 1.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 89,
+      "uv_index": 12,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-07",
+        "tempMin": "25",
+        "tempMax": "35",
+        "textDay": "多云",
+        "textNight": "晴",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "89",
+        "precip": "1.0",
+        "pop": null,
+        "uvIndex": "12"
+      }
+    },
+    {
+      "date": "2026-08-08",
+      "day_index": 2,
+      "snapshot_day_index": 2,
+      "state": "high_temperature",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴",
+      "temperature_min_c": 26,
+      "temperature_max_c": 36,
+      "precipitation_mm": 1.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 88,
+      "uv_index": 12,
+      "risk_level": "high",
+      "risk_tags": [
+        "rain",
+        "heat",
+        "extreme_heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-08",
+        "tempMin": "26",
+        "tempMax": "36",
+        "textDay": "晴",
+        "textNight": "晴",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "88",
+        "precip": "1.0",
+        "pop": null,
+        "uvIndex": "12"
+      }
+    },
+    {
+      "date": "2026-08-09",
+      "day_index": 3,
+      "snapshot_day_index": 3,
+      "state": "high_temperature",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴",
+      "temperature_min_c": 26,
+      "temperature_max_c": 36,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 87,
+      "uv_index": 12,
+      "risk_level": "high",
+      "risk_tags": [
+        "heat",
+        "extreme_heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-09",
+        "tempMin": "26",
+        "tempMax": "36",
+        "textDay": "晴",
+        "textNight": "晴",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "87",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "12"
+      }
+    },
+    {
+      "date": "2026-08-10",
+      "day_index": 4,
+      "snapshot_day_index": 4,
+      "state": "high_temperature",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "多云",
+      "temperature_min_c": 25,
+      "temperature_max_c": 35,
+      "precipitation_mm": 1.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 85,
+      "uv_index": 9,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-10",
+        "tempMin": "25",
+        "tempMax": "35",
+        "textDay": "晴",
+        "textNight": "多云",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "85",
+        "precip": "1.0",
+        "pop": null,
+        "uvIndex": "9"
+      }
+    },
+    {
+      "date": "2026-08-11",
+      "day_index": 5,
+      "snapshot_day_index": 5,
+      "state": "high_temperature",
+      "weather": "阵雨",
+      "day_weather": "阵雨",
+      "night_weather": "多云",
+      "temperature_min_c": 26,
+      "temperature_max_c": 36,
+      "precipitation_mm": 1.2,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 82,
+      "uv_index": 12,
+      "risk_level": "high",
+      "risk_tags": [
+        "rain",
+        "heat",
+        "extreme_heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-11",
+        "tempMin": "26",
+        "tempMax": "36",
+        "textDay": "阵雨",
+        "textNight": "多云",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "82",
+        "precip": "1.2",
+        "pop": null,
+        "uvIndex": "12"
+      }
+    },
+    {
+      "date": "2026-08-12",
+      "day_index": 6,
+      "snapshot_day_index": 6,
+      "state": "high_temperature",
+      "weather": "阵雨",
+      "day_weather": "阵雨",
+      "night_weather": "多云",
+      "temperature_min_c": 26,
+      "temperature_max_c": 36,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 92,
+      "uv_index": 5,
+      "risk_level": "high",
+      "risk_tags": [
+        "rain",
+        "heat",
+        "extreme_heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-12",
+        "tempMin": "26",
+        "tempMax": "36",
+        "textDay": "阵雨",
+        "textNight": "多云",
+        "windDirDay": "南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "92",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "5"
+      }
+    },
+    {
+      "date": "2026-08-13",
+      "day_index": 7,
+      "snapshot_day_index": 7,
+      "state": "high_temperature",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "中雨",
+      "temperature_min_c": 25,
+      "temperature_max_c": 36,
+      "precipitation_mm": 1.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 85,
+      "uv_index": 12,
+      "risk_level": "high",
+      "risk_tags": [
+        "rain",
+        "heat",
+        "extreme_heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-13",
+        "tempMin": "25",
+        "tempMax": "36",
+        "textDay": "小雨",
+        "textNight": "中雨",
+        "windDirDay": "南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "85",
+        "precip": "1.0",
+        "pop": null,
+        "uvIndex": "12"
+      }
+    },
+    {
+      "date": "2026-08-14",
+      "day_index": 8,
+      "snapshot_day_index": 8,
+      "state": "high_temperature",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "晴",
+      "temperature_min_c": 25,
+      "temperature_max_c": 33,
+      "precipitation_mm": 4.1,
+      "precipitation_probability": null,
+      "wind_direction_day": "南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 83,
+      "uv_index": 6,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-14",
+        "tempMin": "25",
+        "tempMax": "33",
+        "textDay": "小雨",
+        "textNight": "晴",
+        "windDirDay": "南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "83",
+        "precip": "4.1",
+        "pop": null,
+        "uvIndex": "6"
+      }
+    },
+    {
+      "date": "2026-08-15",
+      "day_index": 9,
+      "snapshot_day_index": 9,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 24,
+      "temperature_max_c": 32,
+      "precipitation_mm": 2.7,
+      "precipitation_probability": null,
+      "wind_direction_day": "东南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 82,
+      "uv_index": 12,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-15",
+        "tempMin": "24",
+        "tempMax": "32",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "东南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "82",
+        "precip": "2.7",
+        "pop": null,
+        "uvIndex": "12"
+      }
+    },
+    {
+      "date": "2026-08-16",
+      "day_index": 10,
+      "snapshot_day_index": 10,
+      "state": "high_temperature",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 25,
+      "temperature_max_c": 35,
+      "precipitation_mm": 2.7,
+      "precipitation_probability": null,
+      "wind_direction_day": "西北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 82,
+      "uv_index": 7,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-16",
+        "tempMin": "25",
+        "tempMax": "35",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "西北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "82",
+        "precip": "2.7",
+        "pop": null,
+        "uvIndex": "7"
+      }
+    },
+    {
+      "date": "2026-08-17",
+      "day_index": 11,
+      "snapshot_day_index": 11,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "阴",
+      "temperature_min_c": 22,
+      "temperature_max_c": 30,
+      "precipitation_mm": 2.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 80,
+      "uv_index": 10,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-17",
+        "tempMin": "22",
+        "tempMax": "30",
+        "textDay": "小雨",
+        "textNight": "阴",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "80",
+        "precip": "2.0",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-18",
+      "day_index": 12,
+      "snapshot_day_index": 12,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 23,
+      "temperature_max_c": 32,
+      "precipitation_mm": 0.7,
+      "precipitation_probability": null,
+      "wind_direction_day": "东风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 82,
+      "uv_index": 10,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-18",
+        "tempMin": "23",
+        "tempMax": "32",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "东风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "82",
+        "precip": "0.7",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-19",
+      "day_index": 13,
+      "snapshot_day_index": 13,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 24,
+      "temperature_max_c": 32,
+      "precipitation_mm": 0.3,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 85,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-19",
+        "tempMin": "24",
+        "tempMax": "32",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "85",
+        "precip": "0.3",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-20",
+      "day_index": 14,
+      "snapshot_day_index": 14,
+      "state": "high_temperature",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "阴",
+      "temperature_min_c": 25,
+      "temperature_max_c": 34,
+      "precipitation_mm": 0.7,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 96,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-20",
+        "tempMin": "25",
+        "tempMax": "34",
+        "textDay": "小雨",
+        "textNight": "阴",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "96",
+        "precip": "0.7",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-21",
+      "day_index": 15,
+      "snapshot_day_index": 15,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 23,
+      "temperature_max_c": 30,
+      "precipitation_mm": 0.6,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 96,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-21",
+        "tempMin": "23",
+        "tempMax": "30",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "96",
+        "precip": "0.6",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-22",
+      "day_index": 16,
+      "snapshot_day_index": 16,
+      "state": "sunny",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴",
+      "temperature_min_c": 23,
+      "temperature_max_c": 31,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 13.0,
+      "humidity_percent": 97,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-22",
+        "tempMin": "23",
+        "tempMax": "31",
+        "textDay": "晴",
+        "textNight": "晴",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "13",
+        "humidity": "97",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-23",
+      "day_index": 17,
+      "snapshot_day_index": 17,
+      "state": "sunny",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 23,
+      "temperature_max_c": 31,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 7.0,
+      "humidity_percent": 97,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-23",
+        "tempMin": "23",
+        "tempMax": "31",
+        "textDay": "多云",
+        "textNight": "晴间多云",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "7",
+        "humidity": "97",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-24",
+      "day_index": 18,
+      "snapshot_day_index": 18,
+      "state": "sunny",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 24,
+      "temperature_max_c": 31,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 6.0,
+      "humidity_percent": 85,
+      "uv_index": 11,
+      "risk_level": "low",
+      "risk_tags": [],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-24",
+        "tempMin": "24",
+        "tempMax": "31",
+        "textDay": "多云",
+        "textNight": "晴间多云",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "6",
+        "humidity": "85",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-25",
+      "day_index": 19,
+      "snapshot_day_index": 19,
+      "state": "sunny",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 23,
+      "temperature_max_c": 31,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 4.0,
+      "humidity_percent": 85,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-25",
+        "tempMin": "23",
+        "tempMax": "31",
+        "textDay": "晴",
+        "textNight": "晴间多云",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "4",
+        "humidity": "85",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-26",
+      "day_index": 20,
+      "snapshot_day_index": 20,
+      "state": "high_temperature",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 24,
+      "temperature_max_c": 33,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 4.0,
+      "humidity_percent": 85,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-26",
+        "tempMin": "24",
+        "tempMax": "33",
+        "textDay": "晴",
+        "textNight": "晴间多云",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "4",
+        "humidity": "85",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-27",
+      "day_index": 21,
+      "snapshot_day_index": 21,
+      "state": "high_temperature",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 25,
+      "temperature_max_c": 33,
+      "precipitation_mm": 1.6,
+      "precipitation_probability": null,
+      "wind_direction_day": "西南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 4.0,
+      "humidity_percent": 87,
+      "uv_index": 6,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-27",
+        "tempMin": "25",
+        "tempMax": "33",
+        "textDay": "雷阵雨",
+        "textNight": "雷阵雨",
+        "windDirDay": "西南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "4",
+        "humidity": "87",
+        "precip": "1.6",
+        "pop": null,
+        "uvIndex": "6"
+      }
+    },
+    {
+      "date": "2026-08-28",
+      "day_index": 22,
+      "snapshot_day_index": 22,
+      "state": "rain",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 25,
+      "temperature_max_c": 32,
+      "precipitation_mm": 3.9,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 6.0,
+      "humidity_percent": 88,
+      "uv_index": 5,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-28",
+        "tempMin": "25",
+        "tempMax": "32",
+        "textDay": "雷阵雨",
+        "textNight": "晴间多云",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "6",
+        "humidity": "88",
+        "precip": "3.9",
+        "pop": null,
+        "uvIndex": "5"
+      }
+    },
+    {
+      "date": "2026-08-29",
+      "day_index": 23,
+      "snapshot_day_index": 23,
+      "state": "rain",
+      "weather": "少云",
+      "day_weather": "少云",
+      "night_weather": "晴",
+      "temperature_min_c": 24,
+      "temperature_max_c": 31,
+      "precipitation_mm": 0.8,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 7.0,
+      "humidity_percent": 86,
+      "uv_index": 10,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-29",
+        "tempMin": "24",
+        "tempMax": "31",
+        "textDay": "少云",
+        "textNight": "晴",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "7",
+        "humidity": "86",
+        "precip": "0.8",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-30",
+      "day_index": 24,
+      "snapshot_day_index": 24,
+      "state": "high_temperature",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴",
+      "temperature_min_c": 23,
+      "temperature_max_c": 33,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 6.0,
+      "humidity_percent": 88,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-30",
+        "tempMin": "23",
+        "tempMax": "33",
+        "textDay": "晴",
+        "textNight": "晴",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "6",
+        "humidity": "88",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-31",
+      "day_index": 25,
+      "snapshot_day_index": 25,
+      "state": "high_temperature",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴",
+      "temperature_min_c": 23,
+      "temperature_max_c": 33,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 6.0,
+      "humidity_percent": 86,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-31",
+        "tempMin": "23",
+        "tempMax": "33",
+        "textDay": "晴",
+        "textNight": "晴",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "6",
+        "humidity": "86",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-09-01",
+      "day_index": 26,
+      "snapshot_day_index": 26,
+      "state": "sunny",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴",
+      "temperature_min_c": 25,
+      "temperature_max_c": 32,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 17.0,
+      "humidity_percent": 86,
+      "uv_index": 11,
+      "risk_level": "low",
+      "risk_tags": [],
+      "suitable_periods": [
+        "morning",
+        "afternoon",
+        "evening"
+      ],
+      "avoid_periods": [],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-01",
+        "tempMin": "25",
+        "tempMax": "32",
+        "textDay": "晴",
+        "textNight": "晴",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "17",
+        "humidity": "86",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-09-02",
+      "day_index": 27,
+      "snapshot_day_index": 27,
+      "state": "rain",
+      "weather": "晴间多云",
+      "day_weather": "晴间多云",
+      "night_weather": "阵雨",
+      "temperature_min_c": 25,
+      "temperature_max_c": 32,
+      "precipitation_mm": 0.5,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 7.0,
+      "humidity_percent": 86,
+      "uv_index": 7,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-02",
+        "tempMin": "25",
+        "tempMax": "32",
+        "textDay": "晴间多云",
+        "textNight": "阵雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "7",
+        "humidity": "86",
+        "precip": "0.5",
+        "pop": null,
+        "uvIndex": "7"
+      }
+    },
+    {
+      "date": "2026-09-03",
+      "day_index": 28,
+      "snapshot_day_index": 28,
+      "state": "rain",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 24,
+      "temperature_max_c": 31,
+      "precipitation_mm": 7.4,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 6.0,
+      "humidity_percent": 85,
+      "uv_index": 3,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-03",
+        "tempMin": "24",
+        "tempMax": "31",
+        "textDay": "雷阵雨",
+        "textNight": "晴间多云",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "6",
+        "humidity": "85",
+        "precip": "7.4",
+        "pop": null,
+        "uvIndex": "3"
+      }
+    },
+    {
+      "date": "2026-09-04",
+      "day_index": 29,
+      "snapshot_day_index": 29,
+      "state": "rain",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 25,
+      "temperature_max_c": 32,
+      "precipitation_mm": 5.2,
+      "precipitation_probability": null,
+      "wind_direction_day": "西北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 2.0,
+      "humidity_percent": 88,
+      "uv_index": 5,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-04",
+        "tempMin": "25",
+        "tempMax": "32",
+        "textDay": "雷阵雨",
+        "textNight": "雷阵雨",
+        "windDirDay": "西北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "2",
+        "humidity": "88",
+        "precip": "5.2",
+        "pop": null,
+        "uvIndex": "5"
+      }
+    },
+    {
+      "date": "2026-09-05",
+      "day_index": 30,
+      "snapshot_day_index": 30,
+      "state": "rain",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 24,
+      "temperature_max_c": 32,
+      "precipitation_mm": 5.4,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 6.0,
+      "humidity_percent": 86,
+      "uv_index": 3,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "guilin",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-05",
+        "tempMin": "24",
+        "tempMax": "32",
+        "textDay": "雷阵雨",
+        "textNight": "雷阵雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "6",
+        "humidity": "86",
+        "precip": "5.4",
+        "pop": null,
+        "uvIndex": "3"
+      }
+    }
+  ]
+}

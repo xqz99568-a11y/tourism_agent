@@ -71,7 +71,7 @@ NODE_PREFIX_TO_CITY = {
 BUDGET_TIER_MAP = {
     "economy": "economy",
     "low": "economy",
-    "medium": "comfort",
+    "medium": "economy",
     "comfort": "comfort",
     "standard": "comfort",
     "luxury": "premium",
@@ -99,6 +99,14 @@ ROUTE_MODE_ALIASES = {
     "drive": "taxi",
     "打车": "taxi",
 }
+
+BUDGET_POLICY_VERSION = "budget_policy_v2_0"
+BUDGET_POLICY_NAME = "Budget Policy v2.0"
+BUDGET_CONTINGENCY_RATIO = 0.10
+BUDGET_AUTO_UPGRADE_THRESHOLD = None
+BUDGET_FOOD_MEALS_PER_DAY = 2.0
+BUDGET_BREAKFAST_MEAL_EQUIVALENT_PER_NIGHT = 0.5
+BUDGET_DEFAULT_POIS_PER_DAY = 2
 
 GENERIC_SEARCH_TERMS = {
     "",
@@ -418,56 +426,216 @@ class FixedTourismData:
     def calculate_budget(
         self,
         *,
+        origin: Any = None,
         destination: Any,
         duration: int,
         num_travelers: int = 1,
         budget_level: str = "medium",
+        budget_limit: Any = None,
         poi_ids: Optional[Iterable[Any]] = None,
+        daily_itinerary: Optional[Iterable[Any]] = None,
         dining_area_id: Optional[str] = None,
         accommodation_area_id: Optional[str] = None,
+        hotel_level: Any = None,
+        food_level: Any = None,
+        transport_mode: Any = None,
+        requested_budget_scope: Any = None,
     ) -> Dict[str, Any]:
         city_id = self._require_city_id(destination)
         bundle = self.city_bundle(city_id)
-        tier = self.normalize_budget_tier(budget_level)
         duration = max(1, int(duration or 1))
         num_travelers = max(1, int(num_travelers or 1))
-        nights = max(duration - 1, 1)
+        nights = max(duration - 1, 0)
         room_count = max(math.ceil(num_travelers / 2), 1)
-
-        dining_reference = self._reference_price(
-            bundle["restaurants"].get("dining_areas", []),
-            tier,
-            preferred_id=dining_area_id,
+        parsed_budget_limit = self._positive_float_or_none(budget_limit)
+        requested_scope = self._normalize_requested_budget_scope(requested_budget_scope)
+        meal_count_equivalent = round(
+            BUDGET_FOOD_MEALS_PER_DAY * duration
+            + BUDGET_BREAKFAST_MEAL_EQUIVALENT_PER_NIGHT * nights,
+            2,
         )
-        accommodation_reference = self._reference_price(
-            bundle["accommodation"].get("accommodation_areas", []),
-            tier,
-            preferred_id=accommodation_area_id,
-        )
-        meals_per_day = 3
-        food_cost = dining_reference * num_travelers * duration * meals_per_day
-        accommodation_cost = accommodation_reference * room_count * nights
 
-        transport_mode = "taxi" if tier == "premium" else "public_transit"
-        trip_count_per_day = 2 if tier == "premium" else 3
-        transport_trip_cost = self._average_transport_cost(city_id, transport_mode)
-        if transport_mode == "taxi":
-            vehicle_count = max(math.ceil(num_travelers / 4), 1)
-            transport_cost = transport_trip_cost * trip_count_per_day * duration * vehicle_count
-        else:
-            transport_cost = transport_trip_cost * trip_count_per_day * duration * num_travelers
-
+        requested_poi_ids = self._poi_ids_from_itinerary(daily_itinerary) or [
+            str(value).strip()
+            for value in _as_list(poi_ids)
+            if str(value or "").strip()
+        ]
         ticket_breakdown = self._ticket_budget(
             bundle["pois"].get("pois", []),
             num_travelers=num_travelers,
             duration=duration,
-            poi_ids=poi_ids,
+            poi_ids=requested_poi_ids,
         )
-        ticket_cost = ticket_breakdown["ticket_cost"]
-        other_cost = {"economy": 30, "comfort": 60, "premium": 120}[tier] * duration * num_travelers
-        subtotal = food_cost + accommodation_cost + transport_cost + ticket_cost + other_cost
-        buffer_cost = round(subtotal * 0.10, 2)
-        total = round(subtotal + buffer_cost, 2)
+        selected_poi_ids = [
+            str(value)
+            for value in (ticket_breakdown.get("summary") or {}).get("selected_poi_ids", [])
+            if str(value or "").strip()
+        ]
+        economy_accommodation = self._reference_price_detail(
+            bundle["accommodation"].get("accommodation_areas", []),
+            "economy",
+            preferred_id=accommodation_area_id,
+        )
+        transport_breakdown = self._local_transport_budget(
+            city_id=city_id,
+            duration=duration,
+            num_travelers=num_travelers,
+            accommodation_area_id=economy_accommodation.get("area_id"),
+            poi_ids=selected_poi_ids,
+            daily_itinerary=daily_itinerary,
+            requested_mode=transport_mode,
+        )
+        if requested_scope == "destination_local_only":
+            intercity_transport = self._local_only_intercity_transport_payload(
+                origin=origin,
+                destination=city_id,
+                num_travelers=num_travelers,
+            )
+        else:
+            intercity_transport = self._intercity_transport_budget(
+                origin=origin,
+                destination=city_id,
+                num_travelers=num_travelers,
+            )
+        intercity_transport_cost = _safe_float(
+            intercity_transport.get("total_intercity_transport_cost_cny")
+        )
+        computed_scope = str(intercity_transport.get("budget_scope") or "destination_local_only")
+        scope_complete = self._budget_scope_complete(
+            requested_scope=requested_scope,
+            computed_scope=computed_scope,
+            intercity_transport=intercity_transport,
+        )
+        preferences = self._budget_preference_flags(
+            budget_level=budget_level,
+            hotel_level=hotel_level,
+            food_level=food_level,
+        )
+
+        def build_scheme(
+            *,
+            hotel_tier: str,
+            food_tier: str,
+            scheme_id: str,
+            reason: str,
+        ) -> Dict[str, Any]:
+            accommodation_reference = self._reference_price_detail(
+                bundle["accommodation"].get("accommodation_areas", []),
+                hotel_tier,
+                preferred_id=accommodation_area_id,
+            )
+            dining_reference = self._reference_price_detail(
+                bundle["restaurants"].get("dining_areas", []),
+                food_tier,
+                preferred_id=dining_area_id,
+            )
+            accommodation_cost = round(
+                accommodation_reference["reference_price_cny"] * room_count * nights,
+                2,
+            )
+            food_cost = round(
+                dining_reference["reference_price_cny"] * meal_count_equivalent * num_travelers,
+                2,
+            )
+            ticket_cost = round(_safe_float(ticket_breakdown.get("ticket_cost")), 2)
+            transport_cost = round(_safe_float(transport_breakdown.get("recommended")), 2)
+            local_basic = round(accommodation_cost + food_cost + ticket_cost + transport_cost, 2)
+            contingency = round(local_basic * BUDGET_CONTINGENCY_RATIO, 2)
+            local_total = round(local_basic + contingency, 2)
+            actual_spending = round(local_basic + intercity_transport_cost, 2)
+            total = round(local_total + intercity_transport_cost, 2)
+            return {
+                "scheme_id": scheme_id,
+                "reason": reason,
+                "hotel_tier": hotel_tier,
+                "food_tier": food_tier,
+                "transport_mode": transport_breakdown.get("mode"),
+                "accommodation_reference": accommodation_reference,
+                "dining_reference": dining_reference,
+                "accommodation_cost": accommodation_cost,
+                "food_cost": food_cost,
+                "ticket_cost": ticket_cost,
+                "transport_cost": transport_cost,
+                "other_cost": 0.0,
+                "local_basic_cost": local_basic,
+                "contingency_amount": contingency,
+                "local_total_recommended": local_total,
+                "estimated_actual_spending": actual_spending,
+                "total_recommended": total,
+                "per_person": round(total / num_travelers, 2),
+                "daily": round(total / duration, 2),
+            }
+
+        economy_scheme = build_scheme(
+            hotel_tier="economy",
+            food_tier="economy",
+            scheme_id="E",
+            reason="economic_baseline",
+        )
+        candidate_schemes = [economy_scheme]
+        preference_candidate = None
+        final_scheme = economy_scheme
+        upgrade_applied: List[str] = []
+        upgrade_decision = (
+            "economic_baseline_over_budget"
+            if parsed_budget_limit is not None
+            and economy_scheme["total_recommended"] > parsed_budget_limit
+            else "economic_baseline"
+        )
+        if preferences["explicit_hotel_tier"] or preferences["explicit_food_tier"]:
+            requested_hotel_tier = preferences["explicit_hotel_tier"] or "economy"
+            requested_food_tier = preferences["explicit_food_tier"] or "economy"
+            preference_candidate = build_scheme(
+                hotel_tier=requested_hotel_tier,
+                food_tier=requested_food_tier,
+                scheme_id="PREF",
+                reason="explicit_user_preference",
+            )
+            candidate_schemes.append(preference_candidate)
+            final_scheme = preference_candidate
+            if requested_hotel_tier != "economy":
+                upgrade_applied.append("accommodation")
+            if requested_food_tier != "economy":
+                upgrade_applied.append("food")
+            upgrade_decision = (
+                "explicit_preference_applied_over_budget"
+                if parsed_budget_limit is not None
+                and preference_candidate["total_recommended"] > parsed_budget_limit
+                else "explicit_preference_applied"
+            )
+
+        total = final_scheme["total_recommended"]
+        local_total = final_scheme["local_total_recommended"]
+        local_subtotal = final_scheme["local_basic_cost"]
+        buffer_cost = final_scheme["contingency_amount"]
+        ticket_cost = final_scheme["ticket_cost"]
+        accommodation_cost = final_scheme["accommodation_cost"]
+        food_cost = final_scheme["food_cost"]
+        transport_cost = final_scheme["transport_cost"]
+        other_cost = 0.0
+        tier = (
+            "comfort"
+            if final_scheme["hotel_tier"] == "comfort" or final_scheme["food_tier"] == "comfort"
+            else ("premium" if final_scheme["hotel_tier"] == "premium" or final_scheme["food_tier"] == "premium" else "economy")
+        )
+        budget_gap = None
+        remaining_budget = None
+        covered_scope_remaining_budget = None
+        if parsed_budget_limit is not None:
+            budget_gap = round(max(total - parsed_budget_limit, 0.0), 2)
+            covered_scope_remaining_budget = round(max(parsed_budget_limit - total, 0.0), 2)
+            remaining_budget = covered_scope_remaining_budget if scope_complete else None
+        sufficiency_status = self._budget_sufficiency_status(
+            total=total,
+            budget_limit=parsed_budget_limit,
+            scope_complete=scope_complete,
+        )
+        preference_budget_gap = None
+        if preference_candidate and parsed_budget_limit is not None:
+            preference_budget_gap = round(
+                max(preference_candidate["total_recommended"] - parsed_budget_limit, 0.0),
+                2,
+            )
 
         metadata = {
             "poi": bundle["pois"]["metadata"],
@@ -475,69 +643,296 @@ class FixedTourismData:
             "accommodation": bundle["accommodation"]["metadata"],
             "transport": bundle["transport"]["metadata"],
         }
+        dataset_versions = {
+            key: value.get("dataset_version") for key, value in metadata.items()
+        }
+        source_file_ids = {
+            key: value.get("file_id") for key, value in metadata.items()
+        }
+        snapshot_dates = {
+            key: value.get("snapshot_date") for key, value in metadata.items()
+        }
+        dataset_versions["intercity_transport"] = intercity_transport.get("snapshot_id")
+        source_file_ids["intercity_transport"] = "data/intercity_transport/rail_second_class_v1.json"
+        snapshot_dates["intercity_transport"] = intercity_transport.get("fare_snapshot_date")
+        budget_items = [
+            {"category": "transport", "item": "fixed destination-local transport", "estimated_cost": round(transport_cost, 2), "is_essential": True},
+            {"category": "accommodation", "item": "fixed accommodation area", "estimated_cost": round(accommodation_cost, 2), "is_essential": True},
+            {"category": "food", "item": "fixed dining area meals", "estimated_cost": round(food_cost, 2), "is_essential": True},
+            {"category": "tickets", "item": "fixed POI tickets", "estimated_cost": round(ticket_cost, 2), "is_essential": True},
+            {"category": "contingency", "item": "10 percent destination-local contingency reserve", "estimated_cost": round(buffer_cost, 2), "is_essential": False},
+            {
+                "category": "intercity_transport",
+                "item": "frozen round-trip rail second-class fare",
+                "estimated_cost": round(intercity_transport_cost, 2),
+                "is_essential": bool(intercity_transport.get("intercity_transport_included")),
+                "notes": intercity_transport.get("disclaimer"),
+            },
+        ]
         return {
+            "origin": origin,
             "destination": destination,
             "city_id": city_id,
             "duration": duration,
             "num_travelers": num_travelers,
             "budget_level": budget_level,
             "normalized_budget_tier": tier,
+            "budget_limit": parsed_budget_limit,
             "offline": True,
-            "calculation_source": "fixed_offline_dataset",
+            "calculation_source": "fixed_reference_cost_model",
+            "budget_policy_version": BUDGET_POLICY_VERSION,
+            "budget_policy_name": BUDGET_POLICY_NAME,
             "total_min": total,
             "total_max": total,
             "total_recommended": total,
+            "final_recommended_total": total,
+            "recommended_preparation_amount": total,
+            "estimated_actual_spending": final_scheme["estimated_actual_spending"],
+            "economic_baseline_total": economy_scheme["total_recommended"],
+            "economic_baseline_local_total": economy_scheme["local_total_recommended"],
+            "economic_baseline_actual_spending": economy_scheme["estimated_actual_spending"],
             "per_person": round(total / num_travelers, 2),
             "daily": round(total / duration, 2),
+            "local_subtotal": round(local_subtotal, 2),
+            "local_total_recommended": local_total,
+            "destination_local_basic_cost": round(local_subtotal, 2),
+            "contingency_amount": buffer_cost,
+            "buffer_cost": buffer_cost,
+            "remaining_budget": remaining_budget,
+            "covered_scope_remaining_budget": covered_scope_remaining_budget,
+            "budget_gap": budget_gap,
+            "preference_budget_gap": preference_budget_gap,
+            "is_over_budget": bool(parsed_budget_limit is not None and total > parsed_budget_limit),
+            "can_judge_budget_sufficiency": sufficiency_status != "indeterminate",
+            "sufficiency_status": sufficiency_status,
+            "requested_budget_scope": requested_scope,
+            "computed_budget_scope": computed_scope,
+            "scope_complete": scope_complete,
+            "budget_complete": not bool((ticket_breakdown.get("summary") or {}).get("unpriceable_count")),
+            "intercity_transport_cost": round(intercity_transport_cost, 2),
+            "intercity_transport_included": bool(intercity_transport.get("intercity_transport_included")),
+            "budget_scope": computed_scope,
+            "mandatory_budget_disclaimer": bool(intercity_transport.get("mandatory_budget_disclaimer")),
+            "budget_disclaimer": intercity_transport.get("disclaimer"),
             "breakdown": {
                 "transport": {
                     "recommended": round(transport_cost, 2),
-                    "mode": transport_mode,
-                    "calculation_rule": "fixed matrix average cost * fixed trip count",
+                    "mode": transport_breakdown.get("mode"),
+                    "scope": "destination_local_transport_only",
+                    "source": transport_breakdown.get("source"),
+                    "fallback_segment_count": transport_breakdown.get("fallback_segment_count"),
+                    "segments": transport_breakdown.get("segments"),
+                    "calculation_rule": transport_breakdown.get("calculation_rule"),
+                },
+                "intercity_transport": {
+                    "recommended": round(intercity_transport_cost, 2),
+                    "included": bool(intercity_transport.get("intercity_transport_included")),
+                    "status": intercity_transport.get("status"),
+                    "route_supported": bool(intercity_transport.get("route_supported")),
+                    "origin": intercity_transport.get("origin"),
+                    "destination": intercity_transport.get("destination"),
+                    "one_way_fare_per_person_cny": intercity_transport.get("one_way_fare_per_person_cny"),
+                    "round_trip_fare_per_person_cny": intercity_transport.get("round_trip_fare_per_person_cny"),
+                    "calculation_rule": intercity_transport.get("calculation_rule")
+                    or "no intercity fare added when origin is missing or route is unsupported",
+                    "disclaimer": intercity_transport.get("disclaimer"),
+                    "fare_evidence": intercity_transport.get("fare_evidence"),
+                    "evidence_manual_review_complete": intercity_transport.get(
+                        "evidence_manual_review_complete"
+                    ),
                 },
                 "accommodation": {
                     "recommended": round(accommodation_cost, 2),
-                    "reference_price_cny": accommodation_reference,
+                    "tier": final_scheme["hotel_tier"],
+                    "reference_price_cny": final_scheme["accommodation_reference"]["reference_price_cny"],
+                    "reference_area_id": final_scheme["accommodation_reference"].get("id"),
+                    "price_statistic": final_scheme["accommodation_reference"].get("statistic"),
                     "room_count": room_count,
                     "night_count": nights,
                     "calculation_rule": "room_count = ceil(traveler_count / 2); total_cost = room_count * reference_price_cny * night_count",
                 },
                 "food": {
                     "recommended": round(food_cost, 2),
-                    "reference_price_cny": dining_reference,
-                    "meal_count": meals_per_day * duration,
-                    "calculation_rule": "total_cost = reference_price_cny * diner_count * meal_count",
+                    "tier": final_scheme["food_tier"],
+                    "reference_price_cny": final_scheme["dining_reference"]["reference_price_cny"],
+                    "reference_area_id": final_scheme["dining_reference"].get("id"),
+                    "price_statistic": final_scheme["dining_reference"].get("statistic"),
+                    "meal_count_equivalent": meal_count_equivalent,
+                    "calculation_rule": "meal_count_equivalent = 2 * day_count + 0.5 * night_count; total_cost = reference_price_cny * meal_count_equivalent * diner_count",
                 },
                 "tickets": {
                     "recommended": round(ticket_cost, 2),
-                    "calculation_rule": "sum known fixed adult ticket prices for selected experiment POIs; pending prices are not guessed",
+                    "source": (ticket_breakdown.get("summary") or {}).get("source"),
+                    "selected_poi_ids": selected_poi_ids,
+                    "calculation_rule": "sum unique final-itinerary fixed adult ticket prices; category estimates are marked as experiment estimates; unpriceable POIs are not guessed",
                 },
-                "other": {"recommended": round(other_cost, 2), "calculation_rule": "fixed per-person daily allowance"},
-                "buffer": {"recommended": buffer_cost, "calculation_rule": "10 percent fixed buffer"},
+                "other": {"recommended": round(other_cost, 2), "calculation_rule": "removed by Budget Policy v2.0; personal shopping is excluded"},
+                "buffer": {
+                    "recommended": buffer_cost,
+                    "calculation_rule": "10 percent contingency reserve applies only to destination-local basic cost; intercity rail is excluded",
+                },
             },
+            "intercity_transport": intercity_transport,
             "ticket_breakdown": ticket_breakdown,
-            "items": [
-                {"category": "transport", "item": "fixed city transport", "estimated_cost": round(transport_cost, 2), "is_essential": True},
-                {"category": "accommodation", "item": "fixed accommodation area", "estimated_cost": round(accommodation_cost, 2), "is_essential": True},
-                {"category": "food", "item": "fixed dining area meals", "estimated_cost": round(food_cost, 2), "is_essential": True},
-                {"category": "tickets", "item": "fixed POI tickets", "estimated_cost": round(ticket_cost, 2), "is_essential": True},
-                {"category": "other", "item": "fixed miscellaneous allowance", "estimated_cost": round(other_cost, 2), "is_essential": False},
-            ],
-            "dataset_versions": {
-                key: value.get("dataset_version") for key, value in metadata.items()
+            "transport_breakdown": transport_breakdown,
+            "items": budget_items,
+            "budget_policy": {
+                "version": BUDGET_POLICY_VERSION,
+                "name": BUDGET_POLICY_NAME,
+                "economic_baseline_first": True,
+                "auto_upgrade_threshold": BUDGET_AUTO_UPGRADE_THRESHOLD,
+                "auto_upgrade_enabled": False,
+                "contingency_ratio": BUDGET_CONTINGENCY_RATIO,
+                "default_budget_scope": intercity_transport.get("budget_scope"),
+                "requested_budget_scope": requested_scope,
+                "computed_budget_scope": computed_scope,
+                "scope_complete": scope_complete,
+                "sufficiency_status": sufficiency_status,
+                "budget_limit": parsed_budget_limit,
+                "upgrade_decision": upgrade_decision,
+                "upgrade_applied": upgrade_applied,
+                "automatic_upgrade_allowed": False,
+                "automatic_upgrade_blocked_reasons": ["auto_upgrade_disabled_by_budget_policy_v2_0"],
+                "selected_scheme_id": final_scheme["scheme_id"],
+                "hotel_tier": final_scheme["hotel_tier"],
+                "food_tier": final_scheme["food_tier"],
+                "transport_mode": final_scheme["transport_mode"],
+                "tier_selection_rule": (
+                    "budget_amount_never_changes_hotel_or_food_tier; "
+                    "comfort_or_premium_requires_explicit_hotel_or_food_preference"
+                ),
+                "candidate_schemes": [
+                    {
+                        "scheme_id": scheme["scheme_id"],
+                        "reason": scheme["reason"],
+                        "hotel_tier": scheme["hotel_tier"],
+                        "food_tier": scheme["food_tier"],
+                        "total_recommended": scheme["total_recommended"],
+                        "local_total_recommended": scheme["local_total_recommended"],
+                    }
+                    for scheme in candidate_schemes
+                ],
+                "explicit_preferences": preferences,
             },
-            "source_file_ids": {
-                key: value.get("file_id") for key, value in metadata.items()
-            },
-            "snapshot_dates": {
-                key: value.get("snapshot_date") for key, value in metadata.items()
-            },
+            "dataset_versions": dataset_versions,
+            "source_file_ids": source_file_ids,
+            "snapshot_dates": snapshot_dates,
             "metadata": {
                 "offline": True,
                 "live_price_allowed": False,
                 "real_time_api_allowed": False,
+                "runtime_online_refresh_allowed": False,
+                "real_time_price_claim_allowed": False,
+                "local_budget_buffer_policy": "10 percent contingency applies to destination-local basic cost only",
+                "budget_policy_version": BUDGET_POLICY_VERSION,
+                "budget_amount_does_not_change_economic_baseline": True,
             },
         }
+
+    def _normalize_requested_budget_scope(self, value: Any) -> str:
+        text = str(value or "").strip().lower()
+        if text in {
+            "destination_local_only",
+            "local_only",
+            "destination_only",
+            "local",
+            "当地",
+            "只算当地",
+        }:
+            return "destination_local_only"
+        if text in {
+            "local_plus_round_trip_intercity",
+            "full_trip",
+            "complete_trip",
+            "full",
+            "总预算",
+            "完整旅行",
+        }:
+            return "local_plus_round_trip_intercity"
+        return "local_plus_round_trip_intercity"
+
+    def _budget_scope_complete(
+        self,
+        *,
+        requested_scope: str,
+        computed_scope: str,
+        intercity_transport: Dict[str, Any],
+    ) -> bool:
+        if requested_scope == "destination_local_only":
+            return computed_scope == "destination_local_only"
+        if computed_scope == "local_plus_round_trip_intercity":
+            return True
+        if intercity_transport.get("status") == "same_city_no_intercity_required":
+            return True
+        return False
+
+    def _budget_sufficiency_status(
+        self,
+        *,
+        total: float,
+        budget_limit: Optional[float],
+        scope_complete: bool,
+    ) -> str:
+        if budget_limit is None:
+            return "indeterminate"
+        if total > budget_limit:
+            return "insufficient"
+        if scope_complete:
+            return "sufficient"
+        return "indeterminate"
+
+    def _local_only_intercity_transport_payload(
+        self,
+        *,
+        origin: Any,
+        destination: str,
+        num_travelers: int,
+    ) -> Dict[str, Any]:
+        origin_text = str(origin or "").strip()
+        return {
+            "provider": "manual_12306_snapshot",
+            "offline": True,
+            "status": "not_requested_local_only",
+            "route_supported": False,
+            "intercity_transport_included": False,
+            "mandatory_budget_disclaimer": False,
+            "budget_scope": "destination_local_only",
+            "requested_origin": origin_text,
+            "requested_destination": destination,
+            "origin": origin_text or None,
+            "destination": destination,
+            "people_count": max(1, int(num_travelers or 1)),
+            "one_way_fare_per_person_cny": None,
+            "round_trip_fare_per_person_cny": 0.0,
+            "total_intercity_transport_cost_cny": 0.0,
+            "real_time_api_allowed": False,
+            "runtime_online_refresh_allowed": False,
+            "real_time_price_claim_allowed": False,
+            "disclaimer": None,
+            "recommended_user_action": None,
+            "calculation_rule": (
+                "intercity transport intentionally excluded because the requested "
+                "budget scope is destination_local_only"
+            ),
+        }
+
+    def _intercity_transport_budget(
+        self,
+        *,
+        origin: Any,
+        destination: Any,
+        num_travelers: int,
+    ) -> Dict[str, Any]:
+        try:
+            from app.core.intercity_transport_snapshot import query_intercity_rail_snapshot
+
+            return query_intercity_rail_snapshot(
+                origin=origin,
+                destination=destination,
+                people_count=num_travelers,
+            )
+        except Exception as exc:
+            raise FixedDataError(f"intercity transport snapshot unavailable: {exc}") from exc
 
     def resolve_area_id(self, city: Any, node_or_area: Any) -> Optional[str]:
         city_id = self._require_city_id(city)
@@ -919,19 +1314,80 @@ class FixedTourismData:
         tier: str,
         preferred_id: Optional[str] = None,
     ) -> float:
+        return self._reference_price_detail(items, tier, preferred_id=preferred_id)["reference_price_cny"]
+
+    def _reference_price_detail(
+        self,
+        items: List[Dict[str, Any]],
+        tier: str,
+        preferred_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
         if preferred_id:
             for item in items:
                 if preferred_id in {item.get("id"), (item.get("transport") or {}).get("matrix_node_id")}:
-                    return self._item_reference_price(item, tier)
+                    return {
+                        "id": item.get("id"),
+                        "name": item.get("name"),
+                        "area_id": self._first_area_id(item),
+                        "matrix_node_id": (item.get("transport") or {}).get("matrix_node_id"),
+                        "tier": tier,
+                        "reference_price_cny": self._item_reference_price(item, tier),
+                        "statistic": "preferred_area_reference_price",
+                    }
         prices = [self._item_reference_price(item, tier) for item in items]
         prices = [price for price in prices if price > 0]
         if not prices:
             raise FixedDataError(f"missing reference_price_cny for tier {tier}")
-        return round(sum(prices) / len(prices), 2)
+        median = self._median(prices)
+        median_item = self._closest_price_item(items, tier, median)
+        return {
+            "id": median_item.get("id") if median_item else None,
+            "name": median_item.get("name") if median_item else None,
+            "area_id": self._first_area_id(median_item or {}),
+            "matrix_node_id": ((median_item or {}).get("transport") or {}).get("matrix_node_id"),
+            "tier": tier,
+            "reference_price_cny": round(median, 2),
+            "statistic": "citywide_median_reference_price",
+        }
 
     def _item_reference_price(self, item: Dict[str, Any], tier: str) -> float:
         tiers = ((item.get("budget") or {}).get("tiers") or {})
         return _safe_float((tiers.get(tier) or {}).get("reference_price_cny"))
+
+    @staticmethod
+    def _median(values: Iterable[Any]) -> float:
+        sorted_values = sorted(_safe_float(value) for value in values if _safe_float(value) > 0)
+        if not sorted_values:
+            return 0.0
+        mid = len(sorted_values) // 2
+        if len(sorted_values) % 2:
+            return float(sorted_values[mid])
+        return (sorted_values[mid - 1] + sorted_values[mid]) / 2
+
+    def _closest_price_item(
+        self,
+        items: List[Dict[str, Any]],
+        tier: str,
+        target_price: float,
+    ) -> Optional[Dict[str, Any]]:
+        candidates = [
+            (abs(self._item_reference_price(item, tier) - target_price), index, item)
+            for index, item in enumerate(items)
+            if self._item_reference_price(item, tier) > 0
+        ]
+        if not candidates:
+            return None
+        candidates.sort(key=lambda row: (row[0], row[1]))
+        return candidates[0][2]
+
+    @staticmethod
+    def _first_area_id(item: Dict[str, Any]) -> Optional[str]:
+        location = item.get("location") or {}
+        area_ids = location.get("area_ids")
+        if isinstance(area_ids, list) and area_ids:
+            return str(area_ids[0])
+        area_id = location.get("area_id") or item.get("area_id")
+        return str(area_id) if area_id else None
 
     def _average_transport_cost(self, city_id: str, mode: str) -> float:
         document = self._load_city_file("transport", city_id)
@@ -945,6 +1401,249 @@ class FixedTourismData:
             raise FixedDataError(f"missing transport cost matrix for mode {mode}")
         return round(sum(costs) / len(costs), 2)
 
+    def _local_transport_budget(
+        self,
+        *,
+        city_id: str,
+        duration: int,
+        num_travelers: int,
+        accommodation_area_id: Optional[str],
+        poi_ids: List[str],
+        daily_itinerary: Optional[Iterable[Any]],
+        requested_mode: Any = None,
+    ) -> Dict[str, Any]:
+        normalized_requested = str(requested_mode or "").strip()
+        mode = "taxi" if any(token in normalized_requested for token in ("打车", "出租", "taxi")) else "public_transit"
+        day_poi_ids = self._daily_poi_ids_from_itinerary(daily_itinerary)
+        if not day_poi_ids and poi_ids:
+            day_poi_ids = [poi_ids[index : index + BUDGET_DEFAULT_POIS_PER_DAY] for index in range(0, len(poi_ids), BUDGET_DEFAULT_POIS_PER_DAY)]
+        if not day_poi_ids:
+            day_poi_ids = [
+                self._default_reference_poi_ids(city_id, duration)
+            ]
+        day_poi_ids = day_poi_ids[:duration]
+        while len(day_poi_ids) < duration:
+            day_poi_ids.append([])
+
+        base_area = accommodation_area_id or self._default_accommodation_area_id(city_id)
+        median_segment_cost = self._average_transport_cost(city_id, mode)
+        segments: List[Dict[str, Any]] = []
+        fallback_segment_count = 0
+        total = 0.0
+        for day_index, day_ids in enumerate(day_poi_ids, start=1):
+            route_areas = [base_area]
+            for poi_id in day_ids:
+                area_id = self._poi_area_id(city_id, poi_id)
+                if area_id:
+                    route_areas.append(area_id)
+            route_areas.append(base_area)
+            for origin_area, destination_area in zip(route_areas, route_areas[1:]):
+                segment = self._transport_segment_cost(
+                    city_id=city_id,
+                    origin_area=origin_area,
+                    destination_area=destination_area,
+                    mode=mode,
+                    fallback_cost=median_segment_cost,
+                    day_index=day_index,
+                )
+                fallback_segment_count += 1 if segment.get("fallback_applied") else 0
+                total += _safe_float(segment.get("cost_cny"))
+                segments.append(segment)
+        return {
+            "recommended": round(total * num_travelers, 2),
+            "per_person": round(total, 2),
+            "mode": mode,
+            "source": "daily_itinerary_route_matrix" if daily_itinerary else "standard_reference_route_matrix",
+            "base_area_id": base_area,
+            "fallback_segment_count": fallback_segment_count,
+            "segments": segments,
+            "calculation_rule": (
+                "per day route = accommodation area -> itinerary POIs -> accommodation area; "
+                "sum fixed area-matrix public transit costs * traveler_count; missing links use city median segment cost"
+            ),
+        }
+
+    def _transport_segment_cost(
+        self,
+        *,
+        city_id: str,
+        origin_area: Optional[str],
+        destination_area: Optional[str],
+        mode: str,
+        fallback_cost: float,
+        day_index: int,
+    ) -> Dict[str, Any]:
+        origin_text = str(origin_area or "").strip()
+        destination_text = str(destination_area or "").strip()
+        if not origin_text or not destination_text or origin_text == destination_text:
+            return {
+                "day": day_index,
+                "origin_area_id": origin_text or None,
+                "destination_area_id": destination_text or None,
+                "mode": "walking",
+                "cost_cny": 0.0,
+                "fallback_applied": False,
+                "note": "same or missing area treated as walking/no local fare",
+            }
+        document = self._load_city_file("transport", city_id)
+        link = self._find_transport_link(document, origin_text, destination_text)
+        if not link:
+            return {
+                "day": day_index,
+                "origin_area_id": origin_text,
+                "destination_area_id": destination_text,
+                "mode": mode,
+                "cost_cny": round(fallback_cost, 2),
+                "fallback_applied": True,
+                "note": "missing matrix link; city median segment fare applied",
+            }
+        cost_map = link.get("cost_cny") or {}
+        cost = _safe_float(cost_map.get(mode))
+        if mode not in cost_map:
+            cost = fallback_cost
+            fallback = True
+        else:
+            fallback = False
+        return {
+            "day": day_index,
+            "origin_area_id": origin_text,
+            "destination_area_id": destination_text,
+            "mode": mode,
+            "cost_cny": round(cost, 2),
+            "duration_minutes": (link.get("duration_minutes") or {}).get(mode),
+            "fallback_applied": fallback,
+        }
+
+    def _default_accommodation_area_id(self, city_id: str) -> Optional[str]:
+        areas = self._load_city_file("accommodation", city_id).get("accommodation_areas", [])
+        detail = self._reference_price_detail(areas, "economy")
+        return detail.get("area_id")
+
+    def _default_reference_poi_ids(self, city_id: str, duration: int) -> List[str]:
+        pois = self._load_city_file("pois", city_id).get("pois", [])
+        return [
+            str(poi.get("id"))
+            for poi in pois[: max(1, duration * BUDGET_DEFAULT_POIS_PER_DAY)]
+            if poi.get("id")
+        ]
+
+    def _poi_area_id(self, city_id: str, poi_id: Any) -> Optional[str]:
+        entity = self.find_entity(poi_id, city_id)
+        if entity:
+            return entity.get("area_id")
+        text = str(poi_id or "").strip()
+        if not text:
+            return None
+        for poi in self._load_city_file("pois", city_id).get("pois", []):
+            if text in {str(poi.get("id")), str(poi.get("name"))}:
+                return ((poi.get("location") or {}).get("area_id"))
+        return None
+
+    def _daily_poi_ids_from_itinerary(self, daily_itinerary: Optional[Iterable[Any]]) -> List[List[str]]:
+        result: List[List[str]] = []
+        for day in _as_list(daily_itinerary):
+            if not isinstance(day, dict):
+                continue
+            ids = self._poi_ids_from_day(day)
+            if ids:
+                result.append(ids)
+        return result
+
+    def _poi_ids_from_itinerary(self, daily_itinerary: Optional[Iterable[Any]]) -> List[str]:
+        seen: List[str] = []
+        for day_ids in self._daily_poi_ids_from_itinerary(daily_itinerary):
+            for poi_id in day_ids:
+                if poi_id not in seen:
+                    seen.append(poi_id)
+        return seen
+
+    def _poi_ids_from_day(self, day: Dict[str, Any]) -> List[str]:
+        raw_items: List[Any] = []
+        raw_items.extend(_as_list(day.get("attraction_poi_ids")))
+        raw_items.extend(_as_list(day.get("poi_ids")))
+        for key in ("attractions", "pois", "activities", "items"):
+            raw_items.extend(_as_list(day.get(key)))
+        ids: List[str] = []
+        for item in raw_items:
+            if isinstance(item, str):
+                if item.strip():
+                    ids.append(item.strip())
+            elif isinstance(item, dict):
+                poi = item.get("poi") if isinstance(item.get("poi"), dict) else {}
+                value = (
+                    item.get("poi_id")
+                    or item.get("id")
+                    or item.get("name")
+                    or poi.get("poi_id")
+                    or poi.get("id")
+                    or poi.get("name")
+                )
+                if value:
+                    ids.append(str(value).strip())
+        return [value for index, value in enumerate(ids) if value and value not in ids[:index]]
+
+    @staticmethod
+    def _positive_float_or_none(value: Any) -> Optional[float]:
+        parsed = _safe_float(value, default=-1.0)
+        return parsed if parsed > 0 else None
+
+    def _budget_preference_flags(
+        self,
+        *,
+        budget_level: Any,
+        hotel_level: Any,
+        food_level: Any,
+    ) -> Dict[str, Any]:
+        text = " ".join(str(value or "") for value in (budget_level, hotel_level, food_level)).lower()
+        save_money = any(token in text for token in ("economy", "省钱", "经济", "便宜", "穷游", "low"))
+        explicit_hotel = str(hotel_level or "").strip().lower()
+        explicit_food = str(food_level or "").strip().lower()
+        explicit_hotel_tier = None
+        explicit_food_tier = None
+        if explicit_hotel:
+            if any(token in explicit_hotel for token in ("五星", "高端", "豪华", "premium", "luxury")):
+                explicit_hotel_tier = "premium"
+            elif any(token in explicit_hotel for token in ("住好", "品质", "舒服", "舒适", "中档", "中等", "comfort", "medium")):
+                explicit_hotel_tier = "comfort"
+            elif any(token in explicit_hotel for token in ("经济", "省钱", "青旅", "economy")):
+                explicit_hotel_tier = "economy"
+        if explicit_food:
+            if any(token in explicit_food for token in ("高档", "高端", "豪华", "premium", "luxury", "米其林")):
+                explicit_food_tier = "premium"
+            elif any(token in explicit_food for token in ("吃好", "美食", "特色", "品质", "舒服", "舒适", "中档", "中等", "comfort", "medium")):
+                explicit_food_tier = "comfort"
+            elif any(token in explicit_food for token in ("经济", "省钱", "小吃", "快餐", "economy")):
+                explicit_food_tier = "economy"
+        return {
+            "save_money": save_money,
+            "explicit_hotel_tier": explicit_hotel_tier,
+            "explicit_food_tier": explicit_food_tier,
+            "raw_budget_level": budget_level,
+            "raw_hotel_level": hotel_level,
+            "raw_food_level": food_level,
+        }
+
+    def _budget_auto_upgrade_blockers(
+        self,
+        *,
+        intercity_transport: Dict[str, Any],
+        ticket_breakdown: Dict[str, Any],
+        preferences: Dict[str, Any],
+        budget_limit: Optional[float],
+    ) -> List[str]:
+        reasons: List[str] = []
+        if budget_limit is None:
+            reasons.append("budget_limit_missing")
+        if preferences.get("save_money"):
+            reasons.append("user_requested_saving_money")
+        if intercity_transport.get("mandatory_budget_disclaimer"):
+            status = str(intercity_transport.get("status") or "intercity_scope_incomplete")
+            reasons.append(status)
+        summary = ticket_breakdown.get("summary") or {}
+        if summary.get("unpriceable_count"):
+            reasons.append("unpriceable_poi_exists")
+        return reasons
+
     def _ticket_budget(
         self,
         pois: List[Dict[str, Any]],
@@ -956,10 +1655,10 @@ class FixedTourismData:
         requested_ids = {str(value) for value in _as_list(poi_ids) if str(value or "").strip()}
         selected = [
             poi for poi in pois
-            if not requested_ids or str(poi.get("id")) in requested_ids
+            if not requested_ids or str(poi.get("id")) in requested_ids or str(poi.get("name")) in requested_ids
         ]
         if not requested_ids:
-            selected = selected[: max(1, duration * 2)]
+            selected = selected[: max(1, duration * BUDGET_DEFAULT_POIS_PER_DAY)]
         details = []
         ticket_sum = 0.0
         pending = []
@@ -1001,18 +1700,26 @@ class FixedTourismData:
             "details": details,
             "summary": {
                 "poi_source_field": "fixed_poi_dataset",
-                "source": "fixed_poi_ticketing",
+                "source": "final_itinerary_pois" if requested_ids else "standard_reference_poi_combo",
+                "selected_poi_ids": [
+                    str(poi.get("id"))
+                    for poi in selected
+                    if poi.get("id")
+                ],
+                "selected_poi_count": len(selected),
                 "known_ticket_count": known_count,
                 "free_ticket_count": free_count,
                 "estimated_ticket_count": estimated_count,
                 "estimated_ticket_total_per_person": round(estimated_total, 2),
                 "pending_confirmation_count": len(pending),
                 "pending_confirmation_pois": pending,
+                "unpriceable_count": 0,
+                "unpriceable_pois": [],
                 "ignored_non_ticket_count": 0,
                 "fallback_applied": estimated_count > 0,
                 "experiment_estimate_rule": (
-                    "unknown adult ticket prices are counted with explicit fixed category estimates, "
-                    "not treated as zero"
+                    "unknown adult ticket prices are counted with explicit fixed category estimates "
+                    "and marked as experiment estimates; they are not treated as verified live prices"
                 ),
             },
         }
@@ -1042,6 +1749,7 @@ class FixedTourismData:
             "urban_landmark": 40.0,
             "theme_park": 180.0,
             "family_science": 80.0,
+            "family_entertainment": 160.0,
             "indoor_venue": 60.0,
         }
         amount = category_estimates.get(category, 50.0)

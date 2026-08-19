@@ -21,6 +21,7 @@ from app.core.experiment_paper_analysis import (
     write_experiment_paper_analysis,
 )
 from app.core.experiment_run_audit import RUN_AUDIT_SCHEMA_VERSION
+from app.core.formal_artifact_integrity import FORMAL_ARTIFACT_INTEGRITY_SCHEMA_VERSION
 from app.core.formal_experiment_preflight import FORMAL_PREFLIGHT_SCHEMA_VERSION
 
 
@@ -41,6 +42,7 @@ _CORE_ARTIFACTS = {
 _REQUIRED_METRIC_FIELDS = (
     "stsr",
     "evaluation_hcsr",
+    "bpcr",
     "agent_selection_f1",
     "tool_selection_f1",
     "agent_set_exact_match",
@@ -123,6 +125,8 @@ def build_formal_experiment_gate(
         for trace in traces
         for call in _as_dict_list(trace.get("llm_calls"))
     ]
+    result_status_summary = _result_status_summary(results)
+    api_failure_summary = _api_failure_timeout_summary(traces)
     methods = _dict(summary.get("methods"))
     expected_result_count = _expected_result_count(preflight, summary)
     required = _normalize_methods(required_methods or DEFAULT_REQUIRED_METHODS)
@@ -158,13 +162,46 @@ def build_formal_experiment_gate(
             expected_result_count is not None and len(results) == expected_result_count
         ),
         "csv_row_count_matches_results": len(csv_rows) == len(results),
+        "all_results_have_execution_status": result_status_summary[
+            "missing_execution_status_count"
+        ]
+        == 0,
+        "all_results_have_valid_status": result_status_summary[
+            "invalid_execution_status_count"
+        ]
+        == 0,
+        "no_failed_results": result_status_summary["failed_result_count"] == 0,
+        "api_failure_timeout_count_zero": api_failure_summary["failure_or_timeout_count"] == 0,
         "run_audit_attached": _all_results_have_run_audit(results),
         "metric_fields_present": _all_results_have_metrics(results),
+        "bpcr_field_present": _all_results_have_metric_keys(results, ("bpcr",)),
+        "stsr_hcsr_bpcr_fields_present": _all_results_have_metric_keys(
+            results,
+            ("stsr", "evaluation_hcsr", "bpcr"),
+        ),
         "trace_evidence_saved": bool(results)
         and all(_result_trace_evidence_exists(root, result) for result in results),
+        "trace_count_matches_results": len(traces) == len(results),
         "llm_call_recorded": bool(llm_calls),
         "no_mock_llm": bool(allow_mock_llm) or not _has_mock_llm(llm_calls),
         "no_llm_fallback": not _has_fallback_llm(llm_calls),
+        "formal_artifact_integrity_recorded": _nested(
+            manifest,
+            "formal_artifact_integrity",
+            "schema_version",
+        )
+        == FORMAL_ARTIFACT_INTEGRITY_SCHEMA_VERSION,
+        "preflight_artifact_integrity_recorded": _nested(
+            preflight,
+            "artifact_integrity",
+            "schema_version",
+        )
+        == FORMAL_ARTIFACT_INTEGRITY_SCHEMA_VERSION,
+        "commit_matches_preflight": _commit_matches_preflight(manifest, preflight),
+        "artifact_integrity_matches_preflight": _artifact_integrity_matches_preflight(
+            manifest,
+            preflight,
+        ),
         "strict_runtime_recorded": _nested(manifest, "runtime_config", "strict_mode") is True,
         "cache_disabled_recorded": _nested(manifest, "runtime_config", "cache_disabled") is True,
         "deterministic_research_final_answer_recorded": _nested(
@@ -179,10 +216,13 @@ def build_formal_experiment_gate(
     }
     failed_checks = [key for key, value in checks.items() if not value]
     status = "passed" if not failed_checks else "failed"
+    hypothesis_supported = _hypothesis_supported(analysis, summary)
     return {
         "schema_version": FORMAL_EXPERIMENT_GATE_SCHEMA_VERSION,
         "created_at": datetime.now(timezone.utc).isoformat(),
         "status": status,
+        "experiment_integrity_passed": status == "passed",
+        "hypothesis_supported": hypothesis_supported,
         "paper_claims_allowed": status == "passed",
         "run_id": manifest.get("run_id") or _nested(preflight, "run", "run_id"),
         "run_dir": root.as_posix(),
@@ -194,6 +234,8 @@ def build_formal_experiment_gate(
         "observed_methods": list(methods.keys()),
         "checks": checks,
         "failed_checks": failed_checks,
+        "result_status_summary": result_status_summary,
+        "api_failure_summary": api_failure_summary,
         "artifact_index": artifact_index,
         "artifact_paths": {
             key: (root / filename).as_posix()
@@ -223,6 +265,8 @@ def render_formal_experiment_report(gate: Dict[str, Any]) -> str:
         "## Conclusion",
         "",
         f"- status: `{gate.get('status')}`",
+        f"- experiment_integrity_passed: `{gate.get('experiment_integrity_passed')}`",
+        f"- hypothesis_supported: `{gate.get('hypothesis_supported')}`",
         f"- paper_claims_allowed: `{gate.get('paper_claims_allowed')}`",
         f"- run_id: `{gate.get('run_id')}`",
         f"- independent_case_count: `{gate.get('independent_case_count')}`",
@@ -244,14 +288,15 @@ def render_formal_experiment_report(gate: Dict[str, Any]) -> str:
             "",
             "## Method summary",
             "",
-            "| Method | Cases | STSR | Agent F1 | Tool F1 | LLM calls | Tokens | Std. cost | Latency ms |",
-            "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+            "| Method | Cases | STSR | HCSR | BPCR | Agent F1 | Tool F1 | LLM calls | Tokens | Std. cost | Latency ms |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
         ]
     )
     for row in methods.get("rows") or []:
         lines.append(
             f"| {row.get('label')} | {_fmt(row.get('case_count'))} "
-            f"| {_fmt(row.get('stsr'))} | {_fmt(row.get('agent_selection_f1'))} "
+            f"| {_fmt(row.get('stsr'))} | {_fmt(row.get('evaluation_hcsr'))} "
+            f"| {_fmt(row.get('bpcr'))} | {_fmt(row.get('agent_selection_f1'))} "
             f"| {_fmt(row.get('tool_selection_f1'))} | {_fmt(row.get('llm_call_count'))} "
             f"| {_fmt(row.get('total_tokens'))} | {_fmt(row.get('standardized_estimated_cost'))} "
             f"| {_fmt(row.get('latency_ms'))} |"
@@ -283,6 +328,7 @@ def render_formal_experiment_report(gate: Dict[str, Any]) -> str:
             f"- llm_call_count: `{trace.get('llm_call_count')}`",
             f"- mock_llm_call_count: `{trace.get('mock_llm_call_count')}`",
             f"- fallback_llm_call_count: `{trace.get('fallback_llm_call_count')}`",
+            f"- api_failure_timeout_count: `{_nested(gate, 'api_failure_summary', 'failure_or_timeout_count')}`",
             f"- total_tokens: `{trace.get('total_tokens')}`",
             f"- standardized_estimated_cost: `{trace.get('standardized_estimated_cost')}`",
             "",
@@ -356,6 +402,8 @@ def _attach_gate_to_manifest(
     manifest["formal_experiment_gate"] = {
         "schema_version": FORMAL_EXPERIMENT_GATE_SCHEMA_VERSION,
         "status": gate.get("status"),
+        "experiment_integrity_passed": gate.get("experiment_integrity_passed"),
+        "hypothesis_supported": gate.get("hypothesis_supported"),
         "paper_claims_allowed": gate.get("paper_claims_allowed"),
         "failed_checks": gate.get("failed_checks") or [],
         "json": gate_path.as_posix(),
@@ -436,6 +484,84 @@ def _all_results_have_metrics(results: List[Dict[str, Any]]) -> bool:
     return True
 
 
+def _all_results_have_metric_keys(
+    results: List[Dict[str, Any]],
+    keys: tuple[str, ...],
+) -> bool:
+    if not results:
+        return False
+    for result in results:
+        metrics = result.get("metrics")
+        if not isinstance(metrics, dict):
+            return False
+        if any(key not in metrics for key in keys):
+            return False
+    return True
+
+
+def _result_status_summary(results: List[Dict[str, Any]]) -> Dict[str, Any]:
+    allowed = {"completed", "clarification", "failed"}
+    missing = 0
+    invalid = 0
+    failed = 0
+    statuses: Dict[str, int] = {}
+    for result in results:
+        status = (
+            _nested(result, "output", "execution_status")
+            or result.get("execution_status")
+            or result.get("status")
+        )
+        status_text = str(status or "").strip().lower()
+        if not status_text:
+            missing += 1
+            status_text = "missing"
+        elif status_text not in allowed:
+            invalid += 1
+        if status_text == "failed" or result.get("status") == "failed" or result.get("error"):
+            failed += 1
+        statuses[status_text] = statuses.get(status_text, 0) + 1
+    return {
+        "status_counts": statuses,
+        "missing_execution_status_count": missing,
+        "invalid_execution_status_count": invalid,
+        "failed_result_count": failed,
+    }
+
+
+def _api_failure_timeout_summary(traces: List[Dict[str, Any]]) -> Dict[str, Any]:
+    failures = []
+    for trace in traces:
+        for group in ("llm_calls", "tool_calls", "api_calls"):
+            for call in _as_dict_list(trace.get(group)):
+                if _call_failed_or_timed_out(call):
+                    failures.append(
+                        {
+                            "group": group,
+                            "name": call.get("name")
+                            or call.get("tool_name")
+                            or call.get("model"),
+                            "status": call.get("status"),
+                            "error": call.get("error"),
+                        }
+                    )
+    return {
+        "failure_or_timeout_count": len(failures),
+        "sample_failures": failures[:10],
+    }
+
+
+def _call_failed_or_timed_out(call: Dict[str, Any]) -> bool:
+    if call.get("success") is False:
+        return True
+    if call.get("error"):
+        return True
+    status = str(call.get("status") or "").strip().lower()
+    if status in {"failed", "error", "timeout", "timed_out"}:
+        return True
+    retry = call.get("retry") if isinstance(call.get("retry"), dict) else {}
+    return retry.get("succeeded") is False
+
+
 def _result_trace_evidence_exists(root: Path, result: Dict[str, Any]) -> bool:
     if isinstance(result.get("trace"), dict) and result["trace"]:
         return True
@@ -478,6 +604,67 @@ def _method_contract_recorded(manifest: Dict[str, Any]) -> bool:
         and isinstance(contract.get("contract_sha256"), str)
         and len(contract.get("contract_sha256")) == 64
     )
+
+
+def _commit_matches_preflight(
+    manifest: Dict[str, Any],
+    preflight: Dict[str, Any],
+) -> bool:
+    manifest_commit = manifest.get("git_commit") or _nested(manifest, "git", "commit")
+    preflight_commit = _nested(preflight, "artifact_integrity", "git", "commit")
+    return bool(manifest_commit and preflight_commit and manifest_commit == preflight_commit)
+
+
+def _artifact_integrity_matches_preflight(
+    manifest: Dict[str, Any],
+    preflight: Dict[str, Any],
+) -> bool:
+    manifest_hash = _nested(manifest, "formal_artifact_integrity", "combined_sha256")
+    preflight_hash = _nested(preflight, "artifact_integrity", "combined_sha256")
+    return bool(manifest_hash and preflight_hash and manifest_hash == preflight_hash)
+
+
+def _hypothesis_supported(analysis: Dict[str, Any], summary: Dict[str, Any]) -> bool:
+    m3_vs_m2 = _dict(analysis.get("m3_vs_m2")) or _dict(summary.get("paired_statistics"))
+    metrics = _dict(m3_vs_m2.get("metrics"))
+    quality_non_decreasing = all(
+        _metric_delta(metrics, metric) is not None
+        and (_metric_delta(metrics, metric) or 0.0) >= 0
+        for metric in ("stsr", "evaluation_hcsr", "bpcr")
+    )
+    resource_saving = any(
+        _relative_saving(metrics, metric) is not None
+        and (_relative_saving(metrics, metric) or 0.0) > 0
+        for metric in (
+            "llm_call_count",
+            "agent_call_count",
+            "tool_call_count",
+            "total_tokens",
+            "standardized_estimated_cost",
+            "latency_ms",
+        )
+    )
+    return bool(quality_non_decreasing and resource_saving)
+
+
+def _metric_delta(metrics: Dict[str, Any], metric: str) -> Optional[float]:
+    row = _dict(metrics.get(metric))
+    value = row.get("delta_mean")
+    if value is None:
+        value = _nested(row, "delta", "mean")
+    return _number(value)
+
+
+def _relative_saving(metrics: Dict[str, Any], metric: str) -> Optional[float]:
+    row = _dict(metrics.get(metric))
+    value = row.get("relative_saving_rate")
+    if value is not None:
+        return _number(value)
+    m3 = _number(_nested(row, "m3", "mean"))
+    m2 = _number(_nested(row, "m2", "mean"))
+    if m3 is None or m2 in (None, 0):
+        return None
+    return round((m2 - m3) / m2, 4)
 
 
 def _expected_result_count(preflight: Dict[str, Any], summary: Dict[str, Any]) -> Optional[int]:

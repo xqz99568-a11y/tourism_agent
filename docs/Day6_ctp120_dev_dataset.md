@@ -1,11 +1,11 @@
 # Day 6 小任务六：20 条开发集
 
-本轮补齐的是论文实验用的开发集，不是最终 100/120 条正式测试集。
+本轮补齐的是论文实验用的开发集，不是最终 CTP100 正式主基准。
 
 ## 文件分工
 
-- `experiments/ctp120_dev.json`：20 条开发集，当前主要实验调试使用。
-- `experiments/benchmark.json`：benchmark 索引文件，Day 7 小任务七后已指向正式测试集草稿 `ctp120_test_draft.json`；开发集仍由 Day7 开发集脚本显式读取 `ctp120_dev.json`。
+- `experiments/ctp120_dev.json`：20 条历史开发集，当前只用于调试、回归和跨集重复检查。
+- `experiments/benchmark.json`：正式主实验入口，当前只指向 `experiments/ctp100_formal_v2.json`；旧 `experiments/ctp120_test_draft.json` 仅作为历史草稿保留，不再作为正式入口。
 - `experiments/benchmark_test.json`：8 条 smoke 集，用于快速检查链路和字段格式。
 
 ## 开发集覆盖

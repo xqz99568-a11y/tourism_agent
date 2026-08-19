@@ -203,6 +203,7 @@
       "expected": {
         "task_type": "clarification",
         "traveler_group": "family",
+        "people_count": 2,
         "missing_slots": ["destination", "duration_days", "start_date"],
         "accepted_agent_sets": [[]],
         "accepted_tool_sets": [[]],

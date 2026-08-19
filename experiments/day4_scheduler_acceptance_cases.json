@@ -30,7 +30,7 @@
         "preferences": []
       },
       "expected_ticket": {
-        "task_type": "trip_planning",
+        "task_type": "weather_aware_trip_plan",
         "changed_slots": [
           "destination",
           "start_date",
@@ -67,7 +67,7 @@
         "clarification_required": false,
         "clarification_fields": [],
         "decision_reasons": [
-          "new_full_plan"
+          "new_weather_aware_plan"
         ]
       }
     },
@@ -199,7 +199,7 @@
       }
     },
     {
-  "case_id": "sched_005_budget_from_existing_plan",
+      "case_id": "sched_005_budget_from_existing_plan",
       "turn_type": "multi_turn",
       "user_input": "这个方案大概要花多少钱？",
       "previous_state": {
@@ -342,9 +342,9 @@
         "planned_tools": [
           "budget_calculator"
         ],
-    "reused_agents": [
-      "attraction"
-    ],
+        "reused_agents": [
+          "attraction"
+        ],
         "invalidated_agents": [],
         "clarification_required": false,
         "clarification_fields": [],
@@ -775,7 +775,7 @@
       }
     },
     {
-    "case_id": "sched_009_start_date_changed",
+      "case_id": "sched_009_start_date_changed",
       "turn_type": "multi_turn",
       "user_input": "出发日期改到 2026-09-05，天数和人数不变。",
       "previous_state": {
@@ -938,7 +938,8 @@
         "missing_slots": [],
         "required_capabilities": [
           "weather_evidence",
-          "itinerary_generation"
+          "itinerary_generation",
+          "budget_estimation"
         ],
         "clarification_required": false,
         "clarification_fields": []
@@ -946,23 +947,25 @@
       "expected_decision": {
         "planned_agents": [
           "weather",
-          "itinerary"
+          "itinerary",
+          "budget"
         ],
         "planned_tools": [
-          "weather_query"
+          "weather_query",
+          "budget_calculator"
         ],
-      "reused_agents": [
-        "attraction",
-        "budget"
-      ],
+        "reused_agents": [
+          "attraction"
+        ],
         "invalidated_agents": [
           "weather",
-          "itinerary"
+          "itinerary",
+          "budget"
         ],
         "clarification_required": false,
         "clarification_fields": [],
         "decision_reasons": [
-          "date_changed_weather_replan"
+          "date_changed_weather_itinerary_budget_replan"
         ]
       }
     },
@@ -1136,21 +1139,24 @@
       },
       "expected_decision": {
         "planned_agents": [
+          "itinerary",
           "budget"
         ],
         "planned_tools": [
           "budget_calculator"
         ],
         "reused_agents": [
-          "attraction"
+          "attraction",
+          "weather"
         ],
         "invalidated_agents": [
+          "itinerary",
           "budget"
         ],
         "clarification_required": false,
         "clarification_fields": [],
         "decision_reasons": [
-          "people_count_changed_budget_only"
+          "people_count_changed_itinerary_budget_replan"
         ]
       }
     },
@@ -1712,7 +1718,6 @@
         ],
         "missing_slots": [],
         "required_capabilities": [
-          "poi_evidence",
           "itinerary_generation",
           "budget_estimation"
         ],
@@ -1721,31 +1726,29 @@
       },
       "expected_decision": {
         "planned_agents": [
-          "attraction",
           "itinerary",
           "budget"
         ],
         "planned_tools": [
-          "poi_search",
           "budget_calculator"
         ],
         "reused_agents": [
+          "attraction",
           "weather"
         ],
         "invalidated_agents": [
-          "attraction",
           "itinerary",
           "budget"
         ],
         "clarification_required": false,
         "clarification_fields": [],
         "decision_reasons": [
-          "budget_changed_replan"
+          "budget_changed_itinerary_budget_replan"
         ]
       }
     },
     {
-    "case_id": "sched_014_weather_adjustment",
+      "case_id": "sched_014_weather_adjustment",
       "turn_type": "multi_turn",
       "user_input": "第二天可能下雨，帮我把行程调整一下，其他尽量不变。",
       "previous_state": {
@@ -1910,30 +1913,32 @@
         "missing_slots": [],
         "required_capabilities": [
           "weather_evidence",
-          "itinerary_generation"
+          "itinerary_generation",
+          "budget_estimation"
         ],
         "clarification_required": false,
         "clarification_fields": []
       },
       "expected_decision": {
         "planned_agents": [
-          "weather",
-          "itinerary"
+          "itinerary",
+          "budget"
         ],
         "planned_tools": [
-          "weather_query"
+          "budget_calculator"
         ],
-      "reused_agents": [
-        "attraction"
-      ],
+        "reused_agents": [
+          "attraction",
+          "weather"
+        ],
         "invalidated_agents": [
-          "weather",
-          "itinerary"
+          "itinerary",
+          "budget"
         ],
         "clarification_required": false,
         "clarification_fields": [],
         "decision_reasons": [
-          "weather_changed_itinerary_adjustment"
+          "weather_adjustment_reuses_previous_weather"
         ]
       }
     },

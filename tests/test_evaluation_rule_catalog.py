@@ -1,4 +1,4 @@
-import json
+﻿import json
 from pathlib import Path
 
 
@@ -32,7 +32,18 @@ RULE_IDS = [
     "H_SENIOR_ACCESSIBILITY",
     "H_WEATHER_ADJUSTMENT_REQUIRED",
     "H_WEATHER_EVIDENCE",
+    "H_NO_DATE_WEATHER_REMINDER",
     "H_BUDGET_EVIDENCE",
+    "H_BUDGET_POLICY_VERSION",
+    "H_BUDGET_ACCOMMODATION_NIGHTS",
+    "H_BUDGET_CONTINGENCY_LOCAL_ONLY",
+    "H_BUDGET_TOTAL_FORMULA",
+    "H_BUDGET_ITINERARY_CONSISTENCY",
+    "H_BUDGET_UPGRADE_POLICY",
+    "H_BUDGET_INDEPENDENT_RECALCULATION",
+    "H_INTERCITY_SCOPE",
+    "H_INTERCITY_COST",
+    "H_INTERCITY_EVIDENCE",
     "H_TOOL_EVIDENCE",
     "T_CLARIFICATION_MISSING_FIELDS",
     "T_CLARIFICATION_NO_PREMATURE_PLAN",
@@ -62,7 +73,7 @@ def test_rule_catalog_keeps_frozen_contract() -> None:
     catalog = _catalog()
 
     assert catalog["schema_version"] == "ctp-evaluation-rule-catalog-v1"
-    assert catalog["catalog_id"] == "day5_independent_evaluator_rules"
+    assert catalog["catalog_id"] == "day8_formal_independent_evaluator_rules"
     assert catalog["status_values"] == ["passed", "failed", "na"]
     assert set(catalog["task_types"]) == TASK_TYPES
     assert catalog["task_aliases"]["budget_control"] == "budget_query"

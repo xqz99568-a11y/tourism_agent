@@ -944,6 +944,8 @@ def _clarification_cases(*, start_index: int, count: int) -> list[dict[str, Any]
                 },
             }
         )
+        if offset == 6:
+            cases[-1]["expected"]["people_count"] = 3
     return cases
 
 

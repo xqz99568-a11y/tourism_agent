@@ -1,0 +1,74 @@
+{
+  "schema_version": "ctp-intercity-transport-manifest-v1",
+  "snapshot_id": "ctp_intercity_rail_second_class_20260813_reviewed_v1",
+  "provider": "manual_12306",
+  "source_name": "China Railway 12306",
+  "source_type": "manual_lookup_official_website",
+  "fare_snapshot_date": "2026-08-13",
+  "transport_mode": "high_speed_or_d_train",
+  "seat_class": "second_class",
+  "passenger_type": "adult",
+  "currency": "CNY",
+  "fare_scope": "one_way_per_person",
+  "round_trip_multiplier": 2,
+  "symmetric_route_lookup_allowed": true,
+  "route_count": 50,
+  "supported_origin_cities": [
+    "shanghai",
+    "guangzhou",
+    "chengdu",
+    "chongqing",
+    "wuhan",
+    "changsha",
+    "nanjing",
+    "zhengzhou",
+    "nanchang",
+    "guiyang"
+  ],
+  "supported_destination_cities": [
+    "beijing",
+    "hangzhou",
+    "xian",
+    "shenzhen",
+    "guilin"
+  ],
+  "real_time_api_allowed": false,
+  "runtime_online_refresh_allowed": false,
+  "real_time_price_claim_allowed": false,
+  "api_key_recorded": false,
+  "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+  "combined_sha256": "c0eb0b9048de4cd35c178a866c70cdf85038521833e62acb92469518d0bb53b8",
+  "files": [
+    {
+      "kind": "fare_table",
+      "path": "data/intercity_transport/rail_second_class_v1.json",
+      "sha256": "f453ddb22547c689a750d8651ccd1154a273e03e45560b0d2fe8fb40f4808020",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    },
+    {
+      "kind": "fare_evidence_ledger",
+      "path": "data/intercity_transport/evidence/rail_second_class_evidence_v1.json",
+      "sha256": "4b627b57a1244a16452b4e28bb774e638ef659bfd5c93dbadf44339eae806942",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    }
+  ],
+  "policy": {
+    "formal_experiment_online_refresh_allowed": false,
+    "unsupported_route_policy": "do_not_guess_do_not_refresh_do_not_switch_to_flight",
+    "unsupported_route_user_message": "\u672a\u67e5\u8be2\u5230\u76f8\u5173\u52a8\u8f66\u4fe1\u606f\uff0c\u6b64\u6b21\u9884\u7b97\u4e0d\u5305\u542b\u57ce\u9645\u4ea4\u901a\uff0c\u5efa\u8bae\u524d\u5f80\u4e2d\u56fd\u94c1\u8def12306\u5b98\u7f51\u67e5\u8be2\u3002",
+    "missing_origin_budget_scope": "destination_local_only"
+  },
+  "evidence": {
+    "ledger_path": "data/intercity_transport/evidence/rail_second_class_evidence_v1.json",
+    "ledger_schema_version": "ctp-intercity-rail-evidence-ledger-v1",
+    "manual_review_required": true,
+    "manual_review_complete": true,
+    "reviewed_count": 50,
+    "pending_count": 0,
+    "screenshot_required_for_formal_claim": true,
+    "planned_query_date": "2026-08-13",
+    "travel_date": "2026-08-13",
+    "query_date": "2026-08-12",
+    "fare_selection_rule_id": "visible_fastest_second_class_fare"
+  }
+}

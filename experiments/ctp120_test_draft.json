@@ -4968,6 +4968,7 @@
           "weather_query",
           "budget_calculator"
         ],
+        "people_count": 3,
         "required_tools": []
       }
     },

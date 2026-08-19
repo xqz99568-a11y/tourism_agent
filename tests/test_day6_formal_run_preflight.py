@@ -10,11 +10,14 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.core.experiment_runner import ExperimentRunner
+from app.core.intercity_transport_snapshot import load_intercity_transport_snapshot_manifest
 from app.core.formal_experiment_preflight import (
     FORMAL_PREFLIGHT_SCHEMA_VERSION,
     FORMAL_MIN_MAX_TOKENS,
     build_formal_preflight_report,
+    write_preflight_report,
 )
+from app.core.qweather_snapshot import load_qweather_snapshot_manifest
 from app.core.tracing import get_current_trace
 
 
@@ -91,7 +94,71 @@ def test_day6_formal_preflight_accepts_scenario_dataset_without_gold_leak(
     )
     assert report["run"]["expected_raw_run_count"] == 8
     assert report["method_fairness_contract"]["contract_sha256"]
+    assert report["policy"]["formal_release_required"] is False
+    assert report["policy"]["require_day8_delivery_pack"] is False
+    assert report["artifact_integrity"]["schema_version"] == "ctp-formal-artifact-integrity-v1"
+    qweather_manifest = load_qweather_snapshot_manifest()
+    assert report["qweather_snapshot"]["valid"] is True
+    assert report["qweather_snapshot"]["snapshot_id"] == qweather_manifest["snapshot_id"]
+    assert report["qweather_snapshot"]["combined_sha256"] == qweather_manifest["combined_sha256"]
+    assert report["qweather_snapshot"]["forecast_start_date"] == qweather_manifest["forecast_start_date"]
+    assert report["qweather_snapshot"]["forecast_end_date"] == qweather_manifest["forecast_end_date"]
+    assert report["qweather_snapshot"]["real_time_api_allowed"] is False
+    intercity_manifest = load_intercity_transport_snapshot_manifest()
+    assert report["intercity_transport_snapshot"]["valid"] is True
+    assert report["intercity_transport_snapshot"]["snapshot_id"] == intercity_manifest["snapshot_id"]
+    assert report["intercity_transport_snapshot"]["combined_sha256"] == intercity_manifest["combined_sha256"]
+    assert report["intercity_transport_snapshot"]["fare_snapshot_date"] == intercity_manifest["fare_snapshot_date"]
+    assert report["intercity_transport_snapshot"]["route_count"] == 50
+    assert report["intercity_transport_snapshot"]["real_time_api_allowed"] is False
+    assert report["intercity_transport_snapshot"]["runtime_online_refresh_allowed"] is False
+    assert report["intercity_transport_snapshot"]["real_time_price_claim_allowed"] is False
     assert "LLM runtime configuration check skipped" in report["warnings"]
+
+
+def test_day8_formal_preflight_requires_clean_git_for_ctp100(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    _formal_env(monkeypatch)
+
+    def _dirty_integrity_report():
+        return {
+            "schema_version": "ctp-formal-artifact-integrity-v1",
+            "hash_strategy": "sha256_file_bytes_v1",
+            "artifacts": {},
+            "combined_sha256": "f" * 64,
+            "all_required_artifacts_exist": True,
+            "missing_artifacts": [],
+            "git": {
+                "checked": True,
+                "commit": "abc123",
+                "worktree_clean": False,
+                "status_short": [" M app/core/example.py"],
+            },
+        }
+
+    monkeypatch.setattr(
+        "app.core.formal_experiment_preflight.build_formal_artifact_integrity_report",
+        _dirty_integrity_report,
+    )
+
+    report = build_formal_preflight_report(
+        benchmark_path=ROOT / "experiments" / "benchmark.json",
+        output_dir=tmp_path / "runs",
+        run_id="dirty-formal",
+        methods=ExperimentRunner.METHODS,
+        repeats=1,
+        expected_case_count=100,
+        require_llm_config=False,
+        require_day8_delivery_pack=False,
+        require_clean_git=True,
+    )
+
+    assert report["status"] == "failed"
+    assert "git working tree must be clean before formal runs" in report["errors"]
+    assert report["policy"]["formal_release_required"] is True
+    assert report["policy"]["require_clean_git"] is True
 
 
 def test_day6_formal_preflight_rejects_nonzero_temperature(
@@ -264,6 +331,102 @@ def test_day6_formal_preflight_requires_deterministic_final_answer(
     ) in report["errors"]
 
 
+def test_day8_formal_preflight_rejects_invalid_qweather_snapshot(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    _formal_env(monkeypatch)
+
+    def _broken_qweather_snapshot():
+        raise RuntimeError("snapshot hash mismatch")
+
+    monkeypatch.setattr(
+        "app.core.formal_experiment_preflight.validate_qweather_snapshot",
+        _broken_qweather_snapshot,
+    )
+    benchmark_path = tmp_path / "benchmark.json"
+    benchmark_path.write_text(
+        json.dumps(
+            {
+                "cases": [
+                    {
+                        "case_id": "c1",
+                        "user_input": "你好，我只是测试对话。",
+                        "expected": {
+                            "task_type": "general_chat",
+                            "accepted_agent_sets": [[]],
+                            "accepted_tool_sets": [[]],
+                        },
+                    }
+                ]
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    report = build_formal_preflight_report(
+        benchmark_path=benchmark_path,
+        output_dir=tmp_path / "runs",
+        run_id="bad-qweather-snapshot",
+        methods=ExperimentRunner.METHODS,
+        repeats=1,
+        require_llm_config=False,
+    )
+
+    assert report["status"] == "failed"
+    assert report["qweather_snapshot"]["valid"] is False
+    assert "qweather frozen weather snapshot is invalid: snapshot hash mismatch" in report["errors"]
+
+
+def test_day8_formal_preflight_rejects_invalid_intercity_transport_snapshot(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    _formal_env(monkeypatch)
+
+    def _broken_intercity_snapshot():
+        raise RuntimeError("intercity hash mismatch")
+
+    monkeypatch.setattr(
+        "app.core.formal_experiment_preflight.validate_intercity_transport_snapshot",
+        _broken_intercity_snapshot,
+    )
+    benchmark_path = tmp_path / "benchmark.json"
+    benchmark_path.write_text(
+        json.dumps(
+            {
+                "cases": [
+                    {
+                        "case_id": "c1",
+                        "user_input": "你好，我只是测试对话。",
+                        "expected": {
+                            "task_type": "general_chat",
+                            "accepted_agent_sets": [[]],
+                            "accepted_tool_sets": [[]],
+                        },
+                    }
+                ]
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    report = build_formal_preflight_report(
+        benchmark_path=benchmark_path,
+        output_dir=tmp_path / "runs",
+        run_id="bad-intercity-snapshot",
+        methods=ExperimentRunner.METHODS,
+        repeats=1,
+        require_llm_config=False,
+    )
+
+    assert report["status"] == "failed"
+    assert report["intercity_transport_snapshot"]["valid"] is False
+    assert "intercity frozen transport snapshot is invalid: intercity hash mismatch" in report["errors"]
+
+
 def test_day6_formal_preflight_blocks_oracle_state_and_nonempty_output(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -421,6 +584,9 @@ def test_day6_scenario_runner_uses_same_method_previous_turn_state(
     assert manifest["benchmark_structure"]["scenario_case_count"] == 1
     assert manifest["benchmark_structure"]["total_turn_count"] == 2
     assert manifest["benchmark_structure"]["statistical_unit"] == "evaluation_unit_id"
+    assert manifest["resume"]["state_saved"] is True
+    assert manifest["resume"]["status"] == "completed"
+    assert manifest["resume"]["progress"]["remaining_result_count"] == 0
     assert {row["scenario_id"] for row in rows} == {"scenario_001"}
     assert {row["turn_id"] for row in rows} == {"t1", "t2"}
     assert "target_turn" in rows[0]
@@ -514,6 +680,202 @@ def test_day6_formal_runner_defaults_to_100_case_manifest() -> None:
     from experiments import run_formal_experiment
 
     assert run_formal_experiment.DEFAULT_BENCHMARK_PATH.name == "benchmark.json"
+
+
+def test_formal_preflight_allows_nonempty_output_only_for_valid_resume(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    _formal_env(monkeypatch)
+
+    async def fake_handler(case: dict) -> dict:
+        trace = get_current_trace()
+        assert trace is not None
+        trace.mark_first_body_token()
+        return {
+            "task_type": "general_chat",
+            "planned_agents": [],
+            "used_agents": [],
+            "planned_tools": [],
+            "called_tools": [],
+            "tool_results": {},
+            "attractions": [],
+            "daily_itinerary": [],
+            "budget": None,
+            "weather": None,
+            "weather_adjustments": [],
+            "execution_status": "completed",
+            "final_answer": "ok",
+        }
+
+    benchmark_path = tmp_path / "resume_preflight.json"
+    benchmark_path.write_text(
+        json.dumps(
+            {
+                "dataset_id": "resume-preflight",
+                "cases": [
+                    {
+                        "case_id": "c1",
+                        "user_input": "你好，我只是想和你简单聊聊，不需要安排旅游行程。",
+                        "expected": {
+                            "task_type": "general_chat",
+                            "accepted_agent_sets": [[]],
+                            "accepted_tool_sets": [[]],
+                            "forbidden_tools": [
+                                "poi_search",
+                                "weather_query",
+                                "budget_calculator",
+                            ],
+                        },
+                    }
+                ],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    output_root = tmp_path / "runs"
+    initial_report = build_formal_preflight_report(
+        benchmark_path=benchmark_path,
+        output_dir=output_root,
+        run_id="resume-preflight-run",
+        methods=["llm_direct"],
+        repeats=1,
+        model_config_name="offline-static",
+        require_llm_config=False,
+    )
+    assert initial_report["status"] == "passed"
+    run_dir = output_root / "resume-preflight-run"
+    write_preflight_report(initial_report, run_dir / "formal_preflight_report.json")
+    runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces",
+        output_dir=output_root,
+        method_handlers={"llm_direct": fake_handler},
+        run_id="resume-preflight-run",
+        model_config_name="offline-static",
+    )
+    runner.run_benchmark(benchmark_path, methods=["llm_direct"])
+
+    blocked_without_resume = build_formal_preflight_report(
+        benchmark_path=benchmark_path,
+        output_dir=output_root,
+        run_id="resume-preflight-run",
+        methods=["llm_direct"],
+        repeats=1,
+        model_config_name="offline-static",
+        require_llm_config=False,
+    )
+    assert blocked_without_resume["status"] == "failed"
+    assert "output directory is not empty" in "\n".join(blocked_without_resume["errors"])
+
+    resume_report = build_formal_preflight_report(
+        benchmark_path=benchmark_path,
+        output_dir=output_root,
+        run_id="resume-preflight-run",
+        methods=["llm_direct"],
+        repeats=1,
+        model_config_name="offline-static",
+        require_llm_config=False,
+        resume=True,
+    )
+
+    assert resume_report["status"] == "passed"
+    assert resume_report["resume"]["status"] == "resume_allowed"
+    assert resume_report["resume"]["completed_result_count"] == 1
+    assert resume_report["resume"]["duplicate_key_count"] == 0
+    assert resume_report["policy"]["no_overwrite"] is False
+    assert resume_report["policy"]["resume_requested"] is True
+
+
+def test_formal_preflight_blocks_resume_when_model_config_changes(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    _formal_env(monkeypatch)
+
+    async def fake_handler(case: dict) -> dict:
+        trace = get_current_trace()
+        assert trace is not None
+        trace.mark_first_body_token()
+        return {
+            "task_type": "general_chat",
+            "planned_agents": [],
+            "used_agents": [],
+            "planned_tools": [],
+            "called_tools": [],
+            "tool_results": {},
+            "attractions": [],
+            "daily_itinerary": [],
+            "budget": None,
+            "weather": None,
+            "weather_adjustments": [],
+            "execution_status": "completed",
+            "final_answer": "ok",
+        }
+
+    benchmark_path = tmp_path / "resume_preflight_mismatch.json"
+    benchmark_path.write_text(
+        json.dumps(
+            {
+                "dataset_id": "resume-preflight-mismatch",
+                "cases": [
+                    {
+                        "case_id": "c1",
+                        "user_input": "你好，我只是想和你简单聊聊，不需要安排旅游行程。",
+                        "expected": {
+                            "task_type": "general_chat",
+                            "accepted_agent_sets": [[]],
+                            "accepted_tool_sets": [[]],
+                            "forbidden_tools": [
+                                "poi_search",
+                                "weather_query",
+                                "budget_calculator",
+                            ],
+                        },
+                    }
+                ],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    output_root = tmp_path / "runs"
+    initial_report = build_formal_preflight_report(
+        benchmark_path=benchmark_path,
+        output_dir=output_root,
+        run_id="resume-mismatch-run",
+        methods=["llm_direct"],
+        repeats=1,
+        model_config_name="offline-static",
+        require_llm_config=False,
+    )
+    assert initial_report["status"] == "passed"
+    run_dir = output_root / "resume-mismatch-run"
+    write_preflight_report(initial_report, run_dir / "formal_preflight_report.json")
+    runner = ExperimentRunner(
+        trace_dir=tmp_path / "traces",
+        output_dir=output_root,
+        method_handlers={"llm_direct": fake_handler},
+        run_id="resume-mismatch-run",
+        model_config_name="offline-static",
+    )
+    runner.run_benchmark(benchmark_path, methods=["llm_direct"])
+
+    report = build_formal_preflight_report(
+        benchmark_path=benchmark_path,
+        output_dir=output_root,
+        run_id="resume-mismatch-run",
+        methods=["llm_direct"],
+        repeats=1,
+        model_config_name="changed-model-config",
+        require_llm_config=False,
+        resume=True,
+    )
+
+    assert report["status"] == "failed"
+    errors = "\n".join(report["errors"])
+    assert "model_config_name mismatch" in errors
+    assert report["resume"]["status"] == "resume_blocked"
 
 
 def _formal_env(monkeypatch: pytest.MonkeyPatch) -> None:

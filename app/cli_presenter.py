@@ -100,6 +100,10 @@ def print_app_result(out: Dict[str, Any], *, show_json: bool) -> None:
         if reply:
             print(reply)
 
+    budget = _pick(out, "budget")
+    if isinstance(budget, dict):
+        print_budget_v2_summary(budget)
+
     if show_json:
         print("\n--- JSON ---")
         print(json.dumps(out, ensure_ascii=False, indent=2))
@@ -122,3 +126,47 @@ def _print_draft_summary(draft: Dict[str, Any]) -> None:
     conclusion = str(draft.get("预算结论") or "").strip()
     if conclusion:
         print(f"预算结论：{conclusion}")
+
+
+def print_budget_v2_summary(budget: Dict[str, Any]) -> None:
+    """Print a compact Budget Policy v2.0 summary when structured budget data is available."""
+    if not isinstance(budget, dict) or not budget:
+        return
+    policy = budget.get("budget_policy") if isinstance(budget.get("budget_policy"), dict) else {}
+    if budget.get("budget_policy_version") != "budget_policy_v2_0" and not policy:
+        return
+    scope = budget.get("budget_scope") or "未注明"
+    print("\n系统> 预算口径：", end="")
+    if scope == "local_plus_round_trip_intercity":
+        print("完整旅行预算（目的地当地费用 + 往返城际高铁）")
+    elif scope == "destination_local_only":
+        print("仅目的地当地费用")
+    elif scope == "local_only_route_uncovered":
+        print("仅目的地当地费用（城际路线未覆盖）")
+    else:
+        print(str(scope))
+
+    def money(value: Any) -> str:
+        try:
+            return f"{float(value):.0f}元"
+        except (TypeError, ValueError):
+            return "未提供"
+
+    print(f"经济型基准费用：{money(budget.get('economic_baseline_total'))}")
+    print(f"预计实际支出：{money(budget.get('estimated_actual_spending'))}")
+    print(f"建议备用金：{money(budget.get('contingency_amount') or budget.get('buffer_cost'))}")
+    print(f"最终建议准备金额：{money(budget.get('recommended_preparation_amount') or budget.get('final_recommended_total') or budget.get('total_budget'))}")
+    if budget.get("budget_limit") is not None:
+        print(f"用户总预算上限：{money(budget.get('budget_limit'))}")
+        print(f"预计剩余金额：{money(budget.get('remaining_budget'))}")
+        print(f"预算缺口：{money(budget.get('budget_gap'))}")
+    if isinstance(policy, dict):
+        upgrade = policy.get("upgrade_applied") or []
+        decision = str(policy.get("upgrade_decision") or "").strip()
+        if upgrade:
+            label = "、".join("住宿" if item == "accommodation" else "餐饮" if item == "food" else str(item) for item in upgrade)
+            print(f"本次升级：{label}升级为舒适/指定档次")
+        elif decision:
+            print(f"本次升级：无（{decision}）")
+    if budget.get("budget_disclaimer"):
+        print(f"城际交通说明：{budget.get('budget_disclaimer')}")

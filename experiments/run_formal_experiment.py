@@ -14,7 +14,6 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.core.experiment_runner import ExperimentRunner
-from app.core.day7_delivery_pack import write_day7_delivery_pack
 from app.core.formal_experiment_gate import write_formal_experiment_gate
 from app.core.formal_experiment_preflight import (
     DEFAULT_FORMAL_METHOD_ORDER_SEED,
@@ -57,6 +56,14 @@ def main() -> int:
         action="store_true",
         help="Exit non-zero if the final formal evidence gate does not pass.",
     )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help=(
+            "Resume an interrupted formal run from benchmark_results.checkpoint.json "
+            "after validating the saved resume contract."
+        ),
+    )
     args = parser.parse_args()
 
     run_id = args.run_id or f"formal_{datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')}"
@@ -70,9 +77,11 @@ def main() -> int:
         methods=ExperimentRunner.METHODS,
         repeats=args.repeats,
         method_order_seed=args.method_order_seed,
+        model_config_name=args.model_config_name,
         expected_case_count=args.expected_cases,
         require_llm_config=not args.skip_llm_config_check,
         strict_formal=True,
+        resume=args.resume,
     )
     if args.preflight_only:
         print(json.dumps(report, ensure_ascii=False, indent=2))
@@ -98,6 +107,7 @@ def main() -> int:
         repeats=args.repeats,
         run_id=run_id,
         model_config_name=args.model_config_name,
+        resume=args.resume,
     )
     formal_gate = write_formal_experiment_gate(
         run_output_dir,
@@ -117,10 +127,6 @@ def main() -> int:
         run_output_dir,
         min_cases=args.expected_cases,
     )
-    day7_delivery_pack = write_day7_delivery_pack(
-        run_output_dir,
-        min_cases=args.expected_cases,
-    )
     payload = _build_payload(
         run_id=run_id,
         run_output_dir=run_output_dir,
@@ -131,14 +137,14 @@ def main() -> int:
         paper_result_pack=paper_result_pack,
         paper_draft_pack=paper_draft_pack,
         paper_submission_pack=paper_submission_pack,
-        day7_delivery_pack=day7_delivery_pack,
+        day8_delivery_pack=report.get("day8_delivery_pack"),
+        resume_report=report.get("resume"),
     )
     _validate_payload_files(payload)
     print(json.dumps(payload, ensure_ascii=False, indent=2))
     if args.strict_paper_readiness and (
         formal_gate["gate_status"] != "passed"
         or paper_submission_pack["submission_status"] != "submission_ready"
-        or day7_delivery_pack["delivery_status"] != "delivery_ready"
     ):
         return 1
     return 0
@@ -171,7 +177,8 @@ def _build_payload(
     paper_result_pack: Dict[str, Any] | None = None,
     paper_draft_pack: Dict[str, Any] | None = None,
     paper_submission_pack: Dict[str, Any] | None = None,
-    day7_delivery_pack: Dict[str, Any] | None = None,
+    day8_delivery_pack: Dict[str, Any] | None = None,
+    resume_report: Dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
     payload = {
         "status": "completed",
@@ -185,6 +192,9 @@ def _build_payload(
         "summary": (run_output_dir / "evaluation_summary.json").as_posix(),
         "paper_tables": (run_output_dir / "paper_tables.md").as_posix(),
         "manifest": (run_output_dir / "experiment_manifest.json").as_posix(),
+        "resume_state": (run_output_dir / "benchmark_resume_state.json").as_posix(),
+        "checkpoint_json": (run_output_dir / "benchmark_results.checkpoint.json").as_posix(),
+        "checkpoint_csv": (run_output_dir / "benchmark_results.checkpoint.csv").as_posix(),
         "traces": (run_output_dir / "traces").as_posix(),
     }
     if formal_gate:
@@ -224,13 +234,28 @@ def _build_payload(
                 "paper_submission_claims_allowed": paper_submission_pack["paper_claims_allowed"],
             }
         )
-    if day7_delivery_pack:
+    if day8_delivery_pack:
         payload.update(
             {
-                "day7_delivery_pack_json": day7_delivery_pack["json"],
-                "day7_delivery_report_md": day7_delivery_pack["markdown"],
-                "day7_delivery_status": day7_delivery_pack["delivery_status"],
-                "day7_delivery_claims_allowed": day7_delivery_pack["paper_claims_allowed"],
+                "day8_delivery_pack_json": day8_delivery_pack.get("path"),
+                "day8_delivery_status": day8_delivery_pack.get("status"),
+                "day8_delivery_ready_for_formal_experiment": day8_delivery_pack.get(
+                    "ready_for_formal_experiment"
+                ),
+                "day8_delivery_failed_checks": day8_delivery_pack.get("failed_checks") or [],
+            }
+        )
+    if resume_report:
+        payload.update(
+            {
+                "resume_requested": resume_report.get("requested"),
+                "resume_status": resume_report.get("status"),
+                "resume_completed_result_count": resume_report.get(
+                    "completed_result_count"
+                ),
+                "resume_completed_unique_key_count": resume_report.get(
+                    "completed_unique_key_count"
+                ),
             }
         )
     return payload
@@ -244,6 +269,9 @@ def _validate_payload_files(payload: Dict[str, Any]) -> None:
         "summary",
         "paper_tables",
         "manifest",
+        "resume_state",
+        "checkpoint_json",
+        "checkpoint_csv",
         "paper_analysis_json",
         "paper_analysis_md",
         "formal_gate",
@@ -254,8 +282,7 @@ def _validate_payload_files(payload: Dict[str, Any]) -> None:
         "paper_draft_md",
         "paper_submission_pack_json",
         "paper_submission_checklist_md",
-        "day7_delivery_pack_json",
-        "day7_delivery_report_md",
+        "day8_delivery_pack_json",
     ):
         if key not in payload:
             continue

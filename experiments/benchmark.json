@@ -1,16 +1,24 @@
 {
   "schema_version": "ctp-benchmark-manifest-v1",
   "dataset_id": "tourism_benchmark_v1",
-  "dataset_version": "2026-08-01-draft-v1",
-  "split": "test_draft",
+  "dataset_version": "2026-08-18-day8-formal-v2-weather-gold-fix",
+  "dataset_role": "post_development_frozen_controlled_main_benchmark",
+  "split": "formal_test",
   "language": "zh-CN",
-  "description": "正式测试集草稿入口。当前指向 ctp120_test_draft.json；该入口用于 100案例/130轮正式实验 preflight，开发集仍保留在 ctp120_dev.json。",
+  "description": "正式主基准入口。当前只指向 ctp100_formal_v2.json；该入口用于 Day8 后的 100案例/130轮四方法主实验 preflight 与正式运行。CTP100 是开发后冻结的受控主基准，不得称为完全未见测试集；CTP30 封闭验证集不进入此入口。",
   "case_files": [
-    "ctp120_test_draft.json"
+    "ctp100_formal_v2.json"
+  ],
+  "excluded_case_files": [
+    {
+      "file": "ctp30_sealed_validation_v1.json",
+      "reason": "sealed_validation_after_main_design_freeze; run separately with M2/M3 only"
+    }
   ],
   "comparison_files": [
     "ctp120_dev.json",
-    "benchmark_test.json"
+    "benchmark_test.json",
+    "day8_dev_experiment_cases_v1_3.json"
   ],
   "expected": {
     "case_count": 100,

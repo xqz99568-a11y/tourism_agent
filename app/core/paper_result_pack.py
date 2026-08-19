@@ -26,12 +26,13 @@ FORMAL_EXPERIMENT_GATE_NAME = "formal_experiment_gate.json"
 _METHOD_LABELS = {
     "llm_direct": "M0 Direct LLM",
     "single_agent": "M1 Single Agent",
-    "fixed_multi_agent": "M2 Fixed Multi-Agent",
+    "fixed_multi_agent": "M2 Fixed Template Multi-Agent",
     "adaptive_multi_agent": "M3 Proposed",
 }
 _QUALITY_METRICS = (
     "stsr",
     "evaluation_hcsr",
+    "bpcr",
     "agent_selection_f1",
     "tool_selection_f1",
 )
@@ -264,13 +265,14 @@ def _build_tables(analysis: Dict[str, Any]) -> Dict[str, Any]:
             ],
         ),
         "rq2_task_success": _table(
-            columns=["method", "case_count", "stsr", "evaluation_hcsr"],
+            columns=["method", "case_count", "stsr", "evaluation_hcsr", "bpcr"],
             rows=[
                 {
                     "method": _label(row.get("method")),
                     "case_count": row.get("case_count"),
                     "stsr": row.get("stsr"),
                     "evaluation_hcsr": row.get("evaluation_hcsr"),
+                    "bpcr": row.get("bpcr"),
                 }
                 for row in methods
             ],
@@ -384,7 +386,7 @@ def _copy_ready_text(
             f"四种方法均按统一实验协议完成比较。{rq_text}"
         ),
         "method_comparison_paragraph": (
-            "M2 与 M3 使用相同业务 Agent、离线工具和评价器，二者差异集中在固定全链路执行"
+            "M2 与 M3 使用相同业务 Agent、离线工具和评价器，二者差异集中在任务类型固定模板执行"
             f"与目标—状态驱动调度。{resource_summary}"
         ),
         "limitation_paragraph": _limitation_text(),
@@ -499,6 +501,7 @@ def _rq2_statement(claims_allowed: bool, analysis: Dict[str, Any]) -> str:
     m3 = _method_row(analysis, "adaptive_multi_agent")
     return (
         f"M3 的 STSR={_fmt(m3.get('stsr'))}，HCSR={_fmt(m3.get('evaluation_hcsr'))}，"
+        f"BPCR={_fmt(m3.get('bpcr'))}，"
         "可用于说明任务成功率与硬约束满足情况。"
     )
 

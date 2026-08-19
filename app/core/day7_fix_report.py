@@ -31,7 +31,7 @@ ISSUE_CATEGORIES = (
 _METHOD_LABELS = {
     "llm_direct": "M0 Direct LLM",
     "single_agent": "M1 Single Agent",
-    "fixed_multi_agent": "M2 Fixed Multi-Agent",
+    "fixed_multi_agent": "M2 Fixed Template Multi-Agent",
     "adaptive_multi_agent": "M3 Proposed",
 }
 

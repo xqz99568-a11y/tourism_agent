@@ -1,0 +1,1371 @@
+{
+  "schema_version": "day8-dev-experiment-cases-v1.3",
+  "dataset_id": "day8_dev_experiment_cases_v1_3",
+  "dataset_version": "2026-08-11-day8-experimentalized-v1",
+  "split": "development_regression",
+  "created_at": "2026-08-11",
+  "source_acceptance_cases": "experiments/day8_dev_acceptance_cases_v1_3.json",
+  "case_count": 25,
+  "reference_date": "2026-08-06",
+  "rules_file": "experiments/day8_task1_rules_v1_3.md",
+  "weather_capability_probe": {
+    "provider": "qweather",
+    "endpoint": "/v7/weather/30d",
+    "capability_probe_only": true,
+    "formal_snapshot_created": false,
+    "cities": [
+      "beijing",
+      "hangzhou",
+      "xian",
+      "shenzhen",
+      "guilin"
+    ],
+    "successful_daily_count": 30,
+    "forecast_start_date": "2026-08-07",
+    "forecast_end_date": "2026-09-05"
+  },
+  "tool_contract": {
+    "generation_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ],
+    "evaluator_only_tools": [
+      "constraint_checker"
+    ]
+  },
+  "annotation_policy": {
+    "visible_language": "zh-CN",
+    "gold_visible_to_generation": false,
+    "slot_gold_consistency_required": true,
+    "changed_slot_current_utterance_required": true,
+    "preserved_slot_previous_state_required": true,
+    "fixed_offline_city_only": true,
+    "recommended_formal_task_coverage_required": false,
+    "coverage_gate_reason": "Day8 25-case set is a targeted development regression set for intent, frozen weather, and intercity-budget hard fixes; it is not the final 100-case formal benchmark.",
+    "adapter_policy": "Keep the original Day8 task_type on each case, and add expected.task_type only as the canonical evaluator-compatible task family."
+  },
+  "task_type_adapter": {
+    "general_chat": "general_chat",
+    "clarification": "clarification",
+    "destination_recommendation": "general_chat",
+    "weather_aware_trip_plan": "trip_planning",
+    "weather_forecast_query": "weather_query",
+    "weather_climate_question": "general_chat"
+  },
+  "cases": [
+    {
+      "case_id": "day8_v13_001_general_greeting",
+      "user_input": "你好，我先了解一下。",
+      "task_type": "general_chat",
+      "gold_slots": {},
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "notes": "闲聊，不进入旅游业务链路。"
+      },
+      "day8_original_task_type": "general_chat",
+      "adapter_note": "Expanded from a two-character greeting because the formal preflight language gate requires at least four visible Chinese characters.",
+      "expected": {
+        "task_type": "general_chat",
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ]
+      }
+    },
+    {
+      "case_id": "day8_v13_002_general_capability_advice",
+      "user_input": "你能在旅游方面给我哪些建议？",
+      "task_type": "general_chat",
+      "gold_slots": {},
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "notes": "询问系统能力，只介绍能力，不规划。"
+      },
+      "day8_original_task_type": "general_chat",
+      "expected": {
+        "task_type": "general_chat",
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ]
+      }
+    },
+    {
+      "case_id": "day8_v13_003_general_no_trip",
+      "user_input": "最近没打算出去玩，就是随便看看。",
+      "task_type": "general_chat",
+      "gold_slots": {},
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "notes": "用户明确暂时不规划。"
+      },
+      "day8_original_task_type": "general_chat",
+      "expected": {
+        "task_type": "general_chat",
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ]
+      }
+    },
+    {
+      "case_id": "day8_v13_004_general_capability_question",
+      "user_input": "你平时都能帮我解决哪些旅游问题？",
+      "task_type": "general_chat",
+      "gold_slots": {},
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "notes": "能力问答，不进入业务链路。"
+      },
+      "day8_original_task_type": "general_chat",
+      "expected": {
+        "task_type": "general_chat",
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ]
+      }
+    },
+    {
+      "case_id": "day8_v13_005_general_thanks",
+      "user_input": "谢谢，暂时不用啦。",
+      "task_type": "general_chat",
+      "gold_slots": {},
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "notes": "感谢与结束语。"
+      },
+      "day8_original_task_type": "general_chat",
+      "expected": {
+        "task_type": "general_chat",
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ]
+      }
+    },
+    {
+      "case_id": "day8_v13_006_clarify_beijing_missing_duration_people",
+      "user_input": "想去北京玩，帮我安排一下吧。",
+      "task_type": "clarification",
+      "gold_slots": {
+        "destination": "beijing"
+      },
+      "defaulted_slots": {},
+      "missing_slots": [
+        "duration_days",
+        "people_count"
+      ],
+      "expected_tool_behavior": {
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "notes": "缺少普通规划必需字段，只追问天数和人数。"
+      },
+      "day8_original_task_type": "clarification",
+      "expected": {
+        "task_type": "clarification",
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "hard_constraints": {
+          "destination": "beijing"
+        },
+        "missing_slots": [
+          "duration_days",
+          "people_count"
+        ]
+      }
+    },
+    {
+      "case_id": "day8_v13_007_destination_recommendation_national_day_budget",
+      "user_input": "国庆想出去旅游，预算大概5000块，有什么合适的安排吗？",
+      "task_type": "destination_recommendation",
+      "gold_slots": {
+        "start_date": "2026-10-01",
+        "budget_amount": 5000
+      },
+      "defaulted_slots": {},
+      "missing_slots": [
+        "destination",
+        "duration_days",
+        "people_count"
+      ],
+      "expected_tool_behavior": {
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "notes": "推荐候选目的地并追问确认，不直接生成完整行程。"
+      },
+      "day8_original_task_type": "destination_recommendation",
+      "expected": {
+        "task_type": "general_chat",
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "hard_constraints": {
+          "start_date": "2026-10-01",
+          "budget_limit": 5000
+        },
+        "adapter_note": "Destination recommendation is a no-tool Day8 regression task; the old evaluator checks that it does not enter the full tourism tool chain."
+      }
+    },
+    {
+      "case_id": "day8_v13_008_clarify_guilin_missing_duration",
+      "user_input": "我想去桂林玩几天，两个人，帮我做个行程。",
+      "task_type": "clarification",
+      "gold_slots": {
+        "destination": "guilin",
+        "people_count": 2
+      },
+      "defaulted_slots": {},
+      "missing_slots": [
+        "duration_days"
+      ],
+      "expected_tool_behavior": {
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "notes": "“玩几天”不是明确天数，需要追问。"
+      },
+      "day8_original_task_type": "clarification",
+      "expected": {
+        "task_type": "clarification",
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "hard_constraints": {
+          "destination": "guilin",
+          "people_count": 2
+        },
+        "missing_slots": [
+          "duration_days"
+        ]
+      }
+    },
+    {
+      "case_id": "day8_v13_009_clarify_xian_parents_missing_duration",
+      "user_input": "过段时间想带爸妈去西安玩，想轻松一点，你帮我规划一下。",
+      "task_type": "clarification",
+      "gold_slots": {
+        "destination": "xian",
+        "preferences": [
+          "relaxed"
+        ]
+      },
+      "defaulted_slots": {
+        "people_count": 3,
+        "people_count_reason": "带爸妈 = 用户本人 + 爸妈"
+      },
+      "missing_slots": [
+        "duration_days"
+      ],
+      "expected_tool_behavior": {
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "notes": "start_date 非必需，但 duration_days 缺失，需要追问。"
+      },
+      "day8_original_task_type": "clarification",
+      "expected": {
+        "task_type": "clarification",
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "hard_constraints": {
+          "destination": "xian",
+          "people_count": 3,
+          "special_requirements": [
+            "low_intensity"
+          ]
+        },
+        "missing_slots": [
+          "duration_days"
+        ]
+      }
+    },
+    {
+      "case_id": "day8_v13_010_clarify_hangzhou_child_missing_duration",
+      "user_input": "想带孩子去杭州玩，预算大概4000块，帮我安排个行程。",
+      "task_type": "clarification",
+      "gold_slots": {
+        "destination": "hangzhou",
+        "budget_amount": 4000
+      },
+      "defaulted_slots": {
+        "people_count": 2,
+        "people_count_reason": "带孩子 = 用户本人 + 孩子"
+      },
+      "missing_slots": [
+        "duration_days"
+      ],
+      "expected_tool_behavior": {
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "notes": "缺少明确天数，只追问天数。"
+      },
+      "day8_original_task_type": "clarification",
+      "expected": {
+        "task_type": "clarification",
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "hard_constraints": {
+          "destination": "hangzhou",
+          "people_count": 2,
+          "traveler_group": "family",
+          "preferences": [
+            "family"
+          ],
+          "budget_limit": 4000
+        },
+        "missing_slots": [
+          "duration_days"
+        ]
+      }
+    },
+    {
+      "case_id": "day8_v13_011_guilin_weather_plan_no_origin",
+      "user_input": "8月10号去桂林玩3天，两个人，预算5000左右，帮我安排一下。",
+      "task_type": "weather_aware_trip_plan",
+      "gold_slots": {
+        "destination": "guilin",
+        "start_date": "2026-08-10",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 5000,
+        "origin": null,
+        "weather_coverage": "full",
+        "budget_scope": "destination_local_only",
+        "mandatory_budget_disclaimer": true
+      },
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "forbidden_tools": [],
+        "notes": "无出发地，预算只算目的地当地费用，并声明不含城际交通。"
+      },
+      "day8_original_task_type": "weather_aware_trip_plan",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "hard_constraints": {
+          "destination": "guilin",
+          "start_date": "2026-08-10",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_limit": 5000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "adapter_note": "Day8 task_type weather_aware_trip_plan is evaluated with the canonical trip_planning rule family."
+      }
+    },
+    {
+      "case_id": "day8_v13_012_guangzhou_to_guilin_four_days",
+      "user_input": "8月12号从广州去桂林玩4天，两个人，预算6000块。",
+      "task_type": "weather_aware_trip_plan",
+      "gold_slots": {
+        "origin": "guangzhou",
+        "destination": "guilin",
+        "start_date": "2026-08-12",
+        "duration_days": 4,
+        "people_count": 2,
+        "budget_amount": 6000,
+        "weather_coverage": "full",
+        "intercity_transport_mode": "high_speed_rail",
+        "intercity_seat_class": "second_class",
+        "intercity_transport_included": true,
+        "budget_scope": "local_plus_round_trip_intercity"
+      },
+      "defaulted_slots": {
+        "intercity_transport_mode": "high_speed_rail",
+        "intercity_seat_class": "second_class"
+      },
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "forbidden_tools": [],
+        "notes": "有 origin，预算应合并冻结高铁二等座往返费用。"
+      },
+      "day8_original_task_type": "weather_aware_trip_plan",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "hard_constraints": {
+          "origin": "guangzhou",
+          "destination": "guilin",
+          "start_date": "2026-08-12",
+          "duration_days": 4,
+          "people_count": 2,
+          "budget_limit": 6000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "adapter_note": "Day8 task_type weather_aware_trip_plan is evaluated with the canonical trip_planning rule family."
+      }
+    },
+    {
+      "case_id": "day8_v13_013_hangzhou_date_range",
+      "user_input": "8月10号到12号想去杭州玩，3个人，预算5000左右。",
+      "task_type": "weather_aware_trip_plan",
+      "gold_slots": {
+        "destination": "hangzhou",
+        "start_date": "2026-08-10",
+        "end_date": "2026-08-12",
+        "duration_days": 3,
+        "people_count": 3,
+        "budget_amount": 5000,
+        "origin": null,
+        "weather_coverage": "full",
+        "budget_scope": "destination_local_only",
+        "mandatory_budget_disclaimer": true
+      },
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "forbidden_tools": [],
+        "notes": "日期区间首尾都算旅行日。"
+      },
+      "day8_original_task_type": "weather_aware_trip_plan",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "hard_constraints": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-10",
+          "end_date": "2026-08-12",
+          "duration_days": 3,
+          "people_count": 3,
+          "budget_limit": 5000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "adapter_note": "Day8 task_type weather_aware_trip_plan is evaluated with the canonical trip_planning rule family."
+      }
+    },
+    {
+      "case_id": "day8_v13_014_xian_nights_and_days",
+      "user_input": "8月9号去西安，住两晚，准备玩3天，两个人大概4500块预算。",
+      "task_type": "weather_aware_trip_plan",
+      "gold_slots": {
+        "destination": "xian",
+        "start_date": "2026-08-09",
+        "duration_days": 3,
+        "nights": 2,
+        "people_count": 2,
+        "budget_amount": 4500,
+        "origin": null,
+        "weather_coverage": "full",
+        "budget_scope": "destination_local_only",
+        "mandatory_budget_disclaimer": true
+      },
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "forbidden_tools": [],
+        "notes": "明确“玩3天”优先于“住两晚”。"
+      },
+      "day8_original_task_type": "weather_aware_trip_plan",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "hard_constraints": {
+          "destination": "xian",
+          "start_date": "2026-08-09",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_limit": 4500,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "adapter_note": "Day8 task_type weather_aware_trip_plan is evaluated with the canonical trip_planning rule family."
+      }
+    },
+    {
+      "case_id": "day8_v13_015_shenzhen_no_budget_amount",
+      "user_input": "8月11号准备去深圳玩两天，我和朋友两个人，帮我安排一下。",
+      "task_type": "weather_aware_trip_plan",
+      "gold_slots": {
+        "destination": "shenzhen",
+        "start_date": "2026-08-11",
+        "duration_days": 2,
+        "people_count": 2,
+        "budget_amount": null,
+        "origin": null,
+        "weather_coverage": "full",
+        "budget_scope": "destination_local_only",
+        "mandatory_budget_disclaimer": true
+      },
+      "defaulted_slots": {
+        "budget_level": "economy"
+      },
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "forbidden_tools": [],
+        "notes": "没有预算金额不追问，使用 economy 默认预算档。"
+      },
+      "day8_original_task_type": "weather_aware_trip_plan",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "hard_constraints": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-11",
+          "duration_days": 2,
+          "people_count": 2,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "adapter_note": "Day8 task_type weather_aware_trip_plan is evaluated with the canonical trip_planning rule family."
+      }
+    },
+    {
+      "case_id": "day8_v13_016_guangzhou_origin_guilin",
+      "user_input": "8月10号从广州出发去桂林玩3天，两个人，预算5000块。",
+      "task_type": "weather_aware_trip_plan",
+      "gold_slots": {
+        "origin": "guangzhou",
+        "destination": "guilin",
+        "start_date": "2026-08-10",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 5000,
+        "weather_coverage": "full",
+        "intercity_transport_mode": "high_speed_rail",
+        "intercity_seat_class": "second_class",
+        "intercity_transport_included": true,
+        "budget_scope": "local_plus_round_trip_intercity"
+      },
+      "defaulted_slots": {
+        "intercity_transport_mode": "high_speed_rail",
+        "intercity_seat_class": "second_class"
+      },
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "forbidden_tools": [],
+        "notes": "origin 和 destination 必须分离，不能把广州识别成目的地。"
+      },
+      "day8_original_task_type": "weather_aware_trip_plan",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "hard_constraints": {
+          "origin": "guangzhou",
+          "destination": "guilin",
+          "start_date": "2026-08-10",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_limit": 5000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "adapter_note": "Day8 task_type weather_aware_trip_plan is evaluated with the canonical trip_planning rule family."
+      }
+    },
+    {
+      "case_id": "day8_v13_017_guangzhou_origin_shenzhen",
+      "user_input": "广州出发，8月10号去深圳玩两天，3个人，预算6000左右。",
+      "task_type": "weather_aware_trip_plan",
+      "gold_slots": {
+        "origin": "guangzhou",
+        "destination": "shenzhen",
+        "start_date": "2026-08-10",
+        "duration_days": 2,
+        "people_count": 3,
+        "budget_amount": 6000,
+        "weather_coverage": "full",
+        "intercity_transport_mode": "high_speed_rail",
+        "intercity_seat_class": "second_class",
+        "intercity_transport_included": true,
+        "budget_scope": "local_plus_round_trip_intercity"
+      },
+      "defaulted_slots": {
+        "intercity_transport_mode": "high_speed_rail",
+        "intercity_seat_class": "second_class"
+      },
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "forbidden_tools": [],
+        "notes": "“广州出发”必须识别为 origin，不是 destination。"
+      },
+      "day8_original_task_type": "weather_aware_trip_plan",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "hard_constraints": {
+          "origin": "guangzhou",
+          "destination": "shenzhen",
+          "start_date": "2026-08-10",
+          "duration_days": 2,
+          "people_count": 3,
+          "budget_limit": 6000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "adapter_note": "Day8 task_type weather_aware_trip_plan is evaluated with the canonical trip_planning rule family."
+      }
+    },
+    {
+      "case_id": "day8_v13_018_zhengzhou_to_xian",
+      "user_input": "8月10号从郑州去西安玩3天，两个人，预算7000块。",
+      "task_type": "weather_aware_trip_plan",
+      "gold_slots": {
+        "origin": "zhengzhou",
+        "destination": "xian",
+        "start_date": "2026-08-10",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 7000,
+        "weather_coverage": "full",
+        "intercity_transport_mode": "high_speed_rail",
+        "intercity_seat_class": "second_class",
+        "intercity_transport_included": true,
+        "budget_scope": "local_plus_round_trip_intercity"
+      },
+      "defaulted_slots": {
+        "intercity_transport_mode": "high_speed_rail",
+        "intercity_seat_class": "second_class"
+      },
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "forbidden_tools": [],
+        "notes": "有 origin，默认高铁二等座往返。"
+      },
+      "day8_original_task_type": "weather_aware_trip_plan",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "hard_constraints": {
+          "origin": "zhengzhou",
+          "destination": "xian",
+          "start_date": "2026-08-10",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_limit": 7000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "adapter_note": "Day8 task_type weather_aware_trip_plan is evaluated with the canonical trip_planning rule family."
+      }
+    },
+    {
+      "case_id": "day8_v13_019_relative_tomorrow_shenzhen",
+      "user_input": "明天想去深圳玩两天，两个人，预算4000左右，帮我安排一下。",
+      "task_type": "weather_aware_trip_plan",
+      "gold_slots": {
+        "destination": "shenzhen",
+        "start_date": "2026-08-07",
+        "duration_days": 2,
+        "people_count": 2,
+        "budget_amount": 4000,
+        "origin": null,
+        "weather_coverage": "full",
+        "budget_scope": "destination_local_only",
+        "mandatory_budget_disclaimer": true
+      },
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "forbidden_tools": [],
+        "notes": "明天按 reference_date 解析为 2026-08-07。"
+      },
+      "day8_original_task_type": "weather_aware_trip_plan",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "hard_constraints": {
+          "destination": "shenzhen",
+          "start_date": "2026-08-07",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_limit": 4000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "adapter_note": "Day8 task_type weather_aware_trip_plan is evaluated with the canonical trip_planning rule family."
+      }
+    },
+    {
+      "case_id": "day8_v13_020_relative_day_after_tomorrow_hangzhou",
+      "user_input": "后天去杭州玩3天，我们3个人，预算6000块左右。",
+      "task_type": "weather_aware_trip_plan",
+      "gold_slots": {
+        "destination": "hangzhou",
+        "start_date": "2026-08-08",
+        "duration_days": 3,
+        "people_count": 3,
+        "budget_amount": 6000,
+        "origin": null,
+        "weather_coverage": "full",
+        "budget_scope": "destination_local_only",
+        "mandatory_budget_disclaimer": true
+      },
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "forbidden_tools": [],
+        "notes": "后天按 reference_date 解析为 2026-08-08。"
+      },
+      "day8_original_task_type": "weather_aware_trip_plan",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "hard_constraints": {
+          "destination": "hangzhou",
+          "start_date": "2026-08-08",
+          "duration_days": 3,
+          "people_count": 3,
+          "budget_limit": 6000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "adapter_note": "Day8 task_type weather_aware_trip_plan is evaluated with the canonical trip_planning rule family."
+      }
+    },
+    {
+      "case_id": "day8_v13_021_national_day_guilin_out_of_range",
+      "user_input": "国庆想去桂林玩3天，两个人，预算5000左右。",
+      "task_type": "weather_aware_trip_plan",
+      "gold_slots": {
+        "destination": "guilin",
+        "start_date": "2026-10-01",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 5000,
+        "origin": null,
+        "weather_coverage": "out_of_range",
+        "budget_scope": "destination_local_only",
+        "mandatory_budget_disclaimer": true
+      },
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "forbidden_tools": [],
+        "notes": "天气工具应返回 out_of_range 或等价覆盖不足状态；系统不得伪造天气。"
+      },
+      "day8_original_task_type": "weather_aware_trip_plan",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "hard_constraints": {
+          "destination": "guilin",
+          "start_date": "2026-10-01",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_limit": 5000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "adapter_note": "Day8 task_type weather_aware_trip_plan is evaluated with the canonical trip_planning rule family."
+      }
+    },
+    {
+      "case_id": "day8_v13_022_national_day_xian_friend_missing_duration",
+      "user_input": "国庆想和朋友去西安玩，但还没想好去几天。",
+      "task_type": "clarification",
+      "gold_slots": {
+        "destination": "xian",
+        "start_date": "2026-10-01"
+      },
+      "defaulted_slots": {
+        "people_count": 2,
+        "people_count_reason": "和朋友 = 用户本人 + 朋友"
+      },
+      "missing_slots": [
+        "duration_days"
+      ],
+      "expected_tool_behavior": {
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "notes": "缺少明确天数，只追问天数。"
+      },
+      "day8_original_task_type": "clarification",
+      "expected": {
+        "task_type": "clarification",
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "hard_constraints": {
+          "destination": "xian",
+          "start_date": "2026-10-01",
+          "people_count": 2
+        },
+        "missing_slots": [
+          "duration_days"
+        ]
+      }
+    },
+    {
+      "case_id": "day8_v13_023_guilin_next_three_days_weather",
+      "user_input": "桂林未来三天天气怎么样？",
+      "task_type": "weather_forecast_query",
+      "gold_slots": {
+        "destination": "guilin",
+        "start_date": "2026-08-07",
+        "duration_days": 3,
+        "weather_coverage": "full"
+      },
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "weather_query"
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "budget_calculator"
+        ],
+        "notes": "只回答具体天气预报，不进入行程和预算。"
+      },
+      "day8_original_task_type": "weather_forecast_query",
+      "expected": {
+        "task_type": "weather_query",
+        "required_tools": [
+          "weather_query"
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "weather"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "weather_query"
+          ]
+        ],
+        "hard_constraints": {
+          "destination": "guilin",
+          "start_date": "2026-08-07",
+          "duration_days": 3
+        },
+        "adapter_note": "Day8 concrete forecast query is evaluated with the canonical weather_query rule family."
+      }
+    },
+    {
+      "case_id": "day8_v13_024_guilin_november_weather_climate",
+      "user_input": "桂林十一月份天气怎么样？",
+      "task_type": "weather_climate_question",
+      "gold_slots": {
+        "destination": "guilin",
+        "month": "2026-11",
+        "weather_coverage": "out_of_range"
+      },
+      "defaulted_slots": {},
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [],
+        "forbidden_tools": [
+          "weather_query",
+          "poi_search",
+          "budget_calculator"
+        ],
+        "notes": "月份/季节天气问题，不能伪造成具体 30 天逐日预报。"
+      },
+      "day8_original_task_type": "weather_climate_question",
+      "expected": {
+        "task_type": "general_chat",
+        "required_tools": [],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "hard_constraints": {
+          "destination": "guilin"
+        },
+        "adapter_note": "Monthly/seasonal climate question must not call frozen daily forecast tools or fabricate a 30-day forecast."
+      }
+    },
+    {
+      "case_id": "day8_v13_025_lhasa_to_guilin_national_day_unsupported_rail",
+      "user_input": "国庆我从拉萨出发去桂林玩3天，两个人，预算8000左右，帮我规划一下。",
+      "task_type": "weather_aware_trip_plan",
+      "gold_slots": {
+        "origin": "lhasa",
+        "destination": "guilin",
+        "start_date": "2026-10-01",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 8000,
+        "weather_coverage": "out_of_range",
+        "intercity_transport_mode": "high_speed_rail",
+        "intercity_seat_class": "second_class",
+        "intercity_route_status": "route_not_supported",
+        "budget_scope": "local_only_route_uncovered"
+      },
+      "defaulted_slots": {
+        "intercity_transport_mode": "high_speed_rail",
+        "intercity_seat_class": "second_class"
+      },
+      "missing_slots": [],
+      "expected_tool_behavior": {
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "forbidden_tools": [],
+        "notes": "铁路路线未覆盖时不得猜票价；天气工具应返回 out_of_range 或等价覆盖不足状态。"
+      },
+      "day8_original_task_type": "weather_aware_trip_plan",
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "hard_constraints": {
+          "origin": "lhasa",
+          "destination": "guilin",
+          "start_date": "2026-10-01",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_limit": 8000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "adapter_note": "Day8 task_type weather_aware_trip_plan is evaluated with the canonical trip_planning rule family."
+      }
+    }
+  ]
+}

@@ -23,7 +23,7 @@
 说明：
 
 - M0 Direct LLM 不调用任何工具，用于衡量无工具能力下限。
-- M1 Single Agent、M2 Fixed Multi-Agent、M3 Adaptive Multi-Agent 的生成工具目录完全相同。
+- M1 Single Agent、M2 Fixed Template Multi-Agent、M3 Adaptive Multi-Agent 的生成工具目录完全相同。
 - 所有工具只读取固定离线数据，不访问实时高德、天气或其他旅游 API。
 - 旧工具 `poi_detail`、`route_planning`、`budget_optimizer` 不进入正式实验生成工具目录。
 - `constraint_checker` 已接入 `ExperimentRunner`，每次方法生成完成后自动运行，并写入 `constraint_report`、通过/失败数量和 HCSR。
@@ -147,7 +147,7 @@ runner 对四种方法输出统一封装为 `ctp-experiment-output-v1`：
 |---|---|
 | M0 `llm_direct` | 无工具 |
 | M1 `single_agent` | 可调用 `poi_search`、`weather_query`、`budget_calculator` |
-| M2 `fixed_multi_agent` | 固定执行景点、天气、行程、预算 Agent；使用同一生成工具目录 |
+| M2 `fixed_multi_agent` | 按任务类型执行固定 Agent 模板；使用同一生成工具目录 |
 | M3 `adaptive_multi_agent` | 根据任务选择最小必要 Agent 与工具；使用同一生成工具目录 |
 
 ## 七、完成标准

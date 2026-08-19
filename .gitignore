@@ -48,6 +48,11 @@ htmlcov/
 logs/
 *.log
 
+# Local experiment outputs that are not frozen formal-input artifacts
+experiments/results/day8_dev/
+experiments/results/tmp_debug/
+experiments/results/traces/**/*.jsonl
+
 # Local Phase 1 scratch files (kept locally, never evidence artifacts)
 experiments/benchmark_test.json
 !experiments/benchmark_test.json

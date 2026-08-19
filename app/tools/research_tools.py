@@ -10,6 +10,14 @@ from datetime import datetime, timedelta
 from typing import Any, Dict, Iterable, List, Optional
 
 from app.core.fixed_data import FixedDataError, get_fixed_tourism_data
+from app.core.qweather_snapshot import (
+    QWEATHER_DEFAULT_WEATHER_QUERY_DAYS,
+    QWEATHER_MAX_QUERY_DAYS,
+    QWeatherSnapshotError,
+    load_qweather_snapshot_manifest,
+    normalize_qweather_city_id,
+    query_qweather_snapshot,
+)
 from app.tools.base import BaseTool, ToolResult
 
 
@@ -150,7 +158,7 @@ class ResearchPOISearchTool(BaseTool):
 
 
 class ResearchWeatherTool(BaseTool):
-    """Query fixed weather scenarios with optional date labels."""
+    """Query the frozen QWeather snapshot with optional date labels."""
 
     name = "weather_query"
     description = "查询固定离线天气，输入城市和日期，返回可复现天气场景与每日天气。"
@@ -162,7 +170,7 @@ class ResearchWeatherTool(BaseTool):
             "destination": {"type": "string", "description": "city 的兼容别名"},
             "date": {"type": "string", "description": "开始日期，YYYY-MM-DD；缺省时只返回 day_index"},
             "start_date": {"type": "string", "description": "date 的兼容别名"},
-            "days": {"type": "integer", "default": 3, "minimum": 1, "maximum": 5},
+            "days": {"type": "integer", "default": 3, "minimum": 1, "maximum": QWEATHER_MAX_QUERY_DAYS},
             "duration": {"type": "integer", "description": "days 的兼容别名"},
             "scenario_type": {
                 "type": "string",
@@ -179,7 +187,7 @@ class ResearchWeatherTool(BaseTool):
         return bool(params.get("city") or params.get("destination")) and _is_valid_optional_int(
             days_value,
             minimum=1,
-            maximum=5,
+            maximum=QWEATHER_MAX_QUERY_DAYS,
         )
 
     async def execute(
@@ -197,25 +205,26 @@ class ResearchWeatherTool(BaseTool):
         city_value = city or destination
         start_date_value = start_date or date
         raw_days = days if days is not None else duration
+        default_days = 3 if start_date_value else QWEATHER_DEFAULT_WEATHER_QUERY_DAYS
         requested_days, days_error = _parse_int_argument(
             raw_days,
             name="days",
-            default=3,
+            default=default_days,
             minimum=1,
-            maximum=5,
+            maximum=QWEATHER_MAX_QUERY_DAYS,
             required=False,
         )
+        date_defaulted = False
+        if not start_date_value:
+            start_date_value = str(load_qweather_snapshot_manifest().get("forecast_start_date") or "")
+            date_defaulted = True
         requested_scenario = weather_scenario or scenario_type or "sunny"
-        scenario = _fixed_weather_scenario_for_date(
-            city_value,
-            start_date_value,
-            fallback=requested_scenario,
-        )
         input_payload = {
             "city": city_value,
             "date": start_date_value,
             "days": requested_days,
             "scenario_type": requested_scenario,
+            "date_defaulted_to_snapshot_start": date_defaulted,
         }
         if not city_value:
             return _failed_tool_result(self.name, input_payload, "invalid_arguments", "city is required")
@@ -230,52 +239,76 @@ class ResearchWeatherTool(BaseTool):
             )
 
         try:
-            raw = get_fixed_tourism_data().weather_query(
+            raw = query_qweather_snapshot(
                 city=city_value,
-                scenario_type=scenario,
+                start_date=start_date_value,
                 days=requested_days,
             )
-            daily_weather = _format_daily_weather(raw.get("daily_forecasts") or [], start_date_value)
+            daily_weather = list(raw.get("daily_weather") or [])
+            coverage_status = str(raw.get("coverage_status") or "out_of_range")
             payload = _tool_payload(
                 self.name,
-                status="success" if daily_weather else "no_result",
+                status="success",
                 input_payload=input_payload,
                 data={
                     "city": raw.get("city") or city_value,
                     "city_id": raw.get("city_id"),
-                    "date": start_date_value,
+                    "date": raw.get("date") or start_date_value,
+                    "start_date": raw.get("start_date") or start_date_value,
+                    "end_date": raw.get("end_date"),
+                    "provider": raw.get("provider"),
+                    "location_id": raw.get("location_id"),
                     "scenario_type": raw.get("scenario_type"),
                     "requested_scenario_type": requested_scenario,
-                    "scenario_selection": (
-                        "city_date_hash" if start_date_value else "explicit_scenario_or_default"
-                    ),
+                    "scenario_selection": raw.get("scenario_selection"),
+                    "weather_type": raw.get("weather_type"),
                     "risk_level": raw.get("risk_level"),
+                    "risk_tags": raw.get("risk_tags") or [],
+                    "requested_days": raw.get("requested_days"),
+                    "coverage_days": raw.get("coverage_days"),
+                    "coverage_status": coverage_status,
+                    "covered_dates": raw.get("covered_dates") or [],
+                    "missing_dates": raw.get("missing_dates") or [],
+                    "forecast_start_date": raw.get("forecast_start_date"),
+                    "forecast_end_date": raw.get("forecast_end_date"),
+                    "snapshot_forecast_start_date": raw.get("snapshot_forecast_start_date"),
+                    "snapshot_forecast_end_date": raw.get("snapshot_forecast_end_date"),
                     "daily_weather": daily_weather,
+                    "daily_forecasts": daily_weather,
+                    "forecast": daily_weather,
                     "planning_constraints": raw.get("planning_constraints") or {},
-                    "weather_adjustment_required": bool(
-                        (raw.get("planning_constraints") or {}).get("dynamic_adjustment_required")
-                    ),
+                    "weather_adjustment_required": bool(raw.get("weather_adjustment_required")),
+                    "warnings": raw.get("warnings") or [],
+                    "applied_rules": raw.get("applied_rules") or [],
+                    "snapshot_id": raw.get("snapshot_id"),
+                    "snapshot_combined_sha256": raw.get("snapshot_combined_sha256"),
+                    "metadata": raw.get("metadata") or {},
+                    "date_defaulted_to_snapshot_start": date_defaulted or bool(raw.get("date_defaulted_to_snapshot_start")),
                 },
                 metadata={
                     "offline": True,
-                    "source_mode": "frozen_offline",
+                    "source_mode": "qweather_frozen_snapshot",
                     "dataset_version": raw.get("dataset_version"),
                     "source_file_id": raw.get("source_file_id"),
                     "record_count": len(daily_weather),
                     "real_time_api_allowed": False,
-                    "canonical_city_id": _canonical_weather_city_key(city_value),
-                    "weather_date_mapping_rule": (
-                        "sha256(canonical_city_id + date) selects one fixed scenario when date is provided"
-                        if start_date_value
-                        else "scenario_type is used only when no concrete date is provided"
-                    ),
+                    "canonical_city_id": normalize_qweather_city_id(city_value),
+                    "coverage_status": coverage_status,
+                    "snapshot_id": raw.get("snapshot_id"),
+                    "snapshot_combined_sha256": raw.get("snapshot_combined_sha256"),
+                    "weather_date_mapping_rule": "city_id + requested date range selects rows from frozen QWeather snapshot",
+                    "date_defaulted_to_snapshot_start": date_defaulted,
                 },
             )
             return ToolResult(success=True, data=payload, metadata=payload["metadata"], api_calls=[])
+        except QWeatherSnapshotError as exc:
+            return _failed_tool_result(self.name, input_payload, "qweather_snapshot_unavailable", str(exc))
         except FixedDataError as exc:
             return _failed_tool_result(self.name, input_payload, "fixed_data_not_found", str(exc))
         except Exception as exc:
             return _failed_tool_result(self.name, input_payload, "internal_error", str(exc))
+
+    external_service = "qweather_frozen_snapshot"
 
 
 class ResearchBudgetCalculatorTool(BaseTool):
@@ -289,18 +322,55 @@ class ResearchBudgetCalculatorTool(BaseTool):
         "properties": {
             "city": {"type": "string", "description": "城市名称"},
             "destination": {"type": "string", "description": "city 的兼容别名"},
+            "origin": {
+                "type": "string",
+                "description": "Optional departure city for frozen round-trip rail fare.",
+            },
+            "from_city": {
+                "type": "string",
+                "description": "Alias of origin.",
+            },
             "people_count": {"type": "integer", "default": 1, "minimum": 1},
             "num_travelers": {"type": "integer", "description": "people_count 的兼容别名"},
             "days": {"type": "integer", "default": 1, "minimum": 1, "maximum": 5},
             "duration": {"type": "integer", "description": "days 的兼容别名"},
             "attractions": {"type": "array", "items": {"type": "string"}, "description": "景点 ID 或名称"},
             "poi_ids": {"type": "array", "items": {"type": "string"}, "description": "attractions 的兼容别名"},
+            "daily_itinerary": {
+                "type": "array",
+                "items": {"type": "object"},
+                "description": "最终逐日行程，用于预算工具按实际景点和路线计价。",
+            },
+            "budget_limit": {
+                "type": "number",
+                "description": "用户总预算上限；默认按总预算理解。",
+            },
+            "budget_basis": {
+                "type": "string",
+                "enum": ["total", "per_person"],
+                "description": "用户原始预算口径；budget_limit 始终是换算后的总预算上限。",
+            },
             "spending_level": {
                 "type": "string",
                 "enum": ["economy", "medium", "comfort", "luxury", "premium"],
                 "default": "medium",
             },
             "budget_level": {"type": "string", "description": "spending_level 的兼容别名"},
+            "hotel_level": {"type": "string", "description": "住宿偏好"},
+            "food_level": {"type": "string", "description": "餐饮偏好"},
+            "transport_mode": {"type": "string", "description": "市内交通偏好"},
+            "requested_budget_scope": {
+                "type": "string",
+                "description": "预算范围：destination_local_only 或 local_plus_round_trip_intercity",
+            },
+            "intercity_transport_included": {
+                "type": "boolean",
+                "description": "用户需求层面是否期望纳入冻结城际往返交通费用。",
+            },
+            "mandatory_budget_disclaimer": {
+                "type": "boolean",
+                "description": "是否必须提醒用户当前预算未覆盖城际大交通。",
+            },
         },
         "required": ["city", "days"],
     }
@@ -323,14 +393,25 @@ class ResearchBudgetCalculatorTool(BaseTool):
         self,
         city: Optional[str] = None,
         destination: Optional[str] = None,
+        origin: Optional[str] = None,
+        from_city: Optional[str] = None,
         people_count: Optional[int] = None,
         num_travelers: Optional[int] = None,
         days: Optional[int] = None,
         duration: Optional[int] = None,
         attractions: Any = None,
         poi_ids: Any = None,
+        daily_itinerary: Optional[List[Dict[str, Any]]] = None,
+        budget_limit: Any = None,
+        budget_basis: Optional[str] = None,
         spending_level: Optional[str] = None,
         budget_level: Optional[str] = None,
+        hotel_level: Optional[str] = None,
+        food_level: Optional[str] = None,
+        transport_mode: Optional[str] = None,
+        requested_budget_scope: Optional[str] = None,
+        intercity_transport_included: Optional[bool] = None,
+        mandatory_budget_disclaimer: Optional[bool] = None,
         **_: Any,
     ) -> ToolResult:
         city_value = city or destination
@@ -356,10 +437,20 @@ class ResearchBudgetCalculatorTool(BaseTool):
         level = spending_level or budget_level or "medium"
         input_payload = {
             "city": city_value,
+            "origin": origin or from_city,
             "people_count": raw_travelers,
             "days": raw_days,
             "attractions": selected_pois,
+            "daily_itinerary": daily_itinerary or [],
+            "budget_limit": budget_limit,
+            "budget_basis": budget_basis,
             "spending_level": level,
+            "hotel_level": hotel_level,
+            "food_level": food_level,
+            "transport_mode": transport_mode,
+            "requested_budget_scope": requested_budget_scope,
+            "intercity_transport_included": intercity_transport_included,
+            "mandatory_budget_disclaimer": mandatory_budget_disclaimer,
         }
         if not city_value:
             return _failed_tool_result(self.name, input_payload, "invalid_arguments", "city is required")
@@ -372,26 +463,72 @@ class ResearchBudgetCalculatorTool(BaseTool):
 
         try:
             raw = get_fixed_tourism_data().calculate_budget(
+                origin=origin or from_city,
                 destination=city_value,
                 duration=trip_days,
                 num_travelers=travelers,
                 budget_level=level,
+                budget_limit=budget_limit,
                 poi_ids=selected_pois,
+                daily_itinerary=daily_itinerary,
+                hotel_level=hotel_level,
+                food_level=food_level,
+                transport_mode=transport_mode,
+                requested_budget_scope=requested_budget_scope,
             )
+            effective_mandatory_disclaimer = bool(
+                raw.get("mandatory_budget_disclaimer")
+                or mandatory_budget_disclaimer
+            )
+            effective_budget_disclaimer = raw.get("budget_disclaimer")
+            if effective_mandatory_disclaimer and not effective_budget_disclaimer:
+                effective_budget_disclaimer = "当前预算不包含出发地与目的地之间的往返城际大交通。"
             payload = _tool_payload(
                 self.name,
                 status="success",
                 input_payload=input_payload,
                 data={
                     "city": city_value,
+                    "origin": origin or from_city,
                     "people_count": travelers,
                     "days": trip_days,
                     "spending_level": level,
                     "currency": "CNY",
                     "total": raw.get("total_recommended"),
+                    "final_recommended_total": raw.get("final_recommended_total"),
+                    "recommended_preparation_amount": raw.get("recommended_preparation_amount"),
+                    "estimated_actual_spending": raw.get("estimated_actual_spending"),
+                    "economic_baseline_total": raw.get("economic_baseline_total"),
+                    "economic_baseline_local_total": raw.get("economic_baseline_local_total"),
+                    "budget_limit": raw.get("budget_limit"),
+                    "budget_basis": budget_basis,
+                    "remaining_budget": raw.get("remaining_budget"),
+                    "covered_scope_remaining_budget": raw.get("covered_scope_remaining_budget"),
+                    "budget_gap": raw.get("budget_gap"),
+                    "is_over_budget": raw.get("is_over_budget"),
+                    "requested_budget_scope": raw.get("requested_budget_scope"),
+                    "computed_budget_scope": raw.get("computed_budget_scope"),
+                    "scope_complete": raw.get("scope_complete"),
+                    "sufficiency_status": raw.get("sufficiency_status"),
+                    "local_total": raw.get("local_total_recommended"),
                     "per_person": raw.get("per_person"),
                     "daily_average": raw.get("daily"),
+                    "budget_scope": raw.get("budget_scope"),
+                    "budget_policy_version": raw.get("budget_policy_version"),
+                    "budget_policy": raw.get("budget_policy") or {},
+                    "budget_complete": raw.get("budget_complete"),
+                    "can_judge_budget_sufficiency": raw.get("can_judge_budget_sufficiency"),
+                    "contingency_amount": raw.get("contingency_amount"),
+                    "intercity_transport_cost": raw.get("intercity_transport_cost"),
+                    "intercity_transport_included": raw.get("intercity_transport_included"),
+                    "real_time_api_allowed": False,
+                    "runtime_online_refresh_allowed": False,
+                    "real_time_price_claim_allowed": False,
+                    "mandatory_budget_disclaimer": effective_mandatory_disclaimer,
+                    "budget_disclaimer": effective_budget_disclaimer,
+                    "intercity_transport": raw.get("intercity_transport") or {},
                     "breakdown": raw.get("breakdown") or {},
+                    "transport_breakdown": raw.get("transport_breakdown") or {},
                     "items": raw.get("items") or [],
                     "ticket_breakdown": raw.get("ticket_breakdown") or {},
                 },
@@ -402,7 +539,17 @@ class ResearchBudgetCalculatorTool(BaseTool):
                     "source_file_ids": raw.get("source_file_ids") or {},
                     "record_count": len(raw.get("items") or []),
                     "real_time_api_allowed": False,
+                    "runtime_online_refresh_allowed": False,
+                    "real_time_price_claim_allowed": False,
                     "calculation_source": raw.get("calculation_source"),
+                    "budget_policy_version": raw.get("budget_policy_version"),
+                    "budget_scope": raw.get("budget_scope"),
+                    "requested_budget_scope": raw.get("requested_budget_scope"),
+                    "computed_budget_scope": raw.get("computed_budget_scope"),
+                    "scope_complete": raw.get("scope_complete"),
+                    "sufficiency_status": raw.get("sufficiency_status"),
+                    "intercity_snapshot_id": (raw.get("intercity_transport") or {}).get("snapshot_id"),
+                    "intercity_snapshot_combined_sha256": (raw.get("intercity_transport") or {}).get("snapshot_combined_sha256"),
                 },
             )
             return ToolResult(success=True, data=payload, metadata=payload["metadata"], api_calls=[])
