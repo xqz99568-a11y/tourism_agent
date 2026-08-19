@@ -2,10 +2,10 @@
 
 ## 总状态
 
-- delivery_status: `day8_delivery_blocked`
-- ready_for_formal_experiment: `False`
-- failed_checks: `['git_worktree_clean']`
-- interpretation: Day8 delivery is blocked; fix failed_checks before running the formal experiment.
+- delivery_status: `day8_delivery_ready`
+- ready_for_formal_experiment: `True`
+- failed_checks: `[]`
+- interpretation: Day8 formal inputs are frozen and ready for the formal four-method experiment.
 
 ## 正式实验入口
 
@@ -61,9 +61,9 @@
 
 - integrity_schema: `ctp-formal-artifact-integrity-v1`
 - combined_sha256: `40a607fcdde96fbb96c51e63334f6e566e2d7e4c4bc137cebb955fd65ad7f75a`
-- git_commit: `467b7ba48315fe2a63070aa5b3189d524025739a`
-- git_worktree_clean: `False`
-- git_status_count: `112`
+- git_commit: `34d40159c6fdba42d92a8b4354556fa52f929a32`
+- git_worktree_clean: `True`
+- git_status_count: `0`
 
 ## Formal preflight
 
@@ -118,7 +118,7 @@
 | formal_artifact_integrity_schema_valid | `True` |
 | formal_artifact_integrity_all_required_exist | `True` |
 | current_commit_recorded | `True` |
-| git_worktree_clean | `False` |
+| git_worktree_clean | `True` |
 | evaluation_rule_catalog_hash_recorded | `True` |
 | independent_evaluator_code_hash_recorded | `True` |
 | experiment_runner_code_hash_recorded | `True` |
@@ -161,7 +161,8 @@
 
 ## 下一步
 
-- [P0] 先修复 Day8 交付包阻塞项：git_worktree_clean
+- [P0] 可以进入正式四方法实验；运行前不要再修改题库、预算金标或冻结快照。
+- [P1] 正式实验完成后，再生成论文结果包和论文初稿材料。
 
 ## 可复制命令
 
