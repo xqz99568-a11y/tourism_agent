@@ -1,0 +1,132 @@
+{
+  "schema_version": "day8-budget-policy-dev-cases-v2",
+  "dataset_id": "day8_budget_policy_dev_cases_v2",
+  "dataset_version": "2026-08-17-budget-policy-v2-scope-tier-dev",
+  "purpose": "Development-only acceptance cases for Budget Policy v2 tier handling, optional upgrades, and three-state budget sufficiency. These cases are not part of the formal CTP-100 test set.",
+  "reference_date": "2026-08-06",
+  "cases": [
+    {
+      "case_id": "day8_budget_v2_001_comfort_hotel_economy_food",
+      "user_input": "8月10号从广州去桂林玩3天，两个人，预算5000元，住宿想舒适一点，吃饭按经济实惠就行。",
+      "task_type": "trip_planning",
+      "slots": {
+        "origin": "guangzhou",
+        "destination": "guilin",
+        "start_date": "2026-08-10",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 5000,
+        "hotel_level": "comfort",
+        "food_level": "economy"
+      },
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": ["poi_search", "budget_calculator"],
+        "hotel_tier": "comfort",
+        "food_tier": "economy",
+        "upgrade_decision": "explicit_preference_applied"
+      }
+    },
+    {
+      "case_id": "day8_budget_v2_002_economy_hotel_comfort_food",
+      "user_input": "后天去杭州玩3天，两个人，住宿经济型就行，但想吃好一点当地特色美食，预算5000。",
+      "task_type": "trip_planning",
+      "slots": {
+        "destination": "hangzhou",
+        "start_date": "2026-08-08",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 5000,
+        "hotel_level": "economy",
+        "food_level": "comfort"
+      },
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": ["poi_search", "budget_calculator"],
+        "hotel_tier": "economy",
+        "food_tier": "comfort",
+        "upgrade_decision": "explicit_preference_applied"
+      }
+    },
+    {
+      "case_id": "day8_budget_v2_003_explicit_premium",
+      "user_input": "从上海去北京玩2天，一个人，预算6000，住宿和餐饮都按高端一点来估。",
+      "task_type": "budget_query",
+      "slots": {
+        "origin": "shanghai",
+        "destination": "beijing",
+        "duration_days": 2,
+        "people_count": 1,
+        "budget_amount": 6000,
+        "hotel_level": "premium",
+        "food_level": "premium"
+      },
+      "expected": {
+        "task_type": "budget_query",
+        "required_tools": ["budget_calculator"],
+        "hotel_tier": "premium",
+        "food_tier": "premium",
+        "upgrade_decision": "explicit_preference_applied"
+      }
+    },
+    {
+      "case_id": "day8_budget_v2_004_insufficient_keep_explicit_tier",
+      "user_input": "从上海去北京玩2天，两个人，预算3000元，但住宿要高端，吃饭也想吃好一点，帮我看够不够。",
+      "task_type": "budget_query",
+      "slots": {
+        "origin": "shanghai",
+        "destination": "beijing",
+        "duration_days": 2,
+        "people_count": 2,
+        "budget_amount": 3000,
+        "hotel_level": "premium",
+        "food_level": "comfort"
+      },
+      "expected": {
+        "task_type": "budget_query",
+        "required_tools": ["budget_calculator"],
+        "hotel_tier": "premium",
+        "food_tier": "comfort",
+        "sufficiency_status": "insufficient",
+        "rule": "do_not_downgrade_explicit_tier_when_over_budget"
+      }
+    },
+    {
+      "case_id": "day8_budget_v2_005_comfortable_pace_not_spending_upgrade",
+      "user_input": "想去西安玩3天，两个人，预算5000，行程安排舒服一点别太赶。",
+      "task_type": "trip_planning",
+      "slots": {
+        "destination": "xian",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 5000
+      },
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": ["poi_search", "budget_calculator"],
+        "hotel_tier": "economy",
+        "food_tier": "economy",
+        "rule": "comfortable_pace_is_not_consumption_tier"
+      }
+    },
+    {
+      "case_id": "day8_budget_v2_006_optional_upgrade_not_main_plan",
+      "user_input": "桂林3天两个人预算5000，主方案按经济型算；如果有富余，可以顺便告诉我可选升级，但不要替换主预算。",
+      "task_type": "budget_query",
+      "slots": {
+        "destination": "guilin",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 5000
+      },
+      "expected": {
+        "task_type": "budget_query",
+        "required_tools": ["budget_calculator"],
+        "hotel_tier": "economy",
+        "food_tier": "economy",
+        "optional_upgrade_allowed": true,
+        "rule": "optional_upgrade_must_not_replace_main_economy_budget"
+      }
+    }
+  ]
+}

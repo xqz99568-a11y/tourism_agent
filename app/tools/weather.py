@@ -3,18 +3,28 @@
 """
 from __future__ import annotations
 
-import time
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 
-import httpx
-
-from app.core.config import settings
-from app.core.fixed_data import FixedDataError, get_fixed_tourism_data, is_formal_offline_mode
+from app.core.qweather_snapshot import (
+    QWEATHER_DEFAULT_WEATHER_QUERY_DAYS,
+    QWEATHER_MAX_QUERY_DAYS,
+    QWeatherSnapshotError,
+    load_qweather_snapshot_manifest,
+    query_qweather_snapshot,
+)
 from app.core.logger import get_logger
 from app.tools.base import BaseTool, ToolResult
 
 logger = get_logger(__name__)
+
+
+def _bounded_weather_days(value: Any) -> int:
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        parsed = QWEATHER_DEFAULT_WEATHER_QUERY_DAYS
+    return max(1, min(parsed, QWEATHER_MAX_QUERY_DAYS))
 
 
 class WeatherTool(BaseTool):
@@ -25,7 +35,7 @@ class WeatherTool(BaseTool):
 
     name = "weather_query"
     description = "查询目的地的天气预报"
-    external_service = "高德地图API"  # 标识外部服务
+    external_service = "qweather_frozen_snapshot"
     parameters = {
         "type": "object",
         "properties": {
@@ -56,15 +66,13 @@ class WeatherTool(BaseTool):
 
     def __init__(self):
         super().__init__()
-        self.api_key = settings.amap.api_key
-        self.base_url = "https://restapi.amap.com/v3/weather/weatherInfo"
 
     async def execute(
         self,
         city: str,
         extensions: str = "all",
         scenario_type: str = "sunny",
-        days: int = 5,
+        days: int = QWEATHER_DEFAULT_WEATHER_QUERY_DAYS,
         **kwargs,
     ) -> ToolResult:
         """查询天气预报"""
@@ -72,113 +80,59 @@ class WeatherTool(BaseTool):
             return ToolResult(success=False, error="Invalid parameters")
 
         try:
-            if is_formal_offline_mode():
-                result = get_fixed_tourism_data().weather_query(
-                    city=city,
-                    scenario_type=kwargs.get("weather_scenario") or scenario_type,
-                    days=kwargs.get("duration") or days,
-                )
+            requested_days = _bounded_weather_days(kwargs.get("duration") or days)
+            explicit_date = kwargs.get("start_date") or kwargs.get("date")
+            start_date = explicit_date or load_qweather_snapshot_manifest().get("forecast_start_date")
+            result = query_qweather_snapshot(
+                city=city,
+                start_date=str(start_date or ""),
+                days=requested_days,
+            )
+            date_defaulted = not bool(explicit_date)
+            return ToolResult(
+                success=True,
+                data=result,
+                metadata={
+                    "offline": True,
+                    "data_source": "qweather_frozen_snapshot",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "real_time_api_allowed": False,
+                    "snapshot_id": result.get("snapshot_id"),
+                    "snapshot_combined_sha256": result.get("snapshot_combined_sha256"),
+                    "coverage_status": result.get("coverage_status"),
+                    "date_defaulted_to_snapshot_start": date_defaulted,
+                    "runtime_online_refresh_allowed": False,
+                },
+                api_calls=[],
+            )
+
+        except Exception as e:
+            if isinstance(e, QWeatherSnapshotError):
                 return ToolResult(
-                    success=True,
-                    data=result,
+                    success=False,
+                    error=str(e),
                     metadata={
                         "offline": True,
-                        "data_source": "fixed_weather_scenario_dataset",
+                        "data_source": "qweather_frozen_snapshot",
+                        "source_mode": "qweather_frozen_snapshot",
                         "real_time_api_allowed": False,
-                        "source_file_id": result.get("source_file_id"),
-                        "dataset_version": result.get("dataset_version"),
+                        "runtime_online_refresh_allowed": False,
                     },
                     api_calls=[],
                 )
-
-            params = {
-                "key": self.api_key,
-                "city": city,
-                "extensions": extensions,
-            }
-
-            start_time = time.time()
-
-            async with httpx.AsyncClient(timeout=10.0) as client:
-                response = await client.get(self.base_url, params=params)
-                cost_ms = (time.time() - start_time) * 1000
-
-                if response.status_code != 200:
-                    self.record_api_call(
-                        endpoint="/v3/weather/weatherInfo",
-                        params={"city": city, "extensions": extensions},
-                        status="failed",
-                        http_status=response.status_code,
-                        error=f"API request failed: {response.status_code}",
-                        cost_ms=cost_ms,
-                    )
-                    return ToolResult(
-                        success=False,
-                        error=f"API request failed: {response.status_code}",
-                    )
-
-                data = response.json()
-
-                if data.get("status") != "1":
-                    self.record_api_call(
-                        endpoint="/v3/weather/weatherInfo",
-                        params={"city": city, "extensions": extensions},
-                        status="failed",
-                        http_status=200,
-                        error=data.get("info", "Unknown error"),
-                        cost_ms=cost_ms,
-                    )
-                    return ToolResult(
-                        success=False,
-                        error=data.get("info", "Unknown error"),
-                    )
-
-                # 记录成功的 API 调用
-                self.record_api_call(
-                    endpoint="/v3/weather/weatherInfo",
-                    params={"city": city, "extensions": extensions},
-                    status="completed",
-                    response={
-                        "lives_count": len(data.get("lives", [])),
-                        "forecasts_count": len(data.get("forecasts", [])),
-                    },
-                    http_status=200,
-                    cost_ms=cost_ms,
-                )
-
-                # 解析天气数据
-                weather_data = data.get("lives", [])
-                forecasts = data.get("forecasts", [])
-
-                result = {
-                    "city": city,
-                    "current": self._parse_current_weather(weather_data[0] if weather_data else {}),
-                    "forecast": self._parse_forecast(forecasts[0].get("casts", []) if forecasts else []),
-                }
-
-                return ToolResult(
-                    success=True,
-                    data=result,
-                    api_calls=[{
-                        "service": "高德地图API",
-                        "endpoint": "/v3/weather/weatherInfo",
-                        "status": "completed",
-                        "cost_ms": cost_ms,
-                        "city": city,
-                    }],
-                )
-
-        except Exception as e:
-            if isinstance(e, FixedDataError):
-                return ToolResult(success=False, error=str(e), metadata={"offline": True})
             logger.exception(f"Weather query failed: {e}")
-            self.record_api_call(
-                endpoint="/v3/weather/weatherInfo",
-                params={"city": city, "extensions": extensions},
-                status="failed",
+            return ToolResult(
+                success=False,
                 error=str(e),
+                metadata={
+                    "offline": True,
+                    "data_source": "qweather_frozen_snapshot",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "real_time_api_allowed": False,
+                    "runtime_online_refresh_allowed": False,
+                },
+                api_calls=[],
             )
-            return ToolResult(success=False, error=str(e))
 
     def _parse_current_weather(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """解析当前天气"""

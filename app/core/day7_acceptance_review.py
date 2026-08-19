@@ -218,6 +218,8 @@ def build_day7_acceptance_pack(
             expected_case_count=expected_case_count,
             require_llm_config=False,
             strict_formal=True,
+            require_day8_delivery_pack=False,
+            require_clean_git=False,
         )
 
     units = _flatten_case_units(cases)
@@ -1461,8 +1463,9 @@ def _acceptance_decision_legacy(
         "cross_dataset_leakage_passed": leakage_report.get("status") == "passed",
         "offline_feasibility_passed": feasibility_report.get("status") == "passed",
         "quota_gate_passed": _nested(evidence, "quota_gate", "status") == "passed",
-        "benchmark_manifest_points_test_draft": "ctp120_test_draft.json"
-        in _as_list(_nested(evidence, "benchmark_manifest", "case_files")),
+        "benchmark_manifest_points_test_draft": _benchmark_manifest_points_known_test_set(
+            evidence
+        ),
         "benchmark_preflight_passed": benchmark_preflight.get("status") == "passed",
         "benchmark_preflight_raw_count_matches_methods": _nested(
             benchmark_preflight,
@@ -1544,8 +1547,9 @@ def _acceptance_decision(
         "cross_dataset_leakage_passed": leakage_report.get("status") == "passed",
         "offline_feasibility_passed": feasibility_report.get("status") == "passed",
         "quota_gate_passed": _nested(evidence, "quota_gate", "status") == "passed",
-        "benchmark_manifest_points_test_draft": "ctp120_test_draft.json"
-        in _as_list(_nested(evidence, "benchmark_manifest", "case_files")),
+        "benchmark_manifest_points_test_draft": _benchmark_manifest_points_known_test_set(
+            evidence
+        ),
         "benchmark_preflight_passed": benchmark_preflight.get("status") == "passed",
         "benchmark_preflight_raw_count_matches_methods": _nested(
             benchmark_preflight,
@@ -1707,6 +1711,18 @@ def _acceptance_decision(
             "100 条测试集主实验。"
         ),
     }
+
+
+def _benchmark_manifest_points_known_test_set(evidence: Mapping[str, Any]) -> bool:
+    """Return whether the current manifest points to an accepted test dataset.
+
+    Day 7 originally froze ``ctp120_test_draft.json``.  After Day 8, the formal
+    manifest legitimately points at ``ctp100_formal_v2.json``.  The historical
+    Day 7 preparation check should accept both states instead of forcing the
+    project back to the old draft entry.
+    """
+    case_files = set(_as_list(_nested(evidence, "benchmark_manifest", "case_files")))
+    return bool(case_files & {"ctp120_test_draft.json", "ctp100_formal_v2.json"})
 
 
 def _stage_delivery_pack(

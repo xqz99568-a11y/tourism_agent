@@ -454,7 +454,7 @@ class BaseAgent(ABC):
             context.add_result(self.config.name, response)
 
             # 完成指标
-            context.complete_agent_metrics(self.config.name, response.tokens_used)
+            context.complete_agent_metrics(self.config.name, response.tokens_used, status=response.status.value)
 
             # 记录执行时间
             execution_time = (datetime.utcnow() - start_time).total_seconds() * 1000
@@ -476,10 +476,11 @@ class BaseAgent(ABC):
                 error=response.error,
             )
 
-            self.status = AgentStatus.COMPLETED
+            self.status = response.status
             logger.info(
-                "%s Agent completed in %.2fms (plan=%.2fms, execute=%.2fms, reflect=%.2fms, tool_calls=%d, tokens=%d)",
+                "%s Agent finished with status=%s in %.2fms (plan=%.2fms, execute=%.2fms, reflect=%.2fms, tool_calls=%d, tokens=%d)",
                 self.config.name.capitalize(),
+                response.status.value,
                 execution_time,
                 plan_time_ms,
                 execute_time_ms,
@@ -489,10 +490,12 @@ class BaseAgent(ABC):
             )
 
             # 记录最终思考步骤
+            final_icon = "✅" if response.success else "⚠️"
+            final_status_text = "执行完成" if response.success else f"执行结束，状态：{response.status.value}"
             self._record_thinking_complete(
                 context,
                 step_name="完成",
-                result_summary=f"✅ {self.config.name.capitalize()} 执行完成，耗时 {execution_time:.0f}ms，使用 {response.tokens_used} tokens",
+                result_summary=f"{final_icon} {self.config.name.capitalize()} {final_status_text}，耗时 {execution_time:.0f}ms，使用 {response.tokens_used} tokens",
             )
 
             # 重置状态

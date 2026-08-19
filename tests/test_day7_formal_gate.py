@@ -11,6 +11,7 @@ from app.core.formal_experiment_gate import (
     FORMAL_EXPERIMENT_GATE_SCHEMA_VERSION,
     write_formal_experiment_gate,
 )
+from app.core.formal_artifact_integrity import build_formal_artifact_integrity_report
 
 
 def test_formal_experiment_gate_passes_complete_formal_evidence(tmp_path: Path) -> None:
@@ -23,9 +24,14 @@ def test_formal_experiment_gate_passes_complete_formal_evidence(tmp_path: Path) 
     gate = payload["gate"]
     assert gate["schema_version"] == FORMAL_EXPERIMENT_GATE_SCHEMA_VERSION
     assert gate["status"] == "passed"
+    assert gate["experiment_integrity_passed"] is True
+    assert gate["hypothesis_supported"] is True
     assert gate["paper_claims_allowed"] is True
     assert gate["checks"]["formal_preflight_passed"] is True
     assert gate["checks"]["paper_analysis_ready"] is True
+    assert gate["checks"]["bpcr_field_present"] is True
+    assert gate["checks"]["commit_matches_preflight"] is True
+    assert gate["checks"]["artifact_integrity_matches_preflight"] is True
     assert gate["checks"]["artifact_hashes_recorded"] is True
     assert gate["artifact_index"]["trace_file_count"] == 4
     assert len(gate["artifact_index"]["trace_combined_sha256"]) == 64
@@ -36,6 +42,8 @@ def test_formal_experiment_gate_passes_complete_formal_evidence(tmp_path: Path) 
 
     manifest = json.loads((run_dir / "experiment_manifest.json").read_text(encoding="utf-8"))
     assert manifest["formal_experiment_gate"]["status"] == "passed"
+    assert manifest["formal_experiment_gate"]["experiment_integrity_passed"] is True
+    assert manifest["formal_experiment_gate"]["hypothesis_supported"] is True
     assert manifest["results"]["formal_experiment_gate"] == payload["json"]
     assert manifest["results"]["formal_experiment_report"] == payload["markdown"]
 
@@ -116,11 +124,13 @@ def _write_formal_run_dir(
         encoding="utf-8",
     )
     (run_dir / "paper_tables.md").write_text("# Paper Result Tables\n", encoding="utf-8")
+    artifact_integrity = build_formal_artifact_integrity_report()
     (run_dir / "formal_preflight_report.json").write_text(
         json.dumps(
             {
                 "schema_version": "ctp-formal-preflight-v1",
                 "status": "passed",
+                "artifact_integrity": artifact_integrity,
                 "run": {
                     "run_id": "unit-formal-run",
                     "expected_raw_run_count": 4,
@@ -137,6 +147,9 @@ def _write_formal_run_dir(
                 "run_id": "unit-formal-run",
                 "dataset_id": "unit-formal-dataset",
                 "dataset_version": "v1",
+                "git_commit": artifact_integrity["git"]["commit"],
+                "git": artifact_integrity["git"],
+                "formal_artifact_integrity": artifact_integrity,
                 "methods": methods,
                 "repeats": 1,
                 "runtime_config": {
@@ -176,6 +189,7 @@ def _result(
     metrics = {
         "stsr": True,
         "evaluation_hcsr": 1.0,
+        "bpcr": 1.0,
         "agent_selection_f1": 1.0,
         "tool_selection_f1": 1.0,
         "agent_set_exact_match": True,
@@ -193,7 +207,7 @@ def _result(
         "latency_ms": 100,
         "metrics": metrics,
         "evaluation": {"task_type": "weather_query"},
-        "output": {"task_type": "weather_query"},
+        "output": {"task_type": "weather_query", "execution_status": "completed"},
         "run_audit": {
             "schema_version": "ctp-run-audit-v1",
             "metrics": metrics,
@@ -257,6 +271,7 @@ def _summary(*, independent_cases: int) -> dict:
             "metrics": {
                 "stsr": _paired_metric(1.0, 1.0, binary=True),
                 "evaluation_hcsr": _paired_metric(1.0, 1.0),
+                "bpcr": _paired_metric(1.0, 1.0),
                 "agent_selection_f1": _paired_metric(1.0, 1.0),
                 "tool_selection_f1": _paired_metric(1.0, 1.0),
                 "llm_call_count": _paired_metric(1.0, 1.0),
@@ -276,6 +291,7 @@ def _method_summary(*, tokens: int, llm_calls: int) -> dict:
         "raw_run_count": 1,
         "stsr_rate": 1.0,
         "evaluation_hcsr_mean": 1.0,
+        "bpcr_mean": 1.0,
         "agent_selection_f1_mean": 1.0,
         "tool_selection_f1_mean": 1.0,
         "llm_call_count_mean": llm_calls,

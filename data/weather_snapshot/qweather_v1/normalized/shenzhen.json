@@ -1,0 +1,1631 @@
+{
+  "metadata": {
+    "file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+    "schema_version": "ctp-qweather-normalized-city-v1",
+    "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+    "provider": "qweather",
+    "snapshot_id": "ctp_qweather_20260807_v1",
+    "reference_date": "2026-08-07",
+    "fetched_at": "2026-08-07T22:59:29+08:00",
+    "timezone": "Asia/Shanghai",
+    "city_id": "shenzhen",
+    "city_name": "深圳",
+    "location_id": "101280601",
+    "forecast_endpoint": "/v7/weather/30d",
+    "forecast_start_date": "2026-08-07",
+    "forecast_end_date": "2026-09-05",
+    "forecast_horizon_days": 30,
+    "record_count": 30,
+    "data_mode": "frozen_offline",
+    "source_mode": "qweather_frozen_snapshot",
+    "location_resolution": "fixed_location_id",
+    "real_time_api_allowed": false,
+    "api_key_recorded": false,
+    "source": {
+      "source_name": "QWeather",
+      "source_endpoint": "/v7/weather/30d",
+      "collection_policy": "collected once before formal experiments; runtime reads local snapshot only"
+    }
+  },
+  "daily_forecasts": [
+    {
+      "date": "2026-08-07",
+      "day_index": 1,
+      "snapshot_day_index": 1,
+      "state": "high_temperature",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴",
+      "temperature_min_c": 27,
+      "temperature_max_c": 34,
+      "precipitation_mm": 1.4,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 83,
+      "uv_index": 12,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-07",
+        "tempMin": "27",
+        "tempMax": "34",
+        "textDay": "晴",
+        "textNight": "晴",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "83",
+        "precip": "1.4",
+        "pop": null,
+        "uvIndex": "12"
+      }
+    },
+    {
+      "date": "2026-08-08",
+      "day_index": 2,
+      "snapshot_day_index": 2,
+      "state": "high_temperature",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "多云",
+      "temperature_min_c": 28,
+      "temperature_max_c": 35,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 73,
+      "uv_index": 12,
+      "risk_level": "medium",
+      "risk_tags": [
+        "heat"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-08",
+        "tempMin": "28",
+        "tempMax": "35",
+        "textDay": "多云",
+        "textNight": "多云",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "73",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "12"
+      }
+    },
+    {
+      "date": "2026-08-09",
+      "day_index": 3,
+      "snapshot_day_index": 3,
+      "state": "high_temperature",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "多云",
+      "temperature_min_c": 28,
+      "temperature_max_c": 35,
+      "precipitation_mm": 1.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 71,
+      "uv_index": 12,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-09",
+        "tempMin": "28",
+        "tempMax": "35",
+        "textDay": "多云",
+        "textNight": "多云",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "71",
+        "precip": "1.0",
+        "pop": null,
+        "uvIndex": "12"
+      }
+    },
+    {
+      "date": "2026-08-10",
+      "day_index": 4,
+      "snapshot_day_index": 4,
+      "state": "high_temperature",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "多云",
+      "temperature_min_c": 27,
+      "temperature_max_c": 35,
+      "precipitation_mm": 1.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 66,
+      "uv_index": 6,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-10",
+        "tempMin": "27",
+        "tempMax": "35",
+        "textDay": "多云",
+        "textNight": "多云",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "66",
+        "precip": "1.0",
+        "pop": null,
+        "uvIndex": "6"
+      }
+    },
+    {
+      "date": "2026-08-11",
+      "day_index": 5,
+      "snapshot_day_index": 5,
+      "state": "rain",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 27,
+      "temperature_max_c": 32,
+      "precipitation_mm": 1.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 75,
+      "uv_index": 10,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-11",
+        "tempMin": "27",
+        "tempMax": "32",
+        "textDay": "雷阵雨",
+        "textNight": "雷阵雨",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "75",
+        "precip": "1.0",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-12",
+      "day_index": 6,
+      "snapshot_day_index": 6,
+      "state": "rain",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 27,
+      "temperature_max_c": 32,
+      "precipitation_mm": 2.1,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 73,
+      "uv_index": 7,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-12",
+        "tempMin": "27",
+        "tempMax": "32",
+        "textDay": "雷阵雨",
+        "textNight": "雷阵雨",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "73",
+        "precip": "2.1",
+        "pop": null,
+        "uvIndex": "7"
+      }
+    },
+    {
+      "date": "2026-08-13",
+      "day_index": 7,
+      "snapshot_day_index": 7,
+      "state": "rain",
+      "weather": "多云",
+      "day_weather": "多云",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 26,
+      "temperature_max_c": 32,
+      "precipitation_mm": 0.3,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 80,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-13",
+        "tempMin": "26",
+        "tempMax": "32",
+        "textDay": "多云",
+        "textNight": "雷阵雨",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "80",
+        "precip": "0.3",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-14",
+      "day_index": 8,
+      "snapshot_day_index": 8,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 26,
+      "temperature_max_c": 32,
+      "precipitation_mm": 6.2,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 74,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-14",
+        "tempMin": "26",
+        "tempMax": "32",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "74",
+        "precip": "6.2",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-15",
+      "day_index": 9,
+      "snapshot_day_index": 9,
+      "state": "rain",
+      "weather": "阴",
+      "day_weather": "阴",
+      "night_weather": "小雨",
+      "temperature_min_c": 26,
+      "temperature_max_c": 31,
+      "precipitation_mm": 11.3,
+      "precipitation_probability": null,
+      "wind_direction_day": "西南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 65,
+      "uv_index": 3,
+      "risk_level": "high",
+      "risk_tags": [
+        "rain",
+        "heavy_rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-15",
+        "tempMin": "26",
+        "tempMax": "31",
+        "textDay": "阴",
+        "textNight": "小雨",
+        "windDirDay": "西南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "65",
+        "precip": "11.3",
+        "pop": null,
+        "uvIndex": "3"
+      }
+    },
+    {
+      "date": "2026-08-16",
+      "day_index": 10,
+      "snapshot_day_index": 10,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 26,
+      "temperature_max_c": 31,
+      "precipitation_mm": 13.6,
+      "precipitation_probability": null,
+      "wind_direction_day": "西南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 66,
+      "uv_index": 4,
+      "risk_level": "high",
+      "risk_tags": [
+        "rain",
+        "heavy_rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-16",
+        "tempMin": "26",
+        "tempMax": "31",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "西南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "66",
+        "precip": "13.6",
+        "pop": null,
+        "uvIndex": "4"
+      }
+    },
+    {
+      "date": "2026-08-17",
+      "day_index": 11,
+      "snapshot_day_index": 11,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "阴",
+      "temperature_min_c": 25,
+      "temperature_max_c": 31,
+      "precipitation_mm": 5.4,
+      "precipitation_probability": null,
+      "wind_direction_day": "东南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 72,
+      "uv_index": 3,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-17",
+        "tempMin": "25",
+        "tempMax": "31",
+        "textDay": "小雨",
+        "textNight": "阴",
+        "windDirDay": "东南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "72",
+        "precip": "5.4",
+        "pop": null,
+        "uvIndex": "3"
+      }
+    },
+    {
+      "date": "2026-08-18",
+      "day_index": 12,
+      "snapshot_day_index": 12,
+      "state": "rain",
+      "weather": "阴",
+      "day_weather": "阴",
+      "night_weather": "小雨",
+      "temperature_min_c": 26,
+      "temperature_max_c": 30,
+      "precipitation_mm": 9.3,
+      "precipitation_probability": null,
+      "wind_direction_day": "东南风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 80,
+      "uv_index": 7,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-18",
+        "tempMin": "26",
+        "tempMax": "30",
+        "textDay": "阴",
+        "textNight": "小雨",
+        "windDirDay": "东南风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "80",
+        "precip": "9.3",
+        "pop": null,
+        "uvIndex": "7"
+      }
+    },
+    {
+      "date": "2026-08-19",
+      "day_index": 13,
+      "snapshot_day_index": 13,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 27,
+      "temperature_max_c": 32,
+      "precipitation_mm": 0.9,
+      "precipitation_probability": null,
+      "wind_direction_day": "西北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 68,
+      "uv_index": 5,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-19",
+        "tempMin": "27",
+        "tempMax": "32",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "西北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "68",
+        "precip": "0.9",
+        "pop": null,
+        "uvIndex": "5"
+      }
+    },
+    {
+      "date": "2026-08-20",
+      "day_index": 14,
+      "snapshot_day_index": 14,
+      "state": "high_temperature",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 25,
+      "temperature_max_c": 34,
+      "precipitation_mm": 2.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 16.0,
+      "humidity_percent": 91,
+      "uv_index": 6,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat",
+        "large_temp_gap"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-20",
+        "tempMin": "25",
+        "tempMax": "34",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "16",
+        "humidity": "91",
+        "precip": "2.0",
+        "pop": null,
+        "uvIndex": "6"
+      }
+    },
+    {
+      "date": "2026-08-21",
+      "day_index": 15,
+      "snapshot_day_index": 15,
+      "state": "rain",
+      "weather": "小雨",
+      "day_weather": "小雨",
+      "night_weather": "小雨",
+      "temperature_min_c": 24,
+      "temperature_max_c": 26,
+      "precipitation_mm": 2.4,
+      "precipitation_probability": null,
+      "wind_direction_day": "西北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 3.0,
+      "humidity_percent": 89,
+      "uv_index": 5,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-21",
+        "tempMin": "24",
+        "tempMax": "26",
+        "textDay": "小雨",
+        "textNight": "小雨",
+        "windDirDay": "西北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "3",
+        "humidity": "89",
+        "precip": "2.4",
+        "pop": null,
+        "uvIndex": "5"
+      }
+    },
+    {
+      "date": "2026-08-22",
+      "day_index": 16,
+      "snapshot_day_index": 16,
+      "state": "high_temperature",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 27,
+      "temperature_max_c": 33,
+      "precipitation_mm": 3.3,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 11.0,
+      "humidity_percent": 83,
+      "uv_index": 3,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-22",
+        "tempMin": "27",
+        "tempMax": "33",
+        "textDay": "雷阵雨",
+        "textNight": "雷阵雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "11",
+        "humidity": "83",
+        "precip": "3.3",
+        "pop": null,
+        "uvIndex": "3"
+      }
+    },
+    {
+      "date": "2026-08-23",
+      "day_index": 17,
+      "snapshot_day_index": 17,
+      "state": "rain",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "阵雨",
+      "temperature_min_c": 26,
+      "temperature_max_c": 32,
+      "precipitation_mm": 5.1,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 6.0,
+      "humidity_percent": 60,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-23",
+        "tempMin": "26",
+        "tempMax": "32",
+        "textDay": "雷阵雨",
+        "textNight": "阵雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "6",
+        "humidity": "60",
+        "precip": "5.1",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-24",
+      "day_index": 18,
+      "snapshot_day_index": 18,
+      "state": "rain",
+      "weather": "晴间多云",
+      "day_weather": "晴间多云",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 27,
+      "temperature_max_c": 32,
+      "precipitation_mm": 1.2,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 6.0,
+      "humidity_percent": 76,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-24",
+        "tempMin": "27",
+        "tempMax": "32",
+        "textDay": "晴间多云",
+        "textNight": "晴间多云",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "6",
+        "humidity": "76",
+        "precip": "1.2",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-25",
+      "day_index": 19,
+      "snapshot_day_index": 19,
+      "state": "high_temperature",
+      "weather": "晴间多云",
+      "day_weather": "晴间多云",
+      "night_weather": "多云",
+      "temperature_min_c": 27,
+      "temperature_max_c": 33,
+      "precipitation_mm": 0.9,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 6.0,
+      "humidity_percent": 74,
+      "uv_index": 10,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-25",
+        "tempMin": "27",
+        "tempMax": "33",
+        "textDay": "晴间多云",
+        "textNight": "多云",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "6",
+        "humidity": "74",
+        "precip": "0.9",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-08-26",
+      "day_index": 20,
+      "snapshot_day_index": 20,
+      "state": "high_temperature",
+      "weather": "阵雨",
+      "day_weather": "阵雨",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 27,
+      "temperature_max_c": 33,
+      "precipitation_mm": 1.1,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 7.0,
+      "humidity_percent": 73,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-26",
+        "tempMin": "27",
+        "tempMax": "33",
+        "textDay": "阵雨",
+        "textNight": "雷阵雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "7",
+        "humidity": "73",
+        "precip": "1.1",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-27",
+      "day_index": 21,
+      "snapshot_day_index": 21,
+      "state": "high_temperature",
+      "weather": "少云",
+      "day_weather": "少云",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 27,
+      "temperature_max_c": 33,
+      "precipitation_mm": 2.8,
+      "precipitation_probability": null,
+      "wind_direction_day": "东风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 19.0,
+      "humidity_percent": 72,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-27",
+        "tempMin": "27",
+        "tempMax": "33",
+        "textDay": "少云",
+        "textNight": "晴间多云",
+        "windDirDay": "东风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "19",
+        "humidity": "72",
+        "precip": "2.8",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-28",
+      "day_index": 22,
+      "snapshot_day_index": 22,
+      "state": "rain",
+      "weather": "晴间多云",
+      "day_weather": "晴间多云",
+      "night_weather": "晴",
+      "temperature_min_c": 27,
+      "temperature_max_c": 32,
+      "precipitation_mm": 2.3,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 6.0,
+      "humidity_percent": 73,
+      "uv_index": 6,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-28",
+        "tempMin": "27",
+        "tempMax": "32",
+        "textDay": "晴间多云",
+        "textNight": "晴",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "6",
+        "humidity": "73",
+        "precip": "2.3",
+        "pop": null,
+        "uvIndex": "6"
+      }
+    },
+    {
+      "date": "2026-08-29",
+      "day_index": 23,
+      "snapshot_day_index": 23,
+      "state": "high_temperature",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 27,
+      "temperature_max_c": 33,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "西北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 17.0,
+      "humidity_percent": 73,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "heat"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-29",
+        "tempMin": "27",
+        "tempMax": "33",
+        "textDay": "晴",
+        "textNight": "晴间多云",
+        "windDirDay": "西北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "17",
+        "humidity": "73",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-30",
+      "day_index": 24,
+      "snapshot_day_index": 24,
+      "state": "high_temperature",
+      "weather": "晴",
+      "day_weather": "晴",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 27,
+      "temperature_max_c": 33,
+      "precipitation_mm": 0.0,
+      "precipitation_probability": null,
+      "wind_direction_day": "西北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 17.0,
+      "humidity_percent": 75,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "heat"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-30",
+        "tempMin": "27",
+        "tempMax": "33",
+        "textDay": "晴",
+        "textNight": "晴间多云",
+        "windDirDay": "西北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "17",
+        "humidity": "75",
+        "precip": "0.0",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-08-31",
+      "day_index": 25,
+      "snapshot_day_index": 25,
+      "state": "high_temperature",
+      "weather": "少云",
+      "day_weather": "少云",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 27,
+      "temperature_max_c": 33,
+      "precipitation_mm": 0.7,
+      "precipitation_probability": null,
+      "wind_direction_day": "西北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 17.0,
+      "humidity_percent": 73,
+      "uv_index": 10,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-08-31",
+        "tempMin": "27",
+        "tempMax": "33",
+        "textDay": "少云",
+        "textNight": "雷阵雨",
+        "windDirDay": "西北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "17",
+        "humidity": "73",
+        "precip": "0.7",
+        "pop": null,
+        "uvIndex": "10"
+      }
+    },
+    {
+      "date": "2026-09-01",
+      "day_index": 26,
+      "snapshot_day_index": 26,
+      "state": "rain",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 27,
+      "temperature_max_c": 32,
+      "precipitation_mm": 11.3,
+      "precipitation_probability": null,
+      "wind_direction_day": "北风",
+      "wind_scale_day": 3,
+      "wind_speed_day_kmh": 26.0,
+      "humidity_percent": 74,
+      "uv_index": 4,
+      "risk_level": "high",
+      "risk_tags": [
+        "rain",
+        "heavy_rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-01",
+        "tempMin": "27",
+        "tempMax": "32",
+        "textDay": "雷阵雨",
+        "textNight": "雷阵雨",
+        "windDirDay": "北风",
+        "windScaleDay": "3-4",
+        "windSpeedDay": "26",
+        "humidity": "74",
+        "precip": "11.3",
+        "pop": null,
+        "uvIndex": "4"
+      }
+    },
+    {
+      "date": "2026-09-02",
+      "day_index": 27,
+      "snapshot_day_index": 27,
+      "state": "rain",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "晴间多云",
+      "temperature_min_c": 27,
+      "temperature_max_c": 32,
+      "precipitation_mm": 5.2,
+      "precipitation_probability": null,
+      "wind_direction_day": "东南风",
+      "wind_scale_day": 3,
+      "wind_speed_day_kmh": 28.0,
+      "humidity_percent": 75,
+      "uv_index": 6,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-02",
+        "tempMin": "27",
+        "tempMax": "32",
+        "textDay": "雷阵雨",
+        "textNight": "晴间多云",
+        "windDirDay": "东南风",
+        "windScaleDay": "3-4",
+        "windSpeedDay": "28",
+        "humidity": "75",
+        "precip": "5.2",
+        "pop": null,
+        "uvIndex": "6"
+      }
+    },
+    {
+      "date": "2026-09-03",
+      "day_index": 28,
+      "snapshot_day_index": 28,
+      "state": "rain",
+      "weather": "晴间多云",
+      "day_weather": "晴间多云",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 27,
+      "temperature_max_c": 31,
+      "precipitation_mm": 2.2,
+      "precipitation_probability": null,
+      "wind_direction_day": "东风",
+      "wind_scale_day": 3,
+      "wind_speed_day_kmh": 20.0,
+      "humidity_percent": 75,
+      "uv_index": 11,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-03",
+        "tempMin": "27",
+        "tempMax": "31",
+        "textDay": "晴间多云",
+        "textNight": "雷阵雨",
+        "windDirDay": "东风",
+        "windScaleDay": "3-4",
+        "windSpeedDay": "20",
+        "humidity": "75",
+        "precip": "2.2",
+        "pop": null,
+        "uvIndex": "11"
+      }
+    },
+    {
+      "date": "2026-09-04",
+      "day_index": 29,
+      "snapshot_day_index": 29,
+      "state": "high_temperature",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 26,
+      "temperature_max_c": 33,
+      "precipitation_mm": 2.9,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 13.0,
+      "humidity_percent": 74,
+      "uv_index": 6,
+      "risk_level": "medium",
+      "risk_tags": [
+        "rain",
+        "heat"
+      ],
+      "suitable_periods": [
+        "morning",
+        "evening",
+        "indoor"
+      ],
+      "avoid_periods": [
+        "midday_outdoor",
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-04",
+        "tempMin": "26",
+        "tempMax": "33",
+        "textDay": "雷阵雨",
+        "textNight": "雷阵雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "13",
+        "humidity": "74",
+        "precip": "2.9",
+        "pop": null,
+        "uvIndex": "6"
+      }
+    },
+    {
+      "date": "2026-09-05",
+      "day_index": 30,
+      "snapshot_day_index": 30,
+      "state": "rain",
+      "weather": "雷阵雨",
+      "day_weather": "雷阵雨",
+      "night_weather": "雷阵雨",
+      "temperature_min_c": 26,
+      "temperature_max_c": 32,
+      "precipitation_mm": 15.2,
+      "precipitation_probability": null,
+      "wind_direction_day": "东北风",
+      "wind_scale_day": 1,
+      "wind_speed_day_kmh": 4.0,
+      "humidity_percent": 73,
+      "uv_index": 3,
+      "risk_level": "high",
+      "risk_tags": [
+        "rain",
+        "heavy_rain"
+      ],
+      "suitable_periods": [
+        "indoor",
+        "short_outdoor_window"
+      ],
+      "avoid_periods": [
+        "long_outdoor_exposure"
+      ],
+      "evidence": {
+        "provider": "qweather",
+        "source_mode": "qweather_frozen_snapshot",
+        "city_id": "shenzhen",
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "source_endpoint": "/v7/weather/30d",
+        "offline": true,
+        "real_time_api_allowed": false
+      },
+      "provider_raw_fields": {
+        "fxDate": "2026-09-05",
+        "tempMin": "26",
+        "tempMax": "32",
+        "textDay": "雷阵雨",
+        "textNight": "雷阵雨",
+        "windDirDay": "东北风",
+        "windScaleDay": "1-3",
+        "windSpeedDay": "4",
+        "humidity": "73",
+        "precip": "15.2",
+        "pop": null,
+        "uvIndex": "3"
+      }
+    }
+  ]
+}

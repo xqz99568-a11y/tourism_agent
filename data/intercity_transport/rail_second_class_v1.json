@@ -1,0 +1,347 @@
+{
+  "schema_version": "ctp-intercity-rail-second-class-v1",
+  "dataset_id": "ctp_intercity_rail_second_class",
+  "dataset_version": "ctp_intercity_rail_second_class_20260813_reviewed_v1",
+  "fare_snapshot_date": "2026-08-13",
+  "source_name": "China Railway 12306",
+  "source_type": "manual_lookup_official_website",
+  "transport_mode": "high_speed_or_d_train",
+  "seat_class": "second_class",
+  "passenger_type": "adult",
+  "currency": "CNY",
+  "fare_scope": "one_way_per_person",
+  "round_trip_multiplier": 2,
+  "symmetric_route_lookup_allowed": true,
+  "real_time_price_claim_allowed": false,
+  "runtime_online_refresh_allowed": false,
+  "api_key_recorded": false,
+  "notes": [
+    "Fares are manually reviewed reference prices from user-provided China Railway 12306 screenshots.",
+    "The formal experiment treats these prices as frozen offline evidence and does not refresh them online.",
+    "The selected fare follows the visible-fastest second-class rule recorded in the evidence ledger.",
+    "Small real-world price fluctuations after the snapshot date are intentionally ignored during experiments."
+  ],
+  "supported_origin_cities": [
+    "shanghai",
+    "guangzhou",
+    "chengdu",
+    "chongqing",
+    "wuhan",
+    "changsha",
+    "nanjing",
+    "zhengzhou",
+    "nanchang",
+    "guiyang"
+  ],
+  "supported_destination_cities": [
+    "beijing",
+    "hangzhou",
+    "xian",
+    "shenzhen",
+    "guilin"
+  ],
+  "routes": [
+    {
+      "route_id": "shanghai_beijing_rail_second_class",
+      "origin": "shanghai",
+      "destination": "beijing",
+      "one_way_fare_per_person_cny": 661
+    },
+    {
+      "route_id": "shanghai_hangzhou_rail_second_class",
+      "origin": "shanghai",
+      "destination": "hangzhou",
+      "one_way_fare_per_person_cny": 83
+    },
+    {
+      "route_id": "shanghai_xian_rail_second_class",
+      "origin": "shanghai",
+      "destination": "xian",
+      "one_way_fare_per_person_cny": 779
+    },
+    {
+      "route_id": "shanghai_shenzhen_rail_second_class",
+      "origin": "shanghai",
+      "destination": "shenzhen",
+      "one_way_fare_per_person_cny": 872
+    },
+    {
+      "route_id": "shanghai_guilin_rail_second_class",
+      "origin": "shanghai",
+      "destination": "guilin",
+      "one_way_fare_per_person_cny": 768.5
+    },
+    {
+      "route_id": "guangzhou_beijing_rail_second_class",
+      "origin": "guangzhou",
+      "destination": "beijing",
+      "one_way_fare_per_person_cny": 1033
+    },
+    {
+      "route_id": "guangzhou_hangzhou_rail_second_class",
+      "origin": "guangzhou",
+      "destination": "hangzhou",
+      "one_way_fare_per_person_cny": 862
+    },
+    {
+      "route_id": "guangzhou_xian_rail_second_class",
+      "origin": "guangzhou",
+      "destination": "xian",
+      "one_way_fare_per_person_cny": 974
+    },
+    {
+      "route_id": "guangzhou_shenzhen_rail_second_class",
+      "origin": "guangzhou",
+      "destination": "shenzhen",
+      "one_way_fare_per_person_cny": 74.5
+    },
+    {
+      "route_id": "guangzhou_guilin_rail_second_class",
+      "origin": "guangzhou",
+      "destination": "guilin",
+      "one_way_fare_per_person_cny": 200
+    },
+    {
+      "route_id": "chengdu_beijing_rail_second_class",
+      "origin": "chengdu",
+      "destination": "beijing",
+      "one_way_fare_per_person_cny": 872
+    },
+    {
+      "route_id": "chengdu_hangzhou_rail_second_class",
+      "origin": "chengdu",
+      "destination": "hangzhou",
+      "one_way_fare_per_person_cny": 1066
+    },
+    {
+      "route_id": "chengdu_xian_rail_second_class",
+      "origin": "chengdu",
+      "destination": "xian",
+      "one_way_fare_per_person_cny": 285
+    },
+    {
+      "route_id": "chengdu_shenzhen_rail_second_class",
+      "origin": "chengdu",
+      "destination": "shenzhen",
+      "one_way_fare_per_person_cny": 770.5
+    },
+    {
+      "route_id": "chengdu_guilin_rail_second_class",
+      "origin": "chengdu",
+      "destination": "guilin",
+      "one_way_fare_per_person_cny": 493
+    },
+    {
+      "route_id": "chongqing_beijing_rail_second_class",
+      "origin": "chongqing",
+      "destination": "beijing",
+      "one_way_fare_per_person_cny": 898
+    },
+    {
+      "route_id": "chongqing_hangzhou_rail_second_class",
+      "origin": "chongqing",
+      "destination": "hangzhou",
+      "one_way_fare_per_person_cny": 848
+    },
+    {
+      "route_id": "chongqing_xian_rail_second_class",
+      "origin": "chongqing",
+      "destination": "xian",
+      "one_way_fare_per_person_cny": 476
+    },
+    {
+      "route_id": "chongqing_shenzhen_rail_second_class",
+      "origin": "chongqing",
+      "destination": "shenzhen",
+      "one_way_fare_per_person_cny": 625.5
+    },
+    {
+      "route_id": "chongqing_guilin_rail_second_class",
+      "origin": "chongqing",
+      "destination": "guilin",
+      "one_way_fare_per_person_cny": 357
+    },
+    {
+      "route_id": "wuhan_beijing_rail_second_class",
+      "origin": "wuhan",
+      "destination": "beijing",
+      "one_way_fare_per_person_cny": 623
+    },
+    {
+      "route_id": "wuhan_hangzhou_rail_second_class",
+      "origin": "wuhan",
+      "destination": "hangzhou",
+      "one_way_fare_per_person_cny": 375
+    },
+    {
+      "route_id": "wuhan_xian_rail_second_class",
+      "origin": "wuhan",
+      "destination": "xian",
+      "one_way_fare_per_person_cny": 428
+    },
+    {
+      "route_id": "wuhan_shenzhen_rail_second_class",
+      "origin": "wuhan",
+      "destination": "shenzhen",
+      "one_way_fare_per_person_cny": 627.5
+    },
+    {
+      "route_id": "wuhan_guilin_rail_second_class",
+      "origin": "wuhan",
+      "destination": "guilin",
+      "one_way_fare_per_person_cny": 397
+    },
+    {
+      "route_id": "changsha_beijing_rail_second_class",
+      "origin": "changsha",
+      "destination": "beijing",
+      "one_way_fare_per_person_cny": 778
+    },
+    {
+      "route_id": "changsha_hangzhou_rail_second_class",
+      "origin": "changsha",
+      "destination": "hangzhou",
+      "one_way_fare_per_person_cny": 461
+    },
+    {
+      "route_id": "changsha_xian_rail_second_class",
+      "origin": "changsha",
+      "destination": "xian",
+      "one_way_fare_per_person_cny": 704
+    },
+    {
+      "route_id": "changsha_shenzhen_rail_second_class",
+      "origin": "changsha",
+      "destination": "shenzhen",
+      "one_way_fare_per_person_cny": 394.5
+    },
+    {
+      "route_id": "changsha_guilin_rail_second_class",
+      "origin": "changsha",
+      "destination": "guilin",
+      "one_way_fare_per_person_cny": 190
+    },
+    {
+      "route_id": "nanjing_beijing_rail_second_class",
+      "origin": "nanjing",
+      "destination": "beijing",
+      "one_way_fare_per_person_cny": 532
+    },
+    {
+      "route_id": "nanjing_hangzhou_rail_second_class",
+      "origin": "nanjing",
+      "destination": "hangzhou",
+      "one_way_fare_per_person_cny": 103
+    },
+    {
+      "route_id": "nanjing_xian_rail_second_class",
+      "origin": "nanjing",
+      "destination": "xian",
+      "one_way_fare_per_person_cny": 623
+    },
+    {
+      "route_id": "nanjing_shenzhen_rail_second_class",
+      "origin": "nanjing",
+      "destination": "shenzhen",
+      "one_way_fare_per_person_cny": 847.5
+    },
+    {
+      "route_id": "nanjing_guilin_rail_second_class",
+      "origin": "nanjing",
+      "destination": "guilin",
+      "one_way_fare_per_person_cny": 625.5
+    },
+    {
+      "route_id": "zhengzhou_beijing_rail_second_class",
+      "origin": "zhengzhou",
+      "destination": "beijing",
+      "one_way_fare_per_person_cny": 278
+    },
+    {
+      "route_id": "zhengzhou_hangzhou_rail_second_class",
+      "origin": "zhengzhou",
+      "destination": "hangzhou",
+      "one_way_fare_per_person_cny": 492.5
+    },
+    {
+      "route_id": "zhengzhou_xian_rail_second_class",
+      "origin": "zhengzhou",
+      "destination": "xian",
+      "one_way_fare_per_person_cny": 221
+    },
+    {
+      "route_id": "zhengzhou_shenzhen_rail_second_class",
+      "origin": "zhengzhou",
+      "destination": "shenzhen",
+      "one_way_fare_per_person_cny": 818.5
+    },
+    {
+      "route_id": "zhengzhou_guilin_rail_second_class",
+      "origin": "zhengzhou",
+      "destination": "guilin",
+      "one_way_fare_per_person_cny": 661.5
+    },
+    {
+      "route_id": "nanchang_beijing_rail_second_class",
+      "origin": "nanchang",
+      "destination": "beijing",
+      "one_way_fare_per_person_cny": 745
+    },
+    {
+      "route_id": "nanchang_hangzhou_rail_second_class",
+      "origin": "nanchang",
+      "destination": "hangzhou",
+      "one_way_fare_per_person_cny": 241
+    },
+    {
+      "route_id": "nanchang_xian_rail_second_class",
+      "origin": "nanchang",
+      "destination": "xian",
+      "one_way_fare_per_person_cny": 640
+    },
+    {
+      "route_id": "nanchang_shenzhen_rail_second_class",
+      "origin": "nanchang",
+      "destination": "shenzhen",
+      "one_way_fare_per_person_cny": 443
+    },
+    {
+      "route_id": "nanchang_guilin_rail_second_class",
+      "origin": "nanchang",
+      "destination": "guilin",
+      "one_way_fare_per_person_cny": 390.5
+    },
+    {
+      "route_id": "guiyang_beijing_rail_second_class",
+      "origin": "guiyang",
+      "destination": "beijing",
+      "one_way_fare_per_person_cny": 1117
+    },
+    {
+      "route_id": "guiyang_hangzhou_rail_second_class",
+      "origin": "guiyang",
+      "destination": "hangzhou",
+      "one_way_fare_per_person_cny": 753
+    },
+    {
+      "route_id": "guiyang_xian_rail_second_class",
+      "origin": "guiyang",
+      "destination": "xian",
+      "one_way_fare_per_person_cny": 605
+    },
+    {
+      "route_id": "guiyang_shenzhen_rail_second_class",
+      "origin": "guiyang",
+      "destination": "shenzhen",
+      "one_way_fare_per_person_cny": 487.5
+    },
+    {
+      "route_id": "guiyang_guilin_rail_second_class",
+      "origin": "guiyang",
+      "destination": "guilin",
+      "one_way_fare_per_person_cny": 183
+    }
+  ],
+  "fare_selection_rule_id": "visible_fastest_second_class_fare",
+  "fare_selection_rule": "For each route, inspect the visible G/C/D intercity or high-speed train candidates in the 12306 screenshot; exclude trains without an explicit second-class or second-class-cabin fare; select the candidate with the shortest visible travel duration; if durations tie, select the lower second-class fare; if both tie, select the earlier departure time. Do not use business class, first class, sleeper, no-seat, flight, promotion, guessed, or refreshed online fares."
+}

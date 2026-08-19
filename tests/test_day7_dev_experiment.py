@@ -12,6 +12,7 @@ if str(ROOT) not in sys.path:
 
 from app.core.day7_dev_experiment_gate import (
     DAY7_DEV_EXPERIMENT_GATE_SCHEMA_VERSION,
+    _multi_turn_state_isolation,
     build_day7_dev_experiment_gate,
 )
 from app.core.experiment_runner import ExperimentRunner
@@ -192,6 +193,23 @@ def test_day7_m3_ablation_writes_no_normalizer_report_for_mini_dataset(
         if item["key"] == "manifest"
     )
     assert manifest_hash == _file_sha256(Path(payload["manifest"]))
+
+
+def test_day8_single_turn_dev_gate_treats_state_isolation_as_not_applicable() -> None:
+    state = _multi_turn_state_isolation(
+        [
+            {"case_id": "single-1", "method": "llm_direct"},
+            {"case_id": "single-1", "method": "single_agent"},
+            {"case_id": "single-1", "method": "fixed_multi_agent"},
+            {"case_id": "single-1", "method": "adaptive_multi_agent"},
+        ],
+        list(ExperimentRunner.METHODS),
+    )
+
+    assert state["passed"] is True
+    assert state["applicable"] is False
+    assert state["scenario_case_count"] == 0
+    assert state["violation_count"] == 0
 
 
 def test_day7_dev_gate_fails_without_state_isolation_metadata(

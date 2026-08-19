@@ -30,7 +30,7 @@ DEFAULT_REQUIRED_METHODS = (
 _METHOD_LABELS = {
     "llm_direct": "M0 Direct LLM",
     "single_agent": "M1 Single Agent",
-    "fixed_multi_agent": "M2 Fixed Multi-Agent",
+    "fixed_multi_agent": "M2 Fixed Template Multi-Agent",
     "adaptive_multi_agent": "M3 Proposed",
 }
 _CORE_RESULT_ARTIFACTS = {
@@ -43,6 +43,7 @@ _CORE_RESULT_ARTIFACTS = {
 _PRIMARY_METHOD_METRICS = (
     "stsr",
     "evaluation_hcsr",
+    "bpcr",
     "agent_selection_f1",
     "tool_selection_f1",
     "llm_call_count",
@@ -56,6 +57,7 @@ _PRIMARY_METHOD_METRICS = (
 _M3_M2_METRICS = (
     "stsr",
     "evaluation_hcsr",
+    "bpcr",
     "agent_selection_f1",
     "tool_selection_f1",
     "llm_call_count",
@@ -211,13 +213,14 @@ def render_paper_analysis_markdown(analysis: Dict[str, Any]) -> str:
         "",
         "## Method comparison",
         "",
-        "| Method | Cases | STSR | HCSR | Agent F1 | Tool F1 | LLM calls | Agent calls | Tool calls | Tokens | Std. cost | Latency ms |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| Method | Cases | STSR | HCSR | BPCR | Agent F1 | Tool F1 | LLM calls | Agent calls | Tool calls | Tokens | Std. cost | Latency ms |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in method_rows:
         lines.append(
             f"| {row.get('label')} | {_fmt(row.get('case_count'))} "
             f"| {_fmt(row.get('stsr'))} | {_fmt(row.get('evaluation_hcsr'))} "
+            f"| {_fmt(row.get('bpcr'))} "
             f"| {_fmt(row.get('agent_selection_f1'))} | {_fmt(row.get('tool_selection_f1'))} "
             f"| {_fmt(row.get('llm_call_count'))} | {_fmt(row.get('agent_call_count'))} "
             f"| {_fmt(row.get('called_tool_count') if row.get('called_tool_count') is not None else row.get('tool_call_count'))} "

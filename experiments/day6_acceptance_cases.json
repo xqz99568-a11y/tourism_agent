@@ -6,7 +6,7 @@
   "cases": [
     {
       "case_id": "day6_full_plan",
-      "user_input": "Plan a two-day Hangzhou trip for two people starting 2026-08-01, budget 5000 yuan, include attractions, weather, and budget.",
+      "user_input": "Plan a two-day Hangzhou trip for two people starting 2026-08-07, budget 5000 yuan, include attractions, weather, and budget.",
       "expected": {
         "task_type": "trip_planning",
         "duration_days": 2,
@@ -33,12 +33,25 @@
     },
     {
       "case_id": "day6_weather_single",
-      "user_input": "Check only the Hangzhou weather forecast for two days from 2026-08-01. Do not plan an itinerary.",
+      "user_input": "Check only the Hangzhou weather forecast for two days from 2026-08-07. Do not plan an itinerary.",
       "expected": {
         "task_type": "weather_query",
         "required_tools": ["weather_query"],
         "accepted_agent_sets": [["weather"]],
         "accepted_tool_sets": [["weather_query"]],
+        "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
+      }
+    },
+    {
+      "case_id": "day6_budget_single",
+      "user_input": "Estimate only the rough budget for a two-day Hangzhou trip for two people. Do not include attractions or weather.",
+      "expected": {
+        "task_type": "budget_query",
+        "duration_days": 2,
+        "required_tools": ["budget_calculator"],
+        "accepted_agent_sets": [["budget"]],
+        "accepted_tool_sets": [["budget_calculator"]],
+        "forbidden_tools": ["poi_search", "weather_query"],
         "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
       }
     },
@@ -68,12 +81,12 @@
     {
       "case_id": "day6_scenario_people_change",
       "case_type": "multi_turn",
-      "description": "First run a full Hangzhou plan, then change only the people count and evaluate the budget-only target turn.",
+      "description": "First run a full Hangzhou plan, then change only the people count and evaluate the itinerary/budget target turn.",
       "turns": [
         {
           "turn_id": "t1_full_plan",
           "target_turn": false,
-          "user_input": "Plan a two-day Hangzhou trip for two people starting 2026-08-01, budget 5000 yuan, include attractions, weather, itinerary, and budget.",
+          "user_input": "Plan a two-day Hangzhou trip for two people starting 2026-08-07, budget 5000 yuan, include attractions, weather, itinerary, and budget.",
           "expected": {
             "task_type": "trip_planning",
             "duration_days": 2,
@@ -89,14 +102,14 @@
         {
           "turn_id": "t2_people_change",
           "target_turn": true,
-          "user_input": "Change the plan for three people. Recalculate only the budget. Keep all other conditions unchanged.",
+          "user_input": "Change the plan for three people. Keep all other conditions unchanged.",
           "expected": {
-            "task_type": "budget_query",
+            "task_type": "partial_replan",
             "duration_days": 2,
             "changed_slots": ["people_count"],
-            "preserved_slots": ["destination", "start_date", "duration_days"],
+            "preserved_slots": ["destination", "start_date", "duration_days", "budget_amount"],
             "required_tools": ["budget_calculator"],
-            "accepted_agent_sets": [["budget"]],
+            "accepted_agent_sets": [["itinerary", "budget"]],
             "accepted_tool_sets": [["budget_calculator"]],
             "secret_marker": "DAY6_GOLD_SHOULD_NOT_LEAK"
           }
@@ -106,12 +119,12 @@
     {
       "case_id": "day6_scenario_rain_day2",
       "case_type": "multi_turn",
-      "description": "First run a full Hangzhou plan, then change the second day to rain and evaluate the weather/itinerary adjustment target turn.",
+      "description": "First run a full Hangzhou plan, then change the second day to rain and evaluate the reused-weather itinerary/budget adjustment target turn.",
       "turns": [
         {
           "turn_id": "t1_full_plan",
           "target_turn": false,
-          "user_input": "Plan a two-day Hangzhou trip for two people starting 2026-08-01, budget 5000 yuan, include attractions, weather, itinerary, and budget.",
+          "user_input": "Plan a two-day Hangzhou trip for two people starting 2026-08-07, budget 5000 yuan, include attractions, weather, itinerary, and budget.",
           "expected": {
             "task_type": "trip_planning",
             "duration_days": 2,
@@ -141,9 +154,9 @@
             },
             "changed_slots": ["weather_scenario"],
             "preserved_slots": ["destination", "start_date", "duration_days", "people_count"],
-            "required_tools": ["weather_query"],
-            "accepted_agent_sets": [["weather", "itinerary"]],
-            "accepted_tool_sets": [["weather_query"]],
+            "required_tools": ["budget_calculator"],
+            "accepted_agent_sets": [["itinerary", "budget"]],
+            "accepted_tool_sets": [["budget_calculator"]],
             "hard_constraints": {
               "weather_adjustment_required": true
             },
@@ -160,7 +173,7 @@
         {
           "turn_id": "t1_full_plan",
           "target_turn": false,
-          "user_input": "Plan a two-day Hangzhou trip for two people starting 2026-08-01, budget 5000 yuan, include attractions, weather, itinerary, and budget.",
+          "user_input": "Plan a two-day Hangzhou trip for two people starting 2026-08-07, budget 5000 yuan, include attractions, weather, itinerary, and budget.",
           "expected": {
             "task_type": "trip_planning",
             "duration_days": 2,

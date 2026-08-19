@@ -58,8 +58,8 @@ def test_followup_budget_turn_does_not_overwrite_destination_with_origin() -> No
         session=session,
     )
 
-    assert normalized["destination"] == "杭州"
-    assert normalized["origin"] == "上海"
+    assert normalized["destination"] == "hangzhou"
+    assert normalized["origin"] == "shanghai"
     assert normalized["budget_amount"] == pytest.approx(4000.0)
     assert normalized["num_travelers"] == 3
 
@@ -102,10 +102,10 @@ def test_partial_slots_are_persisted_before_clarification_finishes(
     event = asyncio.run(run_process())
 
     assert event is not None
-    assert session.trip_context.destination == "杭州"
+    assert session.trip_context.destination == "hangzhou"
     assert session.trip_context.duration_days == 3
     assert session.pending_clarification_latch is not None
-    assert session.pending_clarification_latch.partial_extracted["destination"] == "杭州"
+    assert session.pending_clarification_latch.partial_extracted["destination"] == "hangzhou"
     assert session.pending_clarification_latch.partial_extracted["duration"] == 3
 
 
@@ -136,6 +136,7 @@ def test_task_planner_reports_tools_separately_from_runtime_execution() -> None:
         IntentType.TRIP_PLANNING,
         {
             "destination": "杭州",
+            "start_date": "2026-08-10",
             "duration": 3,
             "budget_amount": 4000,
             "num_travelers": 2,

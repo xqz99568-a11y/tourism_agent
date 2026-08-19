@@ -57,7 +57,8 @@ def test_visible_request_parser_supports_common_chinese_and_english_slots() -> N
     )
     followup = parse_visible_request_slots("把两天改成三天，其他条件不变")
 
-    assert chinese["destination"] == "beijing"
+    assert chinese["origin"] == "beijing"
+    assert "destination" not in chinese
     assert chinese["duration_days"] == 2
     assert chinese["people_count"] == 2
     assert chinese["start_date"] == "2026-08-01"
@@ -94,6 +95,16 @@ def test_visible_request_parser_ignores_non_travel_avoidance_phrasing() -> None:
     assert slots["people_count"] == 2
     assert slots["budget_amount"] == 7120
     assert "special_requirements" not in slots
+
+
+def test_visible_request_parser_handles_companion_origin_and_explicit_total_people() -> None:
+    origin_slots = parse_visible_request_slots("从武汉带爸妈去北京玩4天，预算9000元。")
+    followup_slots = parse_visible_request_slots("再加一个人，现在一共3个人，其他条件不变。")
+
+    assert origin_slots["origin"] == "wuhan"
+    assert origin_slots["destination"] == "beijing"
+    assert origin_slots["people_count"] == 3
+    assert followup_slots["people_count"] == 3
 
 
 def test_builtin_m2_m3_use_parsed_method_input_not_gold_slots(tmp_path: Path) -> None:

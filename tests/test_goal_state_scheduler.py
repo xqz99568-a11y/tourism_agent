@@ -9,6 +9,7 @@ if str(ROOT) not in sys.path:
 from app.core.goal_state_scheduler import (
     DECISION_SCHEMA_VERSION,
     TICKET_SCHEMA_VERSION,
+    build_goal_state_result_fingerprints,
     build_goal_state_ticket,
     is_goal_state_agent_reusable,
     normalize_slots,
@@ -78,6 +79,21 @@ def _successful_previous_state(
     return state
 
 
+def _successful_previous_state_with_fingerprints(
+    slots: dict,
+    *,
+    agents: tuple[str, ...] = ("attraction", "weather", "itinerary", "budget"),
+) -> dict:
+    state = _successful_previous_state(slots, agents=agents)
+    state["result_fingerprints"] = build_goal_state_result_fingerprints(
+        slots=slots,
+        tool_results=state.get("tool_results"),
+        daily_itinerary=state.get("daily_itinerary"),
+        result_agents=agents,
+    )
+    return state
+
+
 def test_goal_state_ticket_matches_day4_acceptance_cases() -> None:
     acceptance_path = ROOT / "experiments" / "day4_scheduler_acceptance_cases.json"
     acceptance = json.loads(acceptance_path.read_text(encoding="utf-8"))
@@ -134,7 +150,7 @@ def test_complete_plan_with_attractions_weather_and_budget_beats_weather_query()
     )
     decision = schedule_goal_state_ticket(ticket)
 
-    assert ticket.task_type == "trip_planning"
+    assert ticket.task_type == "weather_aware_trip_plan"
     assert ticket.required_capabilities == [
         "poi_evidence",
         "weather_evidence",
@@ -157,7 +173,7 @@ def test_complete_plan_wording_with_budget_still_routes_to_full_plan() -> None:
     )
     decision = schedule_goal_state_ticket(ticket)
 
-    assert ticket.task_type == "trip_planning"
+    assert ticket.task_type == "weather_aware_trip_plan"
     assert decision.planned_agents == ["attraction", "weather", "itinerary", "budget"]
     assert decision.planned_tools == [
         "poi_search",
@@ -174,7 +190,7 @@ def test_landmark_route_weather_budget_wording_routes_to_full_plan() -> None:
     )
     decision = schedule_goal_state_ticket(ticket)
 
-    assert ticket.task_type == "trip_planning"
+    assert ticket.task_type == "weather_aware_trip_plan"
     assert decision.planned_agents == ["attraction", "weather", "itinerary", "budget"]
     assert decision.planned_tools == [
         "poi_search",
@@ -308,8 +324,8 @@ def test_partial_replan_combines_date_and_people_changes() -> None:
     assert decision.reused_agents == ["attraction"]
     assert decision.invalidated_agents == ["weather", "itinerary", "budget"]
     assert decision.decision_reasons == [
-        "date_changed_weather_replan",
-        "people_count_changed_budget_only",
+        "date_changed_weather_itinerary_budget_replan",
+        "people_count_changed_itinerary_budget_replan",
     ]
 
 
@@ -339,6 +355,174 @@ def test_partial_replan_combines_duration_and_preference_changes() -> None:
         "duration_changed_partial_replan",
         "preferences_changed_replan",
     ]
+
+
+def test_no_date_duration_change_does_not_trigger_weather_requery() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "destination": "guilin",
+            "duration_days": 4,
+            "people_count": 2,
+            "budget_amount": 6000,
+        },
+        agents=("attraction", "itinerary", "budget"),
+    )
+
+    ticket = build_goal_state_ticket(
+        user_input="Shorten the plan to three days, keep other conditions unchanged.",
+        current_slots={"duration_days": 3},
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "partial_replan", ticket
+    assert ticket.changed_slots == ["duration_days"]
+    assert decision.planned_agents == ["itinerary", "budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+    assert "weather" not in decision.planned_agents
+    assert "weather_query" not in decision.planned_tools
+    assert decision.reused_agents == ["attraction"]
+    assert decision.invalidated_agents == ["itinerary", "budget"]
+
+
+def test_special_requirements_change_reuses_weather_and_replans_trip_artifacts() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "destination": "xian",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+        }
+    )
+
+    ticket = build_goal_state_ticket(
+        user_input="My mother has bad knees; slow the pace and avoid long walks.",
+        current_slots={"special_requirements": ["low_intensity"]},
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "partial_replan", ticket
+    assert ticket.changed_slots == ["special_requirements"]
+    assert decision.planned_agents == ["attraction", "itinerary", "budget"]
+    assert decision.planned_tools == ["poi_search", "budget_calculator"]
+    assert decision.reused_agents == ["weather"]
+    assert decision.invalidated_agents == ["attraction", "itinerary", "budget"]
+
+
+def test_sun_avoidance_indoor_preference_change_is_partial_replan_not_weather_adjustment() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6000,
+        }
+    )
+    user_input = "我比较怕晒，多安排室内场馆，别改日期和预算。"
+
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots=parse_visible_request_slots(user_input),
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "partial_replan"
+    assert set(ticket.changed_slots) == {"preferences", "special_requirements"}
+    assert "weather_scenario" not in ticket.changed_slots
+    assert ticket.required_capabilities == [
+        "poi_evidence",
+        "itinerary_generation",
+        "budget_estimation",
+    ]
+    assert decision.planned_agents == ["attraction", "itinerary", "budget"]
+    assert decision.planned_tools == ["poi_search", "budget_calculator"]
+    assert decision.reused_agents == ["weather"]
+    assert decision.invalidated_agents == ["attraction", "itinerary", "budget"]
+
+
+def test_budget_amount_change_reuses_existing_itinerary_and_recomputes_budget_only() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "destination": "hangzhou",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4500,
+        }
+    )
+
+    ticket = build_goal_state_ticket(
+        user_input="Keep the route unchanged and raise the budget limit to 5500 yuan.",
+        current_slots={"budget_amount": 5500},
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "partial_replan"
+    assert ticket.changed_slots == ["budget_amount"]
+    assert decision.planned_agents == ["budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+    assert decision.reused_agents == ["attraction", "weather", "itinerary"]
+    assert decision.invalidated_agents == ["budget"]
+
+
+def test_chinese_budget_change_with_negated_replan_runs_budget_only() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "origin": "guangzhou",
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 3,
+            "budget_amount": 4000,
+        }
+    )
+
+    ticket = build_goal_state_ticket(
+        user_input="总预算上限提高到6000元，不用重新安排行程。",
+        current_slots={"budget_amount": 6000},
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "partial_replan"
+    assert ticket.goal_change_type == "slot_delta"
+    assert ticket.changed_slots == ["budget_amount"]
+    assert decision.planned_agents == ["budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+    assert decision.reused_agents == ["attraction", "weather", "itinerary"]
+    assert decision.invalidated_agents == ["budget"]
+
+
+def test_people_count_change_with_budget_unchanged_replans_itinerary_and_budget() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "origin": "guangzhou",
+            "destination": "guilin",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+        }
+    )
+
+    ticket = build_goal_state_ticket(
+        user_input="又有一个朋友加入，现在一共3个人，预算上限不变。",
+        current_slots={"people_count": 3},
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "partial_replan", ticket
+    assert ticket.changed_slots == ["people_count"]
+    assert decision.planned_agents == ["itinerary", "budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+    assert decision.reused_agents == ["attraction", "weather"]
+    assert decision.invalidated_agents == ["itinerary", "budget"]
 
 
 def test_goal_shift_without_slot_change_is_not_identical_reuse() -> None:
@@ -503,7 +687,7 @@ def test_chinese_clarification_handles_not_yet_decided_budget_fields() -> None:
     assert decision.planned_tools == []
 
 
-def test_chinese_rain_change_routes_to_weather_adjustment_without_budget_recompute() -> None:
+def test_chinese_rain_change_reuses_weather_and_recomputes_itinerary_budget() -> None:
     previous_state = _successful_previous_state(
         {
             "destination": "beijing",
@@ -523,13 +707,13 @@ def test_chinese_rain_change_routes_to_weather_adjustment_without_budget_recompu
 
     assert ticket.task_type == "weather_adjustment"
     assert ticket.changed_slots == ["weather_scenario"]
-    assert decision.planned_agents == ["weather", "itinerary"]
-    assert decision.planned_tools == ["weather_query"]
-    assert decision.reused_agents == ["attraction"]
-    assert "budget" not in decision.invalidated_agents
+    assert decision.planned_agents == ["itinerary", "budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+    assert decision.reused_agents == ["attraction", "weather"]
+    assert decision.invalidated_agents == ["itinerary", "budget"]
 
 
-def test_high_temperature_adjustment_reuses_attraction_without_budget_recompute() -> None:
+def test_high_temperature_adjustment_reuses_attraction_and_recomputes_budget() -> None:
     previous_state = _successful_previous_state(
         {
             "destination": "shenzhen",
@@ -552,11 +736,10 @@ def test_high_temperature_adjustment_reuses_attraction_without_budget_recompute(
     decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
 
     assert ticket.task_type == "weather_adjustment"
-    assert decision.planned_agents == ["weather", "itinerary"]
-    assert decision.planned_tools == ["weather_query"]
-    assert decision.reused_agents == ["attraction"]
-    assert "budget" not in decision.planned_agents
-    assert "budget" not in decision.invalidated_agents
+    assert decision.planned_agents == ["itinerary", "budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+    assert decision.reused_agents == ["attraction", "weather"]
+    assert decision.invalidated_agents == ["itinerary", "budget"]
 
 
 def test_identical_chinese_previous_turn_reuses_all_results() -> None:
@@ -583,6 +766,97 @@ def test_identical_chinese_previous_turn_reuses_all_results() -> None:
     assert decision.planned_agents == []
     assert decision.planned_tools == []
     assert decision.reused_agents == ["attraction", "weather", "itinerary", "budget"]
+
+
+def test_origin_only_delta_reuses_plan_and_recomputes_budget_only() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "destination": "guilin",
+            "start_date": "2026-08-10",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+        }
+    )
+
+    ticket = build_goal_state_ticket(
+        user_input="从广州出发",
+        current_slots={"origin": "guangzhou"},
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "partial_replan"
+    assert ticket.changed_slots == ["origin"]
+    assert ticket.required_capabilities == ["budget_estimation"]
+    assert ticket.dependency_policy == {"origin_change_scope": "budget_only"}
+    assert decision.planned_agents == ["budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+    assert decision.reused_agents == ["attraction", "weather", "itinerary"]
+    assert decision.invalidated_agents == ["budget"]
+    assert decision.decision_reasons == ["origin_changed_budget_only"]
+    assert decision.reuse_validation["unusable_reasons"]["budget"] in {
+        "input_fingerprint_mismatch",
+        "scheduled_for_reexecution",
+    }
+
+
+def test_origin_delta_with_explicit_route_replan_runs_itinerary_and_budget() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "destination": "guilin",
+            "start_date": "2026-08-10",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+        }
+    )
+
+    ticket = build_goal_state_ticket(
+        user_input="改成从广州出发，重新安排一下路线",
+        current_slots={"origin": "guangzhou"},
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "partial_replan"
+    assert ticket.changed_slots == ["origin"]
+    assert ticket.dependency_policy == {"origin_change_scope": "itinerary_budget"}
+    assert decision.planned_agents == ["itinerary", "budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+    assert decision.reused_agents == ["attraction", "weather"]
+    assert decision.invalidated_agents == ["itinerary", "budget"]
+    assert decision.decision_reasons == ["origin_changed_itinerary_budget_replan"]
+
+
+def test_origin_route_replan_without_date_reuses_attraction_result_fingerprint() -> None:
+    previous_state = _successful_previous_state_with_fingerprints(
+        {
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "special_requirements": ["low_intensity"],
+        },
+        agents=("attraction", "itinerary", "budget"),
+    )
+    user_input = "我们从广州出发，想重新安排行程。"
+
+    ticket = build_goal_state_ticket(
+        user_input=user_input,
+        current_slots=parse_visible_request_slots(user_input),
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "partial_replan"
+    assert ticket.changed_slots == ["origin"]
+    assert ticket.dependency_policy == {"origin_change_scope": "itinerary_budget"}
+    assert decision.planned_agents == ["itinerary", "budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+    assert decision.reused_agents == ["attraction"]
+    assert "poi_search" not in decision.planned_tools
+    assert "weather_query" not in decision.planned_tools
 
 
 def test_weather_only_with_negated_itinerary_is_weather_query() -> None:
@@ -883,7 +1157,7 @@ def test_previous_fingerprint_extra_conditions_do_not_match_missing_current_slot
     )
 
 
-def test_weather_adjustment_does_not_recompute_budget_when_budget_fingerprint_is_noisy() -> None:
+def test_weather_adjustment_recomputes_budget_even_when_previous_budget_looks_reusable() -> None:
     slots = {
         "destination": "beijing",
         "start_date": "2026-08-18",
@@ -902,10 +1176,36 @@ def test_weather_adjustment_does_not_recompute_budget_when_budget_fingerprint_is
     decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
 
     assert ticket.task_type == "weather_adjustment"
-    assert decision.planned_agents == ["weather", "itinerary"]
-    assert decision.planned_tools == ["weather_query"]
+    assert decision.planned_agents == ["itinerary", "budget"]
+    assert decision.planned_tools == ["budget_calculator"]
+    assert decision.reused_agents == ["attraction", "weather"]
+    assert decision.invalidated_agents == ["itinerary", "budget"]
+
+
+def test_weather_adjustment_queries_weather_when_previous_weather_is_missing() -> None:
+    previous_state = _successful_previous_state(
+        {
+            "destination": "beijing",
+            "start_date": "2026-08-18",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 6600,
+        },
+        agents=("attraction", "itinerary", "budget"),
+    )
+
+    ticket = build_goal_state_ticket(
+        user_input="北京第1天有雨，只调整第一天，日期、天数、人数和预算都不变。",
+        current_slots={"weather_scenario": "rain"},
+        previous_state=previous_state,
+    )
+    decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+
+    assert ticket.task_type == "weather_adjustment"
+    assert decision.planned_agents == ["weather", "itinerary", "budget"]
+    assert decision.planned_tools == ["weather_query", "budget_calculator"]
     assert decision.reused_agents == ["attraction"]
-    assert "budget" not in decision.invalidated_agents
+    assert decision.invalidated_agents == ["weather", "itinerary", "budget"]
 
 
 def test_empty_preferences_and_none_budget_are_explicit_slot_changes() -> None:

@@ -1,0 +1,1117 @@
+{
+  "schema_version": "ctp-day8-delivery-pack-v1",
+  "created_at": "2026-08-19T09:42:14.106616+00:00",
+  "run_id": "day8_delivery_20260819T094214Z",
+  "readiness": {
+    "status": "day8_delivery_ready",
+    "ready_for_formal_experiment": true,
+    "paper_claims_allowed": false,
+    "failed_checks": [],
+    "checks": {
+      "benchmark_manifest_loads": true,
+      "formal_dataset_loads": true,
+      "benchmark_points_to_ctp100_formal_v2": true,
+      "benchmark_and_dataset_versions_match": true,
+      "formal_dataset_case_count_matches": true,
+      "formal_dataset_turn_count_matches": true,
+      "benchmark_expanded_case_count_matches": true,
+      "benchmark_expanded_turn_count_matches": true,
+      "formal_preflight_passed": true,
+      "qweather_snapshot_valid": true,
+      "qweather_runtime_refresh_forbidden": true,
+      "intercity_snapshot_valid": true,
+      "intercity_route_count_matches": true,
+      "intercity_runtime_refresh_forbidden": true,
+      "budget_gold_policy_version_matches": true,
+      "budget_gold_schema_formal": true,
+      "budget_gold_status_formal_frozen": true,
+      "budget_gold_review_confirmed": true,
+      "economy_budget_manual_review_valid": true,
+      "budget_gold_manual_review_ledger_linked": true,
+      "budget_gold_confirmed_scope_economy_only": true,
+      "budget_gold_formal_tiers_economy_only": true,
+      "budget_gold_excludes_comfort_premium_confirmation": true,
+      "budget_gold_generated_records_use_economy_tiers": true,
+      "budget_gold_matches_current_dataset": true,
+      "budget_gold_counts_match": true,
+      "budget_review_clean": true,
+      "dataset_audit_passed": true,
+      "dataset_audit_matches_current_dataset": true,
+      "runner_acceptance_130_turn_gate_locked": true,
+      "no_date_weather_reminder_18_of_18": true,
+      "planned_actual_consistency_metrics_declared": true,
+      "m2_template_stsr_compatibility_valid": true,
+      "bpcr_formal_metric_declared": true,
+      "academic_experiment_design_valid": true,
+      "ctp100_declared_post_development_controlled": true,
+      "ctp100_not_claimed_unseen": true,
+      "sealed_validation_dataset_valid": true,
+      "sealed_validation_not_in_main_benchmark": true,
+      "sealed_validation_methods_m2_m3_only": true,
+      "formal_artifact_integrity_schema_valid": true,
+      "formal_artifact_integrity_all_required_exist": true,
+      "current_commit_recorded": true,
+      "git_worktree_clean": true,
+      "evaluation_rule_catalog_hash_recorded": true,
+      "independent_evaluator_code_hash_recorded": true,
+      "experiment_runner_code_hash_recorded": true,
+      "formal_preflight_records_artifact_integrity": true,
+      "evaluation_rule_catalog_declares_day8_formal": true,
+      "all_required_artifacts_exist": true,
+      "all_existing_artifact_hashes_recorded": true
+    },
+    "interpretation": "Day8 formal inputs are frozen and ready for the formal four-method experiment."
+  },
+  "formal_input": {
+    "benchmark_manifest": "experiments/benchmark.json",
+    "formal_dataset": "experiments/ctp100_formal_v2.json",
+    "dataset_id": "ctp100_formal_v2",
+    "dataset_version": "2026-08-18-day8-formal-v2-weather-gold-fix",
+    "dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
+    "case_count": 100,
+    "turn_count": 130,
+    "benchmark_case_count": 100,
+    "benchmark_turn_count": 130,
+    "methods": [
+      "llm_direct",
+      "single_agent",
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ],
+    "expected_raw_run_count": 520
+  },
+  "frozen_snapshots": {
+    "qweather": {
+      "valid": true,
+      "provider": "qweather",
+      "snapshot_id": "ctp_qweather_20260807_v1",
+      "combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+      "forecast_horizon_days": 30,
+      "forecast_start_date": "2026-08-07",
+      "forecast_end_date": "2026-09-05",
+      "cities": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "file_count": 10,
+      "real_time_api_allowed": false,
+      "runtime_online_refresh_allowed": false
+    },
+    "intercity_transport": {
+      "valid": true,
+      "provider": "manual_12306",
+      "snapshot_id": "ctp_intercity_rail_second_class_20260813_reviewed_v1",
+      "source_name": "China Railway 12306",
+      "combined_sha256": "c0eb0b9048de4cd35c178a866c70cdf85038521833e62acb92469518d0bb53b8",
+      "route_count": 50,
+      "fare_snapshot_date": "2026-08-13",
+      "transport_mode": "high_speed_or_d_train",
+      "seat_class": "second_class",
+      "real_time_api_allowed": false,
+      "runtime_online_refresh_allowed": false,
+      "real_time_price_claim_allowed": false
+    }
+  },
+  "budget_gold": {
+    "path": "experiments/generated/ctp100_budget_gold_v2.json",
+    "schema_version": "ctp100-budget-gold-v2-formal-v1",
+    "gold_status": "formal_frozen",
+    "review_status": "confirmed",
+    "budget_policy_version": "budget_policy_v2_0",
+    "source_dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
+    "summary": {
+      "evaluation_unit_count": 130,
+      "budget_gold_count": 90,
+      "skipped_count": 40,
+      "skipped_by_reason": {
+        "budget_not_required": 40
+      },
+      "generated_by_task_type": {
+        "budget_query": 10,
+        "partial_replan": 25,
+        "trip_planning": 50,
+        "weather_adjustment": 5
+      }
+    },
+    "review": {
+      "exists": true,
+      "path": "experiments/generated/ctp100_budget_gold_v2_review.csv",
+      "row_count": 90,
+      "issue_row_count": 0,
+      "issue_units": []
+    },
+    "manual_review": {
+      "required": true,
+      "status": "confirmed",
+      "status_source": "validated_economy_manual_review_ledger",
+      "reviewer": "dataset_owner",
+      "review_date": "2026-08-19",
+      "review_sha256": "8ea717633318d38f858a99d3735b68673d926b4b815fb4ba3643f43ab0964a17",
+      "confirmed_scope": [
+        "economy",
+        "intercity_transport",
+        "budget_policy_v2"
+      ],
+      "excluded_scope": [
+        "comfort",
+        "premium"
+      ],
+      "formal_main_experiment_tiers": [
+        "economy"
+      ],
+      "confirmed_city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "comfort_premium_exclusion": {
+        "excluded_from_formal_main_experiment": true,
+        "reason": "comfort and premium tiers may appear in development-only tier handling checks or optional upgrade explanations, but they are not confirmed as formal main-experiment budget gold in this paper run."
+      },
+      "review_artifacts": {
+        "economy_manual_review_json": "experiments/generated/economy_budget_manual_review_v1.json",
+        "economy_manual_review_md": "experiments/generated/economy_budget_manual_review_v1.md",
+        "budget_gold_review_markdown": "experiments/generated/ctp100_budget_gold_v2_review.md",
+        "budget_gold_review_csv": "experiments/generated/ctp100_budget_gold_v2_review.csv",
+        "food_reference_policy": "experiments/generated/food_reference_policy_review_v1.md"
+      }
+    },
+    "economy_manual_review": {
+      "valid": true,
+      "path": "experiments/generated/economy_budget_manual_review_v1.json",
+      "sha256": "8ea717633318d38f858a99d3735b68673d926b4b815fb4ba3643f43ab0964a17",
+      "review_status": "confirmed",
+      "reviewer": "dataset_owner",
+      "review_date": "2026-08-19",
+      "confirmed_scope": [
+        "economy",
+        "intercity_transport",
+        "budget_policy_v2"
+      ],
+      "excluded_scope": [
+        "comfort",
+        "premium"
+      ],
+      "formal_main_experiment_tiers": [
+        "economy"
+      ],
+      "summary": {
+        "review_status": "confirmed",
+        "confirmed_scope": [
+          "economy",
+          "intercity_transport",
+          "budget_policy_v2"
+        ],
+        "excluded_scope": [
+          "comfort",
+          "premium"
+        ],
+        "formal_main_experiment_tiers": [
+          "economy"
+        ],
+        "city_count": 5,
+        "city_ids": [
+          "beijing",
+          "hangzhou",
+          "xian",
+          "shenzhen",
+          "guilin"
+        ]
+      }
+    },
+    "policy_doc": "docs/Budget_Policy_v2.md"
+  },
+  "dataset_audit": {
+    "path": "experiments/generated/ctp100_formal_v2_dataset_audit.json",
+    "markdown": "experiments/generated/ctp100_formal_v2_dataset_audit.md",
+    "schema_version": "ctp100-formal-v2-dataset-audit-v1",
+    "status": "passed",
+    "dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
+    "issue_counts": {}
+  },
+  "day8_acceptance_gates": {
+    "runner_acceptance_test": "tests/test_day8_task1_runner_acceptance.py",
+    "runner_acceptance_130_turn_gate_locked": true,
+    "expected_turn_count": 130,
+    "expected_method_result_count": 520,
+    "no_date_weather_reminder_expected_count": 18,
+    "no_date_weather_reminder_audit": {
+      "check_id": "day8_no_date_trip_planning_requires_weather_reminder",
+      "status": "passed",
+      "actual": {
+        "count": 18,
+        "violations": []
+      }
+    },
+    "planned_actual_consistency_metrics_declared": true,
+    "m2_template_stsr_compatibility_valid": true,
+    "bpcr_formal_metric_declared": true
+  },
+  "academic_experiment_design": {
+    "status": "passed",
+    "errors": [],
+    "warnings": [],
+    "checks": {
+      "design_json_exists": true,
+      "design_markdown_exists": true,
+      "schema_version_matches": true,
+      "design_version_matches": true,
+      "freeze_before_formal_results": true,
+      "freeze_date_recorded": true,
+      "main_dataset_id_matches": true,
+      "main_dataset_role_controlled": true,
+      "main_dataset_not_claimed_unseen": true,
+      "main_design_role_matches": true,
+      "main_design_declares_not_unseen": true,
+      "main_case_count_matches": true,
+      "main_turn_count_matches": true,
+      "main_quality_passed": true,
+      "benchmark_points_only_to_main_ctp100": true,
+      "sealed_dataset_not_in_main_benchmark": true,
+      "sealed_dataset_not_in_main_comparisons": true,
+      "sealed_dataset_id_matches": true,
+      "sealed_dataset_role_matches": true,
+      "sealed_design_role_matches": true,
+      "sealed_case_count_matches": true,
+      "sealed_turn_count_matches": true,
+      "sealed_quality_passed": true,
+      "sealed_validation_methods_are_m2_m3_only": true,
+      "main_methods_are_four_method_comparison": true,
+      "primary_comparison_is_m3_vs_m2": true,
+      "statistical_tests_frozen": true,
+      "secondary_multiplicity_control_recorded": true,
+      "no_tuning_after_main_freeze": true,
+      "sealed_validation_no_tuning_policy": true
+    },
+    "design": {
+      "path": "experiments/academic_experiment_design_v1.json",
+      "sha256": "51ac4bdac7f5774faa15cc4b61b6b46e944e58fe9c0858a60b5fdc2ab3926421",
+      "doc_path": "docs/Academic_Experiment_Design_v1.md",
+      "doc_sha256": "106e5ae42ab52e7d1911b6de36461c696688abe1519df7ccfbe92730921405c6",
+      "schema_version": "ctp-academic-experiment-design-v1",
+      "design_version": "CTP-GMAS-ACADEMIC-DESIGN-v1",
+      "freeze_status": "frozen_before_formal_results",
+      "freeze_date": "2026-08-19"
+    },
+    "main_benchmark": {
+      "manifest_path": "experiments/benchmark.json",
+      "manifest_sha256": "b19bf0de60674d8787f1977ace99fbc321366aef8e41b9f9f7d77015dca34381",
+      "dataset_path": "experiments/ctp100_formal_v2.json",
+      "dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
+      "dataset_id": "ctp100_formal_v2",
+      "dataset_role": "post_development_frozen_controlled_main_benchmark",
+      "case_count": 100,
+      "turn_count": 130,
+      "quality_status": "passed"
+    },
+    "sealed_validation": {
+      "dataset_path": "experiments/ctp30_sealed_validation_v1.json",
+      "dataset_sha256": "7d2e56a36cad685b6c4345dbb3531cb7bcb8e05a82d2a16d980df1a80a738761",
+      "dataset_id": "ctp30_sealed_validation_v1",
+      "dataset_role": "sealed_validation_after_main_design_freeze",
+      "case_count": 30,
+      "turn_count": 30,
+      "quality_status": "passed",
+      "methods": [
+        "fixed_multi_agent",
+        "adaptive_multi_agent"
+      ]
+    },
+    "main_quality": {
+      "status": "passed",
+      "errors": [],
+      "warnings": [],
+      "case_count": 100,
+      "scenario_case_count": 30,
+      "total_unit_count": 130,
+      "task_distribution": {
+        "attraction_recommendation": 10,
+        "budget_query": 10,
+        "clarification": 8,
+        "general_chat": 14,
+        "partial_replan": 25,
+        "trip_planning": 50,
+        "weather_adjustment": 5,
+        "weather_query": 8
+      },
+      "city_distribution": {
+        "beijing": 23,
+        "guilin": 25,
+        "hangzhou": 23,
+        "shenzhen": 23,
+        "xian": 23
+      },
+      "duplicate_visible_input_groups": [],
+      "cross_split_duplicate_visible_input_groups": [],
+      "near_duplicate_visible_input_pairs": []
+    },
+    "sealed_quality": {
+      "status": "passed",
+      "errors": [],
+      "warnings": [],
+      "case_count": 30,
+      "scenario_case_count": 0,
+      "total_unit_count": 30,
+      "task_distribution": {
+        "attraction_recommendation": 4,
+        "budget_query": 4,
+        "clarification": 3,
+        "general_chat": 3,
+        "partial_replan": 4,
+        "trip_planning": 6,
+        "weather_adjustment": 2,
+        "weather_query": 4
+      },
+      "city_distribution": {
+        "beijing": 6,
+        "guilin": 7,
+        "hangzhou": 5,
+        "shenzhen": 5,
+        "xian": 4
+      },
+      "duplicate_visible_input_groups": [],
+      "cross_split_duplicate_visible_input_groups": [],
+      "near_duplicate_visible_input_pairs": []
+    }
+  },
+  "formal_artifact_integrity": {
+    "schema_version": "ctp-formal-artifact-integrity-v1",
+    "hash_strategy": "sha256_file_bytes_v1",
+    "artifacts": {
+      "benchmark_manifest": {
+        "path": "experiments/benchmark.json",
+        "exists": true,
+        "size_bytes": 1084,
+        "sha256": "b19bf0de60674d8787f1977ace99fbc321366aef8e41b9f9f7d77015dca34381"
+      },
+      "formal_dataset": {
+        "path": "experiments/ctp100_formal_v2.json",
+        "exists": true,
+        "size_bytes": 258044,
+        "sha256": "205de804c7a401c2542b3d48fa7195bc4b46a6349a5e67558eeb4b611f3dccb0"
+      },
+      "sealed_validation_dataset": {
+        "path": "experiments/ctp30_sealed_validation_v1.json",
+        "exists": true,
+        "size_bytes": 37753,
+        "sha256": "0ea84989537c0428219d9ccb8e0991077afbfd3fd420f4666a9c01a64ea7c527"
+      },
+      "academic_experiment_design": {
+        "path": "experiments/academic_experiment_design_v1.json",
+        "exists": true,
+        "size_bytes": 3302,
+        "sha256": "51ac4bdac7f5774faa15cc4b61b6b46e944e58fe9c0858a60b5fdc2ab3926421"
+      },
+      "experiment_protocol": {
+        "path": "Phase0_实验协议.md",
+        "exists": true,
+        "size_bytes": 32084,
+        "sha256": "15d9d7eddb532b7a46b30372003a600bf90abadbe9b88dd0db26da2424488f44"
+      },
+      "budget_policy_doc": {
+        "path": "docs/Budget_Policy_v2.md",
+        "exists": true,
+        "size_bytes": 5429,
+        "sha256": "258857325f625577d1a12a7fe8ac03d075fa94ce026118aa6a7e151f4d3a4cb6"
+      },
+      "budget_gold": {
+        "path": "experiments/generated/ctp100_budget_gold_v2.json",
+        "exists": true,
+        "size_bytes": 313275,
+        "sha256": "65cd9e680548af0b8a44cf4870a146a2730cddfceb2ee0d9320f2c7543e890b0"
+      },
+      "qweather_manifest": {
+        "path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+        "exists": true,
+        "size_bytes": 6014,
+        "sha256": "fdf0f1e106ab735ecb5f647be8528722f7e4832af90923e6f83ef2eb556d99ab"
+      },
+      "qweather_validation": {
+        "path": "data/weather_snapshot/qweather_v1/validation_report.json",
+        "exists": true,
+        "size_bytes": 4174,
+        "sha256": "4a5a150bbd3051ddf832fc9317ed8d1e9bc910ed0ca81bb52a027e299f7778b1"
+      },
+      "intercity_manifest": {
+        "path": "data/intercity_transport/snapshot_manifest.json",
+        "exists": true,
+        "size_bytes": 2772,
+        "sha256": "a49d6dd135e18931cf6e12fe6abe231412387baff55210b5a110182f35941151"
+      },
+      "intercity_fare_table": {
+        "path": "data/intercity_transport/rail_second_class_v1.json",
+        "exists": true,
+        "size_bytes": 10453,
+        "sha256": "c318b2932631d87be0888683b03ede3a18cb3a32eef7d7061d2ca19770146dbc"
+      },
+      "evaluation_rule_catalog": {
+        "path": "experiments/evaluation_rule_catalog.json",
+        "exists": true,
+        "size_bytes": 24730,
+        "sha256": "608ba339b446d8d662768d9b62575e48b6df2ccbc97ffb3338d3b16537502d76"
+      },
+      "independent_evaluator_code": {
+        "path": "app/core/independent_evaluator.py",
+        "exists": true,
+        "size_bytes": 159040,
+        "sha256": "9a9bac68969b84092c13defa334cc047638e16e3a68db7e9441dfccc20f61f31"
+      },
+      "experiment_runner_code": {
+        "path": "app/core/experiment_runner.py",
+        "exists": true,
+        "size_bytes": 366649,
+        "sha256": "08015e91ec4fe948c8a85356fb02ea66d3d48984efb285340d12b9e6ff29115c"
+      },
+      "method_contract_code": {
+        "path": "app/core/experiment_method_contract.py",
+        "exists": true,
+        "size_bytes": 18812,
+        "sha256": "19d7df01ecbb1c97a204c2eecd507a9b9defda2a70640a980a3229c90b9519eb"
+      },
+      "formal_preflight_code": {
+        "path": "app/core/formal_experiment_preflight.py",
+        "exists": true,
+        "size_bytes": 47903,
+        "sha256": "6d5e16bf0a6b0edb98f0a77c2b274599b304fd1dce6a2fb1665314696560e2fa"
+      },
+      "formal_gate_code": {
+        "path": "app/core/formal_experiment_gate.py",
+        "exists": true,
+        "size_bytes": 31915,
+        "sha256": "3bc0fbe7f691420feaa6acc977be7314586ecb3f78733dc5b2b7919436291602"
+      }
+    },
+    "combined_sha256": "40a607fcdde96fbb96c51e63334f6e566e2d7e4c4bc137cebb955fd65ad7f75a",
+    "all_required_artifacts_exist": true,
+    "missing_artifacts": [],
+    "git": {
+      "checked": true,
+      "commit": "34d40159c6fdba42d92a8b4354556fa52f929a32",
+      "worktree_clean": true,
+      "status_short": []
+    }
+  },
+  "formal_preflight": {
+    "schema_version": "ctp-formal-preflight-v1",
+    "status": "passed",
+    "errors": [],
+    "warnings": [
+      "LLM runtime configuration check skipped"
+    ],
+    "benchmark": {
+      "path": "D:/Code/Tourism_Agent/experiments/benchmark.json",
+      "sha256": "d600bada7875e92c15c3301aeada837a18e1bc7c3db89dcf0f6e09aa66fa42ce",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+      "case_count": 100,
+      "single_turn_case_count": 70,
+      "scenario_case_count": 30,
+      "total_turn_count": 130,
+      "statistical_unit": "case_id"
+    },
+    "run": {
+      "run_id": "day8_delivery_20260819T094214Z_preflight_probe",
+      "output_dir": "D:/Code/Tourism_Agent/experiments/results/formal_runs/day8_delivery_20260819T094214Z_preflight_probe",
+      "methods": [
+        "llm_direct",
+        "single_agent",
+        "fixed_multi_agent",
+        "adaptive_multi_agent"
+      ],
+      "method_count": 4,
+      "repeats": 1,
+      "method_order_seed": 20260718,
+      "model_config_name": "default",
+      "expected_raw_run_count": 520,
+      "expected_result_files": [
+        "benchmark_results.csv",
+        "benchmark_results.json",
+        "evaluation_summary.json",
+        "paper_tables.md",
+        "experiment_manifest.json"
+      ]
+    },
+    "qweather_snapshot": {
+      "valid": true,
+      "schema_version": "ctp-qweather-snapshot-manifest-v1",
+      "provider": "qweather",
+      "snapshot_id": "ctp_qweather_20260807_v1",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+      "combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+      "forecast_endpoint": "/v7/weather/30d",
+      "forecast_horizon_days": 30,
+      "forecast_start_date": "2026-08-07",
+      "forecast_end_date": "2026-09-05",
+      "cities": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "file_count": 10,
+      "validation_report": {
+        "required": true,
+        "path": "data/weather_snapshot/qweather_v1/validation_report.json"
+      },
+      "real_time_api_allowed": false
+    },
+    "intercity_transport_snapshot": {
+      "valid": true,
+      "schema_version": "ctp-intercity-transport-manifest-v1",
+      "provider": "manual_12306",
+      "snapshot_id": "ctp_intercity_rail_second_class_20260813_reviewed_v1",
+      "source_name": "China Railway 12306",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+      "combined_sha256": "c0eb0b9048de4cd35c178a866c70cdf85038521833e62acb92469518d0bb53b8",
+      "fare_snapshot_date": "2026-08-13",
+      "transport_mode": "high_speed_or_d_train",
+      "seat_class": "second_class",
+      "route_count": 50,
+      "symmetric_route_lookup_allowed": true,
+      "file_count": 2,
+      "evidence": {
+        "ledger_path": "data/intercity_transport/evidence/rail_second_class_evidence_v1.json",
+        "ledger_schema_version": "ctp-intercity-rail-evidence-ledger-v1",
+        "manual_review_required": true,
+        "manual_review_complete": true,
+        "reviewed_count": 50,
+        "pending_count": 0,
+        "screenshot_required_for_formal_claim": true,
+        "planned_query_date": "2026-08-13",
+        "travel_date": "2026-08-13",
+        "query_date": "2026-08-12",
+        "fare_selection_rule_id": "visible_fastest_second_class_fare",
+        "rejected_count": 0,
+        "status_counts": {
+          "reviewed": 50
+        },
+        "route_count": 50,
+        "ledger_dataset_version": "ctp_intercity_rail_second_class_evidence_20260813_reviewed_v1"
+      },
+      "real_time_api_allowed": false,
+      "runtime_online_refresh_allowed": false,
+      "real_time_price_claim_allowed": false
+    },
+    "academic_experiment_design": {
+      "required": true,
+      "schema_version": "ctp-academic-experiment-design-report-v1",
+      "status": "passed",
+      "errors": [],
+      "warnings": [],
+      "checks": {
+        "design_json_exists": true,
+        "design_markdown_exists": true,
+        "schema_version_matches": true,
+        "design_version_matches": true,
+        "freeze_before_formal_results": true,
+        "freeze_date_recorded": true,
+        "main_dataset_id_matches": true,
+        "main_dataset_role_controlled": true,
+        "main_dataset_not_claimed_unseen": true,
+        "main_design_role_matches": true,
+        "main_design_declares_not_unseen": true,
+        "main_case_count_matches": true,
+        "main_turn_count_matches": true,
+        "main_quality_passed": true,
+        "benchmark_points_only_to_main_ctp100": true,
+        "sealed_dataset_not_in_main_benchmark": true,
+        "sealed_dataset_not_in_main_comparisons": true,
+        "sealed_dataset_id_matches": true,
+        "sealed_dataset_role_matches": true,
+        "sealed_design_role_matches": true,
+        "sealed_case_count_matches": true,
+        "sealed_turn_count_matches": true,
+        "sealed_quality_passed": true,
+        "sealed_validation_methods_are_m2_m3_only": true,
+        "main_methods_are_four_method_comparison": true,
+        "primary_comparison_is_m3_vs_m2": true,
+        "statistical_tests_frozen": true,
+        "secondary_multiplicity_control_recorded": true,
+        "no_tuning_after_main_freeze": true,
+        "sealed_validation_no_tuning_policy": true
+      },
+      "design": {
+        "path": "experiments/academic_experiment_design_v1.json",
+        "sha256": "51ac4bdac7f5774faa15cc4b61b6b46e944e58fe9c0858a60b5fdc2ab3926421",
+        "doc_path": "docs/Academic_Experiment_Design_v1.md",
+        "doc_sha256": "106e5ae42ab52e7d1911b6de36461c696688abe1519df7ccfbe92730921405c6",
+        "schema_version": "ctp-academic-experiment-design-v1",
+        "design_version": "CTP-GMAS-ACADEMIC-DESIGN-v1",
+        "freeze_status": "frozen_before_formal_results",
+        "freeze_date": "2026-08-19"
+      },
+      "main_benchmark": {
+        "manifest_path": "experiments/benchmark.json",
+        "manifest_sha256": "b19bf0de60674d8787f1977ace99fbc321366aef8e41b9f9f7d77015dca34381",
+        "dataset_path": "experiments/ctp100_formal_v2.json",
+        "dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
+        "dataset_id": "ctp100_formal_v2",
+        "dataset_role": "post_development_frozen_controlled_main_benchmark",
+        "case_count": 100,
+        "turn_count": 130,
+        "quality_status": "passed"
+      },
+      "sealed_validation": {
+        "dataset_path": "experiments/ctp30_sealed_validation_v1.json",
+        "dataset_sha256": "7d2e56a36cad685b6c4345dbb3531cb7bcb8e05a82d2a16d980df1a80a738761",
+        "dataset_id": "ctp30_sealed_validation_v1",
+        "dataset_role": "sealed_validation_after_main_design_freeze",
+        "case_count": 30,
+        "turn_count": 30,
+        "quality_status": "passed",
+        "methods": [
+          "fixed_multi_agent",
+          "adaptive_multi_agent"
+        ]
+      },
+      "main_quality": {
+        "status": "passed",
+        "errors": [],
+        "warnings": [],
+        "case_count": 100,
+        "scenario_case_count": 30,
+        "total_unit_count": 130,
+        "task_distribution": {
+          "attraction_recommendation": 10,
+          "budget_query": 10,
+          "clarification": 8,
+          "general_chat": 14,
+          "partial_replan": 25,
+          "trip_planning": 50,
+          "weather_adjustment": 5,
+          "weather_query": 8
+        },
+        "city_distribution": {
+          "beijing": 23,
+          "guilin": 25,
+          "hangzhou": 23,
+          "shenzhen": 23,
+          "xian": 23
+        },
+        "duplicate_visible_input_groups": [],
+        "cross_split_duplicate_visible_input_groups": [],
+        "near_duplicate_visible_input_pairs": []
+      },
+      "sealed_quality": {
+        "status": "passed",
+        "errors": [],
+        "warnings": [],
+        "case_count": 30,
+        "scenario_case_count": 0,
+        "total_unit_count": 30,
+        "task_distribution": {
+          "attraction_recommendation": 4,
+          "budget_query": 4,
+          "clarification": 3,
+          "general_chat": 3,
+          "partial_replan": 4,
+          "trip_planning": 6,
+          "weather_adjustment": 2,
+          "weather_query": 4
+        },
+        "city_distribution": {
+          "beijing": 6,
+          "guilin": 7,
+          "hangzhou": 5,
+          "shenzhen": 5,
+          "xian": 4
+        },
+        "duplicate_visible_input_groups": [],
+        "cross_split_duplicate_visible_input_groups": [],
+        "near_duplicate_visible_input_pairs": []
+      }
+    },
+    "artifact_integrity": {
+      "schema_version": "ctp-formal-artifact-integrity-v1",
+      "hash_strategy": "sha256_file_bytes_v1",
+      "artifacts": {
+        "benchmark_manifest": {
+          "path": "experiments/benchmark.json",
+          "exists": true,
+          "size_bytes": 1084,
+          "sha256": "b19bf0de60674d8787f1977ace99fbc321366aef8e41b9f9f7d77015dca34381"
+        },
+        "formal_dataset": {
+          "path": "experiments/ctp100_formal_v2.json",
+          "exists": true,
+          "size_bytes": 258044,
+          "sha256": "205de804c7a401c2542b3d48fa7195bc4b46a6349a5e67558eeb4b611f3dccb0"
+        },
+        "sealed_validation_dataset": {
+          "path": "experiments/ctp30_sealed_validation_v1.json",
+          "exists": true,
+          "size_bytes": 37753,
+          "sha256": "0ea84989537c0428219d9ccb8e0991077afbfd3fd420f4666a9c01a64ea7c527"
+        },
+        "academic_experiment_design": {
+          "path": "experiments/academic_experiment_design_v1.json",
+          "exists": true,
+          "size_bytes": 3302,
+          "sha256": "51ac4bdac7f5774faa15cc4b61b6b46e944e58fe9c0858a60b5fdc2ab3926421"
+        },
+        "experiment_protocol": {
+          "path": "Phase0_实验协议.md",
+          "exists": true,
+          "size_bytes": 32084,
+          "sha256": "15d9d7eddb532b7a46b30372003a600bf90abadbe9b88dd0db26da2424488f44"
+        },
+        "budget_policy_doc": {
+          "path": "docs/Budget_Policy_v2.md",
+          "exists": true,
+          "size_bytes": 5429,
+          "sha256": "258857325f625577d1a12a7fe8ac03d075fa94ce026118aa6a7e151f4d3a4cb6"
+        },
+        "budget_gold": {
+          "path": "experiments/generated/ctp100_budget_gold_v2.json",
+          "exists": true,
+          "size_bytes": 313275,
+          "sha256": "65cd9e680548af0b8a44cf4870a146a2730cddfceb2ee0d9320f2c7543e890b0"
+        },
+        "qweather_manifest": {
+          "path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+          "exists": true,
+          "size_bytes": 6014,
+          "sha256": "fdf0f1e106ab735ecb5f647be8528722f7e4832af90923e6f83ef2eb556d99ab"
+        },
+        "qweather_validation": {
+          "path": "data/weather_snapshot/qweather_v1/validation_report.json",
+          "exists": true,
+          "size_bytes": 4174,
+          "sha256": "4a5a150bbd3051ddf832fc9317ed8d1e9bc910ed0ca81bb52a027e299f7778b1"
+        },
+        "intercity_manifest": {
+          "path": "data/intercity_transport/snapshot_manifest.json",
+          "exists": true,
+          "size_bytes": 2772,
+          "sha256": "a49d6dd135e18931cf6e12fe6abe231412387baff55210b5a110182f35941151"
+        },
+        "intercity_fare_table": {
+          "path": "data/intercity_transport/rail_second_class_v1.json",
+          "exists": true,
+          "size_bytes": 10453,
+          "sha256": "c318b2932631d87be0888683b03ede3a18cb3a32eef7d7061d2ca19770146dbc"
+        },
+        "evaluation_rule_catalog": {
+          "path": "experiments/evaluation_rule_catalog.json",
+          "exists": true,
+          "size_bytes": 24730,
+          "sha256": "608ba339b446d8d662768d9b62575e48b6df2ccbc97ffb3338d3b16537502d76"
+        },
+        "independent_evaluator_code": {
+          "path": "app/core/independent_evaluator.py",
+          "exists": true,
+          "size_bytes": 159040,
+          "sha256": "9a9bac68969b84092c13defa334cc047638e16e3a68db7e9441dfccc20f61f31"
+        },
+        "experiment_runner_code": {
+          "path": "app/core/experiment_runner.py",
+          "exists": true,
+          "size_bytes": 366649,
+          "sha256": "08015e91ec4fe948c8a85356fb02ea66d3d48984efb285340d12b9e6ff29115c"
+        },
+        "method_contract_code": {
+          "path": "app/core/experiment_method_contract.py",
+          "exists": true,
+          "size_bytes": 18812,
+          "sha256": "19d7df01ecbb1c97a204c2eecd507a9b9defda2a70640a980a3229c90b9519eb"
+        },
+        "formal_preflight_code": {
+          "path": "app/core/formal_experiment_preflight.py",
+          "exists": true,
+          "size_bytes": 47903,
+          "sha256": "6d5e16bf0a6b0edb98f0a77c2b274599b304fd1dce6a2fb1665314696560e2fa"
+        },
+        "formal_gate_code": {
+          "path": "app/core/formal_experiment_gate.py",
+          "exists": true,
+          "size_bytes": 31915,
+          "sha256": "3bc0fbe7f691420feaa6acc977be7314586ecb3f78733dc5b2b7919436291602"
+        }
+      },
+      "combined_sha256": "40a607fcdde96fbb96c51e63334f6e566e2d7e4c4bc137cebb955fd65ad7f75a",
+      "all_required_artifacts_exist": true,
+      "missing_artifacts": [],
+      "git": {
+        "checked": true,
+        "commit": "34d40159c6fdba42d92a8b4354556fa52f929a32",
+        "worktree_clean": true,
+        "status_short": []
+      }
+    },
+    "day8_delivery_pack": {
+      "required": false,
+      "path": "D:/Code/Tourism_Agent/experiments/generated/day8_delivery_pack.json",
+      "status": "not_required",
+      "reason": "benchmark_is_not_ctp100_formal_v2"
+    },
+    "policy": {
+      "strict_formal": true,
+      "formal_release_required": true,
+      "require_day8_delivery_pack": false,
+      "require_clean_git": false,
+      "gold_visible_to_generation": false,
+      "previous_state_policy": "formal multi-turn state must be produced by the same method's prior turn",
+      "no_overwrite": true,
+      "resume_requested": false,
+      "resume_requires_contract_match": true,
+      "preflight_consumes_api": false
+    }
+  },
+  "artifact_inventory": [
+    {
+      "key": "benchmark_manifest",
+      "path": "experiments/benchmark.json",
+      "exists": true,
+      "size_bytes": 1084,
+      "sha256": "b19bf0de60674d8787f1977ace99fbc321366aef8e41b9f9f7d77015dca34381"
+    },
+    {
+      "key": "formal_dataset",
+      "path": "experiments/ctp100_formal_v2.json",
+      "exists": true,
+      "size_bytes": 258044,
+      "sha256": "205de804c7a401c2542b3d48fa7195bc4b46a6349a5e67558eeb4b611f3dccb0"
+    },
+    {
+      "key": "qweather_manifest",
+      "path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+      "exists": true,
+      "size_bytes": 6014,
+      "sha256": "fdf0f1e106ab735ecb5f647be8528722f7e4832af90923e6f83ef2eb556d99ab"
+    },
+    {
+      "key": "qweather_validation_report",
+      "path": "data/weather_snapshot/qweather_v1/validation_report.json",
+      "exists": true,
+      "size_bytes": 4174,
+      "sha256": "4a5a150bbd3051ddf832fc9317ed8d1e9bc910ed0ca81bb52a027e299f7778b1"
+    },
+    {
+      "key": "intercity_manifest",
+      "path": "data/intercity_transport/snapshot_manifest.json",
+      "exists": true,
+      "size_bytes": 2772,
+      "sha256": "a49d6dd135e18931cf6e12fe6abe231412387baff55210b5a110182f35941151"
+    },
+    {
+      "key": "intercity_fare_table",
+      "path": "data/intercity_transport/rail_second_class_v1.json",
+      "exists": true,
+      "size_bytes": 10453,
+      "sha256": "c318b2932631d87be0888683b03ede3a18cb3a32eef7d7061d2ca19770146dbc"
+    },
+    {
+      "key": "intercity_evidence_ledger",
+      "path": "data/intercity_transport/evidence/rail_second_class_evidence_v1.json",
+      "exists": true,
+      "size_bytes": 99086,
+      "sha256": "4addfcda2ec645e170d17875c0e0a3e86bdc2f1b977d2f9719a80b1adad3fb8e"
+    },
+    {
+      "key": "budget_policy_doc",
+      "path": "docs/Budget_Policy_v2.md",
+      "exists": true,
+      "size_bytes": 5429,
+      "sha256": "258857325f625577d1a12a7fe8ac03d075fa94ce026118aa6a7e151f4d3a4cb6"
+    },
+    {
+      "key": "evaluation_rule_catalog",
+      "path": "experiments/evaluation_rule_catalog.json",
+      "exists": true,
+      "size_bytes": 24730,
+      "sha256": "608ba339b446d8d662768d9b62575e48b6df2ccbc97ffb3338d3b16537502d76"
+    },
+    {
+      "key": "independent_evaluator_code",
+      "path": "app/core/independent_evaluator.py",
+      "exists": true,
+      "size_bytes": 159040,
+      "sha256": "9a9bac68969b84092c13defa334cc047638e16e3a68db7e9441dfccc20f61f31"
+    },
+    {
+      "key": "experiment_runner_code",
+      "path": "app/core/experiment_runner.py",
+      "exists": true,
+      "size_bytes": 366649,
+      "sha256": "08015e91ec4fe948c8a85356fb02ea66d3d48984efb285340d12b9e6ff29115c"
+    },
+    {
+      "key": "method_contract_code",
+      "path": "app/core/experiment_method_contract.py",
+      "exists": true,
+      "size_bytes": 18812,
+      "sha256": "19d7df01ecbb1c97a204c2eecd507a9b9defda2a70640a980a3229c90b9519eb"
+    },
+    {
+      "key": "formal_preflight_code",
+      "path": "app/core/formal_experiment_preflight.py",
+      "exists": true,
+      "size_bytes": 47903,
+      "sha256": "6d5e16bf0a6b0edb98f0a77c2b274599b304fd1dce6a2fb1665314696560e2fa"
+    },
+    {
+      "key": "formal_gate_code",
+      "path": "app/core/formal_experiment_gate.py",
+      "exists": true,
+      "size_bytes": 31915,
+      "sha256": "3bc0fbe7f691420feaa6acc977be7314586ecb3f78733dc5b2b7919436291602"
+    },
+    {
+      "key": "day8_runner_acceptance_test",
+      "path": "tests/test_day8_task1_runner_acceptance.py",
+      "exists": true,
+      "size_bytes": 13974,
+      "sha256": "bc0a6de27d2f5af4b13ec9267be22989f22867505a2dc4bba4914b8edc80aa56"
+    },
+    {
+      "key": "academic_experiment_design_json",
+      "path": "experiments/academic_experiment_design_v1.json",
+      "exists": true,
+      "size_bytes": 3302,
+      "sha256": "51ac4bdac7f5774faa15cc4b61b6b46e944e58fe9c0858a60b5fdc2ab3926421"
+    },
+    {
+      "key": "academic_experiment_design_md",
+      "path": "docs/Academic_Experiment_Design_v1.md",
+      "exists": true,
+      "size_bytes": 4616,
+      "sha256": "106e5ae42ab52e7d1911b6de36461c696688abe1519df7ccfbe92730921405c6"
+    },
+    {
+      "key": "sealed_validation_dataset",
+      "path": "experiments/ctp30_sealed_validation_v1.json",
+      "exists": true,
+      "size_bytes": 37753,
+      "sha256": "0ea84989537c0428219d9ccb8e0991077afbfd3fd420f4666a9c01a64ea7c527"
+    },
+    {
+      "key": "academic_design_validation_json",
+      "path": "experiments/generated/academic_experiment_design_validation_v1.json",
+      "exists": true,
+      "size_bytes": 4385,
+      "sha256": "dfea5612c3870e662871e6ef704d805ec62e9993f5e5f16061fbc64f24f6e15c"
+    },
+    {
+      "key": "academic_design_validation_md",
+      "path": "experiments/generated/academic_experiment_design_validation_v1.md",
+      "exists": true,
+      "size_bytes": 2116,
+      "sha256": "5cb264ff4439bac1d48b4c7726d4f71a5f2028296ae0268b451630d7320086fa"
+    },
+    {
+      "key": "budget_gold_json",
+      "path": "experiments/generated/ctp100_budget_gold_v2.json",
+      "exists": true,
+      "size_bytes": 313275,
+      "sha256": "65cd9e680548af0b8a44cf4870a146a2730cddfceb2ee0d9320f2c7543e890b0"
+    },
+    {
+      "key": "economy_budget_manual_review_json",
+      "path": "experiments/generated/economy_budget_manual_review_v1.json",
+      "exists": true,
+      "size_bytes": 8644,
+      "sha256": "8ea717633318d38f858a99d3735b68673d926b4b815fb4ba3643f43ab0964a17"
+    },
+    {
+      "key": "economy_budget_manual_review_md",
+      "path": "experiments/generated/economy_budget_manual_review_v1.md",
+      "exists": true,
+      "size_bytes": 2061,
+      "sha256": "0a1ffc0ed84870728aa47ab923b86f343736dbbdd04714008f5c39705a90fc63"
+    },
+    {
+      "key": "budget_review_md",
+      "path": "experiments/generated/ctp100_budget_gold_v2_review.md",
+      "exists": true,
+      "size_bytes": 54829,
+      "sha256": "b67acf4dde8dcb16b50666feae78f32d87008a159a2af4ef79595d40797d50af"
+    },
+    {
+      "key": "budget_review_csv",
+      "path": "experiments/generated/ctp100_budget_gold_v2_review.csv",
+      "exists": true,
+      "size_bytes": 52159,
+      "sha256": "b9ea1c519522921ee7fdd521d7d5f53a584146cf4a851fc3707b0d5fc27140bf"
+    },
+    {
+      "key": "dataset_audit_json",
+      "path": "experiments/generated/ctp100_formal_v2_dataset_audit.json",
+      "exists": true,
+      "size_bytes": 3781,
+      "sha256": "4ce065f0a6ef1f0aa321e31b16f7996b862e677e0fdc0a82e55b21027b2b7e07"
+    },
+    {
+      "key": "dataset_audit_md",
+      "path": "experiments/generated/ctp100_formal_v2_dataset_audit.md",
+      "exists": true,
+      "size_bytes": 2233,
+      "sha256": "6df9ff1421d7635bce94ceb8be2855c97e7ce9aff2b0e040eb9218e5d096f2ee"
+    }
+  ],
+  "handoff_commands": [
+    {
+      "name": "验证学术实验设计冻结",
+      "command": "python experiments/validate_academic_experiment_design.py"
+    },
+    {
+      "name": "重新生成预算金标",
+      "command": "python experiments/generate_ctp100_budget_gold_v2.py"
+    },
+    {
+      "name": "重新生成预算审阅表",
+      "command": "python experiments/generate_ctp100_budget_gold_review_v2.py"
+    },
+    {
+      "name": "重新生成题库审计报告",
+      "command": "python experiments/audit_ctp100_formal_v2.py"
+    },
+    {
+      "name": "重新生成 Day8 交付包",
+      "command": "python experiments/build_day8_delivery_pack.py"
+    },
+    {
+      "name": "正式实验预检查",
+      "command": "python experiments/run_formal_experiment.py --expected-cases 100 --preflight-only --skip-llm-config-check"
+    },
+    {
+      "name": "正式四方法实验",
+      "command": "python experiments/run_formal_experiment.py --expected-cases 100 --strict-paper-readiness"
+    }
+  ],
+  "manual_next_steps": [
+    {
+      "priority": "P0",
+      "item": "可以进入正式四方法实验；运行前不要再修改题库、预算金标或冻结快照。"
+    },
+    {
+      "priority": "P1",
+      "item": "正式实验完成后，再生成论文结果包和论文初稿材料。"
+    }
+  ],
+  "writing_boundaries": {
+    "allowed_claims": [
+      "Day8 已形成可复现的正式实验输入：100 个案例、130 个评测轮次。",
+      "CTP100 是开发后冻结的受控主基准，不是完全未见测试集。",
+      "CTP30 封闭验证集已单独冻结，不进入正式主实验入口。",
+      "正式实验天气使用冻结 QWeather 快照，实验阶段不联网刷新天气。",
+      "正式实验城际交通使用冻结成人二等座高铁/动车参考票价，不声称实时票价。",
+      "预算金额只用于判断预算充足性，不自动触发住宿或餐饮升级。"
+    ],
+    "forbidden_claims": [
+      "不能把 Day8 交付包说成正式实验结果。",
+      "不能把 CTP100 说成完全未见测试集。",
+      "不能用 CTP30 封闭验证结果继续调参后再声称其封闭性。",
+      "不能在未运行正式四方法实验前宣称某个方法效果最好。",
+      "不能声称天气或城际票价是实验运行时实时获取。"
+    ]
+  },
+  "delivery_outputs": {
+    "day8_delivery_pack_json": "D:/Code/Tourism_Agent/experiments/generated/day8_delivery_pack.json",
+    "day8_delivery_report_md": "D:/Code/Tourism_Agent/experiments/generated/day8_delivery_report.md"
+  }
+}

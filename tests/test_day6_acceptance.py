@@ -36,18 +36,18 @@ def test_day6_acceptance_script_writes_pipeline_evidence(
     assert payload["academic_quality_status"] == "not_evaluated_with_fake_llm"
     assert payload["quality_gate"]["schema_version"] == "day6-acceptance-gate-v1"
     assert payload["quality_gate"]["task_type_alignment"]["status"] == "passed"
-    assert payload["quality_gate"]["task_type_alignment"]["checked_unit_count"] == 32
+    assert payload["quality_gate"]["task_type_alignment"]["checked_unit_count"] == 36
     assert payload["quality_gate"]["task_type_alignment"]["mismatch_count"] == 0
     assert payload["quality_gate"]["task_type_alignment"]["non_frozen_task_type_count"] == 0
     assert payload["quality_gate"]["stsr"]["status"] == "informational_only"
-    assert payload["quality_gate"]["stsr"]["total_count"] == 32
+    assert payload["quality_gate"]["stsr"]["total_count"] == 36
     assert payload["quality_gate"]["stsr"]["interpretation"] == "fake_llm_not_model_quality"
     assert payload["run_id"] == "day6-unit"
-    assert payload["result_count"] == payload["expected_count"] == 44
+    assert payload["result_count"] == payload["expected_count"] == 48
     assert payload["saved_evidence"]["schema_version"] == "day6-saved-evidence-v1"
     assert payload["saved_evidence"]["status"] == "saved"
-    assert payload["saved_evidence"]["result_count"] == 44
-    assert payload["saved_evidence"]["expected_count"] == 44
+    assert payload["saved_evidence"]["result_count"] == 48
+    assert payload["saved_evidence"]["expected_count"] == 48
     assert payload["trace_file_count"] == payload["result_count"]
     assert Path(payload["trace_dir"]).exists()
     assert Path(payload["representative_trace"]).exists()
@@ -60,8 +60,8 @@ def test_day6_acceptance_script_writes_pipeline_evidence(
     paper_tables = Path(payload["paper_tables"]).read_text(encoding="utf-8")
 
     assert set(summary["methods"]) == set(day6_acceptance.ExperimentRunner.METHODS)
-    assert summary["paired_statistics"]["pair_count"] == 8
-    assert summary["unique_case_count"] == 8
+    assert summary["paired_statistics"]["pair_count"] == 9
+    assert summary["unique_case_count"] == 9
     assert summary["quality_evaluation_scope"]["multi_turn"] == "target_turn_only"
     assert summary["repeat_aggregation"]["unit"] == "evaluation_unit_id"
     assert summary["repeat_aggregation"]["scenario_turns_are_repeats"] is False
@@ -84,7 +84,7 @@ def test_day6_acceptance_script_writes_pipeline_evidence(
     assert "status: `passed`" in report_text
     assert "git_commit:" in report_text
     assert "saved_evidence_status: `saved`" in report_text
-    assert "trace_file_count: `44`" in report_text
+    assert "trace_file_count: `48`" in report_text
     assert "Saved evidence files" in report_text
     assert "fake_llm_not_model_quality" in report_text
     assert "FakeLLM diagnostics only, not academic-quality model results" in report_text
@@ -101,11 +101,11 @@ def test_day6_acceptance_script_writes_pipeline_evidence(
     assert manifest["costing"]["output_token_unit_price"] == 0.0
     day6_evidence = manifest["day6_acceptance"]
     assert day6_evidence["status"] == "passed"
-    assert day6_evidence["result_count"] == 44
-    assert day6_evidence["expected_count"] == 44
+    assert day6_evidence["result_count"] == 48
+    assert day6_evidence["expected_count"] == 48
     assert day6_evidence["quality_gate"]["task_type_alignment"]["status"] == "passed"
     assert day6_evidence["saved_evidence"]["status"] == "saved"
-    assert day6_evidence["saved_evidence"]["trace_file_count"] == 44
+    assert day6_evidence["saved_evidence"]["trace_file_count"] == 48
     assert manifest["results"]["day6_acceptance_report"] == payload["report"]
     assert manifest["results"]["trace_dir"] == payload["trace_dir"]
     assert manifest["results"]["representative_trace"] == payload["representative_trace"]
@@ -170,7 +170,7 @@ def test_day6_acceptance_script_writes_pipeline_evidence(
         and result["method"] == "adaptive_multi_agent"
     )
     full_plan_scheduler = m3_full_plan["output"]["metadata"]["adaptive_scheduler"]
-    assert full_plan_scheduler["ticket"]["task_type"] == "trip_planning"
+    assert full_plan_scheduler["ticket"]["task_type"] == "weather_aware_trip_plan"
     assert full_plan_scheduler["decision"]["planned_agents"] == [
         "attraction",
         "weather",
@@ -218,10 +218,19 @@ def test_day6_acceptance_script_writes_pipeline_evidence(
     assert m3_reuse["audit"] == m3_reuse["run_audit"]
     assert m3_reuse["target_turn"] is True
     assert "attraction" in m3_reuse["metrics"]["m3_reused_agents"]
-    assert m3_reuse["run_audit"]["metrics"]["planned_agent_count"] < (
+    assert m2_reuse["output"]["metadata"]["fixed_template_scheduler"]["decision"][
+        "planned_agents"
+    ] == ["itinerary", "budget"]
+    assert m2_reuse["output"]["metadata"]["fixed_template_scheduler"]["decision"][
+        "planned_tools"
+    ] == ["budget_calculator"]
+    assert m2_reuse["output"]["metadata"]["fixed_template_scheduler"]["decision"][
+        "reused_agents"
+    ] == []
+    assert m3_reuse["run_audit"]["metrics"]["planned_agent_count"] <= (
         m2_reuse["run_audit"]["metrics"]["planned_agent_count"]
     )
-    assert m3_reuse["run_audit"]["metrics"]["called_tool_count"] < (
+    assert m3_reuse["run_audit"]["metrics"]["called_tool_count"] <= (
         m2_reuse["run_audit"]["metrics"]["called_tool_count"]
     )
 
@@ -248,9 +257,10 @@ def test_day6_acceptance_script_writes_pipeline_evidence(
     )
     rain_scheduler = rain["output"]["metadata"]["adaptive_scheduler"]
     assert rain_scheduler["ticket"]["task_type"] == "weather_adjustment"
-    assert rain_scheduler["decision"]["planned_agents"] == ["weather", "itinerary"]
-    assert rain_scheduler["decision"]["planned_tools"] == ["weather_query"]
+    assert rain_scheduler["decision"]["planned_agents"] == ["itinerary", "budget"]
+    assert rain_scheduler["decision"]["planned_tools"] == ["budget_calculator"]
     assert "attraction" in rain["metrics"]["m3_reused_agents"]
+    assert "weather" in rain["metrics"]["m3_reused_agents"]
     assert any(
         adjustment.get("day") == 2 and adjustment.get("day_index") == 2
         for adjustment in rain["output"]["weather_adjustments"]

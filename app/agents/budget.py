@@ -223,6 +223,11 @@ class BudgetAgent(BaseAgent):
         """执行预算分析任务 - 增强版"""
 
         destination = context.extracted_info.get("destination", "")
+        origin = (
+            context.extracted_info.get("origin")
+            or context.extracted_info.get("departure_place")
+            or (session.trip_context.origin if session and session.trip_context else None)
+        )
         duration = self._normalize_duration(context.extracted_info.get("duration"))
         num_travelers = self._normalize_travelers(
             context.extracted_info.get("num_travelers"),
@@ -230,6 +235,10 @@ class BudgetAgent(BaseAgent):
         )
         budget_level = context.extracted_info.get("budget_level", session.preferences.budget_level or "medium")
         budget_level = self._normalize_budget_level(budget_level)
+        requested_budget_scope = (
+            context.extracted_info.get("requested_budget_scope")
+            or context.extracted_info.get("budget_scope")
+        )
 
         if not destination:
             return AgentResponse(
@@ -291,34 +300,49 @@ class BudgetAgent(BaseAgent):
             }
 
         fixed_budget = None
-        if is_formal_offline_mode():
+        fixed_breakdown: Dict[str, Any] = {}
+        fixed_total_with_buffer: Optional[float] = None
+        intercity_transport: Dict[str, Any] = {}
+        intercity_transport_cost = 0.0
+        if is_formal_offline_mode() or get_fixed_tourism_data().resolve_city_id(destination):
             try:
                 fixed_budget = get_fixed_tourism_data().calculate_budget(
+                    origin=origin,
                     destination=destination,
                     duration=duration,
                     num_travelers=num_travelers,
                     budget_level=budget_level,
+                    budget_limit=budget_limit,
+                    poi_ids=self._fixed_poi_ids_from_pois(pois),
+                    daily_itinerary=daily_plans,
+                    hotel_level=user_prefs.get("hotel_level"),
+                    food_level=user_prefs.get("food_level"),
+                    transport_mode=user_prefs.get("transport_mode"),
+                    requested_budget_scope=requested_budget_scope,
                 )
             except FixedDataError as exc:
-                logger.warning(f"Fixed budget data unavailable in formal offline mode: {exc}")
-                return AgentResponse(
-                    agent_name=self.name,
-                    status=AgentStatus.FAILED,
-                    content=f"固定预算数据不可用：{exc}",
-                    data={
-                        "offline": True,
-                        "calculation_source": "fixed_offline_dataset",
-                        "fixed_budget_required": True,
-                        "error_type": "fixed_budget_unavailable",
-                        "error": str(exc),
-                    },
-                    error=str(exc),
-                    metadata={
-                        "offline": True,
-                        "fixed_budget_required": True,
-                        "legacy_estimator_used": False,
-                    },
-                )
+                if not is_formal_offline_mode():
+                    fixed_budget = None
+                else:
+                    logger.warning(f"Fixed budget data unavailable in formal offline mode: {exc}")
+                    return AgentResponse(
+                        agent_name=self.name,
+                        status=AgentStatus.FAILED,
+                        content=f"固定预算数据不可用：{exc}",
+                        data={
+                            "offline": True,
+                            "calculation_source": "fixed_reference_cost_model",
+                            "fixed_budget_required": True,
+                            "error_type": "fixed_budget_unavailable",
+                            "error": str(exc),
+                        },
+                        error=str(exc),
+                        metadata={
+                            "offline": True,
+                            "fixed_budget_required": True,
+                            "legacy_estimator_used": False,
+                        },
+                    )
 
         if fixed_budget:
             fixed_breakdown = fixed_budget.get("breakdown") or {}
@@ -328,7 +352,10 @@ class BudgetAgent(BaseAgent):
             other_cost = float((fixed_breakdown.get("other") or {}).get("recommended") or 0)
             ticket_breakdown = fixed_budget.get("ticket_breakdown") or ticket_breakdown
             computed_ticket_cost = float(ticket_breakdown.get("ticket_cost") or 0)
-            estimated_by = "fixed_offline_dataset"
+            intercity_transport = fixed_budget.get("intercity_transport") or {}
+            intercity_transport_cost = float(fixed_budget.get("intercity_transport_cost") or 0)
+            fixed_total_with_buffer = float(fixed_budget.get("total_recommended") or 0)
+            estimated_by = fixed_budget.get("calculation_source") or "fixed_reference_cost_model"
         elif has_daily_plans:
             transport_cost = self._estimate_transport_cost_from_daily_plans(daily_plans, duration, num_travelers, budget_level, dest_factor, user_prefs)
             hotel_cost = self._estimate_hotel_cost_from_daily_plans(daily_plans, duration, num_travelers, budget_level, dest_factor, user_prefs)
@@ -340,11 +367,23 @@ class BudgetAgent(BaseAgent):
             food_cost = self._estimate_food_cost(destination, duration, num_travelers, budget_level, dest_factor, user_prefs)
             other_cost = self._estimate_other_cost(duration, num_travelers, budget_level, dest_factor, user_prefs)
 
-        buffer_cost = self._calculate_buffer_cost(transport_cost + hotel_cost + food_cost + computed_ticket_cost + other_cost)
+        if fixed_budget and fixed_total_with_buffer is not None:
+            buffer_cost = float((fixed_breakdown.get("buffer") or {}).get("recommended") or 0)
+            total_estimated = (
+                transport_cost
+                + hotel_cost
+                + food_cost
+                + computed_ticket_cost
+                + other_cost
+                + intercity_transport_cost
+            )
+            total_with_buffer = fixed_total_with_buffer
+        else:
+            buffer_cost = self._calculate_buffer_cost(transport_cost + hotel_cost + food_cost + computed_ticket_cost + other_cost)
 
-        # 计算总预算
-        total_estimated = transport_cost + hotel_cost + food_cost + computed_ticket_cost + other_cost
-        total_with_buffer = total_estimated + buffer_cost
+            # 计算总预算
+            total_estimated = transport_cost + hotel_cost + food_cost + computed_ticket_cost + other_cost
+            total_with_buffer = total_estimated + buffer_cost
 
         # 判断是否超预算
         is_over_budget = budget_limit is not None and total_with_buffer > budget_limit
@@ -353,7 +392,7 @@ class BudgetAgent(BaseAgent):
         optimization_suggestions = []
         if is_over_budget and budget_limit:
             optimization_suggestions = self._generate_optimization_suggestions(
-                total_with_buffer, budget_limit, transport_cost, hotel_cost, food_cost, computed_ticket_cost, other_cost, budget_level
+                total_with_buffer, budget_limit, transport_cost + intercity_transport_cost, hotel_cost, food_cost, computed_ticket_cost, other_cost, budget_level
             )
 
         # 记录详细思考过程
@@ -413,6 +452,14 @@ class BudgetAgent(BaseAgent):
         if fixed_budget:
             inputs_for_result["offline"] = True
             inputs_for_result["fixed_dataset_versions"] = fixed_budget.get("dataset_versions")
+            inputs_for_result["budget_scope"] = fixed_budget.get("budget_scope")
+            inputs_for_result["requested_budget_scope"] = fixed_budget.get("requested_budget_scope")
+            inputs_for_result["computed_budget_scope"] = fixed_budget.get("computed_budget_scope")
+            inputs_for_result["scope_complete"] = fixed_budget.get("scope_complete")
+            inputs_for_result["sufficiency_status"] = fixed_budget.get("sufficiency_status")
+            inputs_for_result["mandatory_budget_disclaimer"] = fixed_budget.get("mandatory_budget_disclaimer")
+            inputs_for_result["budget_disclaimer"] = fixed_budget.get("budget_disclaimer")
+            inputs_for_result["fixed_budget"] = fixed_budget
         messages = self.build_messages(session, system_prompt)
 
         try:
@@ -452,6 +499,8 @@ class BudgetAgent(BaseAgent):
                 poi_source_field,
                 duration,
                 num_travelers,
+                intercity_transport=intercity_transport,
+                intercity_transport_cost=intercity_transport_cost,
             )
 
             return AgentResponse(
@@ -784,6 +833,19 @@ class BudgetAgent(BaseAgent):
             prefs["transport_mode"] = prefs["transport_mode"] or getattr(session.preferences, "transport_mode", None)
 
         return prefs
+
+    def _fixed_poi_ids_from_pois(self, pois: List[Dict[str, Any]]) -> List[str]:
+        """从上游 POI 结果中提取固定数据集 POI ID。"""
+        result: List[str] = []
+        for poi in pois or []:
+            if not isinstance(poi, dict):
+                continue
+            for field in ("poi_id", "id", "attraction_id"):
+                value = poi.get(field)
+                if value is not None and str(value).strip():
+                    result.append(str(value).strip())
+                    break
+        return result
 
     def _get_destination_factor(self, destination: str) -> float:
         """获取目的地消费系数"""
@@ -1123,6 +1185,7 @@ class BudgetAgent(BaseAgent):
             "num_travelers": self._normalize_travelers(extracted.get("num_travelers"), session_ctx.num_travelers if session_ctx else None),
             "budget_level": self._normalize_budget_level(extracted.get("budget_level") or (session_prefs.budget_level if session_prefs else "medium") or "medium"),
             "budget_amount": extracted.get("budget_amount"),
+            "budget_basis": extracted.get("budget_basis"),
             "budget_limit": extracted.get("budget_limit"),
             "total_budget": extracted.get("total_budget"),
             "budget": extracted.get("budget"),
@@ -1134,6 +1197,21 @@ class BudgetAgent(BaseAgent):
             "food_level": str(extracted.get("food_level") or "").strip(),
             "transport_mode": str(extracted.get("transport_mode") or "").strip(),
             "daily_plans_input": extracted.get("daily_plans"),
+            "origin": (
+                extracted.get("origin")
+                or extracted.get("departure_place")
+                or (session_ctx.origin if session_ctx else None)
+            ),
+            "departure_place": (
+                extracted.get("departure_place")
+                or extracted.get("origin")
+                or (session_ctx.departure_place if session_ctx else None)
+            ),
+            "requested_budget_scope": (
+                extracted.get("requested_budget_scope")
+                or extracted.get("budget_scope")
+            ),
+            "mandatory_budget_disclaimer": extracted.get("mandatory_budget_disclaimer"),
         }
         return result
 
@@ -1363,6 +1441,8 @@ class BudgetAgent(BaseAgent):
         poi_source_field: Optional[str],
         duration: int,
         num_travelers: int,
+        intercity_transport: Optional[Dict[str, Any]] = None,
+        intercity_transport_cost: float = 0.0,
     ) -> Dict[str, Any]:
         """构建完整的结构化预算结果。"""
         per_day_total = total_with_buffer / max(duration, 1)
@@ -1372,7 +1452,7 @@ class BudgetAgent(BaseAgent):
             budget_gap = round(total_with_buffer - budget_limit, 2) if total_with_buffer > budget_limit else 0.0
         applied_rules = []
         if inputs.get("offline"):
-            applied_rules.append("fixed_offline_dataset")
+            applied_rules.append("budget_policy_v2_0_fixed_reference_cost_model")
         if pois:
             applied_rules.append("poi_list_price_extraction")
         if daily_plans:
@@ -1390,24 +1470,76 @@ class BudgetAgent(BaseAgent):
             for name in (ticket_summary.get("pending_confirmation_pois") or [])
             if str(name).strip()
         ]
+        intercity_info = intercity_transport or {}
+        total_transport_cost = transport_cost + float(intercity_transport_cost or 0.0)
+        fixed_budget = inputs.get("fixed_budget") if isinstance(inputs.get("fixed_budget"), dict) else {}
+        budget_policy = fixed_budget.get("budget_policy") if isinstance(fixed_budget.get("budget_policy"), dict) else {}
+        mandatory_budget_disclaimer = bool(
+            inputs.get("mandatory_budget_disclaimer")
+            or intercity_info.get("mandatory_budget_disclaimer")
+        )
+        budget_disclaimer = inputs.get("budget_disclaimer") or intercity_info.get("disclaimer")
+        if mandatory_budget_disclaimer and not budget_disclaimer:
+            budget_disclaimer = "当前预算不包含出发地与目的地之间的往返城际大交通。"
         result: Dict[str, Any] = {
+            "origin": inputs.get("origin") or intercity_info.get("origin"),
             "budget_level": inputs.get("budget_level") or "medium",
+            "budget_basis": inputs.get("budget_basis"),
             "total_budget": round(total_with_buffer, 2),
             "confirmed_total_cost": round(total_with_buffer, 2),
+            "final_recommended_total": round(
+                float(fixed_budget.get("final_recommended_total") or total_with_buffer),
+                2,
+            ),
+            "recommended_preparation_amount": round(
+                float(fixed_budget.get("recommended_preparation_amount") or total_with_buffer),
+                2,
+            ),
+            "estimated_actual_spending": round(
+                float(fixed_budget.get("estimated_actual_spending") or max(total_with_buffer - buffer_cost, 0.0)),
+                2,
+            ),
+            "economic_baseline_total": (
+                round(float(fixed_budget.get("economic_baseline_total")), 2)
+                if fixed_budget.get("economic_baseline_total") is not None
+                else None
+            ),
+            "economic_baseline_local_total": fixed_budget.get("economic_baseline_local_total"),
+            "budget_policy_version": fixed_budget.get("budget_policy_version"),
+            "budget_policy": budget_policy,
+            "contingency_amount": fixed_budget.get("contingency_amount", round(buffer_cost, 2)),
+            "remaining_budget": fixed_budget.get("remaining_budget"),
+            "covered_scope_remaining_budget": fixed_budget.get("covered_scope_remaining_budget"),
             "per_person_budget": round(total_with_buffer / max(num_travelers, 1), 2),
             "daily_budget": round(total_with_buffer / max(duration, 1), 2),
             "per_day_budget": round(per_day_total, 2),
             "per_day_per_person_budget": round(per_day_per_person, 2),
-            "transport_cost": round(transport_cost, 2),
+            "transport_cost": round(total_transport_cost, 2),
+            "local_transport_cost": round(transport_cost, 2),
+            "intercity_transport_cost": round(float(intercity_transport_cost or 0.0), 2),
+            "intercity_transport_included": bool(intercity_info.get("intercity_transport_included")),
+            "intercity_transport": intercity_info,
+            "real_time_api_allowed": False if inputs.get("offline") else None,
+            "runtime_online_refresh_allowed": False if inputs.get("offline") else None,
+            "real_time_price_claim_allowed": False if inputs.get("offline") else None,
+            "budget_scope": inputs.get("budget_scope") or intercity_info.get("budget_scope"),
+            "requested_budget_scope": inputs.get("requested_budget_scope"),
+            "computed_budget_scope": inputs.get("computed_budget_scope") or inputs.get("budget_scope"),
+            "scope_complete": inputs.get("scope_complete"),
+            "sufficiency_status": inputs.get("sufficiency_status"),
+            "mandatory_budget_disclaimer": mandatory_budget_disclaimer,
+            "budget_disclaimer": budget_disclaimer,
             "hotel_cost": round(hotel_cost, 2),
             "food_cost": round(food_cost, 2),
             "ticket_cost": round(ticket_cost, 2),
             "confirmed_ticket_cost": round(ticket_cost, 2),
             "other_cost": round(other_cost, 2),
             "buffer_cost": round(buffer_cost, 2),
-            "is_over_budget": self._is_over_budget(total_with_buffer, budget_limit),
+            "is_over_budget": fixed_budget.get("is_over_budget", self._is_over_budget(total_with_buffer, budget_limit)),
             "budget_limit": budget_limit,
-            "budget_gap": budget_gap,
+            "budget_gap": fixed_budget.get("budget_gap", budget_gap),
+            "budget_complete": fixed_budget.get("budget_complete"),
+            "can_judge_budget_sufficiency": fixed_budget.get("can_judge_budget_sufficiency"),
             "estimated_by": estimated_by,
             "ticket_poi_source_field": poi_source_field,
             "ticket_cost_per_person": round(ticket_breakdown.get("ticket_cost_per_person") or 0.0, 2),
@@ -1421,7 +1553,9 @@ class BudgetAgent(BaseAgent):
             "known_ticket_count": int(ticket_summary.get("known_ticket_count") or 0),
             "ignored_non_ticket_count": int(ticket_summary.get("ignored_non_ticket_count") or 0),
             "budget_breakdown": {
-                "transport": round(transport_cost, 2),
+                "transport": round(total_transport_cost, 2),
+                "local_transport": round(transport_cost, 2),
+                "intercity_transport": round(float(intercity_transport_cost or 0.0), 2),
                 "hotel": round(hotel_cost, 2),
                 "food": round(food_cost, 2),
                 "ticket": round(ticket_cost, 2),
@@ -1432,6 +1566,11 @@ class BudgetAgent(BaseAgent):
         }
         if inputs.get("fixed_dataset_versions"):
             result["fixed_dataset_versions"] = inputs.get("fixed_dataset_versions")
+        if fixed_budget:
+            result["fixed_budget_breakdown"] = fixed_budget.get("breakdown") or {}
+            result["transport_breakdown"] = fixed_budget.get("transport_breakdown") or {}
+            result["items"] = fixed_budget.get("items") or []
+            result["calculation_source"] = fixed_budget.get("calculation_source")
         if pois:
             result["poi_count"] = len(pois)
             result["avg_ticket_per_poi"] = round(ticket_cost / max(len(pois), 1) / max(num_travelers, 1), 2)

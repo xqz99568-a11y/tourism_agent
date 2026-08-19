@@ -204,8 +204,8 @@ def _draft_readiness(result_pack: Dict[str, Any]) -> Dict[str, Any]:
 def _paper_positioning() -> Dict[str, Any]:
     return {
         "method_name": METHOD_NAME,
-        "core_problem": "多 Agent 旅游规划中，固定完整链路容易造成不必要的 Agent 与工具调用。",
-        "primary_comparison": "M3 Proposed 与 M2 Fixed Multi-Agent 的配对比较。",
+        "core_problem": "多 Agent 旅游规划中，固定任务模板难以利用多轮状态变化，容易造成不必要的 Agent 与工具重算。",
+        "primary_comparison": "M3 Proposed 与 M2 Fixed Template Multi-Agent 的配对比较。",
         "research_questions": [
             "RQ1：目标—状态调度是否能正确选择 Agent 与工具？",
             "RQ2：动态调度是否保持任务成功率和硬约束满足率？",
@@ -344,8 +344,8 @@ def _abstract_text(readiness: Dict[str, Any], result_pack: Dict[str, Any]) -> st
         f"本文提出{METHOD_NAME}。该方法将用户目标、已知条件、缺失条件和状态变化统一表示为任务状态，"
         "并基于能力依赖选择最小必要 Agent 与离线工具，在多轮任务中复用未失效结果。"
         f"实验在 {readiness.get('independent_case_count')} 个独立测试案例上比较 M0 Direct LLM、"
-        "M1 Single Agent、M2 Fixed Multi-Agent 与 M3 Proposed 四种方法，采用任务成功率、硬约束满足率、"
-        f"Agent/工具选择 F1 以及调用开销等指标进行评价。{rq_text}"
+        "M1 Single Agent、M2 Fixed Template Multi-Agent 与 M3 Proposed 四种方法，采用任务成功率、硬约束满足率、"
+        f"预算策略符合率（BPCR）、Agent/工具选择 F1 以及调用开销等指标进行评价。{rq_text}"
     )
 
 
@@ -353,9 +353,9 @@ def _introduction_text(title: str) -> str:
     return (
         "随着大语言模型在复杂任务求解中的应用增加，多 Agent 系统逐渐被用于将用户请求分解为若干"
         "专业子任务，并结合外部工具获得可验证证据。旅游规划是一类典型的约束密集型任务，用户请求通常"
-        "同时包含目的地、日期、预算、人群偏好、天气风险和多轮修改等条件。如果系统始终执行固定完整"
-        "Agent 链路，虽然实现简单，但容易在单项查询、澄清请求和局部修改场景中产生不必要的 Agent 调用、"
-        "工具调用和 Token 消耗。"
+        "同时包含目的地、日期、预算、人群偏好、天气风险和多轮修改等条件。如果系统只依赖固定任务模板，"
+        "虽然实现简单，但难以利用多轮状态变化，容易在局部修改场景中产生不必要的 Agent 重算、工具调用"
+        "和 Token 消耗。"
         "\n\n"
         f"围绕上述问题，本文以“{title}”为研究主题，关注多 Agent 系统中的协同调度而非单纯的文本生成质量。"
         "本文的核心假设是：在相同模型、相同离线数据、相同工具和相同评价器条件下，若调度器能够根据用户"
@@ -363,7 +363,7 @@ def _introduction_text(title: str) -> str:
         "系统执行开销。"
         "\n\n"
         "本文贡献包括：第一，提出目标—状态驱动的自适应多 Agent 协同调度方法；第二，构建包含 Direct LLM、"
-        "Single Agent、Fixed Multi-Agent 和 Proposed Method 的公平比较框架；第三，建立覆盖 Agent 选择、"
+        "Single Agent、Fixed Template Multi-Agent 和 Proposed Method 的公平比较框架；第三，建立覆盖 Agent 选择、"
         "工具选择、任务成功、硬约束满足和资源开销的可复现实验流程。"
     )
 
@@ -393,9 +393,9 @@ def _method_text() -> str:
         "的结果可以复用，受影响的 Agent 才重新执行。"
         "\n\n"
         "为了保证论文比较公平，本文设置四种方法。M0 Direct LLM 不使用 Agent 和工具，作为无工具能力下限；"
-        "M1 Single Agent 使用一个通用 Agent 自主完成任务和工具调用；M2 Fixed Multi-Agent 固定执行完整业务"
-        "Agent 链路；M3 Proposed 使用本文的目标—状态驱动调度和局部复用机制。M2 与 M3 使用相同业务 Agent、"
-        "相同离线工具和相同评价器，二者核心差异只体现在固定完整执行与动态最小必要执行。"
+        "M1 Single Agent 使用一个通用 Agent 自主完成任务和工具调用；M2 Fixed Template Multi-Agent "
+        "按任务类型套用预设 Agent 模板，且不复用上一轮结果；M3 Proposed 使用本文的目标—状态驱动调度和局部复用机制。"
+        "M2 与 M3 使用相同业务 Agent、相同离线工具和相同评价器，二者核心差异体现在固定任务模板与目标—状态驱动动态调度及结果复用。"
     )
 
 
@@ -408,7 +408,7 @@ def _experiment_text(readiness: Dict[str, Any]) -> str:
         "\n\n"
         "实验比较 M0、M1、M2 和 M3 四种方法，统一模型配置、温度、最大 Token、重试规则、输出 Schema、"
         "离线工具和独立评价器。主要指标分为三类：调度正确性指标包括 Agent Selection F1 和 Tool Selection F1；"
-        "任务正确性指标包括严格任务成功率 STSR 和硬约束满足率 HCSR；效率指标包括 LLM 调用次数、Agent 调用"
+        "任务正确性指标包括严格任务成功率 STSR、硬约束满足率 HCSR 和预算策略符合率 BPCR；效率指标包括 LLM 调用次数、Agent 调用"
         "次数、工具调用次数、Token、估算成本和端到端时延。M3 与 M2 的比较采用配对统计，并报告均值差、"
         "置信区间和相应统计检验。"
     )

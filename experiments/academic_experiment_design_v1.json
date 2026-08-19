@@ -1,0 +1,80 @@
+{
+  "schema_version": "ctp-academic-experiment-design-v1",
+  "design_version": "CTP-GMAS-ACADEMIC-DESIGN-v1",
+  "freeze_status": "frozen_before_formal_results",
+  "freeze_date": "2026-08-19",
+  "paper_goal": "面向约束旅游规划的大模型多 Agent 协作、调度与工具调用研究",
+  "main_benchmark": {
+    "dataset_id": "ctp100_formal_v2",
+    "file": "experiments/ctp100_formal_v2.json",
+    "role": "post_development_frozen_controlled_main_benchmark",
+    "paper_label_zh": "开发后冻结的受控主基准",
+    "claim_allowed_as_unseen": false,
+    "case_count": 100,
+    "turn_count": 130,
+    "methods": [
+      "llm_direct",
+      "single_agent",
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ],
+    "purpose": "主实验用于比较四种方法在同一冻结数据、同一工具和同一评价器下的任务成功率、调度正确性与执行开销。"
+  },
+  "sealed_validation": {
+    "dataset_id": "ctp30_sealed_validation_v1",
+    "file": "experiments/ctp30_sealed_validation_v1.json",
+    "role": "sealed_validation_after_main_design_freeze",
+    "paper_label_zh": "封闭验证集",
+    "case_count": 30,
+    "turn_count": 30,
+    "methods": [
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ],
+    "purpose": "在系统、主基准、预算金标和统计方案冻结后，用于检查 M3 相对 M2 的结论是否在额外未调参案例上保持方向一致。",
+    "not_used_for": [
+      "开发调参",
+      "Prompt 修正",
+      "预算规则修正",
+      "天气或铁路数据补采",
+      "替换 CTP100 主实验结论"
+    ]
+  },
+  "statistical_plan": {
+    "primary_metric": "STSR",
+    "secondary_metrics": [
+      "HCSR",
+      "Agent F1",
+      "Tool F1",
+      "LLM call count",
+      "Agent/tool call count",
+      "total tokens",
+      "latency",
+      "standardized estimated cost"
+    ],
+    "primary_comparison": "adaptive_multi_agent_vs_fixed_multi_agent",
+    "paired_unit": "case_id",
+    "confidence_interval": "paired bootstrap 95%",
+    "binary_test": "McNemar",
+    "continuous_test": "Wilcoxon signed-rank",
+    "secondary_multiplicity_control": "Holm-Bonferroni correction for secondary endpoints",
+    "repeat_policy": "重复实验结果先按 case_id 聚合，不作为额外独立样本。",
+    "minimum_claim_rule": "只有在 STSR/HCSR 不低于 M2 且效率指标下降时，才允许声称自适应调度在保持质量的同时降低开销。"
+  },
+  "claim_boundaries": {
+    "no_tuning_after_main_freeze": true,
+    "sealed_validation_no_tuning_after_run": true,
+    "do_not_call_ctp100_unseen": true,
+    "do_not_claim_real_time_weather_or_rail_price": true,
+    "do_not_use_system_self_review_as_primary_metric": true,
+    "do_not_delete_or_rerun_model_failures_selectively": true
+  },
+  "freeze_inputs": {
+    "weather_snapshot": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+    "intercity_transport_snapshot": "data/intercity_transport/snapshot_manifest.json",
+    "budget_gold": "experiments/generated/ctp100_budget_gold_v2.json",
+    "economy_budget_manual_review": "experiments/generated/economy_budget_manual_review_v1.json",
+    "method_fairness_contract": "app/core/experiment_method_contract.py",
+    "independent_evaluator": "app/core/independent_evaluator.py"
+  }
+}

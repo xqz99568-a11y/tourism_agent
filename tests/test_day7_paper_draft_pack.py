@@ -14,6 +14,7 @@ from app.core.paper_draft_pack import (
     write_paper_draft_pack,
 )
 from app.core.paper_result_pack import write_paper_result_pack
+from app.core.formal_artifact_integrity import build_formal_artifact_integrity_report
 
 
 def test_paper_draft_pack_writes_manuscript_and_manifest(tmp_path: Path) -> None:
@@ -125,12 +126,15 @@ def _write_formal_run_dir(run_dir: Path, *, independent_cases: int) -> Path:
         encoding="utf-8",
     )
     (run_dir / "paper_tables.md").write_text("# Paper Result Tables\n", encoding="utf-8")
+    artifact_integrity = build_formal_artifact_integrity_report()
+    git_commit = artifact_integrity["git"]["commit"]
     (run_dir / "formal_preflight_report.json").write_text(
         json.dumps(
             {
                 "schema_version": "ctp-formal-preflight-v1",
                 "status": "passed",
                 "run": {"run_id": "unit-formal-run", "expected_raw_run_count": 4},
+                "artifact_integrity": artifact_integrity,
             },
             ensure_ascii=False,
             indent=2,
@@ -141,6 +145,8 @@ def _write_formal_run_dir(run_dir: Path, *, independent_cases: int) -> Path:
         json.dumps(
             {
                 "run_id": "unit-formal-run",
+                "git_commit": git_commit,
+                "git": {"commit": git_commit},
                 "dataset_id": "unit-formal-dataset",
                 "dataset_version": "v1",
                 "methods": methods,
@@ -156,6 +162,7 @@ def _write_formal_run_dir(run_dir: Path, *, independent_cases: int) -> Path:
                 },
                 "model_config_name": "unit-model-config",
                 "model": "unit-model",
+                "formal_artifact_integrity": artifact_integrity,
                 "results": {
                     "csv": (run_dir / "benchmark_results.csv").as_posix(),
                     "json": (run_dir / "benchmark_results.json").as_posix(),
@@ -175,6 +182,7 @@ def _result(method: str, *, tokens: int, trace: dict, trace_path: Path) -> dict:
     metrics = {
         "stsr": True,
         "evaluation_hcsr": 1.0,
+        "bpcr": 1.0,
         "agent_selection_f1": 1.0,
         "tool_selection_f1": 1.0,
         "agent_set_exact_match": True,
@@ -192,7 +200,8 @@ def _result(method: str, *, tokens: int, trace: dict, trace_path: Path) -> dict:
         "latency_ms": 100,
         "metrics": metrics,
         "evaluation": {"task_type": "weather_query"},
-        "output": {"task_type": "weather_query"},
+        "output": {"task_type": "weather_query", "execution_status": "completed"},
+        "execution_status": "completed",
         "run_audit": {"schema_version": "ctp-run-audit-v1", "metrics": metrics},
         "trace": trace,
         "trace_file": trace_path.as_posix(),
@@ -252,6 +261,7 @@ def _summary(*, independent_cases: int) -> dict:
             "metrics": {
                 "stsr": _paired_metric(1.0, 1.0, binary=True),
                 "evaluation_hcsr": _paired_metric(1.0, 1.0),
+                "bpcr": _paired_metric(1.0, 1.0),
                 "agent_selection_f1": _paired_metric(1.0, 1.0),
                 "tool_selection_f1": _paired_metric(1.0, 1.0),
                 "llm_call_count": _paired_metric(1.0, 1.0),
@@ -271,6 +281,7 @@ def _method_summary(*, tokens: int, agent_calls: int, tool_calls: int) -> dict:
         "raw_run_count": 1,
         "stsr_rate": 1.0,
         "evaluation_hcsr_mean": 1.0,
+        "bpcr_mean": 1.0,
         "agent_selection_f1_mean": 1.0,
         "tool_selection_f1_mean": 1.0,
         "llm_call_count_mean": 1,

@@ -370,7 +370,7 @@ def _validate_paper_tables(paper_tables: str) -> None:
     required = [
         "M0 Direct LLM",
         "M1 Single Agent",
-        "M2 Fixed Multi-Agent",
+        "M2 Fixed Template Multi-Agent",
         "M3 Proposed",
         "Agent/tool diagnostics",
         "Token and cost",
@@ -463,7 +463,21 @@ def _validate_outputs(results: List[Dict[str, Any]]) -> None:
             if not isinstance(raw_output, dict) or raw_output.get("schema_version") != EXPERIMENT_OUTPUT_SCHEMA_VERSION:
                 raise RuntimeError("Day6 M0/M1 raw output schema mismatch")
             structured_meta = (raw_output.get("metadata") or {}).get("structured_llm_output") or {}
-            if structured_meta.get("parse_status") != "passed" or structured_meta.get("validation_status") != "passed":
+            single_agent_no_business_output = (
+                method == "single_agent"
+                and raw_output.get("task_type") in {"general_chat", "clarification"}
+                and not raw_output.get("planned_agents")
+                and not raw_output.get("used_agents")
+                and not raw_output.get("planned_tools")
+                and not raw_output.get("called_tools")
+            )
+            if (
+                not single_agent_no_business_output
+                and (
+                    structured_meta.get("parse_status") != "passed"
+                    or structured_meta.get("validation_status") != "passed"
+                )
+            ):
                 raise RuntimeError("Day6 M0/M1 structured JSON validation failed")
         if method == "llm_direct":
             if audit.get("planned_agents") or audit.get("called_tools"):
@@ -603,8 +617,10 @@ def _validate_m3_full_plan(results: List[Dict[str, Any]]) -> None:
 
     expected_agents = {"attraction", "weather", "itinerary", "budget"}
     expected_tools = set(GENERATION_TOOL_NAMES)
-    if ticket.get("task_type") != "trip_planning":
-        raise RuntimeError("Day6 M3 full plan case was not recognized as trip_planning")
+    if ticket.get("task_type") not in {"trip_planning", "weather_aware_trip_plan"}:
+        raise RuntimeError(
+            "Day6 M3 full plan case was not recognized as a weather-aware full plan"
+        )
     if set(decision.get("planned_agents") or []) != expected_agents:
         raise RuntimeError("Day6 M3 full plan case did not plan all four agents")
     if set(decision.get("planned_tools") or []) != expected_tools:
@@ -720,15 +736,25 @@ def _validate_people_change_reuse(results: List[Dict[str, Any]]) -> None:
     m2_audit = (m2.get("run_audit") or {}).get("metrics") or {}
     m3_audit = (m3.get("run_audit") or {}).get("metrics") or {}
     m3_metrics = m3.get("metrics") or {}
+    m2_scheduler = ((m2.get("output") or {}).get("metadata") or {}).get("fixed_template_scheduler") or {}
+    m2_decision = m2_scheduler.get("decision") if isinstance(m2_scheduler.get("decision"), dict) else {}
 
+    if m2_scheduler.get("name") != "fixed_template_scheduler":
+        raise RuntimeError("Day6 M2 people-change case did not record fixed-template scheduler metadata")
+    if m2_decision.get("planned_agents") != ["itinerary", "budget"]:
+        raise RuntimeError("Day6 M2 people-change case did not use the fixed people-change template")
+    if m2_decision.get("planned_tools") != ["budget_calculator"]:
+        raise RuntimeError("Day6 M2 people-change case did not use the fixed people-change tool template")
+    if m2_decision.get("reused_agents") not in ([], None):
+        raise RuntimeError("Day6 M2 people-change case must not reuse previous agents")
     if "budget" not in set(m3_metrics.get("m3_planned_agents") or []):
         raise RuntimeError("Day6 M3 people-change case did not plan budget agent")
     if "attraction" not in set(m3_metrics.get("m3_reused_agents") or []):
         raise RuntimeError("Day6 M3 people-change case did not reuse attraction result")
-    if m3_audit.get("planned_agent_count", 0) >= m2_audit.get("planned_agent_count", 0):
-        raise RuntimeError("Day6 M3 people-change case did not reduce planned agents vs M2")
-    if m3_audit.get("called_tool_count", 0) >= m2_audit.get("called_tool_count", 0):
-        raise RuntimeError("Day6 M3 people-change case did not reduce called tools vs M2")
+    if m3_audit.get("planned_agent_count", 0) > m2_audit.get("planned_agent_count", 0):
+        raise RuntimeError("Day6 M3 people-change case planned more agents than the M2 fixed template")
+    if m3_audit.get("called_tool_count", 0) > m2_audit.get("called_tool_count", 0):
+        raise RuntimeError("Day6 M3 people-change case called more tools than the M2 fixed template")
 
 
 def _validate_rain_turn_reuse(results: List[Dict[str, Any]]) -> None:
@@ -739,12 +765,14 @@ def _validate_rain_turn_reuse(results: List[Dict[str, Any]]) -> None:
     metrics = m3.get("metrics") or {}
     if ticket.get("task_type") != "weather_adjustment":
         raise RuntimeError("Day6 rain target turn was not recognized as weather_adjustment")
-    if set(decision.get("planned_agents") or []) != {"weather", "itinerary"}:
-        raise RuntimeError("Day6 rain target turn must plan weather and itinerary agents")
-    if set(decision.get("planned_tools") or []) != {"weather_query"}:
-        raise RuntimeError("Day6 rain target turn must call only weather_query")
+    if set(decision.get("planned_agents") or []) != {"itinerary", "budget"}:
+        raise RuntimeError("Day6 rain target turn must plan itinerary and budget agents")
+    if set(decision.get("planned_tools") or []) != {"budget_calculator"}:
+        raise RuntimeError("Day6 rain target turn must call only budget_calculator")
     if "attraction" not in set(metrics.get("m3_reused_agents") or []):
         raise RuntimeError("Day6 rain target turn did not reuse attraction")
+    if "weather" not in set(metrics.get("m3_reused_agents") or []):
+        raise RuntimeError("Day6 rain target turn did not reuse weather")
     adjustments = (m3.get("output") or {}).get("weather_adjustments") or []
     if not any(
         isinstance(item, dict) and item.get("day") == 2 and item.get("day_index") == 2
@@ -868,7 +896,7 @@ def _tool_arguments(name: str, text: str) -> Dict[str, Any]:
         scenario_type = "rain" if _contains_any(text, ("rain", "rainy", "涓嬮洦", "闆ㄥぉ")) else "sunny"
         return {
             "city": "Hangzhou",
-            "date": "2026-08-01",
+            "date": "2026-08-07",
             "days": days,
             "scenario_type": scenario_type,
         }

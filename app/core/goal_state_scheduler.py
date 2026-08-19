@@ -1,6 +1,7 @@
 """Goal-state task ticket and scheduler decisions for research experiments."""
 from __future__ import annotations
 
+import re
 from dataclasses import asdict, dataclass, field
 from typing import Any, Iterable, Mapping
 
@@ -19,7 +20,12 @@ TOOLS_BY_AGENT = {
 }
 
 AGENT_FINGERPRINT_SLOTS = {
-    "attraction": ("destination", "traveler_group", "preferences"),
+    "attraction": (
+        "destination",
+        "traveler_group",
+        "preferences",
+        "special_requirements",
+    ),
     "weather": ("destination", "start_date", "duration_days", "weather_scenario"),
     "itinerary": (
         "destination",
@@ -27,16 +33,17 @@ AGENT_FINGERPRINT_SLOTS = {
         "duration_days",
         "traveler_group",
         "preferences",
-        "budget_amount",
-        "budget_level",
+        "special_requirements",
         "weather_scenario",
     ),
     "budget": (
+        "origin",
         "destination",
         "duration_days",
         "people_count",
         "traveler_group",
         "preferences",
+        "special_requirements",
         "budget_amount",
         "budget_level",
     ),
@@ -53,8 +60,10 @@ RESULT_DEPENDENCIES = {
 }
 
 CANONICAL_SLOT_ORDER = (
+    "origin",
     "destination",
     "start_date",
+    "end_date",
     "duration_days",
     "people_count",
     "traveler_group",
@@ -75,11 +84,15 @@ CAPABILITY_ORDER = (
 )
 
 SLOT_ALIASES = {
+    "departure_city": "origin",
+    "departure_place": "origin",
+    "from_city": "origin",
     "city": "destination",
     "destination_city": "destination",
     "date": "start_date",
     "travel_date": "start_date",
     "departure_date": "start_date",
+    "return_date": "end_date",
     "days": "duration_days",
     "duration": "duration_days",
     "num_days": "duration_days",
@@ -114,12 +127,38 @@ CITY_ALIASES = {
     "shenzhen": "shenzhen",
     "桂林": "guilin",
     "guilin": "guilin",
+    "拉萨": "lhasa",
+    "lhasa": "lhasa",
+    "广州": "guangzhou",
+    "guangzhou": "guangzhou",
+    "上海": "shanghai",
+    "shanghai": "shanghai",
+    "成都": "chengdu",
+    "chengdu": "chengdu",
+    "重庆": "chongqing",
+    "chongqing": "chongqing",
+    "武汉": "wuhan",
+    "wuhan": "wuhan",
+    "长沙": "changsha",
+    "changsha": "changsha",
+    "南京": "nanjing",
+    "nanjing": "nanjing",
+    "郑州": "zhengzhou",
+    "zhengzhou": "zhengzhou",
+    "南昌": "nanchang",
+    "nanchang": "nanchang",
+    "贵阳": "guiyang",
+    "guiyang": "guiyang",
 }
 
 TASK_REQUIRED_SLOTS = {
     "trip_planning": ("destination", "duration_days", "people_count", "start_date"),
+    "trip_plan": ("destination", "duration_days", "people_count"),
+    "weather_aware_trip_plan": ("destination", "start_date", "duration_days", "people_count"),
     "attraction_recommendation": ("destination",),
-    "weather_query": ("destination", "start_date"),
+    "weather_query": ("destination",),
+    "weather_forecast_query": ("destination",),
+    "weather_climate_question": ("destination",),
 }
 
 TASK_CAPABILITIES = {
@@ -129,10 +168,28 @@ TASK_CAPABILITIES = {
         "itinerary_generation",
         "budget_estimation",
     ),
+    "trip_plan": (
+        "poi_evidence",
+        "itinerary_generation",
+        "budget_estimation",
+    ),
+    "weather_aware_trip_plan": (
+        "poi_evidence",
+        "weather_evidence",
+        "itinerary_generation",
+        "budget_estimation",
+    ),
     "attraction_recommendation": ("poi_evidence",),
+    "destination_recommendation": ("chat_response",),
     "weather_query": ("weather_evidence",),
+    "weather_forecast_query": ("weather_evidence",),
+    "weather_climate_question": ("chat_response",),
     "budget_query": ("budget_estimation",),
-    "weather_adjustment": ("weather_evidence", "itinerary_generation"),
+    "weather_adjustment": (
+        "weather_evidence",
+        "itinerary_generation",
+        "budget_estimation",
+    ),
     "clarification": ("clarification",),
     "general_chat": ("chat_response",),
 }
@@ -295,10 +352,18 @@ ATTRACTION_EXPANSION_TERMS = (
 GENERAL_CHAT_TERMS = (
     "谢谢",
     "你好",
+    "随便看看",
+    "暂时不用",
+    "暂时不用啦",
+    "暂时不规划",
+    "没打算出去",
     "晚安",
     "道个晚安",
     "能做什么",
     "助手能做什么",
+    "哪些建议",
+    "哪些旅游问题",
+    "帮我解决哪些旅游问题",
     "心情",
     "不错",
     "thanks",
@@ -307,6 +372,12 @@ GENERAL_CHAT_TERMS = (
     "good mood",
 )
 NEGATED_TRAVEL_PLANNING_TERMS = (
+    "没打算出去玩",
+    "最近没打算出去玩",
+    "暂时不用",
+    "暂时不用啦",
+    "暂时不规划",
+    "随便看看",
     "不需要任何旅行规划",
     "不需要任何旅游规划",
     "不需要旅行规划",
@@ -347,6 +418,11 @@ NEGATED_TRAVEL_PLANNING_TERMS = (
     "dont need a plan",
     "no need for a plan",
     "do not plan",
+    "no more planning",
+    "no more trip planning",
+    "no more travel planning",
+    "no planning for now",
+    "no more planning for now",
     "don't plan",
     "dont plan",
     "only saying hi",
@@ -430,6 +506,29 @@ BUDGET_SINGLE_SCOPE_TERMS = (
     "only budget",
     "rough budget",
 )
+DESTINATION_RECOMMENDATION_TERMS = (
+    "去哪",
+    "哪里",
+    "去哪儿",
+    "有什么合适",
+    "合适的安排",
+    "推荐目的地",
+    "推荐去哪",
+    "适合去哪",
+)
+WEATHER_CLIMATE_TERMS = (
+    "月份天气",
+    "月天气",
+    "十一月份",
+    "十一月",
+    "11月份",
+    "11月",
+    "季节",
+    "全年",
+    "一般天气",
+    "climate",
+    "seasonal weather",
+)
 
 
 @dataclass(frozen=True)
@@ -507,7 +606,11 @@ class GoalStateTicketBuilder:
             changed_slots=changed_slots,
             goal_change_type=goal_change_type,
         )
-        explicit_missing_slots = self._explicit_clarification_missing_slots(user_input)
+        explicit_missing_slots = [
+            slot
+            for slot in self._explicit_clarification_missing_slots(user_input)
+            if slot not in effective_current or _is_empty_value(effective_current.get(slot))
+        ]
         missing_slots = (
             explicit_missing_slots
             or self._missing_slots(
@@ -527,10 +630,15 @@ class GoalStateTicketBuilder:
         )
         clarification_required = task_type == "clarification"
         clarification_fields = list(missing_slots) if clarification_required else []
-        required_capabilities = self._required_capabilities(task_type, changed_slots)
+        required_capabilities = self._required_capabilities(
+            task_type,
+            changed_slots,
+            goal_change_type=goal_change_type,
+        )
         dependency_policy = self._dependency_policy(
             task_type=task_type,
             user_input=user_input,
+            changed_slots=changed_slots,
         )
 
         return GoalStateTaskTicket(
@@ -556,10 +664,16 @@ class GoalStateTicketBuilder:
     ) -> str:
         if not previous_slots:
             return "new_request"
+        text = _normalize_text(user_input)
+        explicit_replan_requested = _contains_any(
+            text,
+            EXPLICIT_REPLAN_TERMS,
+        ) and not _has_negated_replan_request(text)
+        if changed_slots and explicit_replan_requested:
+            return "explicit_replan"
         if changed_slots:
             return "slot_delta"
-        text = _normalize_text(user_input)
-        if _contains_any(text, EXPLICIT_REPLAN_TERMS):
+        if explicit_replan_requested:
             return "explicit_replan"
         if _contains_any(text, ATTRACTION_EXPANSION_TERMS):
             return "goal_shift_attraction"
@@ -583,13 +697,21 @@ class GoalStateTicketBuilder:
     ) -> str:
         text = _normalize_text(user_input)
         has_previous = bool(previous_slots)
-        has_weather_signal = _contains_any(text, WEATHER_TERMS)
+        has_weather_signal = _has_weather_text(text)
         has_weather_signal = has_weather_signal or "weather_scenario" in current_slots
-        has_trip_signal = _contains_any(text, TRIP_TERMS)
-        has_attraction_signal = _contains_any(text, ATTRACTION_TERMS)
-        has_budget_signal = _contains_any(text, BUDGET_TERMS)
+        has_trip_signal = _has_trip_text(text)
+        has_attraction_signal = _has_attraction_text(text)
+        has_budget_signal = _has_budget_text(text)
         budget_single_scope = _is_budget_single_scope_request(text)
         ticket_budget_single_scope = _is_ticket_budget_single_scope_request(text)
+        strict_budget_single_scope = (
+            ticket_budget_single_scope or _is_strict_budget_single_scope_request(text)
+        )
+        budget_query_requested = (
+            strict_budget_single_scope
+            or ticket_budget_single_scope
+            or (budget_single_scope and not _is_preserved_budget_statement(text))
+        )
         full_planning_priority = _is_multi_capability_trip_planning_request(
             text,
             current_slots=current_slots,
@@ -599,6 +721,14 @@ class GoalStateTicketBuilder:
             current_slots=current_slots,
         )
         explicit_weather_only = _is_weather_single_scope_request(text)
+        complete_trip_slots = all(
+            slot in current_slots
+            for slot in ("destination", "duration_days", "people_count")
+        )
+        has_start_date = "start_date" in current_slots
+
+        if _is_general_chat_only_request(text):
+            return "general_chat"
 
         if not has_previous and not current_slots and _is_general_chat_only_request(text):
             return "general_chat"
@@ -607,9 +737,6 @@ class GoalStateTicketBuilder:
             text,
             TRIP_TERMS + ATTRACTION_TERMS + WEATHER_TERMS + BUDGET_TERMS,
         ):
-            return "general_chat"
-
-        if not has_previous and _is_general_chat_only_request(text):
             return "general_chat"
 
         if has_previous:
@@ -632,12 +759,20 @@ class GoalStateTicketBuilder:
                 return "weather_adjustment"
             if explicit_full_plan or full_planning_priority:
                 return "partial_replan"
-            if set(changed_slots) & {"preferences", "budget_amount", "budget_level"}:
+            if set(changed_slots) & {
+                "preferences",
+                "budget_amount",
+                "budget_level",
+                "special_requirements",
+            }:
+                return "partial_replan"
+            if "people_count" in changed_slots and not budget_query_requested:
                 return "partial_replan"
             budget_query_delta_slots = {"people_count", "budget_amount", "budget_level"}
             if (
                 has_budget_signal
                 and not _contains_any(text, REPLAN_ACTION_TERMS)
+                and budget_query_requested
                 and set(changed_slots) <= budget_query_delta_slots
             ):
                 return "budget_query"
@@ -651,24 +786,30 @@ class GoalStateTicketBuilder:
                 return "partial_replan"
             return "general_chat"
 
-        if _is_general_chat_only_request(text):
-            return "general_chat"
+        if _is_weather_climate_question(text):
+            return "weather_climate_question"
+        if _is_destination_recommendation_request(text, current_slots=current_slots):
+            return "destination_recommendation"
         if explicit_weather_only:
-            return "weather_query"
-        if explicit_full_plan:
-            return "trip_planning"
+            return "weather_forecast_query" if "未来" in text else "weather_query"
         if has_attraction_signal and _is_attraction_single_scope_request(text):
             return "attraction_recommendation"
+        if strict_budget_single_scope:
+            return "budget_query"
+        if (explicit_full_plan or full_planning_priority) and complete_trip_slots:
+            return "weather_aware_trip_plan" if has_start_date else "trip_plan"
+        if explicit_full_plan:
+            return "trip_planning"
         if ticket_budget_single_scope or budget_single_scope:
             return "budget_query"
-        if full_planning_priority:
-            return "trip_planning"
+        if has_trip_signal and complete_trip_slots:
+            return "weather_aware_trip_plan" if has_start_date else "trip_plan"
         if has_weather_signal and _is_weather_single_scope_request(text):
             return "weather_query"
         if has_trip_signal and any(
             slot in current_slots for slot in ("start_date", "duration_days", "people_count")
         ):
-            return "trip_planning"
+            return "weather_aware_trip_plan" if has_start_date else "trip_plan"
         if has_budget_signal:
             return "budget_query"
         if has_attraction_signal and not any(slot in current_slots for slot in ("start_date", "duration_days", "people_count")):
@@ -676,7 +817,7 @@ class GoalStateTicketBuilder:
         if has_weather_signal:
             return "weather_query"
         if has_trip_signal or any(slot in current_slots for slot in ("start_date", "duration_days", "people_count")):
-            return "trip_planning"
+            return "weather_aware_trip_plan" if has_start_date else "trip_plan"
         if current_slots.get("destination"):
             return "attraction_recommendation"
         return "general_chat"
@@ -704,13 +845,19 @@ class GoalStateTicketBuilder:
                 current_slots,
             ) or _has_available_result(previous_state, "itinerary", current_slots):
                 return []
-            required = ("destination", "start_date")
+            required = ("destination",)
             return [slot for slot in required if slot not in current_slots]
 
         required = TASK_REQUIRED_SLOTS.get(task_type, ())
         return [slot for slot in required if slot not in current_slots]
 
-    def _required_capabilities(self, task_type: str, changed_slots: list[str]) -> list[str]:
+    def _required_capabilities(
+        self,
+        task_type: str,
+        changed_slots: list[str],
+        *,
+        goal_change_type: str = "none",
+    ) -> list[str]:
         if task_type != "partial_replan":
             return list(TASK_CAPABILITIES.get(task_type, ()))
 
@@ -720,18 +867,41 @@ class GoalStateTicketBuilder:
         if "duration_days" in changed_slots:
             capabilities.extend(("weather_evidence", "itinerary_generation", "budget_estimation"))
         if "start_date" in changed_slots:
-            capabilities.extend(("weather_evidence", "itinerary_generation"))
+            capabilities.extend(("weather_evidence", "itinerary_generation", "budget_estimation"))
         if "people_count" in changed_slots:
+            capabilities.extend(("itinerary_generation", "budget_estimation"))
+        if "origin" in changed_slots:
             capabilities.append("budget_estimation")
-        if any(slot in changed_slots for slot in ("traveler_group", "preferences")):
+        if any(
+            slot in changed_slots
+            for slot in ("traveler_group", "preferences", "special_requirements")
+        ):
             capabilities.extend(("poi_evidence", "itinerary_generation", "budget_estimation"))
         if any(slot in changed_slots for slot in ("budget_amount", "budget_level")):
-            capabilities.extend(("poi_evidence", "itinerary_generation", "budget_estimation"))
+            if goal_change_type == "explicit_replan":
+                capabilities.extend(("itinerary_generation", "budget_estimation"))
+            else:
+                capabilities.append("budget_estimation")
         if "weather_scenario" in changed_slots:
             capabilities.extend(("weather_evidence", "itinerary_generation"))
         return _ordered_unique_capabilities(capabilities)
 
-    def _dependency_policy(self, *, task_type: str, user_input: str) -> dict[str, Any]:
+    def _dependency_policy(
+        self,
+        *,
+        task_type: str,
+        user_input: str,
+        changed_slots: list[str],
+    ) -> dict[str, Any]:
+        if task_type == "partial_replan" and set(changed_slots) == {"origin"}:
+            return {
+                "origin_change_scope": (
+                    "itinerary_budget"
+                    if _origin_change_requests_itinerary_replan(user_input)
+                    else "budget_only"
+                )
+            }
+
         if task_type != "budget_query":
             return {}
 
@@ -747,7 +917,10 @@ class GoalStateTicketBuilder:
 
     def _explicit_clarification_missing_slots(self, user_input: str) -> list[str]:
         text = _normalize_text(user_input)
-        if not _contains_any(
+        if _budget_query_needs_budget_amount(text):
+            return ["budget_amount"]
+        explicit_clarification_request = _is_explicit_clarification_request(text)
+        if not explicit_clarification_request and not _contains_any(
             text,
             (
                 "缺失",
@@ -768,14 +941,16 @@ class GoalStateTicketBuilder:
         slots: list[str] = []
         if _contains_any(text, ("目的地", "城市", "去哪", "destination", "city")):
             slots.append("destination")
-        if _contains_any(text, ("出发日期", "日期", "时间", "start_date", "start date", "date")):
+        if _contains_any(text, ("出发日期", "日期", "时间", "什么时候", "什么时候走", "何时", "start_date", "start date", "date")):
             slots.append("start_date")
         if _contains_any(text, ("旅行天数", "旅游天数", "天数", "几天", "duration", "days")):
             slots.append("duration_days")
         if _contains_any(text, ("出行人数", "人数", "几个人", "people", "traveler")):
             slots.append("people_count")
-        if _contains_any(text, ("预算", "费用", "budget", "cost")):
+        if _contains_any(text, ("预算", "费用", "多少钱", "花多少钱", "budget", "cost")):
             slots.append("budget_amount")
+        if not slots and explicit_clarification_request:
+            slots.extend(["destination", "duration_days", "people_count"])
         return [slot for slot in CANONICAL_SLOT_ORDER if slot in set(slots)]
 
 
@@ -804,9 +979,33 @@ class GoalStateScheduler:
                 decision_reasons=["new_full_plan"],
             )
 
+        if ticket.task_type == "weather_aware_trip_plan":
+            return self._decision(
+                planned_agents=list(CANONICAL_AGENT_ORDER),
+                decision_reasons=["new_weather_aware_plan"],
+            )
+
+        if ticket.task_type == "trip_plan":
+            return self._decision(
+                planned_agents=["attraction", "itinerary", "budget"],
+                decision_reasons=["new_trip_plan_without_weather"],
+            )
+
+        if ticket.task_type == "destination_recommendation":
+            return self._decision(decision_reasons=["destination_recommendation_no_tools"])
+
         if ticket.task_type == "attraction_recommendation":
             return self._decision(
                 planned_agents=["attraction"],
+                decision_reasons=["single_capability_request"],
+            )
+
+        if ticket.task_type == "weather_climate_question":
+            return self._decision(decision_reasons=["weather_climate_no_forecast_tool"])
+
+        if ticket.task_type == "weather_forecast_query":
+            return self._decision(
+                planned_agents=["weather"],
                 decision_reasons=["single_capability_request"],
             )
 
@@ -820,11 +1019,24 @@ class GoalStateScheduler:
             return self._schedule_budget_query(ticket, previous_state)
 
         if ticket.task_type == "weather_adjustment":
+            if _has_available_result(
+                previous_state,
+                "weather",
+                _reuse_slots_for_ticket_agent(ticket, "weather"),
+            ):
+                return self._decision_with_reuse_validation(
+                    ticket=ticket,
+                    previous_state=previous_state,
+                    planned_agents=["itinerary", "budget"],
+                    invalidated_agents=["itinerary", "budget"],
+                    decision_reasons=["weather_adjustment_reuses_previous_weather"],
+                    reuse_scope_agents=["attraction", "weather"],
+                )
             return self._decision_with_reuse_validation(
                 ticket=ticket,
                 previous_state=previous_state,
-                planned_agents=["weather", "itinerary"],
-                invalidated_agents=["weather", "itinerary"],
+                planned_agents=["weather", "itinerary", "budget"],
+                invalidated_agents=["weather", "itinerary", "budget"],
                 decision_reasons=["weather_changed_itinerary_adjustment"],
                 reuse_scope_agents=["attraction"],
             )
@@ -850,10 +1062,10 @@ class GoalStateScheduler:
             return self._decision_with_reuse_validation(
                 ticket=ticket,
                 previous_state=previous_state,
-                planned_agents=["budget"],
-                invalidated_agents=["budget"],
-                decision_reasons=["people_count_changed_budget_only"],
-                reuse_scope_agents=["attraction"],
+                planned_agents=["itinerary", "budget"],
+                invalidated_agents=["itinerary", "budget"],
+                decision_reasons=["people_count_changed_itinerary_budget_replan"],
+                reuse_scope_agents=["attraction", "weather"],
             )
 
         if _has_available_result(
@@ -943,24 +1155,48 @@ class GoalStateScheduler:
                 decision_reasons=["destination_changed_invalidate_all"],
             )
 
+        if changed == {"origin"}:
+            if (ticket.dependency_policy or {}).get("origin_change_scope") == "itinerary_budget":
+                return self._decision_with_reuse_validation(
+                    ticket=ticket,
+                    previous_state=previous_state,
+                    planned_agents=["itinerary", "budget"],
+                    invalidated_agents=["itinerary", "budget"],
+                    decision_reasons=["origin_changed_itinerary_budget_replan"],
+                    reuse_scope_agents=["attraction", "weather"],
+                )
+            return self._decision_with_reuse_validation(
+                ticket=ticket,
+                previous_state=previous_state,
+                planned_agents=["budget"],
+                invalidated_agents=["budget"],
+                decision_reasons=["origin_changed_budget_only"],
+                reuse_scope_agents=["attraction", "weather", "itinerary"],
+            )
+
         planned_agents: list[str] = []
         invalidated_agents: list[str] = []
         decision_reasons: list[str] = []
 
         if "duration_days" in changed:
-            planned_agents.extend(["weather", "itinerary", "budget"])
-            invalidated_agents.extend(["weather", "itinerary", "budget"])
+            duration_agents = (
+                ["weather", "itinerary", "budget"]
+                if _slots_require_weather_for_itinerary(ticket.current_slots)
+                else ["itinerary", "budget"]
+            )
+            planned_agents.extend(duration_agents)
+            invalidated_agents.extend(duration_agents)
             decision_reasons.append("duration_changed_partial_replan")
 
         if "start_date" in changed:
-            planned_agents.extend(["weather", "itinerary"])
-            invalidated_agents.extend(["weather", "itinerary"])
-            decision_reasons.append("date_changed_weather_replan")
+            planned_agents.extend(["weather", "itinerary", "budget"])
+            invalidated_agents.extend(["weather", "itinerary", "budget"])
+            decision_reasons.append("date_changed_weather_itinerary_budget_replan")
 
         if "people_count" in changed:
-            planned_agents.append("budget")
-            invalidated_agents.append("budget")
-            decision_reasons.append("people_count_changed_budget_only")
+            planned_agents.extend(["itinerary", "budget"])
+            invalidated_agents.extend(["itinerary", "budget"])
+            decision_reasons.append("people_count_changed_itinerary_budget_replan")
 
         if "traveler_group" in changed:
             planned_agents.extend(["attraction", "itinerary", "budget"])
@@ -972,10 +1208,20 @@ class GoalStateScheduler:
             invalidated_agents.extend(["attraction", "itinerary", "budget"])
             decision_reasons.append("preferences_changed_replan")
 
-        if changed & {"budget_amount", "budget_level"}:
+        if "special_requirements" in changed:
             planned_agents.extend(["attraction", "itinerary", "budget"])
             invalidated_agents.extend(["attraction", "itinerary", "budget"])
-            decision_reasons.append("budget_changed_replan")
+            decision_reasons.append("special_requirements_changed_replan")
+
+        if changed & {"budget_amount", "budget_level"}:
+            if ticket.goal_change_type == "explicit_replan":
+                planned_agents.extend(["itinerary", "budget"])
+                invalidated_agents.extend(["itinerary", "budget"])
+                decision_reasons.append("budget_changed_itinerary_budget_replan")
+            else:
+                planned_agents.append("budget")
+                invalidated_agents.append("budget")
+                decision_reasons.append("budget_changed_budget_only")
 
         if "weather_scenario" in changed:
             planned_agents.extend(["weather", "itinerary"])
@@ -1048,7 +1294,11 @@ class GoalStateScheduler:
             exclude=excluded,
             scope=scope,
         )
-        cascaded_unusable = self._cascade_unusable_agents(unusable_agents, previous_state)
+        cascaded_unusable = self._cascade_unusable_agents(
+            unusable_agents,
+            previous_state,
+            ticket=ticket,
+        )
         if cascaded_unusable:
             planned.extend(cascaded_unusable)
             invalidated.extend(cascaded_unusable)
@@ -1058,6 +1308,7 @@ class GoalStateScheduler:
                 decision_reasons = [*decision_reasons, "previous_result_unusable_replan"]
 
         planned, invalidated, reusable_agents, dependency_reasons = self._enforce_dependencies(
+            ticket=ticket,
             planned_agents=planned,
             invalidated_agents=invalidated,
             reusable_agents=reusable_agents,
@@ -1175,6 +1426,8 @@ class GoalStateScheduler:
         self,
         unusable_agents: list[str],
         previous_state: Mapping[str, Any] | None,
+        *,
+        ticket: GoalStateTaskTicket | None = None,
     ) -> list[str]:
         raw_available = set(_raw_available_agents(previous_state))
         cascaded = set(unusable_agents)
@@ -1183,12 +1436,14 @@ class GoalStateScheduler:
                 dependent
                 for dependent in DEPENDENT_AGENTS.get(agent, ())
                 if dependent in raw_available
+                and agent in _result_dependencies_for_ticket(dependent, ticket)
             )
         return _ordered_agents(list(cascaded))
 
     def _enforce_dependencies(
         self,
         *,
+        ticket: GoalStateTaskTicket | None = None,
         planned_agents: list[str],
         invalidated_agents: list[str],
         reusable_agents: list[str],
@@ -1202,7 +1457,8 @@ class GoalStateScheduler:
         while changed:
             changed = False
             active_agents = planned | reusable
-            for dependent, upstream_agents in RESULT_DEPENDENCIES.items():
+            for dependent in RESULT_DEPENDENCIES:
+                upstream_agents = _result_dependencies_for_ticket(dependent, ticket)
                 if dependent not in active_agents:
                     continue
 
@@ -1276,6 +1532,73 @@ def normalize_slots(
     return {slot: normalized[slot] for slot in CANONICAL_SLOT_ORDER if slot in normalized}
 
 
+def _result_dependencies_for_ticket(
+    agent_name: str,
+    ticket: GoalStateTaskTicket | None,
+) -> tuple[str, ...]:
+    dependencies = list(RESULT_DEPENDENCIES.get(agent_name, ()))
+    if agent_name == "itinerary" and "weather" in dependencies:
+        if not _ticket_requires_weather_for_itinerary(ticket):
+            dependencies.remove("weather")
+    if (
+        agent_name == "budget"
+        and "itinerary" not in dependencies
+        and _ticket_requires_itinerary_for_budget(ticket)
+    ):
+        dependencies.append("itinerary")
+    return tuple(dependencies)
+
+
+def _result_dependencies_for_slots(
+    agent_name: str,
+    slots: Mapping[str, Any] | None,
+) -> tuple[str, ...]:
+    dependencies = list(RESULT_DEPENDENCIES.get(agent_name, ()))
+    if agent_name == "itinerary" and "weather" in dependencies:
+        if not _slots_require_weather_for_itinerary(slots):
+            dependencies.remove("weather")
+    return tuple(dependencies)
+
+
+def _ticket_requires_weather_for_itinerary(
+    ticket: GoalStateTaskTicket | None,
+) -> bool:
+    if ticket is None:
+        return True
+    if ticket.task_type == "trip_plan":
+        return False
+    if ticket.task_type == "partial_replan" and not _slots_require_weather_for_itinerary(
+        ticket.current_slots
+    ):
+        return False
+    if "weather_evidence" in set(ticket.required_capabilities or []):
+        return True
+    return _slots_require_weather_for_itinerary(ticket.current_slots)
+
+
+def _ticket_requires_itinerary_for_budget(
+    ticket: GoalStateTaskTicket | None,
+) -> bool:
+    if ticket is None:
+        return False
+    if ticket.task_type == "budget_query":
+        return False
+    if ticket.task_type in {
+        "trip_planning",
+        "trip_plan",
+        "weather_aware_trip_plan",
+        "partial_replan",
+        "weather_adjustment",
+    }:
+        return True
+    return "itinerary_generation" in set(ticket.required_capabilities or [])
+
+
+def _slots_require_weather_for_itinerary(slots: Mapping[str, Any] | None) -> bool:
+    normalized = normalize_slots(slots)
+    return bool(normalized.get("start_date") or normalized.get("weather_scenario"))
+
+
 def _previous_slots_from_state(previous_state: Mapping[str, Any] | None) -> Mapping[str, Any]:
     if not isinstance(previous_state, Mapping):
         return {}
@@ -1310,7 +1633,7 @@ def _diff_slots(
 def _normalize_slot_value(key: str, value: Any) -> Any:
     if isinstance(value, str):
         stripped = value.strip()
-        if key == "destination":
+        if key in {"destination", "origin"}:
             return CITY_ALIASES.get(stripped.casefold(), stripped)
         if key in {"duration_days", "people_count"} and stripped.isdigit():
             return int(stripped)
@@ -1354,10 +1677,235 @@ def _contains_any(text: str, terms: tuple[str, ...]) -> bool:
     return any(term.casefold() in text for term in terms)
 
 
+def _has_negated_replan_request(text: str) -> bool:
+    """Return True when replan words are explicitly negated by the user.
+
+    This keeps requests such as "不用重新安排行程" from being interpreted as an
+    explicit itinerary rerun merely because they contain "重新安排".
+    """
+    return _has_any(
+        text,
+        (
+            "\u4e0d\u7528\u91cd\u65b0\u5b89\u6392",
+            "\u4e0d\u7528\u91cd\u65b0\u89c4\u5212",
+            "\u4e0d\u8981\u91cd\u65b0\u5b89\u6392",
+            "\u4e0d\u8981\u91cd\u65b0\u89c4\u5212",
+            "\u4e0d\u91cd\u65b0\u5b89\u6392",
+            "\u4e0d\u91cd\u65b0\u89c4\u5212",
+            "\u65e0\u9700\u91cd\u65b0\u5b89\u6392",
+            "\u65e0\u9700\u91cd\u65b0\u89c4\u5212",
+            "\u4e0d\u7528\u91cd\u6392",
+            "\u4e0d\u8981\u91cd\u6392",
+            "\u4e0d\u91cd\u6392",
+            "\u4e0d\u6362\u8def\u7ebf",
+            "\u8def\u7ebf\u4e0d\u7528\u6539",
+            "\u884c\u7a0b\u4e0d\u7528\u6539",
+            "\u4e0d\u7528\u6539\u8def\u7ebf",
+            "\u4e0d\u7528\u6539\u884c\u7a0b",
+            "\u4e0d\u8c03\u6574\u884c\u7a0b",
+            "\u4e0d\u7528\u8c03\u6574\u884c\u7a0b",
+            "do not replan",
+            "don't replan",
+            "dont replan",
+            "no need to replan",
+            "do not redo",
+            "don't redo",
+            "keep the route unchanged",
+            "keep the itinerary unchanged",
+            "do not change the itinerary",
+            "do not change the route",
+        ),
+    )
+
+
+def _has_any(text: str, terms: tuple[str, ...]) -> bool:
+    return any(term in text for term in terms)
+
+
+def _has_weather_text(text: str) -> bool:
+    return _contains_any(text, WEATHER_TERMS) or _has_any(
+        text,
+        (
+            "\u5929\u6c14",
+            "\u5929\u6c14\u9884\u62a5",
+            "\u9884\u62a5",
+            "\u4e0b\u96e8",
+            "\u964d\u96e8",
+            "\u96e8",
+            "\u9ad8\u6e29",
+            "\u4f4e\u6e29",
+            "\u51b7\u4e0d\u51b7",
+            "\u70ed\u4e0d\u70ed",
+        ),
+    )
+
+
+def _has_budget_text(text: str) -> bool:
+    return _contains_any(text, BUDGET_TERMS) or _contains_any(
+        text,
+        TEXT_BUDGET_SIGNAL_TERMS,
+    ) or _has_any(
+        text,
+        (
+            "\u9884\u7b97",
+            "\u8d39\u7528",
+            "\u82b1\u8d39",
+            "\u591a\u5c11\u94b1",
+            "\u94b1\u591f\u5417",
+            "\u591f\u5417",
+            "\u591f\u4e0d\u591f",
+            "\u80fd\u4e0d\u80fd\u8986\u76d6",
+            "\u5269\u591a\u5c11",
+            "\u7b97\u7b97",
+            "\u5403\u4f4f\u884c",
+            "\u63a7\u5236\u4f4f",
+        ),
+    )
+
+
+def _has_attraction_text(text: str) -> bool:
+    return _contains_any(text, ATTRACTION_TERMS) or _has_any(
+        text,
+        (
+            "\u666f\u70b9",
+            "\u666f\u533a",
+            "\u573a\u9986",
+            "\u535a\u7269\u9986",
+            "\u5730\u6807",
+            "\u6587\u5316\u8857\u533a",
+            "\u5ba4\u5185\u573a\u9986",
+            "\u503c\u5f97\u770b",
+            "\u503c\u5f97\u53bb",
+        ),
+    )
+
+
+def _has_trip_text(text: str) -> bool:
+    return _contains_any(text, TRIP_TERMS) or _has_any(
+        text,
+        (
+            "\u884c\u7a0b",
+            "\u8def\u7ebf",
+            "\u7ebf\u8def",
+            "\u89c4\u5212",
+            "\u8ba1\u5212",
+            "\u5b89\u6392",
+            "\u653b\u7565",
+            "\u65c5\u6e38",
+            "\u65c5\u884c",
+            "\u51fa\u6e38",
+        ),
+    )
+
+
+def _has_explicit_trip_plan_text(text: str) -> bool:
+    return _has_any(
+        text,
+        (
+            "\u5b8c\u6574\u884c\u7a0b",
+            "\u5b8c\u6574\u89c4\u5212",
+            "\u5b8c\u6574\u65c5\u6e38\u8ba1\u5212",
+            "\u5b8c\u6574\u65c5\u884c\u8ba1\u5212",
+            "\u5e2e\u6211\u5b89\u6392",
+            "\u5e2e\u6211\u89c4\u5212",
+            "\u505a\u4e2a\u884c\u7a0b",
+            "\u505a\u4e00\u4efd\u884c\u7a0b",
+            "\u6392\u4e2a\u884c\u7a0b",
+            "\u6392\u4e00\u4e0b",
+        ),
+    ) or _contains_any(text, FULL_TRIP_PLAN_TERMS)
+
+
+def _negates_non_attraction_work(text: str) -> bool:
+    return _has_any(
+        text,
+        (
+            "\u4e0d\u7528\u505a\u5b8c\u6574\u884c\u7a0b",
+            "\u4e0d\u8981\u5b8c\u6574\u884c\u7a0b",
+            "\u4e0d\u7528\u5b89\u6392\u884c\u7a0b",
+            "\u4e0d\u8981\u884c\u7a0b",
+            "\u5148\u522b\u7b97\u8d39\u7528\u548c\u8def\u7ebf",
+            "\u4e0d\u7528\u7b97\u8d39\u7528",
+            "\u4e0d\u7528\u7b97\u9884\u7b97",
+            "\u4e0d\u7528\u6392\u8def\u7ebf",
+            "\u5148\u4e0d\u8003\u8651",
+            "\u53ea\u63a8\u8350\u666f\u70b9",
+            "\u53ea\u9700\u8981\u51e0\u4e2a\u9009\u62e9",
+        ),
+    )
+
+
+def _has_budget_only_text(text: str) -> bool:
+    return _has_any(
+        text,
+        (
+            "\u53ea\u7b97\u8d39\u7528",
+            "\u53ea\u7b97",
+            "\u53ea\u4f30\u7b97",
+            "\u53ea\u60f3\u77e5\u9053",
+            "\u5927\u6982\u9700\u8981\u591a\u5c11\u94b1",
+            "\u5927\u6982\u8981\u591a\u5c11",
+            "\u5e2e\u6211\u7b97\u7b97",
+            "\u5e2e\u6211\u770b\u770b\u5927\u6982\u9700\u8981\u591a\u5c11\u94b1",
+            "\u4e0d\u7528\u6392\u8def\u7ebf",
+            "\u94b1\u591f\u5417",
+            "\u591f\u5417",
+            "\u591f\u4e0d\u591f",
+            "\u80fd\u4e0d\u80fd\u8986\u76d6\u65c5\u884c\u8d39\u7528",
+            "\u4f1a\u5269\u591a\u5c11",
+            "\u5f53\u5730\u5403\u4f4f\u884c",
+            "\u65c5\u884c\u8d39\u7528\u80fd\u4e0d\u80fd\u63a7\u5236\u4f4f",
+            "\u80fd\u4e0d\u80fd\u63a7\u5236\u4f4f",
+        ),
+    )
+
+
+def _is_explicit_clarification_request(text: str) -> bool:
+    """Return True when the user explicitly asks the system to ask follow-up questions."""
+    return _contains_any(
+        text,
+        (
+            "请先问我",
+            "先问我",
+            "先追问我",
+            "先跟我确认",
+            "先向我确认",
+            "请先向我确认",
+            "请先确认",
+            "都没想好",
+            "都还没想好",
+            "还没想好",
+            "没想好",
+            "没有想好",
+            "不知道去哪",
+            "不知道去哪里",
+            "clarify first",
+            "ask me first",
+        ),
+    )
+
+
 def _is_weather_single_scope_request(text: str) -> bool:
     """Return True only for requests that clearly ask for weather evidence alone."""
-    if not _contains_any(text, WEATHER_TERMS):
+    if not _has_weather_text(text):
         return False
+    if re.search(r"(\u80fd\u67e5\u5230|\u80fd\u4e0d\u80fd\u67e5|\u67e5\u5f97\u5230).{0,12}\u5929\u6c14", text):
+        return True
+    if re.search(r"\u5929\u6c14.{0,8}(\u600e\u4e48\u6837|\u5982\u4f55|\u80fd\u4e0d\u80fd\u67e5|\u80fd\u67e5\u5230|\u80fd\u63d0\u524d\u67e5\u5230)", text):
+        return True
+    if _has_any(
+        text,
+        (
+            "\u53ea\u770b\u5929\u6c14",
+            "\u53ea\u67e5\u5929\u6c14",
+            "\u4ec5\u67e5\u5929\u6c14",
+            "\u53ea\u8981\u5929\u6c14",
+            "\u4f1a\u4e0d\u4f1a\u4e0b\u96e8",
+            "\u9002\u4e0d\u9002\u5408\u5b89\u6392\u6237\u5916",
+            "\u51fa\u95e8\u9700\u8981\u51c6\u5907\u4ec0\u4e48",
+        ),
+    ):
+        return True
     if _contains_any(text, WEATHER_SINGLE_SCOPE_TERMS):
         return True
     if any(term in text for term in ("只看", "只查", "仅查", "只要", "仅看")) and (
@@ -1367,37 +1915,220 @@ def _is_weather_single_scope_request(text: str) -> bool:
     return not _contains_any(
         text,
         TRIP_TERMS + ATTRACTION_TERMS + BUDGET_TERMS,
+    ) and not (_has_trip_text(text) or _has_attraction_text(text) or _has_budget_text(text))
+
+
+def _is_weather_climate_question(text: str) -> bool:
+    if _contains_any(text, WEATHER_TERMS) and _contains_any(text, WEATHER_CLIMATE_TERMS):
+        return True
+    if not _has_weather_text(text):
+        return False
+    climate_terms = (
+        "\u901a\u5e38",
+        "\u4e00\u822c",
+        "\u5168\u5e74",
+        "\u5b63\u8282",
+        "\u6708\u4efd",
+        "\u51b7\u4e0d\u51b7",
+        "\u70ed\u4e0d\u70ed",
+        "\u9700\u8981\u51c6\u5907\u4ec0\u4e48\u8863\u670d",
+    )
+    month_pattern = r"(?:\d{1,2}|\u5341\u4e00|\u5341\u4e8c|\u5341[\u4e00\u4e8c]?)\u6708(?:\u4efd)?"
+    return _has_any(text, climate_terms) and bool(re.search(month_pattern, text))
+
+
+def _is_destination_recommendation_request(
+    text: str,
+    *,
+    current_slots: Mapping[str, Any],
+) -> bool:
+    if current_slots.get("destination"):
+        return False
+    if _has_any(
+        text,
+        (
+            "\u63a8\u8350\u51e0\u4e2a\u76ee\u7684\u5730",
+            "\u63a8\u8350\u51e0\u4e2a\u57ce\u5e02",
+            "\u63a8\u8350\u51e0\u4e2a\u5730\u65b9",
+            "\u5148\u63a8\u8350\u51e0\u4e2a\u5730\u65b9",
+            "\u9002\u5408\u7684\u57ce\u5e02",
+            "\u9002\u5408\u7684\u76ee\u7684\u5730",
+            "\u53bb\u54ea\u91cc",
+            "\u53bb\u54ea",
+            "\u6709\u4ec0\u4e48\u5efa\u8bae",
+        ),
+    ):
+        return True
+    if not _contains_any(text, TRIP_TERMS + DESTINATION_RECOMMENDATION_TERMS):
+        return False
+    return _contains_any(text, DESTINATION_RECOMMENDATION_TERMS) or (
+        _contains_any(text, BUDGET_TERMS)
+        and _contains_any(text, ("旅游", "旅行", "出游", "出去玩", "出去旅游"))
     )
 
 
 def _is_general_chat_only_request(text: str) -> bool:
+    if _has_positive_single_scope_request(text):
+        return False
+    if _has_any(
+        text,
+        (
+            "\u4eca\u5929\u4e0d\u505a\u65c5\u6e38\u653b\u7565",
+            "\u4eca\u5929\u4e0d\u505a\u653b\u7565",
+            "\u6682\u65f6\u6ca1\u6709\u51fa\u6e38\u8ba1\u5212",
+            "\u6682\u65f6\u6ca1\u6709\u65c5\u884c\u8ba1\u5212",
+            "\u6ca1\u6709\u51fa\u6e38\u8ba1\u5212",
+            "\u53ea\u662f\u8fdb\u6765\u770b\u770b",
+            "\u968f\u4fbf\u804a",
+            "\u5148\u505c\u4e00\u4e0b",
+            "\u4e0d\u7528\u7ee7\u7eed\u505a\u884c\u7a0b",
+            "\u518d\u89c1",
+            "\u6253\u4e2a\u62db\u547c",
+            "\u8bb2\u4e00\u4e2a\u7b80\u77ed\u7684\u7b11\u8bdd",
+            "\u600e\u4e48\u751f\u6210\u7684",
+            "\u600e\u6837\u751f\u6210\u7684",
+        ),
+    ):
+        return True
+    if _contains_any(text, NEGATED_TRAVEL_PLANNING_TERMS):
+        return True
     if not _contains_any(text, GENERAL_CHAT_TERMS):
         return False
-    return _contains_any(text, NEGATED_TRAVEL_PLANNING_TERMS)
+    capability_question_terms = (
+        "能做什么",
+        "哪些建议",
+        "哪些旅游问题",
+        "帮我解决哪些旅游问题",
+        "能帮我解决哪些",
+    )
+    return _contains_any(text, capability_question_terms)
+
+
+def _has_positive_single_scope_request(text: str) -> bool:
+    """Return True when a concrete domain request should override negated planning terms."""
+    if _is_weather_single_scope_request(text):
+        return True
+    if (_contains_any(text, ATTRACTION_TERMS) or _has_attraction_text(text)) and _is_attraction_single_scope_request(text):
+        return True
+    if _is_strict_budget_single_scope_request(text) or _is_ticket_budget_single_scope_request(text):
+        return True
+    return False
 
 
 def _is_attraction_single_scope_request(text: str) -> bool:
-    if not _contains_any(text, ATTRACTION_TERMS):
+    if not (_contains_any(text, ATTRACTION_TERMS) or _has_attraction_text(text)):
         return False
+    if _negates_non_attraction_work(text):
+        return True
     if _contains_any(text, ATTRACTION_SINGLE_SCOPE_TERMS):
         return True
-    return not _contains_any(text, TRIP_TERMS + WEATHER_TERMS + BUDGET_TERMS)
+    if _has_any(text, ("\u6709\u54ea\u4e9b", "\u54ea\u4e9b", "\u503c\u5f97\u770b", "\u503c\u5f97\u53bb")) and not _has_explicit_trip_plan_text(text):
+        return True
+    return not _contains_any(text, TRIP_TERMS + WEATHER_TERMS + BUDGET_TERMS) and not (
+        _has_trip_text(text) or _has_weather_text(text) or _has_budget_text(text)
+    )
 
 
 def _is_budget_single_scope_request(text: str) -> bool:
-    has_budget_signal = _contains_any(text, BUDGET_TERMS) or _contains_any(
-        text,
-        TEXT_BUDGET_SIGNAL_TERMS,
-    )
+    has_budget_signal = _has_budget_text(text)
     if not has_budget_signal:
         return False
+    if _is_local_budget_scope_modifier(text) and _has_explicit_trip_plan_text(text):
+        return False
+    if _has_budget_only_text(text):
+        return True
     if _contains_any(text, BUDGET_SINGLE_SCOPE_TERMS):
         return True
     if "粗略估算" in text or ("估算" in text and ("控制在" in text or "元内" in text)):
         return True
-    if _contains_any(text, WEATHER_TERMS + ATTRACTION_TERMS):
+    if _contains_any(text, WEATHER_TERMS + ATTRACTION_TERMS + TRIP_TERMS):
         return False
     return not _contains_any(text, BUDGET_PLANNING_ACTION_TERMS)
+
+
+def _is_strict_budget_single_scope_request(text: str) -> bool:
+    has_budget_signal = _has_budget_text(text)
+    if not has_budget_signal:
+        return False
+    if _is_local_budget_scope_modifier(text) and _has_explicit_trip_plan_text(text):
+        return False
+    if _has_budget_only_text(text):
+        return True
+    strict_terms = (
+        "\u53ea\u4f30\u7b97",
+        "\u53ea\u7b97",
+        "\u7c97\u7565\u4f30\u7b97",
+        "\u662f\u5426\u591f\u7528",
+        "\u591f\u4e0d\u591f",
+        "\u662f\u5426\u80fd\u63a7\u5236",
+        "\u63a7\u5236\u5728",
+        "\u5143\u5185",
+        "budget only",
+        "only budget",
+        "rough budget",
+    )
+    return _contains_any(text, strict_terms)
+
+
+def _is_preserved_budget_statement(text: str) -> bool:
+    if not _has_budget_text(text):
+        return False
+    return _has_any(
+        text,
+        (
+            "\u9884\u7b97\u4e0d\u53d8",
+            "\u9884\u7b97\u4e0a\u9650\u4e0d\u53d8",
+            "\u603b\u9884\u7b97\u4e0d\u53d8",
+            "\u4e0a\u9650\u4e0d\u53d8",
+            "\u8d39\u7528\u4e0a\u9650\u4e0d\u53d8",
+            "\u9884\u7b97\u4fdd\u6301\u4e0d\u53d8",
+            "\u603b\u9884\u7b97\u4fdd\u6301\u4e0d\u53d8",
+            "budget unchanged",
+            "budget stays the same",
+            "same budget",
+            "keep the same budget",
+        ),
+    )
+
+
+def _is_local_budget_scope_modifier(text: str) -> bool:
+    return _has_any(
+        text,
+        (
+            "\u53ea\u7b97\u5f53\u5730",
+            "\u53ea\u8ba1\u7b97\u5f53\u5730",
+            "\u53ea\u770b\u5f53\u5730",
+            "\u5f53\u5730\u8d39\u7528",
+            "\u5f53\u5730\u65c5\u884c\u8d39\u7528",
+            "\u5f53\u5730\u5403\u4f4f\u884c",
+            "\u76ee\u7684\u5730\u5f53\u5730",
+            "\u4e0d\u542b\u5927\u4ea4\u901a",
+            "\u4e0d\u5305\u542b\u5927\u4ea4\u901a",
+            "\u4e0d\u7b97\u5927\u4ea4\u901a",
+            "\u4e0d\u5305\u62ec\u5927\u4ea4\u901a",
+            "\u4e0d\u542b\u57ce\u9645",
+            "\u4e0d\u5305\u542b\u57ce\u9645",
+            "\u4e0d\u7b97\u57ce\u9645",
+            "\u4e0d\u5305\u62ec\u57ce\u9645",
+        ),
+    )
+
+
+def _budget_query_needs_budget_amount(text: str) -> bool:
+    if not _has_budget_text(text):
+        return False
+    return _has_any(
+        text,
+        (
+            "\u591f\u4e0d\u591f",
+            "\u591f\u5417",
+            "\u80fd\u4e0d\u80fd\u591f",
+            "\u63a7\u5236\u5728",
+            "\u4e0d\u8d85\u8fc7",
+            "\u4e0a\u9650",
+            "\u603b\u9884\u7b97",
+        ),
+    )
 
 
 def _is_ticket_budget_single_scope_request(text: str) -> bool:
@@ -1420,16 +2151,16 @@ def _is_multi_capability_trip_planning_request(
     Budget also counts when it is provided as a parsed numeric slot from visible
     text, because users often write "5000元" without repeating "预算".
     """
-    if not _contains_any(text, TRIP_TERMS):
+    if not _has_trip_text(text):
         return False
 
     capability_count = 0
-    if _contains_any(text, ATTRACTION_TERMS):
+    if _has_attraction_text(text):
         capability_count += 1
-    if _contains_any(text, WEATHER_TERMS):
+    if _has_weather_text(text):
         capability_count += 1
     if (
-        _contains_any(text, BUDGET_TERMS)
+        _has_budget_text(text)
         or "budget_amount" in current_slots
         or "budget_level" in current_slots
     ):
@@ -1458,6 +2189,52 @@ def _budget_query_requires_attraction_evidence(user_input: str) -> bool:
     if _negates_attraction_ticket_cost(text):
         return False
     return _contains_any(text, BUDGET_ATTRACTION_DEPENDENCY_TERMS)
+
+
+def _origin_change_requests_itinerary_replan(user_input: str) -> bool:
+    text = _normalize_text(user_input)
+    if not text:
+        return False
+    budget_only_terms = (
+        "\u9884\u7b97",
+        "\u8d39\u7528",
+        "\u82b1\u8d39",
+        "\u591a\u5c11\u94b1",
+        "\u7b97\u94b1",
+        "budget",
+        "cost",
+    )
+    itinerary_terms = (
+        "\u884c\u7a0b",
+        "\u8def\u7ebf",
+        "\u7ebf\u8def",
+        "\u6bcf\u5929",
+        "\u7b2c\u4e00\u5929",
+        "\u7b2c1\u5929",
+        "itinerary",
+        "route",
+    )
+    explicit_itinerary_replan_terms = (
+        "\u91cd\u65b0\u5b89\u6392",
+        "\u91cd\u65b0\u89c4\u5212",
+        "\u91cd\u6392",
+        "\u8c03\u6574\u884c\u7a0b",
+        "\u8c03\u6574\u8def\u7ebf",
+        "\u8c03\u6574\u7ebf\u8def",
+        "\u884c\u7a0b\u4e5f\u8c03",
+        "\u8def\u7ebf\u4e5f\u8c03",
+        "replan itinerary",
+        "replan route",
+        "adjust itinerary",
+        "adjust route",
+        "redo itinerary",
+    )
+    if (
+        _contains_any(text, budget_only_terms)
+        and not _contains_any(text, itinerary_terms)
+    ):
+        return False
+    return _contains_any(text, explicit_itinerary_replan_terms)
 
 
 def _negates_attraction_ticket_cost(text: str) -> bool:
@@ -1492,6 +2269,65 @@ def is_goal_state_agent_reusable(
     )
 
 
+def is_goal_state_agent_reusable_for_ticket(
+    agent_name: str,
+    *,
+    ticket: GoalStateTaskTicket | Mapping[str, Any] | None,
+    previous_state: Mapping[str, Any] | None,
+) -> bool:
+    """Return whether a previous result is reusable under a concrete ticket.
+
+    This keeps execution-time reuse aligned with scheduler-time reuse.  The
+    distinction matters for weather-adjustment turns where newly mentioned
+    preferences such as "indoor" describe how to rearrange the old itinerary,
+    not a request to rerun the attraction search.
+    """
+    normalized_ticket = _ticket_from_mapping(ticket)
+    if normalized_ticket is None:
+        current_slots = (
+            ticket.get("current_slots")
+            if isinstance(ticket, Mapping)
+            and isinstance(ticket.get("current_slots"), Mapping)
+            else None
+        )
+        return _is_agent_reusable(
+            agent_name,
+            current_slots=current_slots,
+            previous_state=previous_state,
+        )
+    return _is_agent_reusable_for_ticket(
+        agent_name,
+        ticket=normalized_ticket,
+        previous_state=previous_state,
+    )
+
+
+def _ticket_from_mapping(
+    ticket: GoalStateTaskTicket | Mapping[str, Any] | None,
+) -> GoalStateTaskTicket | None:
+    if isinstance(ticket, GoalStateTaskTicket):
+        return ticket
+    if not isinstance(ticket, Mapping):
+        return None
+    return GoalStateTaskTicket(
+        task_type=str(ticket.get("task_type") or "general_chat"),
+        current_slots=dict(ticket.get("current_slots") or {}),
+        previous_slots=dict(ticket.get("previous_slots") or {}),
+        changed_slots=[str(slot) for slot in ticket.get("changed_slots") or []],
+        preserved_slots=[str(slot) for slot in ticket.get("preserved_slots") or []],
+        missing_slots=[str(slot) for slot in ticket.get("missing_slots") or []],
+        required_capabilities=[
+            str(capability) for capability in ticket.get("required_capabilities") or []
+        ],
+        dependency_policy=dict(ticket.get("dependency_policy") or {}),
+        clarification_required=bool(ticket.get("clarification_required")),
+        clarification_fields=[
+            str(field) for field in ticket.get("clarification_fields") or []
+        ],
+        goal_change_type=str(ticket.get("goal_change_type") or "none"),
+    )
+
+
 def build_goal_state_result_fingerprints(
     *,
     slots: Mapping[str, Any] | None,
@@ -1517,7 +2353,7 @@ def build_goal_state_result_fingerprints(
     for agent in CANONICAL_AGENT_ORDER:
         if any(
             not available_results.get(upstream)
-            for upstream in RESULT_DEPENDENCIES.get(agent, ())
+            for upstream in _result_dependencies_for_slots(agent, canonical_slots)
         ):
             continue
         if not _agent_has_successful_artifact(
@@ -1563,12 +2399,13 @@ def _reuse_slots_for_ticket_agent(
     agent_name: str,
 ) -> Mapping[str, Any]:
     slots = dict(ticket.current_slots or {})
-    if (
-        ticket.task_type == "weather_adjustment"
-        and agent_name == "attraction"
-        and "preferences" in set(ticket.changed_slots or [])
-    ):
-        slots.pop("preferences", None)
+    if ticket.task_type == "weather_adjustment":
+        if agent_name == "attraction":
+            for slot in ("traveler_group", "preferences", "special_requirements"):
+                if slot in set(ticket.changed_slots or []):
+                    slots.pop(slot, None)
+        if agent_name == "weather":
+            slots.pop("weather_scenario", None)
     return slots
 
 
@@ -1724,6 +2561,15 @@ def _agent_fingerprint_matches(
     if not isinstance(previous_state, Mapping):
         return False
     expected = _agent_fingerprint_from_slots(agent_name, normalize_slots(current_slots))
+    result_candidates = _agent_previous_result_fingerprint_candidates(
+        agent_name,
+        previous_state,
+    )
+    if result_candidates:
+        return any(
+            _fingerprint_candidate_matches(agent_name, expected, candidate)
+            for candidate in result_candidates
+        )
     candidates = _agent_previous_fingerprint_candidates(agent_name, previous_state)
     if not candidates:
         return not _previous_tool_results_from_state(previous_state)
@@ -1737,11 +2583,10 @@ def _agent_previous_fingerprint_candidates(
     agent_name: str,
     previous_state: Mapping[str, Any],
 ) -> list[dict[str, Any]]:
-    candidates: list[dict[str, Any]] = []
-    for candidate in _previous_result_fingerprint_candidates(previous_state):
-        agent_fingerprint = candidate.get(agent_name) if isinstance(candidate, Mapping) else None
-        if isinstance(agent_fingerprint, Mapping):
-            candidates.append(_normalize_fingerprint(agent_fingerprint))
+    candidates: list[dict[str, Any]] = _agent_previous_result_fingerprint_candidates(
+        agent_name,
+        previous_state,
+    )
 
     tool_results = _previous_tool_results_from_state(previous_state)
     for tool_name in TOOLS_BY_AGENT.get(agent_name, ()):
@@ -1759,6 +2604,27 @@ def _agent_previous_fingerprint_candidates(
     if previous_slots:
         candidates.append(_agent_fingerprint_from_slots(agent_name, previous_slots))
     return [candidate for candidate in candidates if candidate]
+
+
+def _agent_previous_result_fingerprint_candidates(
+    agent_name: str,
+    previous_state: Mapping[str, Any],
+) -> list[dict[str, Any]]:
+    candidates: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for candidate in _previous_result_fingerprint_candidates(previous_state):
+        agent_fingerprint = candidate.get(agent_name) if isinstance(candidate, Mapping) else None
+        if not isinstance(agent_fingerprint, Mapping):
+            continue
+        normalized = _normalize_fingerprint(agent_fingerprint)
+        if not normalized:
+            continue
+        key = repr(sorted(normalized.items(), key=lambda item: item[0]))
+        if key in seen:
+            continue
+        seen.add(key)
+        candidates.append(normalized)
+    return candidates
 
 
 def _previous_result_fingerprint_candidates(
@@ -1819,6 +2685,11 @@ def _slots_from_tool_input(tool_name: str, tool_input: Mapping[str, Any]) -> dic
     if tool_name == "budget_calculator":
         return normalize_slots(
             {
+                "origin": (
+                    tool_input.get("origin")
+                    or tool_input.get("from_city")
+                    or tool_input.get("departure_city")
+                ),
                 "destination": tool_input.get("city") or tool_input.get("destination"),
                 "duration_days": tool_input.get("days") or tool_input.get("duration"),
                 "people_count": (

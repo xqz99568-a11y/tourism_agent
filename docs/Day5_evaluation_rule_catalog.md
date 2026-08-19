@@ -1,4 +1,8 @@
-# Day 5 Step 1：独立评测规则目录
+# Day 5 Step 1：独立评测规则目录（历史版本）
+
+> 当前正式论文实验使用 `experiments/evaluation_rule_catalog.json` 中的
+> `day8_formal_independent_evaluator_rules`。本文件保留 Day5 规则冻结过程，
+> 只作为演化记录，不再作为最终投稿实验的唯一引用口径。
 
 Step 1 只做一件事：冻结论文评测口径。后续代码只能按 `experiments/evaluation_rule_catalog.json` 打分，不能等结果出来后再改规则。
 
@@ -30,8 +34,8 @@ Step 1 只做一件事：冻结论文评测口径。后续代码只能按 `exper
 
 本步完成后应具备：
 
-- Day5 分支：`paper/day5-independent-evaluator`。
-- 机器可读规则目录：`experiments/evaluation_rule_catalog.json`。
+- 历史 Day5 分支：`paper/day5-independent-evaluator`。
+- 当前机器可读规则目录：`experiments/evaluation_rule_catalog.json`，正式 catalog_id 为 `day8_formal_independent_evaluator_rules`。
 - 测试锁定规则 ID、任务覆盖、三态语义和独立评测器边界。
 
 真正逐案例评分逻辑留到 Step 3；Step 2 先补齐方法输出中评测器需要读取的结构化字段。

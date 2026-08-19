@@ -1,0 +1,255 @@
+{
+  "schema_version": "economy-budget-manual-review-v1",
+  "review_status": "confirmed",
+  "reviewer": "dataset_owner",
+  "review_date": "2026-08-19",
+  "confirmation_basis": "dataset_owner confirmed that the formal main experiment only reviews the economy budget baseline; values are checked against frozen local JSON files.",
+  "budget_policy_version": "budget_policy_v2_0",
+  "confirmed_scope": [
+    "economy",
+    "intercity_transport",
+    "budget_policy_v2"
+  ],
+  "excluded_scope": [
+    "comfort",
+    "premium"
+  ],
+  "formal_main_experiment_tiers": [
+    "economy"
+  ],
+  "comfort_premium_exclusion": {
+    "excluded_from_formal_main_experiment": true,
+    "reason": "comfort and premium tiers may appear in development-only tier handling checks or optional upgrade explanations, but they are not confirmed as formal main-experiment budget gold in this paper run."
+  },
+  "fixed_tourism_data": {
+    "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+    "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+  },
+  "accommodation_formula": {
+    "formula_id": "accommodation_median_reference_price_x_rooms_x_nights_v1",
+    "tier": "economy",
+    "reference_price_rule": "citywide median of economy reference_price_cny from data/accommodation/{city}.json",
+    "room_rule": "rooms = ceil(people_count / 2)",
+    "night_rule": "nights = max(duration_days - 1, 0)",
+    "total_rule": "accommodation_cost = economy_reference_price_cny * rooms * nights"
+  },
+  "food_formula": {
+    "formula_id": "food_median_reference_price_x_people_x_2d_plus_0_5n_v1",
+    "tier": "economy",
+    "reference_price_rule": "citywide median of economy reference_price_cny from data/restaurants/{city}.json",
+    "meal_equivalent_rule": "meal_count_equivalent = 2 * duration_days + 0.5 * nights",
+    "total_rule": "food_cost = economy_reference_price_cny * people_count * meal_count_equivalent"
+  },
+  "city_reviews": [
+    {
+      "city_id": "beijing",
+      "city_name": "北京",
+      "review_status": "confirmed",
+      "accommodation": {
+        "tier": "economy",
+        "reference_price_cny": 330.0,
+        "statistic": "citywide_median_reference_price",
+        "source_values": [
+          380.0,
+          330.0,
+          260.0,
+          320.0,
+          300.0,
+          420.0,
+          360.0
+        ],
+        "source_file": "data/accommodation/beijing.json",
+        "source_sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      "food": {
+        "tier": "economy",
+        "reference_price_cny": 55.0,
+        "statistic": "citywide_median_reference_price",
+        "source_values": [
+          45.0,
+          70.0,
+          55.0,
+          75.0,
+          40.0,
+          80.0,
+          40.0
+        ],
+        "source_file": "data/restaurants/beijing.json",
+        "source_sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+        "formula_id": "food_median_reference_price_x_people_x_2d_plus_0_5n_v1"
+      },
+      "review_conclusion": "confirmed_for_formal_economy_budget_baseline"
+    },
+    {
+      "city_id": "hangzhou",
+      "city_name": "杭州",
+      "review_status": "confirmed",
+      "accommodation": {
+        "tier": "economy",
+        "reference_price_cny": 320.0,
+        "statistic": "citywide_median_reference_price",
+        "source_values": [
+          360.0,
+          330.0,
+          300.0,
+          240.0,
+          320.0,
+          280.0,
+          380.0
+        ],
+        "source_file": "data/accommodation/hangzhou.json",
+        "source_sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      "food": {
+        "tier": "economy",
+        "reference_price_cny": 50.0,
+        "statistic": "citywide_median_reference_price",
+        "source_values": [
+          40.0,
+          55.0,
+          50.0,
+          40.0,
+          45.0,
+          55.0,
+          65.0
+        ],
+        "source_file": "data/restaurants/hangzhou.json",
+        "source_sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+        "formula_id": "food_median_reference_price_x_people_x_2d_plus_0_5n_v1"
+      },
+      "review_conclusion": "confirmed_for_formal_economy_budget_baseline"
+    },
+    {
+      "city_id": "xian",
+      "city_name": "西安",
+      "review_status": "confirmed",
+      "accommodation": {
+        "tier": "economy",
+        "reference_price_cny": 260.0,
+        "statistic": "citywide_median_reference_price",
+        "source_values": [
+          260.0,
+          260.0,
+          320.0,
+          200.0,
+          280.0,
+          260.0,
+          350.0
+        ],
+        "source_file": "data/accommodation/xian.json",
+        "source_sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      "food": {
+        "tier": "economy",
+        "reference_price_cny": 40.0,
+        "statistic": "citywide_median_reference_price",
+        "source_values": [
+          35.0,
+          30.0,
+          20.0,
+          50.0,
+          40.0,
+          50.0,
+          50.0
+        ],
+        "source_file": "data/restaurants/xian.json",
+        "source_sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+        "formula_id": "food_median_reference_price_x_people_x_2d_plus_0_5n_v1"
+      },
+      "review_conclusion": "confirmed_for_formal_economy_budget_baseline"
+    },
+    {
+      "city_id": "shenzhen",
+      "city_name": "深圳",
+      "review_status": "confirmed",
+      "accommodation": {
+        "tier": "economy",
+        "reference_price_cny": 360.0,
+        "statistic": "citywide_median_reference_price",
+        "source_values": [
+          380.0,
+          260.0,
+          280.0,
+          380.0,
+          360.0,
+          450.0,
+          320.0
+        ],
+        "source_file": "data/accommodation/shenzhen.json",
+        "source_sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      "food": {
+        "tier": "economy",
+        "reference_price_cny": 55.0,
+        "statistic": "citywide_median_reference_price",
+        "source_values": [
+          40.0,
+          50.0,
+          65.0,
+          65.0,
+          65.0,
+          40.0,
+          55.0
+        ],
+        "source_file": "data/restaurants/shenzhen.json",
+        "source_sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+        "formula_id": "food_median_reference_price_x_people_x_2d_plus_0_5n_v1"
+      },
+      "review_conclusion": "confirmed_for_formal_economy_budget_baseline"
+    },
+    {
+      "city_id": "guilin",
+      "city_name": "桂林",
+      "review_status": "confirmed",
+      "accommodation": {
+        "tier": "economy",
+        "reference_price_cny": 180.0,
+        "statistic": "citywide_median_reference_price",
+        "source_values": [
+          200.0,
+          160.0,
+          160.0,
+          180.0,
+          240.0,
+          320.0,
+          180.0
+        ],
+        "source_file": "data/accommodation/guilin.json",
+        "source_sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+      },
+      "food": {
+        "tier": "economy",
+        "reference_price_cny": 30.0,
+        "statistic": "citywide_median_reference_price",
+        "source_values": [
+          25.0,
+          30.0,
+          25.0,
+          30.0,
+          35.0,
+          40.0,
+          30.0
+        ],
+        "source_file": "data/restaurants/guilin.json",
+        "source_sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+        "formula_id": "food_median_reference_price_x_people_x_2d_plus_0_5n_v1"
+      },
+      "review_conclusion": "confirmed_for_formal_economy_budget_baseline"
+    }
+  ],
+  "review_artifacts": {
+    "markdown": "experiments/generated/economy_budget_manual_review_v1.md",
+    "budget_gold_review": "experiments/generated/ctp100_budget_gold_v2_review.md",
+    "food_reference_policy": "experiments/generated/food_reference_policy_review_v1.md"
+  }
+}

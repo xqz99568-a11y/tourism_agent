@@ -19,9 +19,9 @@ import time
 import uuid
 from contextlib import contextmanager
 from dataclasses import asdict, is_dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Any, Awaitable, Callable, Dict, Iterable, List, Optional
+from typing import Any, Awaitable, Callable, Dict, Iterable, List, Mapping, Optional
 
 from app.core.config import settings
 from app.core.experiment_method_contract import (
@@ -50,11 +50,20 @@ from app.core.fixed_data import (
     get_fixed_tourism_data,
     validate_fixed_data_snapshot,
 )
+from app.core.formal_artifact_integrity import build_formal_artifact_integrity_report
+from app.core.budget_gold import (
+    BudgetGoldError,
+    DEFAULT_CTP100_BUDGET_GOLD_PATH,
+    validate_budget_gold,
+)
+from app.core.qweather_snapshot import qweather_snapshot_summary
+from app.core.intercity_transport_snapshot import intercity_transport_snapshot_summary
 from app.core.goal_state_scheduler import (
     RESULT_DEPENDENCIES,
     build_goal_state_result_fingerprints,
     build_goal_state_ticket,
     is_goal_state_agent_reusable,
+    is_goal_state_agent_reusable_for_ticket,
     schedule_goal_state_ticket,
 )
 from app.core.independent_evaluator import (
@@ -68,6 +77,10 @@ from app.core.independent_evaluator import (
 )
 from app.core.llm.client import LLMMessage, ToolDefinition, get_llm
 from app.core.llm_costing import COSTING_SCHEMA_VERSION, build_price_snapshot
+from app.core.no_date_weather_policy import (
+    append_no_date_weather_reminder,
+    gold_requires_no_date_weather_reminder,
+)
 from app.core.tool_executor import ToolExecutor
 from app.core.tracing import (
     DEFAULT_TRACE_DIR,
@@ -127,6 +140,14 @@ STRUCTURED_LLM_M0_METHOD_FIELDS = (
     "called_tools",
     "tool_results",
 )
+EXPERIMENT_RESUME_SCHEMA_VERSION = "ctp-experiment-resume-v1"
+EXPERIMENT_RESUME_CONTRACT_SCHEMA_VERSION = "ctp-experiment-resume-contract-v1"
+BENCHMARK_RESULTS_CSV_NAME = "benchmark_results.csv"
+BENCHMARK_RESULTS_JSON_NAME = "benchmark_results.json"
+BENCHMARK_CHECKPOINT_CSV_NAME = "benchmark_results.checkpoint.csv"
+BENCHMARK_CHECKPOINT_JSON_NAME = "benchmark_results.checkpoint.json"
+BENCHMARK_RESUME_STATE_NAME = "benchmark_resume_state.json"
+SINGLE_TURN_RESUME_ID = ""
 EXPERIMENT_LLM_CALL_TIMEOUT_ENV = "EXPERIMENT_LLM_CALL_TIMEOUT_SECONDS"
 EXPERIMENT_AGENT_DECISION_NORMALIZER_ENV = "EXPERIMENT_AGENT_DECISION_NORMALIZER"
 FROZEN_RESEARCH_TASK_TYPES = {
@@ -141,6 +162,11 @@ FROZEN_RESEARCH_TASK_TYPES = {
 }
 RESEARCH_TASK_TYPE_ALIASES = {
     "budget_control": "budget_query",
+    "trip_plan": "trip_planning",
+    "weather_aware_trip_plan": "trip_planning",
+    "weather_forecast_query": "weather_query",
+    "weather_climate_question": "general_chat",
+    "destination_recommendation": "general_chat",
 }
 
 
@@ -345,6 +371,7 @@ class ExperimentRunner:
         summary_path: Optional[str | Path] = None,
         paper_tables_path: Optional[str | Path] = None,
         manifest_path: Optional[str | Path] = None,
+        resume: bool = False,
     ) -> List[Dict[str, Any]]:
         """Run all benchmark cases through all requested methods."""
         return asyncio.run(
@@ -360,6 +387,7 @@ class ExperimentRunner:
                 summary_path=summary_path,
                 paper_tables_path=paper_tables_path,
                 manifest_path=manifest_path,
+                resume=resume,
             )
         )
 
@@ -377,8 +405,10 @@ class ExperimentRunner:
         summary_path: Optional[str | Path] = None,
         paper_tables_path: Optional[str | Path] = None,
         manifest_path: Optional[str | Path] = None,
+        resume: bool = False,
     ) -> List[Dict[str, Any]]:
         benchmark_file = Path(benchmark_path)
+        benchmark_document = json.loads(benchmark_file.read_text(encoding="utf-8"))
         cases = self.load_benchmark(benchmark_file)
         selected_methods = [
             self._normalize_method(method) for method in (methods or self.METHODS)
@@ -389,19 +419,69 @@ class ExperimentRunner:
 
         benchmark_output_dir = self._benchmark_output_dir(effective_run_id)
         if csv_path is None:
-            csv_path = benchmark_output_dir / "benchmark_results.csv"
+            csv_path = benchmark_output_dir / BENCHMARK_RESULTS_CSV_NAME
         if json_path is None:
-            json_path = benchmark_output_dir / "benchmark_results.json"
+            json_path = benchmark_output_dir / BENCHMARK_RESULTS_JSON_NAME
         if summary_path is None:
             summary_path = benchmark_output_dir / "evaluation_summary.json"
         if paper_tables_path is None:
             paper_tables_path = benchmark_output_dir / "paper_tables.md"
         if manifest_path is None:
             manifest_path = benchmark_output_dir / "experiment_manifest.json"
-        checkpoint_csv_path = benchmark_output_dir / "benchmark_results.checkpoint.csv"
-        checkpoint_json_path = benchmark_output_dir / "benchmark_results.checkpoint.json"
+        checkpoint_csv_path = benchmark_output_dir / BENCHMARK_CHECKPOINT_CSV_NAME
+        checkpoint_json_path = benchmark_output_dir / BENCHMARK_CHECKPOINT_JSON_NAME
+        resume_state_path = benchmark_output_dir / BENCHMARK_RESUME_STATE_NAME
+        resume_contract = self._build_benchmark_resume_contract(
+            benchmark_path=benchmark_file,
+            benchmark_document=benchmark_document,
+            run_id=effective_run_id,
+            methods=selected_methods,
+            repeats=effective_repeats,
+            system_variant=system_variant,
+            model_config_name=model_config_name,
+        )
+        planned_keys = self._planned_benchmark_resume_keys(
+            cases,
+            methods=selected_methods,
+            repeats=effective_repeats,
+            repeat_index_start=self.repeat_index,
+        )
+        planned_key_index = {key: index for index, key in enumerate(planned_keys)}
 
         results: List[Dict[str, Any]] = []
+        completed_by_key: Dict[tuple[str, str, str, int], Dict[str, Any]] = {}
+        resume_events: List[Dict[str, Any]] = []
+        if resume:
+            resume_load = self._load_resume_checkpoint(
+                checkpoint_json_path=checkpoint_json_path,
+                final_json_path=Path(json_path),
+                resume_state_path=resume_state_path,
+                current_contract=resume_contract,
+                planned_keys=planned_keys,
+            )
+            results = list(resume_load["results"])
+            completed_by_key = {
+                self._resume_key_from_result(result): result
+                for result in results
+            }
+            resume_events.extend(resume_load.get("resume_events") or [])
+            resume_events.append(
+                {
+                    "event": "resume_started",
+                    "created_at": datetime.utcnow().isoformat() + "Z",
+                    "loaded_result_count": len(results),
+                    "source": resume_load.get("source"),
+                }
+            )
+        self._write_benchmark_resume_state(
+            resume_state_path,
+            contract=resume_contract,
+            status="running",
+            completed_results=results,
+            expected_result_count=len(planned_keys),
+            resume_enabled=bool(resume),
+            resume_events=resume_events,
+        )
         for repeat_offset in range(effective_repeats):
             repeat_index = self.repeat_index + repeat_offset
             for case in cases:
@@ -412,44 +492,109 @@ class ExperimentRunner:
                 )
                 if self._is_scenario_case(case):
                     for method in case_methods:
-                        results.extend(
-                            await self._arun_scenario_case(
-                                case,
-                                method=method,
-                                run_id=effective_run_id,
-                                repeat_index=repeat_index,
-                                system_variant=system_variant,
-                                model_config_name=model_config_name,
+                        def _checkpoint_scenario_result(result: Dict[str, Any]) -> None:
+                            self._record_new_resume_result(
+                                result,
+                                results=results,
+                                completed_by_key=completed_by_key,
                             )
-                        )
-                        self._export_benchmark_checkpoint(
-                            results,
-                            csv_path=checkpoint_csv_path,
-                            json_path=checkpoint_json_path,
-                        )
-                    continue
+                            self._export_benchmark_checkpoint(
+                                self._sort_results_for_resume(results, planned_key_index),
+                                csv_path=checkpoint_csv_path,
+                                json_path=checkpoint_json_path,
+                            )
+                            self._write_benchmark_resume_state(
+                                resume_state_path,
+                                contract=resume_contract,
+                                status="running",
+                                completed_results=results,
+                                expected_result_count=len(planned_keys),
+                                resume_enabled=bool(resume),
+                                resume_events=resume_events,
+                            )
 
-                for method in case_methods:
-                    results.append(
-                        await self.arun(
+                        scenario_results = await self._arun_scenario_case(
                             case,
                             method=method,
                             run_id=effective_run_id,
                             repeat_index=repeat_index,
                             system_variant=system_variant,
                             model_config_name=model_config_name,
+                            completed_results_by_key=completed_by_key,
+                            on_new_result=_checkpoint_scenario_result,
                         )
+                        for result in scenario_results:
+                            self._record_new_resume_result(
+                                result,
+                                results=results,
+                                completed_by_key=completed_by_key,
+                            )
+                        self._export_benchmark_checkpoint(
+                            self._sort_results_for_resume(results, planned_key_index),
+                            csv_path=checkpoint_csv_path,
+                            json_path=checkpoint_json_path,
+                        )
+                        self._write_benchmark_resume_state(
+                            resume_state_path,
+                            contract=resume_contract,
+                            status="running",
+                            completed_results=results,
+                            expected_result_count=len(planned_keys),
+                            resume_enabled=bool(resume),
+                            resume_events=resume_events,
+                        )
+                    continue
+
+                for method in case_methods:
+                    planned_key = self._resume_key_for_case(
+                        case,
+                        method=method,
+                        repeat_index=repeat_index,
+                    )
+                    if planned_key in completed_by_key:
+                        continue
+                    result = await self.arun(
+                        case,
+                        method=method,
+                        run_id=effective_run_id,
+                        repeat_index=repeat_index,
+                        system_variant=system_variant,
+                        model_config_name=model_config_name,
+                    )
+                    self._record_new_resume_result(
+                        result,
+                        results=results,
+                        completed_by_key=completed_by_key,
                     )
                     self._export_benchmark_checkpoint(
-                        results,
+                        self._sort_results_for_resume(results, planned_key_index),
                         csv_path=checkpoint_csv_path,
                         json_path=checkpoint_json_path,
                     )
+                    self._write_benchmark_resume_state(
+                        resume_state_path,
+                        contract=resume_contract,
+                        status="running",
+                        completed_results=results,
+                        expected_result_count=len(planned_keys),
+                        resume_enabled=bool(resume),
+                        resume_events=resume_events,
+                    )
 
+        results = self._sort_results_for_resume(results, planned_key_index)
         self.export_csv(results, csv_path)
         self.export_json(results, json_path)
         summary = self.export_evaluation_summary(results, summary_path)
         self.export_paper_tables(summary, paper_tables_path)
+        self._write_benchmark_resume_state(
+            resume_state_path,
+            contract=resume_contract,
+            status="completed",
+            completed_results=results,
+            expected_result_count=len(planned_keys),
+            resume_enabled=bool(resume),
+            resume_events=resume_events,
+        )
         self.write_experiment_manifest(
             benchmark_path=benchmark_file,
             output_path=manifest_path,
@@ -464,9 +609,480 @@ class ExperimentRunner:
                 "json": json_path,
                 "summary": summary_path,
                 "paper_tables": paper_tables_path,
+                "resume_state": resume_state_path,
+                "checkpoint_csv": checkpoint_csv_path,
+                "checkpoint_json": checkpoint_json_path,
             },
+            resume_state_path=resume_state_path,
         )
         return results
+
+    def _build_benchmark_resume_contract(
+        self,
+        *,
+        benchmark_path: Path,
+        benchmark_document: Any,
+        run_id: str,
+        methods: List[ExperimentMethod],
+        repeats: int,
+        system_variant: Optional[str],
+        model_config_name: Optional[str],
+    ) -> Dict[str, Any]:
+        base_url = os.getenv("LLM_BASE_URL") or settings.llm.base_url
+        model = os.getenv("LLM_MODEL") or settings.llm.model
+        resolved_system_variant = _optional_text(system_variant) or self.system_variant or "per_method"
+        resolved_model_config = _optional_text(model_config_name) or self.model_config_name
+        qweather_snapshot = qweather_snapshot_summary()
+        intercity_snapshot = intercity_transport_snapshot_summary()
+        budget_gold_manifest = _budget_gold_manifest_summary()
+        return {
+            "schema_version": EXPERIMENT_RESUME_CONTRACT_SCHEMA_VERSION,
+            "run_id": str(run_id),
+            "git_commit": _git_commit(),
+            "dataset": {
+                "path": benchmark_path.as_posix(),
+                "sha256": canonical_json_sha256(benchmark_document),
+                "hash_strategy": CANONICAL_JSON_SHA256_STRATEGY,
+            },
+            "methods": list(methods),
+            "method_contract_sha256": method_fairness_contract_hash(methods),
+            "repeats": _validate_repeats(repeats),
+            "repeat_index_start": self.repeat_index,
+            "method_order_seed": self.method_order_seed,
+            "system_variant": resolved_system_variant,
+            "model_config_name": resolved_model_config,
+            "model_config": {
+                "provider": _llm_provider_from_base_url(base_url),
+                "base_url": str(base_url),
+                "model": str(model),
+                "temperature": _environment_float("LLM_TEMPERATURE", settings.llm.temperature),
+                "max_tokens": _environment_int("LLM_MAX_TOKENS", settings.llm.max_tokens),
+                "timeout_seconds": _environment_int("LLM_TIMEOUT", settings.llm.timeout),
+                "retry_max_attempts": _environment_int(
+                    "LLM_RETRY_MAX_ATTEMPTS",
+                    settings.llm.retry_max_attempts,
+                ),
+                "reasoning_effort": _environment_text("LLM_REASONING_EFFORT"),
+                "deterministic_research_final_answer": _environment_bool(
+                    "EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER",
+                    False,
+                ),
+            },
+            "runtime_config": {
+                "strict_mode": is_experiment_strict_mode(),
+                "cache_disabled": is_experiment_cache_disabled(),
+                "trace_save_user_message": _environment_bool("TRACE_SAVE_USER_MESSAGE", False),
+            },
+            "prompt_versions": {
+                "structured_llm_output": STRUCTURED_LLM_OUTPUT_PROMPT_VERSION,
+                "research_agent": RESEARCH_AGENT_PROMPT_VERSION,
+            },
+            "method_controls": {
+                "research_agent_decision_normalizer_enabled": (
+                    self.enable_research_agent_decision_normalizer
+                ),
+                "research_agent_decision_normalizer_version": (
+                    RESEARCH_AGENT_DECISION_NORMALIZER_VERSION
+                ),
+            },
+            "offline_data": {
+                "fixed_data_combined_sha256": self.fixed_data_manifest.get("combined_sha256"),
+                "qweather_snapshot_id": qweather_snapshot.get("snapshot_id"),
+                "qweather_combined_sha256": qweather_snapshot.get("combined_sha256"),
+                "intercity_snapshot_id": intercity_snapshot.get("snapshot_id"),
+                "intercity_combined_sha256": intercity_snapshot.get("combined_sha256"),
+                "budget_gold_path": budget_gold_manifest.get("path"),
+                "budget_gold_file_sha256": budget_gold_manifest.get("file_sha256"),
+                "budget_gold_review_status": budget_gold_manifest.get("review_status"),
+                "budget_gold_artifact_hashes": budget_gold_manifest.get("artifact_hashes") or {},
+            },
+        }
+
+    def _planned_benchmark_resume_keys(
+        self,
+        cases: List[Dict[str, Any]],
+        *,
+        methods: List[ExperimentMethod],
+        repeats: int,
+        repeat_index_start: int,
+    ) -> List[tuple[str, str, str, int]]:
+        keys: List[tuple[str, str, str, int]] = []
+        for repeat_offset in range(repeats):
+            repeat_index = repeat_index_start + repeat_offset
+            for case in cases:
+                case_methods = self._ordered_methods_for_case(
+                    methods,
+                    case_id=self._benchmark_case_order_id(case),
+                    repeat_index=repeat_index,
+                )
+                if self._is_scenario_case(case):
+                    scenario_id = self._scenario_id(case)
+                    turns = self._scenario_turns(case)
+                    for method in case_methods:
+                        for turn_index, turn in enumerate(turns):
+                            turn_id = self._scenario_resume_turn_id(
+                                case,
+                                turn,
+                                turn_index=turn_index,
+                            )
+                            keys.append(
+                                self._resume_key(
+                                    scenario_id,
+                                    turn_id,
+                                    method,
+                                    repeat_index,
+                                )
+                            )
+                    continue
+                for method in case_methods:
+                    keys.append(
+                        self._resume_key_for_case(
+                            case,
+                            method=method,
+                            repeat_index=repeat_index,
+                        )
+                    )
+        return keys
+
+    def _load_resume_checkpoint(
+        self,
+        *,
+        checkpoint_json_path: Path,
+        final_json_path: Path,
+        resume_state_path: Path,
+        current_contract: Mapping[str, Any],
+        planned_keys: List[tuple[str, str, str, int]],
+    ) -> Dict[str, Any]:
+        if not resume_state_path.exists():
+            raise RuntimeError(
+                f"benchmark resume state is missing: {resume_state_path}"
+            )
+        try:
+            resume_state = json.loads(resume_state_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RuntimeError(f"benchmark resume state is invalid: {exc}") from exc
+        if not isinstance(resume_state, dict):
+            raise RuntimeError("benchmark resume state must be a JSON object")
+        if resume_state.get("schema_version") != EXPERIMENT_RESUME_SCHEMA_VERSION:
+            raise RuntimeError(
+                "benchmark resume state schema mismatch: "
+                f"{resume_state.get('schema_version')}"
+            )
+        mismatches = self._resume_contract_mismatches(
+            resume_state.get("contract"),
+            current_contract,
+        )
+        if mismatches:
+            details = "\n".join(f"- {item}" for item in mismatches)
+            raise RuntimeError(f"benchmark resume contract mismatch:\n{details}")
+
+        checkpoint_results = self._read_resume_results(checkpoint_json_path)
+        final_results = self._read_resume_results(final_json_path)
+        source = None
+        results: List[Dict[str, Any]] = []
+        if checkpoint_results or final_results:
+            if len(final_results) > len(checkpoint_results):
+                source = final_json_path.as_posix()
+                results = final_results
+            else:
+                source = checkpoint_json_path.as_posix()
+                results = checkpoint_results
+        else:
+            source = "resume_state_only"
+        self._validate_resume_results(
+            results,
+            planned_keys=planned_keys,
+            run_id=str(current_contract.get("run_id") or ""),
+        )
+        return {
+            "results": results,
+            "source": source,
+            "resume_events": list(resume_state.get("resume_events") or []),
+        }
+
+    def _read_resume_results(self, path: Path) -> List[Dict[str, Any]]:
+        if not path.exists():
+            return []
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RuntimeError(f"benchmark resume results are invalid: {path}: {exc}") from exc
+        if not isinstance(value, list):
+            raise RuntimeError(f"benchmark resume results must be a JSON list: {path}")
+        return [item for item in value if isinstance(item, dict)]
+
+    def _validate_resume_results(
+        self,
+        results: List[Dict[str, Any]],
+        *,
+        planned_keys: List[tuple[str, str, str, int]],
+        run_id: str,
+    ) -> None:
+        planned = set(planned_keys)
+        seen: set[tuple[str, str, str, int]] = set()
+        errors: List[str] = []
+        for index, result in enumerate(results, start=1):
+            if str(result.get("run_id") or "") != run_id:
+                errors.append(f"row {index}: run_id mismatch")
+                continue
+            try:
+                key = self._resume_key_from_result(result)
+            except ValueError as exc:
+                errors.append(f"row {index}: {exc}")
+                continue
+            if key in seen:
+                errors.append(f"row {index}: duplicate result key {self._resume_key_label(key)}")
+            seen.add(key)
+            if key not in planned:
+                errors.append(f"row {index}: result key is not part of this benchmark plan {self._resume_key_label(key)}")
+        if len(results) > len(planned_keys):
+            errors.append(
+                f"completed result count exceeds planned count: {len(results)} > {len(planned_keys)}"
+            )
+        if errors:
+            details = "\n".join(f"- {error}" for error in errors)
+            raise RuntimeError(f"benchmark resume checkpoint is not reusable:\n{details}")
+
+    def _resume_contract_mismatches(
+        self,
+        previous_contract: Any,
+        current_contract: Mapping[str, Any],
+    ) -> List[str]:
+        if not isinstance(previous_contract, Mapping):
+            return ["previous resume contract is missing or invalid"]
+        checks = (
+            ("run_id",),
+            ("git_commit",),
+            ("dataset", "sha256"),
+            ("method_contract_sha256",),
+            ("methods",),
+            ("repeats",),
+            ("repeat_index_start",),
+            ("method_order_seed",),
+            ("system_variant",),
+            ("model_config_name",),
+            ("model_config", "base_url"),
+            ("model_config", "model"),
+            ("model_config", "temperature"),
+            ("model_config", "max_tokens"),
+            ("model_config", "timeout_seconds"),
+            ("model_config", "retry_max_attempts"),
+            ("model_config", "reasoning_effort"),
+            ("model_config", "deterministic_research_final_answer"),
+            ("runtime_config", "strict_mode"),
+            ("runtime_config", "cache_disabled"),
+            ("runtime_config", "trace_save_user_message"),
+            ("method_controls", "research_agent_decision_normalizer_enabled"),
+            ("method_controls", "research_agent_decision_normalizer_version"),
+            ("offline_data", "fixed_data_combined_sha256"),
+            ("offline_data", "qweather_snapshot_id"),
+            ("offline_data", "qweather_combined_sha256"),
+            ("offline_data", "intercity_snapshot_id"),
+            ("offline_data", "intercity_combined_sha256"),
+            ("offline_data", "budget_gold_file_sha256"),
+            ("offline_data", "budget_gold_review_status"),
+            ("offline_data", "budget_gold_artifact_hashes"),
+        )
+        mismatches: List[str] = []
+        for path in checks:
+            previous = _nested_get(previous_contract, path)
+            current = _nested_get(current_contract, path)
+            if previous != current:
+                mismatches.append(
+                    f"{'.'.join(path)} changed: previous={previous!r}, current={current!r}"
+                )
+        return mismatches
+
+    def _write_benchmark_resume_state(
+        self,
+        path: Path,
+        *,
+        contract: Mapping[str, Any],
+        status: str,
+        completed_results: List[Dict[str, Any]],
+        expected_result_count: int,
+        resume_enabled: bool,
+        resume_events: List[Dict[str, Any]],
+    ) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        sorted_keys = [
+            self._resume_key_to_document(self._resume_key_from_result(result))
+            for result in completed_results
+        ]
+        completed_key_count = len({self._resume_key_from_result(result) for result in completed_results})
+        state = {
+            "schema_version": EXPERIMENT_RESUME_SCHEMA_VERSION,
+            "updated_at": datetime.utcnow().isoformat() + "Z",
+            "status": status,
+            "resume_enabled_for_this_invocation": bool(resume_enabled),
+            "contract": dict(contract),
+            "progress": {
+                "completed_result_count": len(completed_results),
+                "completed_unique_key_count": completed_key_count,
+                "expected_result_count": expected_result_count,
+                "remaining_result_count": max(0, expected_result_count - completed_key_count),
+            },
+            "completed_keys": sorted_keys,
+            "resume_events": list(resume_events),
+            "policy": {
+                "unique_key": ["case_id", "turn_id", "method", "repeat_index"],
+                "skip_completed_results": True,
+                "failed_results_are_preserved": True,
+                "contract_mismatch_requires_new_run_id": True,
+            },
+        }
+        path.write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def _record_new_resume_result(
+        self,
+        result: Dict[str, Any],
+        *,
+        results: List[Dict[str, Any]],
+        completed_by_key: Dict[tuple[str, str, str, int], Dict[str, Any]],
+    ) -> None:
+        key = self._resume_key_from_result(result)
+        if key in completed_by_key:
+            raise RuntimeError(
+                f"benchmark resume duplicate result key: {self._resume_key_label(key)}"
+            )
+        completed_by_key[key] = result
+        results.append(result)
+
+    def _sort_results_for_resume(
+        self,
+        results: List[Dict[str, Any]],
+        planned_key_index: Mapping[tuple[str, str, str, int], int],
+    ) -> List[Dict[str, Any]]:
+        fallback = len(planned_key_index) + 1
+
+        def _order(item: tuple[int, Dict[str, Any]]) -> tuple[int, int]:
+            original_index, result = item
+            try:
+                key = self._resume_key_from_result(result)
+            except ValueError:
+                return (fallback, original_index)
+            return (planned_key_index.get(key, fallback), original_index)
+
+        return [result for _, result in sorted(enumerate(results), key=_order)]
+
+    def _resume_key_for_case(
+        self,
+        case: Mapping[str, Any],
+        *,
+        method: ExperimentMethod,
+        repeat_index: int,
+    ) -> tuple[str, str, str, int]:
+        case_id = str(case.get("case_id") or case.get("id") or canonical_json_sha256(case))
+        return self._resume_key(case_id, SINGLE_TURN_RESUME_ID, method, repeat_index)
+
+    def _resume_key_from_result(
+        self,
+        result: Mapping[str, Any],
+    ) -> tuple[str, str, str, int]:
+        case_id = str(result.get("case_id") or result.get("scenario_id") or "").strip()
+        if not case_id:
+            raise ValueError("missing case_id")
+        method = self._normalize_method(str(result.get("method") or ""))
+        return self._resume_key(
+            case_id,
+            result.get("turn_id"),
+            method,
+            _validate_repeat_index(result.get("repeat_index")),
+        )
+
+    def _resume_key(
+        self,
+        case_id: Any,
+        turn_id: Any,
+        method: ExperimentMethod,
+        repeat_index: int,
+    ) -> tuple[str, str, str, int]:
+        normalized_turn_id = (
+            SINGLE_TURN_RESUME_ID
+            if turn_id is None
+            else str(turn_id).strip()
+        )
+        return (
+            str(case_id).strip(),
+            normalized_turn_id,
+            self._normalize_method(method),
+            _validate_repeat_index(repeat_index),
+        )
+
+    def _resume_key_to_document(
+        self,
+        key: tuple[str, str, str, int],
+    ) -> Dict[str, Any]:
+        case_id, turn_id, method, repeat_index = key
+        return {
+            "case_id": case_id,
+            "turn_id": turn_id or None,
+            "method": method,
+            "repeat_index": repeat_index,
+        }
+
+    def _resume_key_label(self, key: tuple[str, str, str, int]) -> str:
+        case_id, turn_id, method, repeat_index = key
+        turn_part = turn_id or "<single>"
+        return f"{case_id}::{turn_part}::{method}::r{repeat_index}"
+
+    def _scenario_resume_turn_id(
+        self,
+        scenario: Mapping[str, Any],
+        turn: Mapping[str, Any],
+        *,
+        turn_index: int,
+    ) -> str:
+        base = {
+            key: value
+            for key, value in scenario.items()
+            if key not in {"turns", "previous_state", "method_previous_state"}
+        }
+        turn_case = {**base, **turn}
+        return str(
+            turn_case.get("turn_id")
+            or turn_case.get("id")
+            or f"turn_{turn_index + 1:02d}"
+        )
+
+    def _manifest_resume_summary(
+        self,
+        resume_state_path: Optional[str | Path],
+    ) -> Dict[str, Any]:
+        if resume_state_path is None:
+            return {
+                "schema_version": EXPERIMENT_RESUME_SCHEMA_VERSION,
+                "state_saved": False,
+                "resume_supported": True,
+            }
+        path = Path(resume_state_path)
+        summary: Dict[str, Any] = {
+            "schema_version": EXPERIMENT_RESUME_SCHEMA_VERSION,
+            "state_saved": path.exists(),
+            "path": path.as_posix(),
+            "resume_supported": True,
+        }
+        if not path.exists():
+            return summary
+        try:
+            state = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            summary["error"] = str(exc)
+            return summary
+        if isinstance(state, dict):
+            summary.update(
+                {
+                    "status": state.get("status"),
+                    "resume_enabled_for_this_invocation": state.get(
+                        "resume_enabled_for_this_invocation"
+                    ),
+                    "progress": state.get("progress") or {},
+                    "resume_event_count": len(state.get("resume_events") or []),
+                    "unique_key": _nested_get(state, ("policy", "unique_key")),
+                    "contract_sha256": canonical_json_sha256(state.get("contract") or {}),
+                }
+            )
+        return summary
 
     def _export_benchmark_checkpoint(
         self,
@@ -489,6 +1105,8 @@ class ExperimentRunner:
         repeat_index: int,
         system_variant: Optional[str],
         model_config_name: Optional[str],
+        completed_results_by_key: Optional[Mapping[tuple[str, str, str, int], Dict[str, Any]]] = None,
+        on_new_result: Optional[Callable[[Dict[str, Any]], None]] = None,
     ) -> List[Dict[str, Any]]:
         """Run a multi-turn scenario with method-local state transfer.
 
@@ -503,6 +1121,7 @@ class ExperimentRunner:
         previous_state: Optional[Dict[str, Any]] = None
         dialogue_history = self._scenario_initial_history(scenario)
         results: List[Dict[str, Any]] = []
+        completed = completed_results_by_key or {}
 
         for turn_index, turn in enumerate(turns):
             turn_case = self._scenario_turn_case(
@@ -514,25 +1133,37 @@ class ExperimentRunner:
                 dialogue_history=dialogue_history,
                 previous_state=previous_state,
             )
-            result = await self.arun(
-                turn_case,
-                method=method,
-                run_id=run_id,
-                repeat_index=repeat_index,
-                system_variant=system_variant,
-                model_config_name=model_config_name,
+            planned_key = self._resume_key(
+                scenario_id,
+                turn_case.get("turn_id"),
+                method,
+                repeat_index,
             )
-            self._attach_scenario_result_metadata(
-                result,
-                scenario_id=scenario_id,
-                turn_id=str(turn_case["turn_id"]),
-                turn_index=turn_index,
-                turn_count=len(turns),
-                target_turn=bool(turn_case.get("target_turn")),
-                previous_state=previous_state,
-                method=method,
-            )
-            results.append(result)
+            if planned_key in completed:
+                result = completed[planned_key]
+            else:
+                result = await self.arun(
+                    turn_case,
+                    method=method,
+                    run_id=run_id,
+                    repeat_index=repeat_index,
+                    system_variant=system_variant,
+                    model_config_name=model_config_name,
+                )
+                self._attach_scenario_result_metadata(
+                    result,
+                    scenario_id=scenario_id,
+                    turn_id=str(turn_case["turn_id"]),
+                    turn_index=turn_index,
+                    turn_count=len(turns),
+                    target_turn=bool(turn_case.get("target_turn")),
+                    previous_state=previous_state,
+                    method=method,
+                )
+                if on_new_result is not None:
+                    on_new_result(result)
+                else:
+                    results.append(result)
             previous_state = self._method_previous_state_from_result(result)
             dialogue_history = self._append_scenario_dialogue_history(
                 dialogue_history,
@@ -774,6 +1405,7 @@ class ExperimentRunner:
         system_variant: Optional[str] = None,
         model_config_name: Optional[str] = None,
         result_paths: Optional[Dict[str, str | Path]] = None,
+        resume_state_path: Optional[str | Path] = None,
     ) -> Dict[str, Any]:
         """Write reproducibility metadata for one benchmark run."""
         benchmark_file = Path(benchmark_path)
@@ -814,6 +1446,7 @@ class ExperimentRunner:
             mock=mock_pricing,
         )
         rule_catalog = load_rule_catalog()
+        budget_gold_manifest = _budget_gold_manifest_summary()
         commit = _git_commit()
         git_status_short = list(self.git_status_short_at_start)
         working_tree_clean = len(git_status_short) == 0
@@ -845,6 +1478,7 @@ class ExperimentRunner:
                 "working_tree_clean": working_tree_clean,
                 "status_short": git_status_short,
             },
+            "formal_artifact_integrity": build_formal_artifact_integrity_report(),
             "methods": selected_methods,
             "method_fairness_contract": {
                 **method_contract,
@@ -940,6 +1574,8 @@ class ExperimentRunner:
                 "env": "TOURISM_FORMAL_EXPERIMENT_OFFLINE",
                 "policy": "formal experiments use frozen local datasets and forbid real-time tourism APIs",
                 "snapshot": self._offline_data_summary(),
+                "qweather_snapshot": qweather_snapshot_summary(),
+                "intercity_transport_snapshot": intercity_transport_snapshot_summary(),
             },
             "evaluation": {
                 "schema_version": EVALUATION_SCHEMA_VERSION,
@@ -949,11 +1585,13 @@ class ExperimentRunner:
                 "catalog_sha256": canonical_json_sha256(rule_catalog),
                 "catalog_hash_strategy": CANONICAL_JSON_SHA256_STRATEGY,
                 "guards": rule_catalog.get("evaluator_guards") or [],
+                "budget_gold": budget_gold_manifest,
             },
             "results": {
                 key: Path(value).as_posix()
                 for key, value in (result_paths or {}).items()
             },
+            "resume": self._manifest_resume_summary(resume_state_path),
         }
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
@@ -1079,6 +1717,10 @@ class ExperimentRunner:
             "hcsr",
             "stsr",
             "evaluation_hcsr",
+            "itcsr",
+            "itcsr_applicable_count",
+            "itcsr_passed_count",
+            "itcsr_failed_count",
             "evaluation_failed_rule_count",
             "evaluation_failed_rule_ids",
             "agent_set_exact_match",
@@ -1499,6 +2141,15 @@ class ExperimentRunner:
         )
 
     async def _run_single_agent(self, case: Dict[str, Any], request_id: str) -> Dict[str, Any]:
+        if self._infer_research_task_type(case) in {"general_chat", "clarification"}:
+            return await self._run_research_multi_agent(
+                case=case,
+                request_id=request_id,
+                method="single_agent",
+                planned_agents=[],
+                planned_tools=[],
+            )
+
         prompt = (
             "请作为单一旅游规划 Agent 独立完成任务。不要调度其他 Agent，"
             "但需要尽量给出结构化、可执行的旅游建议。\n\n用户请求："
@@ -1555,6 +2206,8 @@ class ExperimentRunner:
 
             agent_run = start_agent_run("single_agent")
             executed_call_count = 0
+            missing_tool_retry_count = 0
+            structured_repair_retry_count = 0
             try:
                 with trace_component("single_agent", agent_name="single_agent"):
                     for _ in range(self.SINGLE_AGENT_MAX_TOOL_ROUNDS):
@@ -1596,10 +2249,62 @@ class ExperimentRunner:
                             tools=definitions,
                         )
                         if not response.tool_calls:
+                            missing_required_tools = self._single_agent_missing_required_tools(
+                                case=case,
+                                tool_results=tool_results,
+                            )
+                            if missing_required_tools and missing_tool_retry_count < 2:
+                                missing_tool_retry_count += 1
+                                messages.append(
+                                    LLMMessage(
+                                        role="assistant",
+                                        content=response.content or "",
+                                    )
+                                )
+                                messages.append(
+                                    LLMMessage(
+                                        role="user",
+                                        content=self._single_agent_missing_tools_retry_prompt(
+                                            case=case,
+                                            missing_tools=missing_required_tools,
+                                            tool_results=tool_results,
+                                        ),
+                                    )
+                                )
+                                continue
+
                             usage = getattr(response, "usage", None) or {}
                             model_payload, json_error = self._parse_strict_structured_llm_json(
                                 response.content
                             )
+                            validation_errors = self._structured_llm_validation_errors(
+                                payload=model_payload,
+                                case=case,
+                                method="single_agent",
+                            )
+                            if (
+                                not missing_required_tools
+                                and (json_error or validation_errors)
+                                and structured_repair_retry_count < 1
+                            ):
+                                structured_repair_retry_count += 1
+                                messages.append(
+                                    LLMMessage(
+                                        role="assistant",
+                                        content=response.content or "",
+                                    )
+                                )
+                                messages.append(
+                                    LLMMessage(
+                                        role="user",
+                                        content=self._single_agent_structured_repair_prompt(
+                                            json_error=json_error,
+                                            validation_errors=validation_errors,
+                                        ),
+                                    )
+                                )
+                                continue
+
                             method_output = self._build_structured_llm_method_output(
                                 case=case,
                                 method="single_agent",
@@ -1612,6 +2317,7 @@ class ExperimentRunner:
                                 execution_status=(
                                     "failed"
                                     if method_failed
+                                    or missing_required_tools
                                     or self._execution_status_from_tool_results(tool_results)
                                     == "failed"
                                     else "completed"
@@ -1623,6 +2329,9 @@ class ExperimentRunner:
                                     "generation_tool_contract": "ctp-research-tools-v1.0",
                                     "method_input_schema_version": case.get("method_input_schema_version"),
                                     "single_agent_max_tool_rounds": self.SINGLE_AGENT_MAX_TOOL_ROUNDS,
+                                    "single_agent_missing_tool_retry_count": missing_tool_retry_count,
+                                    "single_agent_structured_repair_retry_count": structured_repair_retry_count,
+                                    "missing_required_tools": missing_required_tools,
                                     "visible_slots": self._case_slots(case),
                                     "goal_state_slots": self._goal_state_current_slots(case),
                                 },
@@ -1705,6 +2414,12 @@ class ExperimentRunner:
                                 )
                                 mark_trace_status("failed", error=tool_content)
                             else:
+                                arguments = self._single_agent_tool_arguments_with_visible_defaults(
+                                    tool_name=tool_call.name,
+                                    arguments=arguments,
+                                    case=case,
+                                    tool_results=tool_results,
+                                )
                                 call = await executor.execute(
                                     tool_name=tool_call.name,
                                     arguments=arguments,
@@ -1777,6 +2492,140 @@ class ExperimentRunner:
             if isinstance(result, dict) and result.get("success") is not False
         }
         return set(required_tools).issubset(successful_tools)
+
+    def _single_agent_missing_required_tools(
+        self,
+        *,
+        case: Dict[str, Any],
+        tool_results: Dict[str, Any],
+    ) -> List[str]:
+        required_tools = self._single_agent_required_tools(case)
+        if not required_tools:
+            return []
+        successful_tools = {
+            name
+            for name, result in (tool_results or {}).items()
+            if isinstance(result, dict) and result.get("success") is not False
+        }
+        return [tool for tool in required_tools if tool not in successful_tools]
+
+    def _single_agent_missing_tools_retry_prompt(
+        self,
+        *,
+        case: Dict[str, Any],
+        missing_tools: List[str],
+        tool_results: Dict[str, Any],
+    ) -> str:
+        defaults = {
+            tool_name: self._research_tool_arguments(tool_name, case, tool_results)
+            for tool_name in missing_tools
+        }
+        return json.dumps(
+            {
+                "instruction": (
+                    "You have not collected the required frozen-tool evidence yet. "
+                    "Do not answer directly. Call the missing tools first, using only "
+                    "the visible slot defaults below when your arguments are incomplete."
+                ),
+                "missing_required_tools": missing_tools,
+                "visible_slot_argument_defaults": defaults,
+            },
+            ensure_ascii=False,
+        )
+
+    @staticmethod
+    def _single_agent_structured_repair_prompt(
+        *,
+        json_error: Optional[str],
+        validation_errors: List[str],
+    ) -> str:
+        return json.dumps(
+            {
+                "instruction": (
+                    "Your previous response was not a valid experiment JSON object. "
+                    "Return exactly one corrected JSON object only. Preserve the same "
+                    "answer content where possible, but make every schema field valid."
+                ),
+                "json_error": json_error,
+                "validation_errors": validation_errors,
+                "required_repairs": {
+                    "weather_adjustments": "must be a list of objects, e.g. [] or [{'day': 1, 'reason': 'rain'}]",
+                    "attractions": "must be a list of objects",
+                    "daily_itinerary": "must be a list of objects",
+                    "execution_status": "must be completed, failed, or clarification",
+                },
+            },
+            ensure_ascii=False,
+        )
+
+    def _single_agent_tool_arguments_with_visible_defaults(
+        self,
+        *,
+        tool_name: str,
+        arguments: Dict[str, Any],
+        case: Dict[str, Any],
+        tool_results: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        normalized = dict(arguments or {})
+        defaults = self._research_tool_arguments(tool_name, case, tool_results)
+        aliases = self._single_agent_argument_aliases(tool_name)
+        for key, value in defaults.items():
+            if (
+                self._single_agent_argument_missing(normalized.get(key))
+                and not self._single_agent_argument_missing(value)
+                and not self._single_agent_equivalent_argument_present(
+                    normalized,
+                    aliases.get(key, []),
+                )
+            ):
+                normalized[key] = value
+        return normalized
+
+    @staticmethod
+    def _single_agent_argument_missing(value: Any) -> bool:
+        return value in (None, "", [], {})
+
+    @classmethod
+    def _single_agent_equivalent_argument_present(
+        cls,
+        arguments: Dict[str, Any],
+        aliases: List[str],
+    ) -> bool:
+        return any(
+            not cls._single_agent_argument_missing(arguments.get(alias))
+            for alias in aliases
+        )
+
+    @staticmethod
+    def _single_agent_argument_aliases(tool_name: str) -> Dict[str, List[str]]:
+        common_city = {"city": ["destination"], "destination": ["city"]}
+        if tool_name == "poi_search":
+            return common_city
+        if tool_name == "weather_query":
+            return {
+                **common_city,
+                "date": ["start_date"],
+                "start_date": ["date"],
+                "days": ["duration"],
+                "duration": ["days"],
+                "scenario_type": ["weather_scenario"],
+                "weather_scenario": ["scenario_type"],
+            }
+        if tool_name == "budget_calculator":
+            return {
+                **common_city,
+                "origin": ["from_city"],
+                "from_city": ["origin"],
+                "people_count": ["num_travelers"],
+                "num_travelers": ["people_count"],
+                "days": ["duration"],
+                "duration": ["days"],
+                "spending_level": ["budget_level"],
+                "budget_level": ["spending_level"],
+                "attractions": ["poi_ids"],
+                "poi_ids": ["attractions"],
+            }
+        return {}
 
     def _single_agent_required_tools(self, case: Dict[str, Any]) -> List[str]:
         required = [
@@ -2209,19 +3058,193 @@ class ExperimentRunner:
 
     async def _run_fixed_multi_agent(self, case: Dict[str, Any], request_id: str) -> Dict[str, Any]:
         execution_case = self._case_for_fixed_multi_agent(case)
-        agents = (
-            ["attraction", "weather", "itinerary", "budget"]
-            if self._is_tourism_case(execution_case)
-            else []
-        )
-        tools = list(GENERATION_TOOL_NAMES) if agents else []
+        scheduler_metadata = self._fixed_multi_agent_scheduler_metadata(execution_case)
+        decision = self._scheduler_decision(scheduler_metadata)
+        agents = _as_list(decision.get("planned_agents"))
+        tools = _as_list(decision.get("planned_tools"))
         return await self._run_research_multi_agent(
             case=execution_case,
             request_id=request_id,
             method="fixed_multi_agent",
             planned_agents=agents,
             planned_tools=tools,
+            scheduler_metadata=scheduler_metadata,
         )
+
+    def _fixed_multi_agent_plan(self, case: Dict[str, Any]) -> tuple[List[str], List[str]]:
+        scheduler_metadata = self._fixed_multi_agent_scheduler_metadata(case)
+        decision = self._scheduler_decision(scheduler_metadata)
+        return _as_list(decision.get("planned_agents")), _as_list(decision.get("planned_tools"))
+
+    def _fixed_multi_agent_scheduler_metadata(self, case: Dict[str, Any]) -> Dict[str, Any]:
+        ticket = build_goal_state_ticket(
+            user_input=str(case.get("user_input") or ""),
+            current_slots=self._goal_state_current_slots(case),
+            previous_state=self._goal_state_previous_state(case),
+        )
+        ticket_payload = ticket.to_dict()
+        agents, tools, reasons = self._m2_fixed_template_for_ticket(ticket_payload)
+        return {
+            "name": "fixed_template_scheduler",
+            "policy": "m2_task_relevant_fixed_template_v2",
+            "state_reuse": False,
+            "dynamic_goal_state_scheduling": False,
+            "template_source": "app.core.experiment_method_contract.M2_FIXED_TEMPLATE_POLICY",
+            "ticket": ticket_payload,
+            "decision": {
+                "schema_version": "ctp-fixed-template-decision-v1",
+                "planned_agents": agents,
+                "planned_tools": tools,
+                "reused_agents": [],
+                "invalidated_agents": [],
+                "clarification_required": bool(ticket_payload.get("clarification_required")),
+                "clarification_fields": _as_list(ticket_payload.get("clarification_fields")),
+                "decision_reasons": reasons,
+                "reuse_validation": {},
+            },
+        }
+
+    def _m2_fixed_template_for_ticket(
+        self,
+        ticket: Dict[str, Any],
+    ) -> tuple[List[str], List[str], List[str]]:
+        task_type = str(ticket.get("task_type") or "").strip()
+        canonical_task_type = self._canonical_research_task_type(task_type)
+
+        if canonical_task_type in {"general_chat", "clarification"}:
+            reason = (
+                "fixed_template_clarification_no_business_agents"
+                if canonical_task_type == "clarification"
+                else "fixed_template_general_chat_no_business_agents"
+            )
+            return [], [], [reason]
+
+        if canonical_task_type == "attraction_recommendation":
+            return ["attraction"], ["poi_search"], ["fixed_template_attraction_only"]
+
+        if canonical_task_type == "weather_query":
+            return ["weather"], ["weather_query"], ["fixed_template_weather_only"]
+
+        if canonical_task_type == "budget_query":
+            return ["budget"], ["budget_calculator"], ["fixed_template_budget_only"]
+
+        if canonical_task_type == "trip_planning":
+            if self._m2_trip_plan_without_weather(ticket):
+                agents = ["attraction", "itinerary", "budget"]
+                return (
+                    agents,
+                    self._tools_for_agents(agents),
+                    ["fixed_template_trip_plan_without_weather"],
+                )
+            agents = ["attraction", "weather", "itinerary", "budget"]
+            return agents, self._tools_for_agents(agents), ["fixed_template_full_trip_plan"]
+
+        if canonical_task_type == "partial_replan":
+            return self._m2_partial_replan_template(ticket)
+
+        if canonical_task_type == "weather_adjustment":
+            agents = ["itinerary", "budget"]
+            return agents, self._tools_for_agents(agents), ["fixed_template_weather_adjustment"]
+
+        return [], [], ["fixed_template_non_executable_task"]
+
+    def _m2_trip_plan_without_weather(self, ticket: Dict[str, Any]) -> bool:
+        task_type = str(ticket.get("task_type") or "").strip()
+        current_slots = (
+            ticket.get("current_slots")
+            if isinstance(ticket.get("current_slots"), dict)
+            else {}
+        )
+        if task_type == "trip_plan":
+            return True
+        if str(current_slots.get("weather_date_policy") or "") == (
+            "no_date_no_specific_weather_for_trip_plan"
+        ):
+            return True
+        return not bool(current_slots.get("start_date") or current_slots.get("weather_scenario"))
+
+    def _m2_partial_replan_template(
+        self,
+        ticket: Dict[str, Any],
+    ) -> tuple[List[str], List[str], List[str]]:
+        changed_slots = set(_as_list(ticket.get("changed_slots")))
+        dependency_policy = (
+            ticket.get("dependency_policy")
+            if isinstance(ticket.get("dependency_policy"), dict)
+            else {}
+        )
+        goal_change_type = str(ticket.get("goal_change_type") or "")
+
+        if not changed_slots:
+            agents = (
+                ["attraction", "itinerary", "budget"]
+                if self._m2_trip_plan_without_weather(ticket)
+                else ["attraction", "weather", "itinerary", "budget"]
+            )
+            reason = (
+                "fixed_template_explicit_replan"
+                if goal_change_type == "explicit_replan"
+                else "fixed_template_identical_followup_rerun"
+            )
+            return agents, self._tools_for_agents(agents), [reason]
+
+        if "destination" in changed_slots:
+            agents = (
+                ["attraction", "itinerary", "budget"]
+                if self._m2_trip_plan_without_weather(ticket)
+                else ["attraction", "weather", "itinerary", "budget"]
+            )
+            return agents, self._tools_for_agents(agents), ["fixed_template_destination_changed"]
+
+        agents: List[str] = []
+        reasons: List[str] = []
+
+        if "origin" in changed_slots:
+            if dependency_policy.get("origin_change_scope") == "itinerary_budget":
+                agents.extend(["itinerary", "budget"])
+                reasons.append("fixed_template_origin_changed_itinerary_budget")
+            else:
+                agents.append("budget")
+                reasons.append("fixed_template_origin_changed_budget_only")
+
+        if changed_slots & {"preferences", "special_requirements", "traveler_group"}:
+            agents.extend(["attraction", "itinerary", "budget"])
+            reasons.append("fixed_template_preference_or_traveler_changed")
+
+        if "start_date" in changed_slots or "weather_scenario" in changed_slots:
+            agents.extend(["weather", "itinerary", "budget"])
+            reasons.append("fixed_template_date_or_weather_changed")
+
+        if "duration_days" in changed_slots:
+            duration_agents = (
+                ["weather", "itinerary", "budget"]
+                if not self._m2_trip_plan_without_weather(ticket)
+                else ["itinerary", "budget"]
+            )
+            agents.extend(duration_agents)
+            reasons.append("fixed_template_duration_changed")
+
+        if "people_count" in changed_slots:
+            agents.extend(["itinerary", "budget"])
+            reasons.append("fixed_template_people_count_changed")
+
+        if changed_slots & {"budget_amount", "budget_level"}:
+            if goal_change_type == "explicit_replan":
+                agents.extend(["itinerary", "budget"])
+                reasons.append("fixed_template_budget_changed_itinerary_budget")
+            else:
+                agents.append("budget")
+                reasons.append("fixed_template_budget_changed_budget_only")
+
+        agents = _ordered_unique([agent for agent in agents if agent in {"attraction", "weather", "itinerary", "budget"}])
+        if not agents:
+            agents = (
+                ["attraction", "itinerary", "budget"]
+                if self._m2_trip_plan_without_weather(ticket)
+                else ["attraction", "weather", "itinerary", "budget"]
+            )
+            reasons.append("fixed_template_partial_replan_default")
+        return agents, self._tools_for_agents(agents), _ordered_unique(reasons)
 
     async def _run_adaptive_multi_agent(self, case: Dict[str, Any], request_id: str) -> Dict[str, Any]:
         plan = self._select_adaptive_research_plan(case)
@@ -2273,14 +3296,14 @@ class ExperimentRunner:
                 self._initialize_trace_for_evaluation(case)
                 set_trace_selected_agents(planned_agents)
                 record_planned_tools(planned_tools)
-                if scheduler_metadata is not None:
+                if method == "adaptive_multi_agent" and scheduler_metadata is not None:
                     set_trace_scheduler_info(scheduler_metadata)
 
             reused_agent_outputs = self._reused_research_agent_outputs(
                 previous_state=self._goal_state_previous_state(case),
                 reused_agents=self._actual_reused_agents_from_scheduler(scheduler_metadata),
             )
-            tool_results, agent_outputs = await self._execute_research_tool_plan(
+            tool_results, agent_outputs, executed_agents = await self._execute_research_tool_plan(
                 case=case,
                 agents=planned_agents,
                 tools=planned_tools,
@@ -2295,11 +3318,12 @@ class ExperimentRunner:
                 planned_tools=planned_tools,
                 tool_results=tool_results,
                 agent_outputs=agent_outputs,
+                executed_agents=executed_agents,
                 scheduler_metadata=scheduler_metadata,
                 called_tools=list(trace.tool_calls) if trace is not None else [],
             )
             result_scheduler = _nested_mapping(result, "metadata", "adaptive_scheduler")
-            if isinstance(result_scheduler, dict):
+            if method == "adaptive_multi_agent" and isinstance(result_scheduler, dict):
                 set_trace_scheduler_info(result_scheduler)
             set_trace_result_summary(result, offline_data=self._offline_data_summary(compact=True))
             return result
@@ -2313,11 +3337,12 @@ class ExperimentRunner:
         initial_tool_results: Optional[Dict[str, Any]] = None,
         initial_agent_outputs: Optional[Dict[str, Any]] = None,
         scheduler_metadata: Optional[Dict[str, Any]] = None,
-    ) -> tuple[Dict[str, Any], Dict[str, Any]]:
+    ) -> tuple[Dict[str, Any], Dict[str, Any], List[str]]:
         catalog = {tool.name: tool for tool in generation_tools()}
         executor = ToolExecutor(tools=catalog)
         tool_results: Dict[str, Any] = dict(initial_tool_results or {})
         agent_outputs: Dict[str, Any] = dict(initial_agent_outputs or {})
+        executed_agents: List[str] = []
         planned_tool_set = set(tools)
         failed_agents: set[str] = set()
 
@@ -2326,6 +3351,7 @@ class ExperimentRunner:
                 agent_name,
                 tool_results,
                 failed_agents,
+                case=case,
                 scheduler_metadata=scheduler_metadata,
             )
             if blocked_by:
@@ -2344,6 +3370,8 @@ class ExperimentRunner:
                 )
                 failed_agents.add(agent_name)
                 continue
+            if agent_name not in executed_agents:
+                executed_agents.append(agent_name)
             agent_tools = [
                 tool_name
                 for tool_name in self._tools_for_research_agent(agent_name)
@@ -2361,6 +3389,7 @@ class ExperimentRunner:
                             case,
                             tool_results,
                             agent_outputs=agent_outputs,
+                            scheduler_metadata=scheduler_metadata,
                         )
                         call = await executor.execute(
                             tool_name=tool_name,
@@ -2380,6 +3409,7 @@ class ExperimentRunner:
                                 case=case,
                                 tool_results=tool_results,
                                 upstream_agent_outputs=agent_outputs,
+                                scheduler_metadata=scheduler_metadata,
                             )
                             agent_outputs[agent_name] = agent_output
                             agent_usage = dict(agent_output.get("usage") or {})
@@ -2418,7 +3448,7 @@ class ExperimentRunner:
                     error=exc,
                 )
                 raise
-        return tool_results, agent_outputs
+        return tool_results, agent_outputs, executed_agents
 
     def _can_skip_blocked_itinerary_with_previous_state(
         self,
@@ -2439,10 +3469,14 @@ class ExperimentRunner:
         tool_results: Dict[str, Any],
         failed_agents: set[str],
         *,
+        case: Dict[str, Any],
         scheduler_metadata: Optional[Dict[str, Any]] = None,
     ) -> List[str]:
         blocked: List[str] = []
-        dependencies = RESULT_DEPENDENCIES.get(agent_name, ())
+        dependencies = self._dependencies_for_research_agent(
+            agent_name,
+            scheduler_metadata=scheduler_metadata,
+        )
         if agent_name == "budget" and not self._budget_requires_attraction_evidence(
             scheduler_metadata
         ):
@@ -2454,6 +3488,91 @@ class ExperimentRunner:
             ):
                 blocked.append(upstream)
         return blocked
+
+    def _dependencies_for_research_agent(
+        self,
+        agent_name: str,
+        *,
+        scheduler_metadata: Optional[Dict[str, Any]] = None,
+    ) -> List[str]:
+        dependencies = list(RESULT_DEPENDENCIES.get(agent_name, ()))
+        if (
+            agent_name == "itinerary"
+            and "weather" in dependencies
+            and scheduler_metadata is not None
+            and not self._scheduler_requires_weather_for_itinerary(scheduler_metadata)
+        ):
+            dependencies.remove("weather")
+        if (
+            agent_name == "itinerary"
+            and "attraction" in dependencies
+            and self._is_fixed_template_scheduler(scheduler_metadata)
+            and "attraction" not in set(
+                _as_list(self._scheduler_decision(scheduler_metadata).get("planned_agents"))
+            )
+        ):
+            dependencies.remove("attraction")
+        if (
+            agent_name == "budget"
+            and "itinerary" not in dependencies
+            and self._scheduler_requires_itinerary_for_budget(scheduler_metadata)
+        ):
+            dependencies.append("itinerary")
+        return dependencies
+
+    def _scheduler_requires_itinerary_for_budget(
+        self,
+        scheduler_metadata: Optional[Dict[str, Any]],
+    ) -> bool:
+        ticket = scheduler_metadata.get("ticket") if isinstance(scheduler_metadata, dict) else None
+        if not isinstance(ticket, dict):
+            return False
+        if self._is_fixed_template_scheduler(scheduler_metadata):
+            decision = self._scheduler_decision(scheduler_metadata)
+            return "itinerary" in set(_as_list(decision.get("planned_agents")))
+        task_type = str(ticket.get("task_type") or "").strip()
+        if task_type == "budget_query":
+            return False
+        if task_type in {
+            "trip_planning",
+            "trip_plan",
+            "weather_aware_trip_plan",
+            "partial_replan",
+            "weather_adjustment",
+        }:
+            return True
+        capabilities = set(_as_list(ticket.get("required_capabilities")))
+        return "itinerary_generation" in capabilities
+
+    def _scheduler_requires_weather_for_itinerary(
+        self,
+        scheduler_metadata: Optional[Dict[str, Any]],
+    ) -> bool:
+        ticket = scheduler_metadata.get("ticket") if isinstance(scheduler_metadata, dict) else None
+        if self._is_fixed_template_scheduler(scheduler_metadata):
+            decision = self._scheduler_decision(scheduler_metadata)
+            return "weather" in set(_as_list(decision.get("planned_agents")))
+        if not isinstance(ticket, dict):
+            return True
+        task_type = str(ticket.get("task_type") or "").strip()
+        if task_type == "trip_plan":
+            return False
+        current_slots = ticket.get("current_slots") if isinstance(ticket.get("current_slots"), dict) else {}
+        if task_type == "partial_replan" and not (
+            current_slots.get("start_date") or current_slots.get("weather_scenario")
+        ):
+            return False
+        capabilities = set(_as_list(ticket.get("required_capabilities")))
+        if "weather_evidence" in capabilities:
+            return True
+        if current_slots.get("start_date") or current_slots.get("weather_scenario"):
+            return True
+        decision = self._scheduler_decision(scheduler_metadata)
+        weather_agents = {
+            *_as_list(decision.get("planned_agents")),
+            *_as_list(decision.get("reused_agents")),
+        }
+        return "weather" in weather_agents
 
     def _budget_requires_attraction_evidence(
         self,
@@ -2467,7 +3586,19 @@ class ExperimentRunner:
         )
         if "requires_attraction_evidence" in dependency_policy:
             return bool(dependency_policy.get("requires_attraction_evidence"))
+        if self._is_fixed_template_scheduler(scheduler_metadata):
+            decision = self._scheduler_decision(scheduler_metadata)
+            return "attraction" in set(_as_list(decision.get("planned_agents")))
         return True
+
+    def _is_fixed_template_scheduler(
+        self,
+        scheduler_metadata: Optional[Dict[str, Any]],
+    ) -> bool:
+        return (
+            isinstance(scheduler_metadata, dict)
+            and str(scheduler_metadata.get("name") or "") == "fixed_template_scheduler"
+        )
 
     def _agent_result_available_for_execution(
         self,
@@ -2479,9 +3610,14 @@ class ExperimentRunner:
                 tool_results.get("poi_search")
             ) and bool(self._attractions_from_tool_result(tool_results.get("poi_search")))
         if agent_name == "weather":
-            return self._is_successful_reusable_tool_result(
-                tool_results.get("weather_query")
-            ) and bool(self._tool_data(tool_results.get("weather_query")).get("daily_weather"))
+            weather_result = tool_results.get("weather_query")
+            if not self._is_successful_reusable_tool_result(weather_result):
+                return False
+            weather = self._tool_data(weather_result)
+            coverage_status = str(weather.get("coverage_status") or "").lower()
+            if coverage_status in {"full", "partial", "out_of_range"}:
+                return True
+            return bool(weather.get("daily_weather"))
         if agent_name == "budget":
             return self._is_successful_reusable_tool_result(
                 tool_results.get("budget_calculator")
@@ -2497,14 +3633,27 @@ class ExperimentRunner:
         }
         return mapping.get(agent_name, [])
 
-    def _evidence_tools_for_research_agent(self, agent_name: str) -> List[str]:
+    def _evidence_tools_for_research_agent(
+        self,
+        agent_name: str,
+        *,
+        scheduler_metadata: Optional[Dict[str, Any]] = None,
+    ) -> List[str]:
         mapping = {
             "attraction": ["poi_search"],
             "weather": ["weather_query"],
             "itinerary": ["poi_search", "weather_query"],
             "budget": ["poi_search", "budget_calculator"],
         }
-        return mapping.get(agent_name, [])
+        evidence_tools = list(mapping.get(agent_name, []))
+        if (
+            agent_name == "itinerary"
+            and "weather_query" in evidence_tools
+            and scheduler_metadata is not None
+            and not self._scheduler_requires_weather_for_itinerary(scheduler_metadata)
+        ):
+            evidence_tools.remove("weather_query")
+        return evidence_tools
 
     async def _run_research_agent_llm(
         self,
@@ -2513,6 +3662,7 @@ class ExperimentRunner:
         case: Dict[str, Any],
         tool_results: Dict[str, Any],
         upstream_agent_outputs: Dict[str, Any],
+        scheduler_metadata: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         llm = self.llm_factory()
         messages = self._research_agent_prompt_messages(
@@ -2520,6 +3670,7 @@ class ExperimentRunner:
             case=case,
             tool_results=tool_results,
             upstream_agent_outputs=upstream_agent_outputs,
+            scheduler_metadata=scheduler_metadata,
         )
         started = time.perf_counter()
         try:
@@ -2606,8 +3757,14 @@ class ExperimentRunner:
             "success": decision_valid,
             "reused": False,
             "prompt_version": RESEARCH_AGENT_PROMPT_VERSION,
-            "evidence_tools": self._evidence_tools_for_research_agent(agent_name),
-            "upstream_agents": list(RESULT_DEPENDENCIES.get(agent_name, ())),
+            "evidence_tools": self._evidence_tools_for_research_agent(
+                agent_name,
+                scheduler_metadata=scheduler_metadata,
+            ),
+            "upstream_agents": self._dependencies_for_research_agent(
+                agent_name,
+                scheduler_metadata=scheduler_metadata,
+            ),
             "content": content,
             "decision_schema_version": RESEARCH_AGENT_DECISION_SCHEMA_VERSION,
             "decision": _jsonable_value(decision or {}),
@@ -2720,10 +3877,18 @@ class ExperimentRunner:
         tool_results: Dict[str, Any],
     ) -> List[str]:
         weather = self._tool_data(tool_results.get("weather_query"))
-        day_count = len(self._weather_day_items(weather))
+        weather_days = self._weather_day_items(weather)
+        day_count = len(weather_days)
+        allowed_days = {
+            _first_positive_int(item.get("day_index"), item.get("day"), default=0)
+            for item in weather_days
+        }
+        allowed_days = {day for day in allowed_days if day > 0}
         risk_days = _int_list(decisions.get("risk_days"))
         errors: List[str] = []
-        if day_count and any(day < 1 or day > day_count for day in risk_days):
+        if allowed_days and any(day not in allowed_days for day in risk_days):
+            errors.append("risk_days must refer to days present in weather evidence")
+        elif day_count and any(day < 1 or day > day_count for day in risk_days):
             errors.append("risk_days must refer to days present in weather evidence")
         if "adjustment_required" in decisions and not isinstance(
             decisions.get("adjustment_required"),
@@ -3066,11 +4231,12 @@ class ExperimentRunner:
         case: Dict[str, Any],
         tool_results: Dict[str, Any],
         upstream_agent_outputs: Dict[str, Any],
+        scheduler_metadata: Optional[Dict[str, Any]] = None,
     ) -> List[LLMMessage]:
         role = {
             "attraction": "Attraction Agent: assess POI evidence and select reliable attraction evidence.",
             "weather": "Weather Agent: assess weather evidence and identify travel risks.",
-            "itinerary": "Itinerary Agent: combine attraction and weather evidence into a day-level plan.",
+            "itinerary": "Itinerary Agent: combine attraction evidence and any available weather evidence into a day-level plan.",
             "budget": "Budget Agent: assess budget evidence and explain cost feasibility.",
         }.get(agent_name, f"{agent_name} Agent")
         context = self._research_agent_prompt_context(
@@ -3078,6 +4244,7 @@ class ExperimentRunner:
             case=case,
             tool_results=tool_results,
             upstream_agent_outputs=upstream_agent_outputs,
+            scheduler_metadata=scheduler_metadata,
         )
         return [
             LLMMessage(
@@ -3107,20 +4274,35 @@ class ExperimentRunner:
         case: Dict[str, Any],
         tool_results: Dict[str, Any],
         upstream_agent_outputs: Dict[str, Any],
+        scheduler_metadata: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
-        evidence_tools = self._evidence_tools_for_research_agent(agent_name)
-        upstream_agents = list(RESULT_DEPENDENCIES.get(agent_name, ()))
+        evidence_tools = self._evidence_tools_for_research_agent(
+            agent_name,
+            scheduler_metadata=scheduler_metadata,
+        )
+        upstream_agents = self._dependencies_for_research_agent(
+            agent_name,
+            scheduler_metadata=scheduler_metadata,
+        )
         return {
             "prompt_version": RESEARCH_AGENT_PROMPT_VERSION,
             "agent_name": agent_name,
             "user_request": str(case.get("user_input") or ""),
             "task_slots": {
                 "city": self._case_city(case),
+                "origin": self._case_origin(case),
                 "duration_days": self._case_duration(case),
                 "start_date": self._case_start_date(case),
                 "people_count": self._case_traveler_count(case),
                 "preferences": self._case_preferences(case),
+                "budget_amount": self._case_budget_limit(case),
+                "budget_basis": self._case_budget_basis(case),
+                "requested_budget_scope": self._case_requested_budget_scope(case),
+                "intercity_transport_included": self._case_intercity_transport_included(case),
+                "mandatory_budget_disclaimer": self._case_mandatory_budget_disclaimer(case),
                 "budget_level": self._case_budget_level(case),
+                "hotel_level": self._case_hotel_level(case),
+                "food_level": self._case_food_level(case),
             },
             "tool_evidence": {
                 tool_name: self._compact_tool_result_for_prompt(
@@ -3260,9 +4442,9 @@ class ExperimentRunner:
         for agent_name in reused_agents:
             if agent_name in invalidated_agents:
                 continue
-            if not is_goal_state_agent_reusable(
+            if not is_goal_state_agent_reusable_for_ticket(
                 agent_name,
-                current_slots=current_slots,
+                ticket=ticket,
                 previous_state=previous_state,
             ):
                 continue
@@ -3296,6 +4478,7 @@ class ExperimentRunner:
             reused_tool_results=reused_tool_results,
             previous_state=previous_state,
             current_slots=current_slots,
+            scheduler_metadata=scheduler_metadata,
         )
         missing_reused_agents = [
             agent for agent in reused_agents if agent not in set(actual_reused_agents)
@@ -3342,13 +4525,19 @@ class ExperimentRunner:
         reused_tool_results: Dict[str, Any],
         previous_state: Optional[Dict[str, Any]],
         current_slots: Dict[str, Any],
+        scheduler_metadata: Optional[Dict[str, Any]] = None,
     ) -> List[str]:
         actual: List[str] = []
         reused_tool_set = set(reused_tool_results)
+        ticket = (
+            scheduler_metadata.get("ticket")
+            if isinstance(scheduler_metadata, dict)
+            else None
+        )
         for agent_name in expected_agents:
-            if not is_goal_state_agent_reusable(
+            if not is_goal_state_agent_reusable_for_ticket(
                 agent_name,
-                current_slots=current_slots,
+                ticket=ticket or {"current_slots": current_slots},
                 previous_state=previous_state,
             ):
                 continue
@@ -3924,6 +5113,50 @@ class ExperimentRunner:
             }
         return budget
 
+    def _budget_itinerary_consistency_audit(
+        self,
+        *,
+        budget: Optional[Dict[str, Any]],
+        daily_itinerary: List[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        if not isinstance(budget, dict) or not budget:
+            return {}
+        final_poi_ids = _ordered_unique(self._daily_itinerary_poi_ids(daily_itinerary))
+        ticket_breakdown = budget.get("ticket_breakdown") if isinstance(budget.get("ticket_breakdown"), dict) else {}
+        ticket_summary = (
+            ticket_breakdown.get("summary")
+            if isinstance(ticket_breakdown.get("summary"), dict)
+            else {}
+        )
+        breakdown = budget.get("breakdown") if isinstance(budget.get("breakdown"), dict) else {}
+        ticket_section = breakdown.get("tickets") if isinstance(breakdown.get("tickets"), dict) else {}
+        budget_poi_ids = _ordered_unique(
+            [
+                str(value)
+                for value in (
+                    ticket_summary.get("selected_poi_ids")
+                    or ticket_section.get("selected_poi_ids")
+                    or []
+                )
+                if str(value or "").strip()
+            ]
+        )
+        source = ticket_summary.get("source") or ticket_section.get("source")
+        if not final_poi_ids and source == "standard_reference_poi_combo":
+            consistency_status = "standard_reference_no_final_itinerary"
+            consistent = True
+        else:
+            consistent = final_poi_ids == budget_poi_ids
+            consistency_status = "matched" if consistent else "mismatched"
+        return {
+            "schema_version": "budget-itinerary-consistency-audit-v1",
+            "status": consistency_status,
+            "consistent": consistent,
+            "final_itinerary_unique_poi_ids": final_poi_ids,
+            "budget_selected_poi_ids": budget_poi_ids,
+            "ticket_source": source,
+        }
+
     def _previous_budget_from_state(
         self,
         previous_state: Optional[Dict[str, Any]],
@@ -3961,7 +5194,6 @@ class ExperimentRunner:
             "itinerary" in planned_agents
             and self._agent_output_available("itinerary", agent_outputs)
             and attractions
-            and weather
         ):
             agent_itinerary = self._daily_itinerary_from_agent_decision(
                 trip_days=trip_days,
@@ -4314,6 +5546,7 @@ class ExperimentRunner:
             if item.get("poi_id")
         }
         result: List[Dict[str, Any]] = []
+        valid_poi_ref_count = 0
         for item in daily:
             if not isinstance(item, dict):
                 continue
@@ -4322,6 +5555,7 @@ class ExperimentRunner:
                 continue
             poi_ids = _as_list(item.get("attraction_poi_ids"))
             selected = [by_id[poi_id] for poi_id in poi_ids if poi_id in by_id]
+            valid_poi_ref_count += len(selected)
             result.append(
                 {
                     "day": day,
@@ -4341,6 +5575,8 @@ class ExperimentRunner:
                     "agent_decision_source": "itinerary",
                 }
             )
+        if by_id and valid_poi_ref_count == 0:
+            return []
         result.sort(key=lambda item: int(item.get("day") or 0))
         return result
 
@@ -4438,6 +5674,7 @@ class ExperimentRunner:
         tool_results: Dict[str, Any],
         *,
         agent_outputs: Optional[Dict[str, Any]] = None,
+        scheduler_metadata: Optional[Dict[str, Any]] = None,
     ) -> Dict[str, Any]:
         city = self._case_city(case)
         duration = self._case_duration(case)
@@ -4457,23 +5694,42 @@ class ExperimentRunner:
             }
         if tool_name == "budget_calculator":
             people_count = self._case_traveler_count(case)
+            origin = self._case_origin(case)
+            daily_itinerary = self._daily_itinerary_for_budget_tool(
+                case=case,
+                tool_results=tool_results,
+                agent_outputs=agent_outputs or {},
+                scheduler_metadata=scheduler_metadata,
+            )
             selected_poi_ids = self._poi_ids_for_budget_tool(
                 case=case,
                 tool_results=tool_results,
                 agent_outputs=agent_outputs or {},
+                daily_itinerary=daily_itinerary,
             )
             return {
                 "city": city,
+                "origin": origin,
                 "people_count": people_count,
                 "days": duration,
                 "attractions": selected_poi_ids,
+                "daily_itinerary": daily_itinerary,
+                "budget_limit": self._case_budget_limit(case),
+                "budget_basis": self._case_budget_basis(case),
+                "requested_budget_scope": self._case_requested_budget_scope(case),
+                "intercity_transport_included": self._case_intercity_transport_included(case),
+                "mandatory_budget_disclaimer": self._case_mandatory_budget_disclaimer(case),
                 "spending_level": self._budget_level_for_research_tool(
                     case=case,
                     city=city,
+                    origin=origin,
                     people_count=people_count,
                     duration_days=duration,
                     selected_poi_ids=selected_poi_ids,
                 ),
+                "hotel_level": self._case_hotel_level(case),
+                "food_level": self._case_food_level(case),
+                "transport_mode": self._case_transport_mode(case),
             }
         return {}
 
@@ -4485,36 +5741,12 @@ class ExperimentRunner:
         people_count: int,
         duration_days: int,
         selected_poi_ids: List[str],
+        origin: Optional[str] = None,
     ) -> str:
         explicit_level = self._case_explicit_budget_level(case)
         if explicit_level:
             return explicit_level
-        default_level = self._case_budget_level(case)
-        budget_limit = self._case_budget_limit(case)
-        if budget_limit is None:
-            return default_level
-        try:
-            default_budget = get_fixed_tourism_data().calculate_budget(
-                destination=city,
-                duration=duration_days,
-                num_travelers=people_count,
-                budget_level=default_level,
-                poi_ids=selected_poi_ids,
-            )
-            if float(default_budget.get("total_recommended") or 0.0) <= budget_limit:
-                return default_level
-            economy_budget = get_fixed_tourism_data().calculate_budget(
-                destination=city,
-                duration=duration_days,
-                num_travelers=people_count,
-                budget_level="economy",
-                poi_ids=selected_poi_ids,
-            )
-            if float(economy_budget.get("total_recommended") or 0.0) <= budget_limit:
-                return "economy"
-        except Exception:
-            return default_level
-        return default_level
+        return self._case_budget_level(case)
 
     def _poi_ids_for_budget_tool(
         self,
@@ -4522,6 +5754,7 @@ class ExperimentRunner:
         case: Dict[str, Any],
         tool_results: Dict[str, Any],
         agent_outputs: Dict[str, Any],
+        daily_itinerary: Optional[List[Dict[str, Any]]] = None,
     ) -> List[str]:
         """Return the bounded POI subset used by the budget tool.
 
@@ -4530,6 +5763,10 @@ class ExperimentRunner:
         with the final itinerary and avoids penalising methods for attractions
         that were never selected.
         """
+        if daily_itinerary:
+            ids = self._daily_itinerary_poi_ids(daily_itinerary)
+            if ids:
+                return ids
         attractions = self._attractions_from_tool_result(tool_results.get("poi_search"))
         if not attractions:
             return []
@@ -4550,6 +5787,65 @@ class ExperimentRunner:
             if item.get("poi_id")
         ]
 
+    def _daily_itinerary_for_budget_tool(
+        self,
+        *,
+        case: Dict[str, Any],
+        tool_results: Dict[str, Any],
+        agent_outputs: Dict[str, Any],
+        scheduler_metadata: Optional[Dict[str, Any]] = None,
+    ) -> List[Dict[str, Any]]:
+        trip_days = self._case_duration(case)
+        weather = self._tool_data(tool_results.get("weather_query"))
+        attractions = self._attractions_for_research_output(
+            case=case,
+            tool_results=tool_results,
+            agent_outputs=agent_outputs,
+            weather=weather,
+        )
+        if not attractions:
+            return []
+        daily_itinerary = self._daily_itinerary_from_agent_decision(
+            trip_days=trip_days,
+            attractions=attractions,
+            agent_outputs=agent_outputs,
+        )
+        if not daily_itinerary and self._scheduler_reuses_agent(
+            scheduler_metadata,
+            "itinerary",
+        ):
+            previous_itinerary = self._previous_daily_itinerary_from_state(
+                self._goal_state_previous_state(case)
+            )
+            if previous_itinerary:
+                daily_itinerary = previous_itinerary
+        if not daily_itinerary:
+            daily_itinerary = self._normalized_decision_daily_itinerary(
+                trip_days,
+                attractions,
+                case=case,
+                weather=weather,
+            )
+        if not daily_itinerary:
+            return []
+        normalized, _audit = self._normalize_daily_itinerary_for_evidence_constraints(
+            trip_days=trip_days,
+            attractions=attractions,
+            weather=weather,
+            case=case,
+            daily_itinerary=daily_itinerary,
+        )
+        return normalized
+
+    def _scheduler_reuses_agent(
+        self,
+        scheduler_metadata: Optional[Dict[str, Any]],
+        agent_name: str,
+    ) -> bool:
+        if not isinstance(scheduler_metadata, dict):
+            return False
+        return agent_name in set(self._actual_reused_agents_from_scheduler(scheduler_metadata))
+
     async def _build_research_method_output(
         self,
         *,
@@ -4559,11 +5855,15 @@ class ExperimentRunner:
         planned_tools: List[str],
         tool_results: Dict[str, Any],
         agent_outputs: Optional[Dict[str, Any]] = None,
+        executed_agents: Optional[List[str]] = None,
         scheduler_metadata: Optional[Dict[str, Any]] = None,
         called_tools: Optional[List[Dict[str, Any]]] = None,
     ) -> Dict[str, Any]:
         called_tools = called_tools or []
         agent_outputs = agent_outputs or {}
+        actual_used_agents = _ordered_unique(
+            executed_agents if executed_agents is not None else planned_agents
+        )
         visible_clarification = (
             scheduler_metadata is None
             and self._infer_research_task_type(case) == "clarification"
@@ -4729,6 +6029,12 @@ class ExperimentRunner:
         )
         if itinerary_evidence_normalization.get("applied"):
             metadata["itinerary_evidence_normalization"] = itinerary_evidence_normalization
+        budget_itinerary_consistency = self._budget_itinerary_consistency_audit(
+            budget=budget,
+            daily_itinerary=daily_itinerary,
+        )
+        if budget_itinerary_consistency:
+            metadata["budget_itinerary_consistency"] = budget_itinerary_consistency
         execution_status = self._execution_status_from_research_artifacts(
             tool_results=tool_results,
             agent_outputs=agent_outputs,
@@ -4736,7 +6042,7 @@ class ExperimentRunner:
         raw_snapshot = {
             "task_type": task_type,
             "planned_agents": planned_agents,
-            "used_agents": planned_agents,
+            "used_agents": actual_used_agents,
             "planned_tools": planned_tools,
             "called_tools": called_tools,
             "agent_outputs": agent_outputs,
@@ -4757,7 +6063,7 @@ class ExperimentRunner:
             "method": method,
             "task_type": task_type,
             "planned_agents": planned_agents,
-            "used_agents": planned_agents,
+            "used_agents": actual_used_agents,
             "planned_tools": planned_tools,
             "called_tools": called_tools,
             "agent_outputs": agent_outputs,
@@ -4868,6 +6174,24 @@ class ExperimentRunner:
         budget_total = self._budget_total_from_evidence(budget)
         if budget_total is not None:
             lines.append(f"预算工具总额：{budget_total:g} 元")
+        intercity_line = self._intercity_budget_answer_line(budget)
+        if intercity_line:
+            lines.append(intercity_line)
+        lines.extend(self._weather_answer_evidence_lines(weather))
+        body = str(answer or "").strip()
+        if lines and self._answer_body_mentions_unselected_poi(
+            body,
+            selected_attractions=attractions,
+            tool_results=tool_results or {},
+        ):
+            body = ""
+        return body if not lines else "\n".join(lines + (["", body] if body else []))
+
+    def _weather_answer_evidence_lines(self, weather: Dict[str, Any]) -> List[str]:
+        if not isinstance(weather, dict) or not weather:
+            return []
+        coverage_status = str(weather.get("coverage_status") or "").strip()
+        provider = str(weather.get("provider") or "").strip()
         weather_terms = _ordered_unique(
             [
                 str(weather.get("scenario_type") or ""),
@@ -4878,16 +6202,113 @@ class ExperimentRunner:
                 ],
             ]
         )
-        if weather_terms:
-            lines.append("天气证据：" + "、".join(weather_terms))
-        body = str(answer or "").strip()
-        if lines and self._answer_body_mentions_unselected_poi(
-            body,
-            selected_attractions=attractions,
-            tool_results=tool_results or {},
+        evidence_labels = [
+            label
+            for label in (
+                "QWeather冻结快照" if provider == "qweather_snapshot" else provider,
+                f"覆盖状态 {coverage_status}" if coverage_status else "",
+                f"天气类型 {'、'.join(weather_terms)}" if weather_terms else "",
+            )
+            if label
+        ]
+        lines = ["天气证据：" + "，".join(evidence_labels)] if evidence_labels else []
+        missing_dates = [
+            str(value)
+            for value in weather.get("missing_dates") or []
+            if str(value or "").strip()
+        ]
+        if not missing_dates and coverage_status in {"partial", "out_of_range"}:
+            requested_dates = self._weather_requested_dates(weather)
+            covered_dates = {
+                str(day.get("date") or "")
+                for day in self._weather_day_items(weather)
+                if isinstance(day, dict) and day.get("date")
+            }
+            missing_dates = [value for value in requested_dates if value not in covered_dates]
+        if coverage_status in {"partial", "out_of_range"} or missing_dates:
+            request_start = str(weather.get("start_date") or weather.get("date") or "").strip()
+            request_end = str(weather.get("end_date") or "").strip()
+            snapshot_start = str(
+                weather.get("snapshot_forecast_start_date")
+                or weather.get("forecast_start_date")
+                or ""
+            ).strip()
+            snapshot_end = str(
+                weather.get("snapshot_forecast_end_date")
+                or weather.get("forecast_end_date")
+                or ""
+            ).strip()
+            parts = []
+            if request_start and request_end:
+                parts.append(f"请求日期 {request_start} 至 {request_end}")
+            if snapshot_start and snapshot_end:
+                parts.append(f"快照覆盖 {snapshot_start} 至 {snapshot_end}")
+            if missing_dates:
+                parts.append("缺失日期：" + "、".join(missing_dates))
+            if parts:
+                lines.append("天气覆盖说明：" + "；".join(parts) + "。")
+            lines.append("超出或缺失的日期不能提供逐日天气；系统不编造范围外天气。")
+        return lines
+
+    def _weather_requested_dates(self, weather: Dict[str, Any]) -> List[str]:
+        start_text = str(weather.get("start_date") or weather.get("date") or "").strip()
+        days = self._safe_positive_int(weather.get("requested_days")) or self._safe_positive_int(weather.get("days")) or 0
+        if not start_text or days < 1:
+            return []
+        try:
+            start = datetime.fromisoformat(start_text).date()
+        except ValueError:
+            return []
+        return [
+            (start + timedelta(days=offset)).isoformat()
+            for offset in range(days)
+        ]
+
+    @staticmethod
+    def _safe_positive_int(value: Any) -> Optional[int]:
+        if isinstance(value, bool):
+            return None
+        try:
+            parsed = int(value)
+        except (TypeError, ValueError):
+            return None
+        return parsed if parsed > 0 else None
+
+    def _intercity_budget_answer_line(self, budget: Dict[str, Any]) -> str:
+        if not isinstance(budget, dict) or not budget:
+            return ""
+        intercity = budget.get("intercity_transport")
+        if not isinstance(intercity, dict):
+            intercity = {}
+        included = bool(
+            budget.get("intercity_transport_included")
+            or intercity.get("intercity_transport_included")
+        )
+        cost = _float_or_none(
+            budget.get("intercity_transport_cost")
+            or intercity.get("total_intercity_transport_cost_cny")
+        )
+        origin = str(intercity.get("origin_label") or intercity.get("origin") or "").strip()
+        destination = str(
+            intercity.get("destination_label") or intercity.get("destination") or ""
+        ).strip()
+        if included and cost and cost > 0:
+            route = f"{origin}至{destination}" if origin and destination else "城际"
+            return (
+                f"城际交通说明：预算已包含{route}成人二等座往返费用，"
+                f"城际交通约 {cost:g} 元。"
+            )
+        if bool(budget.get("mandatory_budget_disclaimer")) or bool(
+            intercity.get("mandatory_budget_disclaimer")
         ):
-            body = ""
-        return body if not lines else "\n".join(lines + (["", body] if body else []))
+            disclaimer = str(
+                budget.get("budget_disclaimer")
+                or intercity.get("disclaimer")
+                or ""
+            ).strip()
+            if disclaimer:
+                return f"城际交通说明：{disclaimer}"
+        return ""
 
     def _answer_body_mentions_unselected_poi(
         self,
@@ -5016,17 +6437,11 @@ class ExperimentRunner:
 
         result_fingerprints = normalized.get("result_fingerprints")
         if not isinstance(result_fingerprints, dict):
-            normalized["result_fingerprints"] = build_goal_state_result_fingerprints(
-                slots=normalized.get("slots") if isinstance(normalized.get("slots"), dict) else {},
-                tool_results=tool_results,
-                daily_itinerary=(
-                    previous_state.get("daily_itinerary")
-                    or _nested_mapping(previous_state, "raw_output", "daily_itinerary")
-                    or _nested_mapping(previous_state, "output", "daily_itinerary")
-                    or _nested_mapping(previous_state, "output", "raw_output", "daily_itinerary")
-                ),
-                result_agents=self._previous_result_agents_from_state(previous_state),
+            explicit_result_fingerprints = self._previous_result_fingerprints_from_state(
+                previous_state
             )
+            if explicit_result_fingerprints:
+                normalized["result_fingerprints"] = explicit_result_fingerprints
 
         available_results = normalized.get("available_results")
         if not isinstance(available_results, dict):
@@ -5035,6 +6450,29 @@ class ExperimentRunner:
                 tool_results=tool_results,
             )
         return normalized
+
+    def _previous_result_fingerprints_from_state(
+        self,
+        previous_state: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        candidates = [
+            previous_state.get("result_fingerprints"),
+            _nested_mapping(previous_state, "metadata", "adaptive_scheduler", "result_fingerprints"),
+            _nested_mapping(previous_state, "raw_output", "metadata", "adaptive_scheduler", "result_fingerprints"),
+            _nested_mapping(previous_state, "output", "metadata", "adaptive_scheduler", "result_fingerprints"),
+            _nested_mapping(
+                previous_state,
+                "output",
+                "raw_output",
+                "metadata",
+                "adaptive_scheduler",
+                "result_fingerprints",
+            ),
+        ]
+        for candidate in candidates:
+            if isinstance(candidate, dict) and candidate:
+                return dict(candidate)
+        return {}
 
     def _previous_goal_state_slots_from_state(self, previous_state: Dict[str, Any]) -> Dict[str, Any]:
         candidates = [
@@ -5156,7 +6594,10 @@ class ExperimentRunner:
             metadata["agent_outputs"] = agent_outputs
             metadata["agent_decision_audit"] = self._agent_decision_audit(agent_outputs)
         if scheduler_metadata is not None:
-            metadata["adaptive_scheduler"] = scheduler_metadata
+            if method == "adaptive_multi_agent":
+                metadata["adaptive_scheduler"] = scheduler_metadata
+            elif method == "fixed_multi_agent":
+                metadata["fixed_template_scheduler"] = scheduler_metadata
             metadata["scheduler"] = scheduler_metadata
             reuse_execution = scheduler_metadata.get("reuse_execution")
             if isinstance(reuse_execution, dict):
@@ -5212,10 +6653,17 @@ class ExperimentRunner:
         )
 
     def _visible_clarification_fields(self, case: Dict[str, Any]) -> List[str]:
-        slots = self._case_slots(case)
+        slots = self._goal_state_current_slots(case)
+        ticket = build_goal_state_ticket(
+            user_input=str(case.get("user_input") or ""),
+            current_slots=slots,
+            previous_state=self._goal_state_previous_state(case),
+        )
+        if ticket.task_type == "clarification" and ticket.clarification_fields:
+            return list(ticket.clarification_fields)
         return [
             slot
-            for slot in ("destination", "start_date", "duration_days")
+            for slot in ("destination", "duration_days", "people_count")
             if slot not in slots
         ]
 
@@ -5229,6 +6677,22 @@ class ExperimentRunner:
             or structured.get("destination")
             or case.get("city")
             or case.get("destination")
+            or ""
+        ).strip()
+
+    def _case_origin(self, case: Dict[str, Any]) -> str:
+        slots = self._case_slots(case)
+        structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
+        return str(
+            slots.get("origin")
+            or slots.get("departure_city")
+            or slots.get("from_city")
+            or structured.get("origin")
+            or structured.get("departure_city")
+            or structured.get("from_city")
+            or case.get("origin")
+            or case.get("departure_city")
+            or case.get("from_city")
             or ""
         ).strip()
 
@@ -5349,6 +6813,96 @@ class ExperimentRunner:
                 return float(value)
             except (TypeError, ValueError):
                 continue
+        return None
+
+    def _case_budget_basis(self, case: Dict[str, Any]) -> Optional[str]:
+        value = self._case_first_value_slot(case, "budget_basis")
+        text = str(value or "").strip().lower()
+        if text in {"per_person", "person", "pp", "average"}:
+            return "per_person"
+        if text in {"total", "overall", "trip_total"}:
+            return "total"
+        return None
+
+    def _case_requested_budget_scope(self, case: Dict[str, Any]) -> str:
+        explicit = self._case_first_value_slot(
+            case,
+            "requested_budget_scope",
+            "budget_scope",
+        )
+        text = str(explicit or "").strip().lower()
+        if text in {"destination_local_only", "local_only", "destination_only", "local"}:
+            return "destination_local_only"
+        if text in {"local_plus_round_trip_intercity", "full_trip", "complete_trip", "full"}:
+            return "local_plus_round_trip_intercity"
+        included = self._case_intercity_transport_included(case, derive=False)
+        if included is False:
+            return "destination_local_only"
+        return "local_plus_round_trip_intercity" if self._case_origin(case) else "destination_local_only"
+
+    def _case_intercity_transport_included(
+        self,
+        case: Dict[str, Any],
+        *,
+        derive: bool = True,
+    ) -> Optional[bool]:
+        value = self._case_first_value_slot(case, "intercity_transport_included")
+        if isinstance(value, bool):
+            return value
+        if value is not None and value != "":
+            text = str(value).strip().lower()
+            if text in {"true", "1", "yes", "y", "included", "include"}:
+                return True
+            if text in {"false", "0", "no", "n", "excluded", "exclude"}:
+                return False
+        if not derive:
+            return None
+        scope = self._case_requested_budget_scope(case)
+        if scope == "destination_local_only":
+            return False
+        return bool(self._case_origin(case))
+
+    def _case_mandatory_budget_disclaimer(self, case: Dict[str, Any]) -> bool:
+        value = self._case_first_value_slot(case, "mandatory_budget_disclaimer")
+        if isinstance(value, bool):
+            return value
+        if value is not None and value != "":
+            text = str(value).strip().lower()
+            if text in {"true", "1", "yes", "y", "required"}:
+                return True
+            if text in {"false", "0", "no", "n"}:
+                return False
+        return bool(self._case_budget_limit(case) is not None and not self._case_origin(case))
+
+    def _case_hotel_level(self, case: Dict[str, Any]) -> Optional[str]:
+        return self._case_first_text_slot(case, "hotel_level", "accommodation_level", "lodging_level")
+
+    def _case_food_level(self, case: Dict[str, Any]) -> Optional[str]:
+        return self._case_first_text_slot(case, "food_level", "dining_level")
+
+    def _case_transport_mode(self, case: Dict[str, Any]) -> Optional[str]:
+        return self._case_first_text_slot(case, "transport_mode", "local_transport_mode")
+
+    def _case_first_value_slot(self, case: Dict[str, Any], *keys: str) -> Any:
+        slots = self._case_slots(case)
+        structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
+        for container in (slots, structured, case):
+            for key in keys:
+                if isinstance(container, dict) and key in container and container.get(key) is not None:
+                    return container.get(key)
+        return None
+
+    def _case_first_text_slot(self, case: Dict[str, Any], *keys: str) -> Optional[str]:
+        slots = self._case_slots(case)
+        structured = case.get("structured_request") if isinstance(case.get("structured_request"), dict) else {}
+        expected = case.get("expected") if isinstance(case.get("expected"), dict) else {}
+        gold_slots = expected.get("gold_slots") if isinstance(expected.get("gold_slots"), dict) else {}
+        for container in (slots, structured, gold_slots, case):
+            for key in keys:
+                value = container.get(key) if isinstance(container, dict) else None
+                text = str(value or "").strip()
+                if text:
+                    return text
         return None
 
     def _offline_data_summary(self, *, compact: bool = False) -> Dict[str, Any]:
@@ -5550,6 +7104,27 @@ class ExperimentRunner:
         case: Optional[Dict[str, Any]] = None,
     ) -> List[Dict[str, Any]]:
         if not weather:
+            if (
+                isinstance(case, dict)
+                and self._case_constraint_task_type(case) == "weather_adjustment"
+            ):
+                scenario = self._case_weather_scenario(case)
+                affected_days = self._explicit_affected_weather_days(case) or [1]
+                return [
+                    {
+                        "day": day,
+                        "day_index": day,
+                        "reason": scenario or "user_supplied_weather_change",
+                        "action": "根据用户提供的天气变化调整受影响日期的行程安排",
+                        "candidate_indoor_pois": [
+                            {"poi_id": item.get("poi_id"), "name": item.get("name")}
+                            for item in attractions
+                            if str(item.get("indoor_outdoor") or "").lower() == "indoor"
+                        ][:3],
+                        "source": "user_supplied_weather_change",
+                    }
+                    for day in affected_days
+                ]
             return []
         scenario = str(weather.get("scenario_type") or "")
         risky = scenario in {"rain", "high_temperature", "low_temperature", "continuous_change"}
@@ -5754,19 +7329,26 @@ class ExperimentRunner:
         if not user_input:
             user_input = _input_dict_to_text(case.get("structured_request") or case)
 
-        parsed_visible_slots = parse_visible_request_slots(
-            user_input,
-            dialogue_history=case.get("dialogue_history"),
-        )
+        evaluation_mode = self._normalize_evaluation_mode(case.get("evaluation_mode"))
         explicit_slots = dict(case.get("slots") or {})
+        structured = case.get("structured_request") or {}
+        structured_slots = _slots_from_mapping(structured) if isinstance(structured, dict) else {}
+        case_level_slots = _slots_from_mapping(case)
+        parsed_visible_slots: Dict[str, Any] = {}
+        if evaluation_mode != "oracle_slots" or not (
+            explicit_slots or structured_slots or case_level_slots
+        ):
+            parsed_visible_slots = parse_visible_request_slots(
+                user_input,
+                dialogue_history=case.get("dialogue_history"),
+            )
         slots = self._merge_visible_slots_without_alias_conflict(
             parsed_visible_slots,
             explicit_slots,
         )
-        structured = case.get("structured_request") or {}
         if isinstance(structured, dict):
-            slots.update(_slots_from_mapping(structured))
-        slots.update(_slots_from_mapping(case))
+            slots.update(structured_slots)
+        slots.update(case_level_slots)
 
         expected = dict(case.get("expected") or case.get("standard_answer") or {})
         expected_goal = case.get("expected_goal")
@@ -5776,8 +7358,6 @@ class ExperimentRunner:
             expected["selected_agents"] = expected.get("agents")
         if "selected_tools" not in expected and "tools" in expected:
             expected["selected_tools"] = expected.get("tools")
-        evaluation_mode = self._normalize_evaluation_mode(case.get("evaluation_mode"))
-
         return {
             **case,
             "case_id": case_id,
@@ -5869,6 +7449,10 @@ class ExperimentRunner:
             trace=trace_record,
             error=error,
             constraint_report=constraint_report,
+        )
+        structured_output = self._apply_no_date_weather_output_policy(
+            case,
+            structured_output,
         )
         metrics = self._score_against_expected(case.get("expected") or {}, trace_record)
         metrics.update(constraint_metrics_from_report(constraint_report))
@@ -6084,6 +7668,40 @@ class ExperimentRunner:
             return self._canonical_research_task_type(direct_task_type)
         return self._infer_research_task_type(case)
 
+    def _apply_no_date_weather_output_policy(
+        self,
+        case: Dict[str, Any],
+        output: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        expected = case.get("expected") if isinstance(case.get("expected"), dict) else {}
+        if not gold_requires_no_date_weather_reminder(expected):
+            return output
+        task_type = self._canonical_research_task_type(output.get("task_type"))
+        if task_type not in {"trip_planning", "partial_replan"}:
+            return output
+
+        final_answer = append_no_date_weather_reminder(output.get("final_answer"))
+        updated = dict(output)
+        updated["final_answer"] = final_answer
+
+        raw_output = updated.get("raw_output")
+        if isinstance(raw_output, dict):
+            updated["raw_output"] = {
+                **raw_output,
+                "final_answer": final_answer,
+            }
+
+        metadata = updated.get("metadata")
+        if isinstance(metadata, dict):
+            updated["metadata"] = {
+                **metadata,
+                "no_date_weather_output_policy": {
+                    "applied": True,
+                    "source": "deterministic_runner_policy",
+                },
+            }
+        return updated
+
     def _score_against_expected(self, expected: Dict[str, Any], trace: Dict[str, Any]) -> Dict[str, Any]:
         expected_tools = _as_list(expected.get("selected_tools") or expected.get("tools"))
         selected_tools = _as_list(trace.get("planned_tools") or trace.get("selected_tools"))
@@ -6213,10 +7831,8 @@ class ExperimentRunner:
         *,
         ticket: Dict[str, Any],
     ) -> tuple[int, int]:
-        task_type = str(ticket.get("task_type") or "")
-        if task_type == "general_chat":
-            return 0, 0
-        return 4, len(GENERATION_TOOL_NAMES)
+        agents, tools, _reasons = self._m2_fixed_template_for_ticket(ticket)
+        return len(agents), len(tools)
 
     def _attach_adaptive_scheduler_metrics(
         self,
@@ -6308,6 +7924,10 @@ class ExperimentRunner:
             "hcsr": metrics.get("hcsr"),
             "stsr": metrics.get("stsr"),
             "evaluation_hcsr": metrics.get("evaluation_hcsr"),
+            "itcsr": metrics.get("itcsr"),
+            "itcsr_applicable_count": metrics.get("itcsr_applicable_count"),
+            "itcsr_passed_count": metrics.get("itcsr_passed_count"),
+            "itcsr_failed_count": metrics.get("itcsr_failed_count"),
             "evaluation_failed_rule_count": metrics.get("evaluation_failed_rule_count"),
             "evaluation_failed_rule_ids": "|".join(_as_list(metrics.get("evaluation_failed_rule_ids"))),
             "agent_set_exact_match": metrics.get("agent_set_exact_match"),
@@ -6450,6 +8070,50 @@ def _input_dict_to_text(data: Dict[str, Any]) -> str:
     return "帮我规划" + "".join(str(part) for part in parts) + "旅游"
 
 
+def _budget_gold_manifest_summary() -> Dict[str, Any]:
+    path = DEFAULT_CTP100_BUDGET_GOLD_PATH
+    try:
+        document = validate_budget_gold(path)
+    except BudgetGoldError as exc:
+        return {
+            "available": False,
+            "path": path.as_posix(),
+            "error": str(exc),
+        }
+    except Exception as exc:  # pragma: no cover - manifest should preserve diagnostics
+        return {
+            "available": False,
+            "path": path.as_posix(),
+            "error": str(exc),
+        }
+    return {
+        "available": True,
+        "path": str(document.get("path") or path.as_posix()),
+        "file_sha256": _raw_file_sha256(path),
+        "hash_strategy": "raw_file_sha256_v1",
+        "schema_version": document.get("schema_version"),
+        "gold_status": document.get("gold_status"),
+        "review_status": document.get("review_status"),
+        "source_dataset_sha256": document.get("source_dataset_sha256"),
+        "budget_policy_version": document.get("budget_policy_version"),
+        "summary": document.get("summary") or {},
+        "artifact_hashes": document.get("artifact_hashes") or {},
+        "visible_to_generation": False,
+        "used_by": "independent_evaluator_only",
+    }
+
+
+def _raw_file_sha256(path: Path) -> Optional[str]:
+    try:
+        digest = hashlib.sha256()
+        with path.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(chunk)
+        return digest.hexdigest()
+    except OSError:
+        return None
+
+
 def _slots_from_mapping(data: Dict[str, Any]) -> Dict[str, Any]:
     slots: Dict[str, Any] = {}
     mapping = {
@@ -6461,6 +8125,18 @@ def _slots_from_mapping(data: Dict[str, Any]) -> Dict[str, Any]:
         "budget": "budget",
         "budget_amount": "budget",
         "budget_level": "budget_level",
+        "budget_basis": "budget_basis",
+        "requested_budget_scope": "requested_budget_scope",
+        "budget_scope": "budget_scope",
+        "intercity_transport_included": "intercity_transport_included",
+        "mandatory_budget_disclaimer": "mandatory_budget_disclaimer",
+        "hotel_level": "hotel_level",
+        "accommodation_level": "hotel_level",
+        "lodging_level": "hotel_level",
+        "food_level": "food_level",
+        "dining_level": "food_level",
+        "intercity_transport_mode": "intercity_transport_mode",
+        "intercity_seat_class": "intercity_seat_class",
         "num_travelers": "num_travelers",
         "people_count": "people_count",
         "traveler_type": "traveler_type",
@@ -6571,6 +8247,15 @@ def _nested_mapping(value: Any, *keys: str) -> Any:
     current = value
     for key in keys:
         if not isinstance(current, dict):
+            return None
+        current = current.get(key)
+    return current
+
+
+def _nested_get(value: Any, keys: Iterable[str]) -> Any:
+    current = value
+    for key in keys:
+        if not isinstance(current, Mapping):
             return None
         current = current.get(key)
     return current
@@ -6858,6 +8543,15 @@ def _optional_equal(expected: Any, actual: Any) -> Optional[bool]:
     if expected is None:
         return None
     return str(expected) == str(actual)
+
+
+def _float_or_none(value: Any) -> Optional[float]:
+    if value is None or value == "":
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def _average_numeric(values: Iterable[Any]) -> Optional[float]:

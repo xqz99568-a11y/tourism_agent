@@ -1,0 +1,19 @@
+{
+  "schema_version": "ctp-real-api-smoke-v1",
+  "status": "completed",
+  "llm_call_count": 1,
+  "prompt_tokens": 56.0,
+  "completion_tokens": 21.0,
+  "total_tokens": 77.0,
+  "calls": [
+    {
+      "provider": "vectorengine_openai_compatible",
+      "model": "gpt-5-mini",
+      "prompt_tokens": 56.0,
+      "completion_tokens": 21.0,
+      "total_tokens": 77.0,
+      "prompt_version": "ctp-real-api-smoke-prompt-v1",
+      "prompt_hash": "5cfd56991153b10303687be466452ebed2122a72aee5ed60cd80ac437f307b07"
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "schema_version": "ctp-academic-experiment-design-report-v1",
+  "status": "passed",
+  "errors": [],
+  "warnings": [],
+  "checks": {
+    "design_json_exists": true,
+    "design_markdown_exists": true,
+    "schema_version_matches": true,
+    "design_version_matches": true,
+    "freeze_before_formal_results": true,
+    "freeze_date_recorded": true,
+    "main_dataset_id_matches": true,
+    "main_dataset_role_controlled": true,
+    "main_dataset_not_claimed_unseen": true,
+    "main_design_role_matches": true,
+    "main_design_declares_not_unseen": true,
+    "main_case_count_matches": true,
+    "main_turn_count_matches": true,
+    "main_quality_passed": true,
+    "benchmark_points_only_to_main_ctp100": true,
+    "sealed_dataset_not_in_main_benchmark": true,
+    "sealed_dataset_not_in_main_comparisons": true,
+    "sealed_dataset_id_matches": true,
+    "sealed_dataset_role_matches": true,
+    "sealed_design_role_matches": true,
+    "sealed_case_count_matches": true,
+    "sealed_turn_count_matches": true,
+    "sealed_quality_passed": true,
+    "sealed_validation_methods_are_m2_m3_only": true,
+    "main_methods_are_four_method_comparison": true,
+    "primary_comparison_is_m3_vs_m2": true,
+    "statistical_tests_frozen": true,
+    "secondary_multiplicity_control_recorded": true,
+    "no_tuning_after_main_freeze": true,
+    "sealed_validation_no_tuning_policy": true
+  },
+  "design": {
+    "path": "experiments/academic_experiment_design_v1.json",
+    "sha256": "51ac4bdac7f5774faa15cc4b61b6b46e944e58fe9c0858a60b5fdc2ab3926421",
+    "doc_path": "docs/Academic_Experiment_Design_v1.md",
+    "doc_sha256": "d93224e1686538d1b94db691b5461bcd508d161361ee41e1335267a3713c7f85",
+    "schema_version": "ctp-academic-experiment-design-v1",
+    "design_version": "CTP-GMAS-ACADEMIC-DESIGN-v1",
+    "freeze_status": "frozen_before_formal_results",
+    "freeze_date": "2026-08-19"
+  },
+  "main_benchmark": {
+    "manifest_path": "experiments/benchmark.json",
+    "manifest_sha256": "b19bf0de60674d8787f1977ace99fbc321366aef8e41b9f9f7d77015dca34381",
+    "dataset_path": "experiments/ctp100_formal_v2.json",
+    "dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
+    "dataset_id": "ctp100_formal_v2",
+    "dataset_role": "post_development_frozen_controlled_main_benchmark",
+    "case_count": 100,
+    "turn_count": 130,
+    "quality_status": "passed"
+  },
+  "sealed_validation": {
+    "dataset_path": "experiments/ctp30_sealed_validation_v1.json",
+    "dataset_sha256": "7d2e56a36cad685b6c4345dbb3531cb7bcb8e05a82d2a16d980df1a80a738761",
+    "dataset_id": "ctp30_sealed_validation_v1",
+    "dataset_role": "sealed_validation_after_main_design_freeze",
+    "case_count": 30,
+    "turn_count": 30,
+    "quality_status": "passed",
+    "methods": [
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ]
+  },
+  "main_quality": {
+    "status": "passed",
+    "errors": [],
+    "warnings": [],
+    "case_count": 100,
+    "scenario_case_count": 30,
+    "total_unit_count": 130,
+    "task_distribution": {
+      "attraction_recommendation": 10,
+      "budget_query": 10,
+      "clarification": 8,
+      "general_chat": 14,
+      "partial_replan": 25,
+      "trip_planning": 50,
+      "weather_adjustment": 5,
+      "weather_query": 8
+    },
+    "city_distribution": {
+      "beijing": 23,
+      "guilin": 25,
+      "hangzhou": 23,
+      "shenzhen": 23,
+      "xian": 23
+    },
+    "duplicate_visible_input_groups": [],
+    "cross_split_duplicate_visible_input_groups": [],
+    "near_duplicate_visible_input_pairs": []
+  },
+  "sealed_quality": {
+    "status": "passed",
+    "errors": [],
+    "warnings": [],
+    "case_count": 30,
+    "scenario_case_count": 0,
+    "total_unit_count": 30,
+    "task_distribution": {
+      "attraction_recommendation": 4,
+      "budget_query": 4,
+      "clarification": 3,
+      "general_chat": 3,
+      "partial_replan": 4,
+      "trip_planning": 6,
+      "weather_adjustment": 2,
+      "weather_query": 4
+    },
+    "city_distribution": {
+      "beijing": 6,
+      "guilin": 7,
+      "hangzhou": 5,
+      "shenzhen": 5,
+      "xian": 4
+    },
+    "duplicate_visible_input_groups": [],
+    "cross_split_duplicate_visible_input_groups": [],
+    "near_duplicate_visible_input_pairs": []
+  }
+}

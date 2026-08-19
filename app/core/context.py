@@ -218,12 +218,12 @@ class AgentMetrics:
     end_time: Optional[float] = None
     status: str = "pending"
 
-    def complete(self, tokens_used: int = 0) -> None:
+    def complete(self, tokens_used: int = 0, status: str = "completed") -> None:
         """完成指标记录"""
         self.end_time = time.time()
         self.execution_time_ms = (self.end_time - self.start_time) * 1000
         self.tokens_used = tokens_used
-        self.status = "completed"
+        self.status = status
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -579,13 +579,14 @@ class ExecutionContext:
     current_phase: str = "init"
     active_agents: List[str] = field(default_factory=list)
     completed_agents: List[str] = field(default_factory=list)
+    failed_agents: List[str] = field(default_factory=list)
 
     # 中间结果
     extracted_info: Dict[str, Any] = field(default_factory=dict)
     agent_results: Dict[str, Any] = field(default_factory=dict)
 
     # 错误处理
-    errors: List[Dict[str, Any]] = field(default_factory=dict)
+    errors: Dict[str, Dict[str, Any]] = field(default_factory=dict)
     retry_count: int = 0
 
     # 思考步骤日志
@@ -614,8 +615,21 @@ class ExecutionContext:
     def add_result(self, agent_name: str, result: Any) -> None:
         """添加 Agent 结果"""
         self.agent_results[agent_name] = result
-        if agent_name not in self.completed_agents:
-            self.completed_agents.append(agent_name)
+        status = getattr(result, "status", None)
+        status_value = getattr(status, "value", status)
+        success = bool(getattr(result, "success", True))
+
+        if success:
+            if agent_name not in self.completed_agents:
+                self.completed_agents.append(agent_name)
+            if agent_name in self.failed_agents:
+                self.failed_agents.remove(agent_name)
+            self.errors.pop(agent_name, None)
+        elif status_value == "failed":
+            if agent_name in self.completed_agents:
+                self.completed_agents.remove(agent_name)
+            error_message = getattr(result, "error", None) or getattr(result, "content", None) or "agent failed"
+            self._record_error(agent_name, str(error_message), increment_retry=True)
 
     def get_result(self, agent_name: str) -> Optional[Any]:
         """获取 Agent 结果"""
@@ -628,12 +642,22 @@ class ExecutionContext:
     def add_error(self, agent_name: str, error: Union[Exception, str]) -> None:
         """添加错误"""
         error_str = str(error) if isinstance(error, Exception) else error
+        self._record_error(agent_name, error_str, increment_retry=True)
+
+    def _record_error(self, agent_name: str, error_str: str, *, increment_retry: bool = True) -> None:
+        """记录失败 Agent，避免失败结果被误判为完成。"""
+        already_recorded = agent_name in self.errors
         self.errors[agent_name] = {
             "agent": agent_name,
             "error": error_str,
             "timestamp": datetime.utcnow().isoformat(),
         }
-        self.retry_count += 1
+        if agent_name not in self.failed_agents:
+            self.failed_agents.append(agent_name)
+        if agent_name in self.completed_agents:
+            self.completed_agents.remove(agent_name)
+        if increment_retry and not already_recorded:
+            self.retry_count += 1
 
     def start_agent_metrics(self, agent_name: str) -> AgentMetrics:
         """开始记录 Agent 执行指标"""
@@ -641,11 +665,11 @@ class ExecutionContext:
         self.agent_metrics[agent_name] = metrics
         return metrics
 
-    def complete_agent_metrics(self, agent_name: str, tokens_used: int = 0) -> Optional[AgentMetrics]:
+    def complete_agent_metrics(self, agent_name: str, tokens_used: int = 0, status: str = "completed") -> Optional[AgentMetrics]:
         """完成 Agent 指标记录"""
         metrics = self.agent_metrics.get(agent_name)
         if metrics:
-            metrics.complete(tokens_used)
+            metrics.complete(tokens_used, status=status)
             # 触发指标回调
             if self.metrics_callback and self._stream_enabled:
                 try:

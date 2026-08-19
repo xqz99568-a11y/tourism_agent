@@ -1,0 +1,12 @@
+{
+  "schema_version": "ctp-llm-costing-v1",
+  "provider": "vectorengine_openai_compatible",
+  "model": "gpt-5-mini",
+  "price_snapshot_date": "2026-08-19",
+  "price_source_url": "https://api.vectorengine.ai/pricing",
+  "currency": "USD",
+  "price_unit": "per_1k_tokens",
+  "input_token_unit_price": 0.00025,
+  "output_token_unit_price": 0.002,
+  "pricing_mode": "frozen_default_token_estimate"
+}
