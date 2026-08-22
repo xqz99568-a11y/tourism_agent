@@ -1,0 +1,84 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_002",
+    "user_input": "我和朋友明天从上海出发去杭州玩2天，两个人，总共最多花3000元，帮我安排一下。",
+    "task_type": "trip_planning",
+    "title": "天气规划｜杭州｜明天｜上海出发",
+    "check": "查询冻结天气（完整覆盖）；计算上海至杭州成人二等座往返费用。",
+    "slots": {
+      "origin": "shanghai",
+      "destination": "hangzhou",
+      "start_date": "2026-08-07",
+      "duration_days": 2,
+      "people_count": 2,
+      "budget_amount": 3000
+    },
+    "expected": {
+      "task_type": "trip_planning",
+      "required_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "accepted_agent_sets": [
+        [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ]
+      ],
+      "forbidden_tools": [],
+      "hard_constraints": {
+        "origin": "shanghai",
+        "destination": "hangzhou",
+        "start_date": "2026-08-07",
+        "duration_days": 2,
+        "people_count": 2,
+        "budget_limit": 3000,
+        "min_attractions": 4,
+        "max_pois_per_day": 2
+      },
+      "origin": "shanghai",
+      "destination": "hangzhou",
+      "start_date": "2026-08-07",
+      "duration_days": 2,
+      "people_count": 2,
+      "budget_amount": 3000,
+      "intercity_transport_mode": "high_speed_or_d_train",
+      "intercity_seat_class": "second_class",
+      "intercity_transport_included": true,
+      "budget_scope": "local_plus_round_trip_intercity",
+      "intercity_route_id": "shanghai_hangzhou_rail_second_class",
+      "intercity_one_way_fare_per_person_cny": 83.0,
+      "intercity_round_trip_cost_cny": 332.0,
+      "weather_required": true,
+      "weather_date_policy": "explicit_date_use_qweather_snapshot",
+      "expected_weather_coverage_status": "full",
+      "expected_weather_covered_dates": [
+        "2026-08-07",
+        "2026-08-08"
+      ],
+      "expected_weather_missing_dates": [],
+      "weather_snapshot_id": "ctp_qweather_20260807_v1"
+    }
+  },
+  "method": "llm_direct",
+  "request_id": "ctp100_v2_002_llm_direct_4a8f4f4b",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z",
+  "run_id": "task_d_m0_real_api_final_20260821T110521Z",
+  "repeat_index": 0,
+  "system_variant": "llm_direct",
+  "model_config_name": "task-d-m0-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

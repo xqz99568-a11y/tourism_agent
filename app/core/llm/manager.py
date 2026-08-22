@@ -29,12 +29,14 @@ from .client import (
     MockLLMClient,
     _retry_audit,
     _retry_result_from_policy,
+    _runtime_llm_chat_token_param,
     _runtime_llm_max_tokens,
     _runtime_llm_reasoning_effort,
     _runtime_llm_retry_max_attempts_for_client,
     _runtime_llm_temperature,
     _runtime_llm_timeout_for_client,
     _runtime_options,
+    llm_provider_from_base_url,
 )
 
 logger = get_logger(__name__)
@@ -225,8 +227,13 @@ def _manager_client_provider_name(client: Optional[BaseLLMClient]) -> Optional[s
         return None
     if isinstance(client, MockLLMClient):
         return "mock"
+    if client.__class__.__name__ == "OllamaClient":
+        return "ollama"
     if isinstance(client, OpenRouterClient):
-        return "openrouter"
+        return llm_provider_from_base_url(getattr(client, "base_url", ""))
+    base_url = str(getattr(client, "base_url", "") or "").casefold()
+    if any(marker in base_url for marker in ("vectorengine", "openrouter", "openai")):
+        return llm_provider_from_base_url(getattr(client, "base_url", ""))
     return client.__class__.__name__.replace("Client", "").lower() or None
 
 
@@ -244,6 +251,10 @@ def _manager_request_options(
         max_tokens=_runtime_llm_max_tokens(kwargs.get("max_tokens")),
         timeout_seconds=_runtime_llm_timeout_for_client(client, kwargs.get("timeout")),
         reasoning_effort=_runtime_llm_reasoning_effort(kwargs.get("reasoning_effort")),
+        completion_limit_parameter=_runtime_llm_chat_token_param(
+            _manager_client_model_name(client),
+            kwargs.get("token_limit_parameter"),
+        ),
         tool_count=len(tools or []),
         tool_choice="auto" if tools else None,
         streaming=streaming,

@@ -120,6 +120,7 @@ def test_real_api_smoke_writes_trace_token_latency_and_cost_reports(
     assert api_response["content_preview"] == '{"ok": true, "message": "pong"}'
     assert api_response["runtime_config"]["temperature"] == 0.0
     assert api_response["request_options"]["max_tokens"] == 128
+    assert api_response["request_options"]["completion_limit_parameter"] == "max_tokens"
     assert api_response["request_options"]["reasoning_effort"] == "minimal"
     assert api_response["retry"]["attempt_count"] == 1
     assert token_report["total_tokens"] == 120.0
@@ -127,12 +128,17 @@ def test_real_api_smoke_writes_trace_token_latency_and_cost_reports(
     assert latency_report["llm_total_duration_ms"] is not None
     assert cost_report["standardized_estimated_cost"] == 0.0016
     assert cost_report["actual_cost_available"] is False
+    assert cost_report["price_snapshots"][0]["provider"] == "vectorengine_openai_compatible"
     assert cost_report["price_snapshots"][0]["price_source_url"] == "https://api.vectorengine.ai/pricing"
+    assert price_snapshot["provider"] == "vectorengine_openai_compatible"
     assert price_snapshot["price_source_url"] == "https://api.vectorengine.ai/pricing"
     assert manifest["api_key_configured"] is True
+    assert manifest["provider"] == "vectorengine_openai_compatible"
+    assert manifest["runtime_config"]["provider"] == "vectorengine_openai_compatible"
     assert manifest["runtime_config"]["temperature"] == 0.0
     assert manifest["runtime_config"]["retry_max_attempts"] == 3
     assert manifest["runtime_config"]["reasoning_effort"] == "minimal"
+    assert manifest["runtime_config"]["completion_limit_parameter"] == "max_tokens"
     assert manifest["connectivity_gate"]["status"] == "passed"
     assert manifest["reports"]["api_response"] == payload["api_response"]
     assert manifest["reports"]["price_snapshot"] == payload["price_snapshot"]

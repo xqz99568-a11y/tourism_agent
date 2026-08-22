@@ -53,6 +53,23 @@ experiments/results/day8_dev/
 experiments/results/tmp_debug/
 experiments/results/traces/**/*.jsonl
 
+# Local diagnostics / failed or superseded formal runs.
+# Keep the registered Task D/E/F final validation evidence visible for the
+# formal_experiment branch; ignore older retries and scratch runs.
+experiments/results/formal_runs/formal_day8_20260819_v1/
+experiments/results/llm_diag/
+experiments/results/real_api_smoke/llm_diag_20260820/
+experiments/results/real_api_smoke/llm_diag_env_20260820/
+experiments/results/task_d_m0_real_api/*
+!experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/
+!experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/**
+experiments/results/task_e_four_method_real_api/*
+!experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/
+!experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/**
+experiments/results/task_f_multiturn_real_api/*
+!experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/
+!experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/**
+
 # Local Phase 1 scratch files (kept locally, never evidence artifacts)
 experiments/benchmark_test.json
 !experiments/benchmark_test.json

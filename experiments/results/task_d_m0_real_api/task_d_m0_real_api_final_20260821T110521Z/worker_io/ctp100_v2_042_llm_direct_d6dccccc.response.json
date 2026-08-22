@@ -1,0 +1,2536 @@
+{
+  "status": "completed",
+  "result": {
+    "case_id": "ctp100_v2_042",
+    "method": "llm_direct",
+    "request_id": "ctp100_v2_042_llm_direct_d6dccccc",
+    "run_id": "task_d_m0_real_api_final_20260821T110521Z",
+    "repeat_index": 0,
+    "system_variant": "llm_direct",
+    "model_config_name": "task-d-m0-real-api",
+    "evaluation_mode": "end_to_end",
+    "input_hash": "5227f3581e1108e44872942300223dc0e5b65abb11a601af967b362a0900c6da",
+    "result_hash": "36e76e150e1001ab809ba9bd3b27ea4094ab28adbc03afa92b837deabb2355d5",
+    "offline_data": {
+      "schema_version": "fixed_data_manifest_v2",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+      "city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "snapshot_dirs": [
+        "pois",
+        "weather",
+        "restaurants",
+        "accommodation",
+        "transport"
+      ],
+      "file_count": 25,
+      "expected_file_count": 25,
+      "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "expected_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "missing_files": [],
+      "files": [
+        {
+          "kind": "accommodation",
+          "city_id": "beijing",
+          "path": "data/accommodation/beijing.json",
+          "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "guilin",
+          "path": "data/accommodation/guilin.json",
+          "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "hangzhou",
+          "path": "data/accommodation/hangzhou.json",
+          "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "shenzhen",
+          "path": "data/accommodation/shenzhen.json",
+          "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "xian",
+          "path": "data/accommodation/xian.json",
+          "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "beijing",
+          "path": "data/pois/beijing.json",
+          "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "guilin",
+          "path": "data/pois/guilin.json",
+          "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "hangzhou",
+          "path": "data/pois/hangzhou.json",
+          "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "shenzhen",
+          "path": "data/pois/shenzhen.json",
+          "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "xian",
+          "path": "data/pois/xian.json",
+          "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "beijing",
+          "path": "data/restaurants/beijing.json",
+          "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "guilin",
+          "path": "data/restaurants/guilin.json",
+          "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "hangzhou",
+          "path": "data/restaurants/hangzhou.json",
+          "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "shenzhen",
+          "path": "data/restaurants/shenzhen.json",
+          "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "xian",
+          "path": "data/restaurants/xian.json",
+          "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "beijing",
+          "path": "data/transport/beijing.json",
+          "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "guilin",
+          "path": "data/transport/guilin.json",
+          "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "hangzhou",
+          "path": "data/transport/hangzhou.json",
+          "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "shenzhen",
+          "path": "data/transport/shenzhen.json",
+          "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "xian",
+          "path": "data/transport/xian.json",
+          "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "beijing",
+          "path": "data/weather/beijing.json",
+          "sha256": "a6b32944050cc2a638d09a67be8d7747ca2b0153527f856d85b4813651c91d0a",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "guilin",
+          "path": "data/weather/guilin.json",
+          "sha256": "450d86b2f7121f970e7c48e5a38ad113c8e4289c0356f448221ce1d63d412f94",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "hangzhou",
+          "path": "data/weather/hangzhou.json",
+          "sha256": "e4ea7c0b10b350cd4c7ba739746e0634d0aa86d77378d858104c0f789f6f64fd",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "shenzhen",
+          "path": "data/weather/shenzhen.json",
+          "sha256": "533e74a25a72fdc58a0f31746f10dd405611b3ab007f18d0319566deaec5e281",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "xian",
+          "path": "data/weather/xian.json",
+          "sha256": "7d9e244e1bd64d129cb75b641a09adc8521d9ce082b4a28de7bbb2aadb92cef4",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        }
+      ]
+    },
+    "output": {
+      "schema_version": "ctp-experiment-output-v1",
+      "case_id": "ctp100_v2_042",
+      "method": "llm_direct",
+      "task_type": "budget_query",
+      "planned_agents": [],
+      "used_agents": [],
+      "planned_tools": [],
+      "called_tools": [],
+      "tool_results": {},
+      "agent_outputs": {},
+      "attractions": [
+        {
+          "name": "西湖",
+          "description": "杭州地标，适合步行、划船、观景，免费及少量门票活动结合"
+        },
+        {
+          "name": "灵隐寺",
+          "description": "历史佛教寺庙，需门票，适合文化体验"
+        },
+        {
+          "name": "河坊街/南宋御街",
+          "description": "老街商业步行区，吃小吃、购物"
+        }
+      ],
+      "trip_days": 2,
+      "daily_itinerary": [
+        {
+          "day": "第1天",
+          "day_index": 1,
+          "summary": "上海出发到杭州，下午游西湖、逛河坊街",
+          "attraction_names": [
+            "西湖",
+            "河坊街/南宋御街"
+          ],
+          "notes": "早上坐高铁（二等座），抵达后寄存行李，市内交通以地铁/公交/步行为主"
+        },
+        {
+          "day": "第2天",
+          "day_index": 2,
+          "summary": "灵隐寺及周边，傍晚返沪",
+          "attraction_names": [
+            "灵隐寺",
+            "西湖（周边散步）"
+          ],
+          "notes": "根据返程车次安排时间，预留充裕到站/安检时间"
+        }
+      ],
+      "budget": {
+        "currency": "CNY",
+        "total_budget": 3000,
+        "people": 2,
+        "breakdown": {
+          "intercity_transport_round_trip": {
+            "assumption": "上海-杭州高铁二等座往返，成人票价约为55-80元单程/人",
+            "estimated_cost": 320,
+            "notes": "按单程80元/人估算，两人往返约320元"
+          },
+          "accommodation": {
+            "assumption": "中档酒店/快捷酒店约200-400元/晚/间",
+            "estimated_cost": 600,
+            "notes": "按300元/晚一间计，1晚或2晚按行程安排计算为600元"
+          },
+          "local_transport_and_taxi": {
+            "assumption": "地铁、公交及少量打车",
+            "estimated_cost": 150,
+            "notes": "两人两天约150元"
+          },
+          "meals": {
+            "assumption": "普通餐饮约60-120元/人/天",
+            "estimated_cost": 360,
+            "notes": "按90元/人/天，两人两天共360元"
+          },
+          "attraction_fees": {
+            "assumption": "灵隐寺、博物馆、船票等小额门票",
+            "estimated_cost": 200,
+            "notes": "两人合计约200元"
+          },
+          "buffer_and_misc": {
+            "assumption": "购物、纪念品、突发费用",
+            "estimated_cost": 100,
+            "notes": ""
+          }
+        },
+        "estimated_total_cost": 1730,
+        "conclusion": "预算充足",
+        "confidence_notes": "为简易估算，实际费用随住宿档次、用餐和车票时间波动；若选更好酒店或高峰车票价则上升"
+      },
+      "weather": null,
+      "weather_adjustments": [],
+      "constraint_report": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "constraint_checker",
+        "status": "success",
+        "success": true,
+        "input": {
+          "request": {
+            "origin": "shanghai",
+            "budget_basis": "total",
+            "requested_budget_scope": "local_plus_round_trip_intercity",
+            "budget_scope": "local_plus_round_trip_intercity",
+            "intercity_transport_included": true,
+            "mandatory_budget_disclaimer": false,
+            "intercity_transport_mode": "high_speed_rail",
+            "intercity_seat_class": "second_class",
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 3000,
+            "case_id": "ctp100_v2_042",
+            "user_input": "从上海坐高铁去杭州玩2天，两个人，总预算上限3000元够不够？只算费用。",
+            "city": "hangzhou",
+            "budget": 3000.0
+          },
+          "constraints": {
+            "budget_limit": 3000,
+            "origin": "shanghai",
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2
+          }
+        },
+        "data": {
+          "all_passed": false,
+          "applicable_count": 3,
+          "passed_count": 1,
+          "failed_count": 2,
+          "checks": [
+            {
+              "name": "trip_days",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "expected": null,
+                "actual": 2
+              }
+            },
+            {
+              "name": "budget_limit",
+              "status": "failed",
+              "passed": false,
+              "details": {
+                "limit": 3000,
+                "actual": null
+              }
+            },
+            {
+              "name": "weather_adjustment",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": false,
+                "adjustment_count": 0
+              }
+            },
+            {
+              "name": "min_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "minimum": null,
+                "actual": 3
+              }
+            },
+            {
+              "name": "max_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "maximum": null,
+                "actual": 3
+              }
+            },
+            {
+              "name": "poi_existence",
+              "status": "failed",
+              "passed": false,
+              "details": {
+                "city_id": "hangzhou",
+                "attraction_count": 3,
+                "unresolved": [
+                  "西湖",
+                  "灵隐寺",
+                  "河坊街/南宋御街"
+                ]
+              }
+            },
+            {
+              "name": "duplicate_attractions",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "duplicates": [],
+                "unique_count": 3,
+                "attraction_count": 3
+              }
+            },
+            {
+              "name": "must_include_pois",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": []
+              }
+            },
+            {
+              "name": "forbidden_pois",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "forbidden": []
+              }
+            },
+            {
+              "name": "rain_attraction_suitability",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "rain_detected": false
+              }
+            },
+            {
+              "name": "senior_accessibility",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "senior_request": false
+              }
+            },
+            {
+              "name": "tool_evidence",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": false
+              }
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "deterministic_evaluator",
+          "real_time_api_allowed": false,
+          "contract": "ctp-research-tools-v1.0"
+        }
+      },
+      "hard_constraint_passed_count": 1,
+      "hard_constraint_failed_count": 2,
+      "hard_constraint_applicable_count": 3,
+      "hard_constraints_all_satisfied": false,
+      "hcsr": 0.3333,
+      "execution_status": "completed",
+      "final_answer": "两人两天从上海高铁去杭州，预算3000元足够。按常规估算（往返高铁、住宿、餐饮、门票与交通）约1700-2000元左右，有较大余地。若住更高档或大量购物则可能超支。",
+      "raw_output": {
+        "schema_version": "ctp-experiment-output-v1",
+        "case_id": "ctp100_v2_042",
+        "method": "llm_direct",
+        "task_type": "budget_query",
+        "planned_agents": [],
+        "used_agents": [],
+        "planned_tools": [],
+        "called_tools": [],
+        "tool_results": {},
+        "attractions": [
+          {
+            "name": "西湖",
+            "description": "杭州地标，适合步行、划船、观景，免费及少量门票活动结合"
+          },
+          {
+            "name": "灵隐寺",
+            "description": "历史佛教寺庙，需门票，适合文化体验"
+          },
+          {
+            "name": "河坊街/南宋御街",
+            "description": "老街商业步行区，吃小吃、购物"
+          }
+        ],
+        "trip_days": 2,
+        "daily_itinerary": [
+          {
+            "day": "第1天",
+            "day_index": 1,
+            "summary": "上海出发到杭州，下午游西湖、逛河坊街",
+            "attraction_names": [
+              "西湖",
+              "河坊街/南宋御街"
+            ],
+            "notes": "早上坐高铁（二等座），抵达后寄存行李，市内交通以地铁/公交/步行为主"
+          },
+          {
+            "day": "第2天",
+            "day_index": 2,
+            "summary": "灵隐寺及周边，傍晚返沪",
+            "attraction_names": [
+              "灵隐寺",
+              "西湖（周边散步）"
+            ],
+            "notes": "根据返程车次安排时间，预留充裕到站/安检时间"
+          }
+        ],
+        "budget": {
+          "currency": "CNY",
+          "total_budget": 3000,
+          "people": 2,
+          "breakdown": {
+            "intercity_transport_round_trip": {
+              "assumption": "上海-杭州高铁二等座往返，成人票价约为55-80元单程/人",
+              "estimated_cost": 320,
+              "notes": "按单程80元/人估算，两人往返约320元"
+            },
+            "accommodation": {
+              "assumption": "中档酒店/快捷酒店约200-400元/晚/间",
+              "estimated_cost": 600,
+              "notes": "按300元/晚一间计，1晚或2晚按行程安排计算为600元"
+            },
+            "local_transport_and_taxi": {
+              "assumption": "地铁、公交及少量打车",
+              "estimated_cost": 150,
+              "notes": "两人两天约150元"
+            },
+            "meals": {
+              "assumption": "普通餐饮约60-120元/人/天",
+              "estimated_cost": 360,
+              "notes": "按90元/人/天，两人两天共360元"
+            },
+            "attraction_fees": {
+              "assumption": "灵隐寺、博物馆、船票等小额门票",
+              "estimated_cost": 200,
+              "notes": "两人合计约200元"
+            },
+            "buffer_and_misc": {
+              "assumption": "购物、纪念品、突发费用",
+              "estimated_cost": 100,
+              "notes": ""
+            }
+          },
+          "estimated_total_cost": 1730,
+          "conclusion": "预算充足",
+          "confidence_notes": "为简易估算，实际费用随住宿档次、用餐和车票时间波动；若选更好酒店或高峰车票价则上升"
+        },
+        "weather": null,
+        "weather_adjustments": [],
+        "execution_status": "completed",
+        "final_answer": "两人两天从上海高铁去杭州，预算3000元足够。按常规估算（往返高铁、住宿、餐饮、门票与交通）约1700-2000元左右，有较大余地。若住更高档或大量购物则可能超支。",
+        "metadata": {
+          "structured_by_llm": true,
+          "prompt_version": "ctp-structured-llm-output-prompts-v2"
+        }
+      },
+      "metadata": {
+        "research_method": "llm_direct",
+        "output_contract": "ctp-experiment-output-v1",
+        "structured_llm_output": {
+          "prompt_version": "ctp-structured-llm-output-prompts-v2",
+          "json_required": true,
+          "parse_status": "passed",
+          "validation_status": "passed",
+          "validation_errors": [],
+          "failure_reason": null
+        },
+        "model_metadata": {
+          "structured_by_llm": true,
+          "prompt_version": "ctp-structured-llm-output-prompts-v2"
+        },
+        "generation_policy": "direct_llm_no_tools",
+        "method_input_schema_version": "ctp-method-input-v1",
+        "visible_slots": {
+          "origin": "shanghai",
+          "destination": "hangzhou",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 3000,
+          "budget_basis": "total",
+          "requested_budget_scope": "local_plus_round_trip_intercity",
+          "budget_scope": "local_plus_round_trip_intercity",
+          "intercity_transport_included": true,
+          "mandatory_budget_disclaimer": false,
+          "intercity_transport_mode": "high_speed_rail",
+          "intercity_seat_class": "second_class"
+        },
+        "goal_state_slots": {
+          "origin": "shanghai",
+          "destination": "hangzhou",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 3000,
+          "budget_basis": "total",
+          "requested_budget_scope": "local_plus_round_trip_intercity",
+          "budget_scope": "local_plus_round_trip_intercity",
+          "intercity_transport_included": true,
+          "mandatory_budget_disclaimer": false,
+          "intercity_transport_mode": "high_speed_rail",
+          "intercity_seat_class": "second_class"
+        },
+        "run_audit_schema_version": "ctp-run-audit-v1"
+      }
+    },
+    "constraint_report": {
+      "schema_version": "research_tool_result_v1",
+      "tool_contract_version": "ctp-research-tools-v1.0",
+      "tool_name": "constraint_checker",
+      "status": "success",
+      "success": true,
+      "input": {
+        "request": {
+          "origin": "shanghai",
+          "budget_basis": "total",
+          "requested_budget_scope": "local_plus_round_trip_intercity",
+          "budget_scope": "local_plus_round_trip_intercity",
+          "intercity_transport_included": true,
+          "mandatory_budget_disclaimer": false,
+          "intercity_transport_mode": "high_speed_rail",
+          "intercity_seat_class": "second_class",
+          "destination": "hangzhou",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 3000,
+          "case_id": "ctp100_v2_042",
+          "user_input": "从上海坐高铁去杭州玩2天，两个人，总预算上限3000元够不够？只算费用。",
+          "city": "hangzhou",
+          "budget": 3000.0
+        },
+        "constraints": {
+          "budget_limit": 3000,
+          "origin": "shanghai",
+          "destination": "hangzhou",
+          "duration_days": 2,
+          "people_count": 2
+        }
+      },
+      "data": {
+        "all_passed": false,
+        "applicable_count": 3,
+        "passed_count": 1,
+        "failed_count": 2,
+        "checks": [
+          {
+            "name": "trip_days",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "expected": null,
+              "actual": 2
+            }
+          },
+          {
+            "name": "budget_limit",
+            "status": "failed",
+            "passed": false,
+            "details": {
+              "limit": 3000,
+              "actual": null
+            }
+          },
+          {
+            "name": "weather_adjustment",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": false,
+              "adjustment_count": 0
+            }
+          },
+          {
+            "name": "min_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "minimum": null,
+              "actual": 3
+            }
+          },
+          {
+            "name": "max_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "maximum": null,
+              "actual": 3
+            }
+          },
+          {
+            "name": "poi_existence",
+            "status": "failed",
+            "passed": false,
+            "details": {
+              "city_id": "hangzhou",
+              "attraction_count": 3,
+              "unresolved": [
+                "西湖",
+                "灵隐寺",
+                "河坊街/南宋御街"
+              ]
+            }
+          },
+          {
+            "name": "duplicate_attractions",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "duplicates": [],
+              "unique_count": 3,
+              "attraction_count": 3
+            }
+          },
+          {
+            "name": "must_include_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": []
+            }
+          },
+          {
+            "name": "forbidden_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "forbidden": []
+            }
+          },
+          {
+            "name": "rain_attraction_suitability",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "rain_detected": false
+            }
+          },
+          {
+            "name": "senior_accessibility",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "senior_request": false
+            }
+          },
+          {
+            "name": "tool_evidence",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": false
+            }
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "offline": true,
+        "source_mode": "deterministic_evaluator",
+        "real_time_api_allowed": false,
+        "contract": "ctp-research-tools-v1.0"
+      }
+    },
+    "hard_constraint_applicable_count": 3,
+    "hard_constraint_passed_count": 1,
+    "hard_constraint_failed_count": 2,
+    "hard_constraints_all_satisfied": false,
+    "hcsr": 0.3333,
+    "raw_output": {
+      "schema_version": "ctp-experiment-output-v1",
+      "case_id": "ctp100_v2_042",
+      "method": "llm_direct",
+      "task_type": "budget_query",
+      "planned_agents": [],
+      "used_agents": [],
+      "planned_tools": [],
+      "called_tools": [],
+      "tool_results": {},
+      "agent_outputs": {},
+      "attractions": [
+        {
+          "name": "西湖",
+          "description": "杭州地标，适合步行、划船、观景，免费及少量门票活动结合"
+        },
+        {
+          "name": "灵隐寺",
+          "description": "历史佛教寺庙，需门票，适合文化体验"
+        },
+        {
+          "name": "河坊街/南宋御街",
+          "description": "老街商业步行区，吃小吃、购物"
+        }
+      ],
+      "trip_days": 2,
+      "daily_itinerary": [
+        {
+          "day": "第1天",
+          "day_index": 1,
+          "summary": "上海出发到杭州，下午游西湖、逛河坊街",
+          "attraction_names": [
+            "西湖",
+            "河坊街/南宋御街"
+          ],
+          "notes": "早上坐高铁（二等座），抵达后寄存行李，市内交通以地铁/公交/步行为主"
+        },
+        {
+          "day": "第2天",
+          "day_index": 2,
+          "summary": "灵隐寺及周边，傍晚返沪",
+          "attraction_names": [
+            "灵隐寺",
+            "西湖（周边散步）"
+          ],
+          "notes": "根据返程车次安排时间，预留充裕到站/安检时间"
+        }
+      ],
+      "budget": {
+        "currency": "CNY",
+        "total_budget": 3000,
+        "people": 2,
+        "breakdown": {
+          "intercity_transport_round_trip": {
+            "assumption": "上海-杭州高铁二等座往返，成人票价约为55-80元单程/人",
+            "estimated_cost": 320,
+            "notes": "按单程80元/人估算，两人往返约320元"
+          },
+          "accommodation": {
+            "assumption": "中档酒店/快捷酒店约200-400元/晚/间",
+            "estimated_cost": 600,
+            "notes": "按300元/晚一间计，1晚或2晚按行程安排计算为600元"
+          },
+          "local_transport_and_taxi": {
+            "assumption": "地铁、公交及少量打车",
+            "estimated_cost": 150,
+            "notes": "两人两天约150元"
+          },
+          "meals": {
+            "assumption": "普通餐饮约60-120元/人/天",
+            "estimated_cost": 360,
+            "notes": "按90元/人/天，两人两天共360元"
+          },
+          "attraction_fees": {
+            "assumption": "灵隐寺、博物馆、船票等小额门票",
+            "estimated_cost": 200,
+            "notes": "两人合计约200元"
+          },
+          "buffer_and_misc": {
+            "assumption": "购物、纪念品、突发费用",
+            "estimated_cost": 100,
+            "notes": ""
+          }
+        },
+        "estimated_total_cost": 1730,
+        "conclusion": "预算充足",
+        "confidence_notes": "为简易估算，实际费用随住宿档次、用餐和车票时间波动；若选更好酒店或高峰车票价则上升"
+      },
+      "weather": null,
+      "weather_adjustments": [],
+      "constraint_report": {},
+      "hard_constraint_passed_count": 0,
+      "hard_constraint_failed_count": 0,
+      "hard_constraint_applicable_count": 0,
+      "hard_constraints_all_satisfied": null,
+      "hcsr": null,
+      "execution_status": "completed",
+      "final_answer": "两人两天从上海高铁去杭州，预算3000元足够。按常规估算（往返高铁、住宿、餐饮、门票与交通）约1700-2000元左右，有较大余地。若住更高档或大量购物则可能超支。",
+      "raw_output": {
+        "schema_version": "ctp-experiment-output-v1",
+        "case_id": "ctp100_v2_042",
+        "method": "llm_direct",
+        "task_type": "budget_query",
+        "planned_agents": [],
+        "used_agents": [],
+        "planned_tools": [],
+        "called_tools": [],
+        "tool_results": {},
+        "attractions": [
+          {
+            "name": "西湖",
+            "description": "杭州地标，适合步行、划船、观景，免费及少量门票活动结合"
+          },
+          {
+            "name": "灵隐寺",
+            "description": "历史佛教寺庙，需门票，适合文化体验"
+          },
+          {
+            "name": "河坊街/南宋御街",
+            "description": "老街商业步行区，吃小吃、购物"
+          }
+        ],
+        "trip_days": 2,
+        "daily_itinerary": [
+          {
+            "day": "第1天",
+            "day_index": 1,
+            "summary": "上海出发到杭州，下午游西湖、逛河坊街",
+            "attraction_names": [
+              "西湖",
+              "河坊街/南宋御街"
+            ],
+            "notes": "早上坐高铁（二等座），抵达后寄存行李，市内交通以地铁/公交/步行为主"
+          },
+          {
+            "day": "第2天",
+            "day_index": 2,
+            "summary": "灵隐寺及周边，傍晚返沪",
+            "attraction_names": [
+              "灵隐寺",
+              "西湖（周边散步）"
+            ],
+            "notes": "根据返程车次安排时间，预留充裕到站/安检时间"
+          }
+        ],
+        "budget": {
+          "currency": "CNY",
+          "total_budget": 3000,
+          "people": 2,
+          "breakdown": {
+            "intercity_transport_round_trip": {
+              "assumption": "上海-杭州高铁二等座往返，成人票价约为55-80元单程/人",
+              "estimated_cost": 320,
+              "notes": "按单程80元/人估算，两人往返约320元"
+            },
+            "accommodation": {
+              "assumption": "中档酒店/快捷酒店约200-400元/晚/间",
+              "estimated_cost": 600,
+              "notes": "按300元/晚一间计，1晚或2晚按行程安排计算为600元"
+            },
+            "local_transport_and_taxi": {
+              "assumption": "地铁、公交及少量打车",
+              "estimated_cost": 150,
+              "notes": "两人两天约150元"
+            },
+            "meals": {
+              "assumption": "普通餐饮约60-120元/人/天",
+              "estimated_cost": 360,
+              "notes": "按90元/人/天，两人两天共360元"
+            },
+            "attraction_fees": {
+              "assumption": "灵隐寺、博物馆、船票等小额门票",
+              "estimated_cost": 200,
+              "notes": "两人合计约200元"
+            },
+            "buffer_and_misc": {
+              "assumption": "购物、纪念品、突发费用",
+              "estimated_cost": 100,
+              "notes": ""
+            }
+          },
+          "estimated_total_cost": 1730,
+          "conclusion": "预算充足",
+          "confidence_notes": "为简易估算，实际费用随住宿档次、用餐和车票时间波动；若选更好酒店或高峰车票价则上升"
+        },
+        "weather": null,
+        "weather_adjustments": [],
+        "execution_status": "completed",
+        "final_answer": "两人两天从上海高铁去杭州，预算3000元足够。按常规估算（往返高铁、住宿、餐饮、门票与交通）约1700-2000元左右，有较大余地。若住更高档或大量购物则可能超支。",
+        "metadata": {
+          "structured_by_llm": true,
+          "prompt_version": "ctp-structured-llm-output-prompts-v2"
+        }
+      },
+      "metadata": {
+        "research_method": "llm_direct",
+        "output_contract": "ctp-experiment-output-v1",
+        "structured_llm_output": {
+          "prompt_version": "ctp-structured-llm-output-prompts-v2",
+          "json_required": true,
+          "parse_status": "passed",
+          "validation_status": "passed",
+          "validation_errors": [],
+          "failure_reason": null
+        },
+        "model_metadata": {
+          "structured_by_llm": true,
+          "prompt_version": "ctp-structured-llm-output-prompts-v2"
+        },
+        "generation_policy": "direct_llm_no_tools",
+        "method_input_schema_version": "ctp-method-input-v1",
+        "visible_slots": {
+          "origin": "shanghai",
+          "destination": "hangzhou",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 3000,
+          "budget_basis": "total",
+          "requested_budget_scope": "local_plus_round_trip_intercity",
+          "budget_scope": "local_plus_round_trip_intercity",
+          "intercity_transport_included": true,
+          "mandatory_budget_disclaimer": false,
+          "intercity_transport_mode": "high_speed_rail",
+          "intercity_seat_class": "second_class"
+        },
+        "goal_state_slots": {
+          "origin": "shanghai",
+          "destination": "hangzhou",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_amount": 3000,
+          "budget_basis": "total",
+          "requested_budget_scope": "local_plus_round_trip_intercity",
+          "budget_scope": "local_plus_round_trip_intercity",
+          "intercity_transport_included": true,
+          "mandatory_budget_disclaimer": false,
+          "intercity_transport_mode": "high_speed_rail",
+          "intercity_seat_class": "second_class"
+        }
+      }
+    },
+    "latency": 12633.76,
+    "latency_ms": 12633.76,
+    "ttft_ms": null,
+    "trace": {
+      "schema_version": "1.8",
+      "created_at": "2026-08-21T03:08:59.978285+00:00",
+      "request_id": "ctp100_v2_042_llm_direct_d6dccccc",
+      "session_id": "exp-ctp100_v2_042-llm_direct-run-task_d_m0_real_api_final_20260821T110521Z-r0",
+      "case_id": "ctp100_v2_042",
+      "run_id": "task_d_m0_real_api_final_20260821T110521Z",
+      "experiment_case_id": "ctp100_v2_042",
+      "experiment_group": null,
+      "repeat_index": 0,
+      "system_variant": "llm_direct",
+      "method": "llm_direct",
+      "evaluation_mode": "end_to_end",
+      "model_config_name": "task-d-m0-real-api",
+      "input_hash": "5227f3581e1108e44872942300223dc0e5b65abb11a601af967b362a0900c6da",
+      "user_message_hash": "5227f3581e1108e44872942300223dc0e5b65abb11a601af967b362a0900c6da",
+      "user_message": null,
+      "result_hash": "36e76e150e1001ab809ba9bd3b27ea4094ab28adbc03afa92b837deabb2355d5",
+      "offline_data": {
+        "schema_version": "fixed_data_manifest_v2",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+        "city_ids": [
+          "beijing",
+          "hangzhou",
+          "xian",
+          "shenzhen",
+          "guilin"
+        ],
+        "snapshot_dirs": [
+          "pois",
+          "weather",
+          "restaurants",
+          "accommodation",
+          "transport"
+        ],
+        "file_count": 25,
+        "expected_file_count": 25,
+        "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+        "expected_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+        "missing_files": [],
+        "files": [
+          {
+            "kind": "accommodation",
+            "city_id": "beijing",
+            "path": "data/accommodation/beijing.json",
+            "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "guilin",
+            "path": "data/accommodation/guilin.json",
+            "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "hangzhou",
+            "path": "data/accommodation/hangzhou.json",
+            "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "shenzhen",
+            "path": "data/accommodation/shenzhen.json",
+            "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "xian",
+            "path": "data/accommodation/xian.json",
+            "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "beijing",
+            "path": "data/pois/beijing.json",
+            "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "guilin",
+            "path": "data/pois/guilin.json",
+            "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "hangzhou",
+            "path": "data/pois/hangzhou.json",
+            "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "shenzhen",
+            "path": "data/pois/shenzhen.json",
+            "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "xian",
+            "path": "data/pois/xian.json",
+            "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "beijing",
+            "path": "data/restaurants/beijing.json",
+            "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "guilin",
+            "path": "data/restaurants/guilin.json",
+            "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "hangzhou",
+            "path": "data/restaurants/hangzhou.json",
+            "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "shenzhen",
+            "path": "data/restaurants/shenzhen.json",
+            "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "xian",
+            "path": "data/restaurants/xian.json",
+            "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "beijing",
+            "path": "data/transport/beijing.json",
+            "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "guilin",
+            "path": "data/transport/guilin.json",
+            "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "hangzhou",
+            "path": "data/transport/hangzhou.json",
+            "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "shenzhen",
+            "path": "data/transport/shenzhen.json",
+            "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "xian",
+            "path": "data/transport/xian.json",
+            "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "beijing",
+            "path": "data/weather/beijing.json",
+            "sha256": "a6b32944050cc2a638d09a67be8d7747ca2b0153527f856d85b4813651c91d0a",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "guilin",
+            "path": "data/weather/guilin.json",
+            "sha256": "450d86b2f7121f970e7c48e5a38ad113c8e4289c0356f448221ce1d63d412f94",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "hangzhou",
+            "path": "data/weather/hangzhou.json",
+            "sha256": "e4ea7c0b10b350cd4c7ba739746e0634d0aa86d77378d858104c0f789f6f64fd",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "shenzhen",
+            "path": "data/weather/shenzhen.json",
+            "sha256": "533e74a25a72fdc58a0f31746f10dd405611b3ab007f18d0319566deaec5e281",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "xian",
+            "path": "data/weather/xian.json",
+            "sha256": "7d9e244e1bd64d129cb75b641a09adc8521d9ce082b4a28de7bbb2aadb92cef4",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          }
+        ]
+      },
+      "status": "completed",
+      "mode": "planning",
+      "intent": "general_chat",
+      "route": "GENERAL_CHAT",
+      "extracted_info": {},
+      "constraints": [],
+      "missing_fields": [],
+      "planned_agents": [],
+      "executed_agents": [],
+      "planned_tools": [],
+      "executed_tools": [],
+      "selected_agents": [],
+      "selected_tools": [],
+      "goal": {
+        "intent": "general_chat",
+        "route": "GENERAL_CHAT",
+        "slots": {},
+        "constraints": [],
+        "planned_agents": [],
+        "selected_agents": []
+      },
+      "stage_timings": {},
+      "agent_timings": {},
+      "agent_runs": [],
+      "llm_calls": [
+        {
+          "call_id": "5a4baa512b304fd89f2ab459b75a5c5c",
+          "id": "5a4baa512b304fd89f2ab459b75a5c5c",
+          "agent_name": null,
+          "component": null,
+          "provider": "vectorengine_openai_compatible",
+          "model": "gpt-5-mini",
+          "streaming": false,
+          "duration_ms": 12423.28,
+          "ttft_ms": null,
+          "tokens": {
+            "prompt_tokens": 942,
+            "completion_tokens": 976,
+            "total_tokens": 1918
+          },
+          "usage": {
+            "prompt_tokens": 942,
+            "completion_tokens": 976,
+            "total_tokens": 1918
+          },
+          "cached_source_usage": null,
+          "chunk_count": null,
+          "mock_used": false,
+          "fallback_used": false,
+          "cache_hit": false,
+          "mock": false,
+          "fallback": false,
+          "success": true,
+          "error": null,
+          "message_count": 2,
+          "message_chars": 3734,
+          "tool_count": 0,
+          "prompt_version": "ctp-structured-llm-output-prompts-v2",
+          "prompt_hash": "fb73fbf9801e0561c18587845cf20b5b7cf2c872ce646a4d33282c4812413959",
+          "request_options": {
+            "schema_version": "ctp-llm-runtime-options-v1",
+            "model": "gpt-5-mini",
+            "base_url": "https://api.vectorengine.ai/v1",
+            "temperature": 0.0,
+            "max_tokens": 4096,
+            "completion_limit_parameter": "max_completion_tokens",
+            "timeout_seconds": 120,
+            "reasoning_effort": "minimal",
+            "tool_count": 0,
+            "tool_choice": null,
+            "streaming": false,
+            "sdk_max_retries": 0
+          },
+          "retry": {
+            "schema_version": "ctp-llm-retry-audit-v1",
+            "max_attempts": 3,
+            "attempt_count": 1,
+            "retry_count": 0,
+            "error_count": 0,
+            "succeeded": true,
+            "attempts": [
+              {
+                "attempt_index": 1,
+                "success": true,
+                "duration_ms": 12423.04,
+                "finish_reason": "stop",
+                "output_chars": 2382,
+                "usage": {
+                  "prompt_tokens": 942,
+                  "completion_tokens": 976,
+                  "total_tokens": 1918,
+                  "completion_tokens_details": "[REDACTED]",
+                  "prompt_tokens_details": "[REDACTED]"
+                }
+              }
+            ]
+          },
+          "cost_schema_version": "ctp-llm-costing-v1",
+          "cost_currency": "USD",
+          "estimated_cost": 0.0021875,
+          "standardized_estimated_cost": 0.0021875,
+          "estimated_cost_cny": null,
+          "standardized_estimated_cost_cny": null,
+          "actual_cost": null,
+          "actual_cost_status": "not_reported_by_provider",
+          "input_token_unit_price": 0.00025,
+          "output_token_unit_price": 0.002,
+          "price_unit": "per_1k_tokens",
+          "price_snapshot_date": "2026-08-01",
+          "price_source_url": "https://api.vectorengine.ai/pricing",
+          "pricing_mode": "frozen_default_token_estimate",
+          "price_snapshot": {
+            "schema_version": "ctp-llm-costing-v1",
+            "provider": "vectorengine_openai_compatible",
+            "model": "gpt-5-mini",
+            "price_snapshot_date": "2026-08-01",
+            "price_source_url": "https://api.vectorengine.ai/pricing",
+            "currency": "USD",
+            "price_unit": "per_1k_tokens",
+            "input_token_unit_price": 0.00025,
+            "output_token_unit_price": 0.002,
+            "pricing_mode": "frozen_default_token_estimate"
+          },
+          "temperature": 0.0,
+          "max_tokens": 4096,
+          "timeout_seconds": 120,
+          "reasoning_effort": "minimal",
+          "retry_max_attempts": 3,
+          "retry_attempt_count": 1,
+          "retry_count": 0,
+          "retry_error_count": 0,
+          "output_chars": 2382
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "adaptive_scheduler": null,
+      "scheduler": null,
+      "total_duration_ms": 12626.65,
+      "first_body_token_ms": null,
+      "first_token_ms": null,
+      "error": null,
+      "llm_call_count": 1,
+      "tool_call_count": 0,
+      "successful_tool_call_count": 0,
+      "failed_tool_call_count": 0,
+      "tool_call_success_rate": null,
+      "planned_tool_count": 0,
+      "executed_tool_count": 0,
+      "selected_tool_count": 0,
+      "api_call_count": 0,
+      "agent_call_count": 0,
+      "failed_agent_count": 0,
+      "cache_hit_count": 0,
+      "fallback_count": 0,
+      "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\task_d_m0_real_api\\task_d_m0_real_api_final_20260821T110521Z\\traces\\20260821T030912605595Z_ctp100_v2_042_llm_direct_d6dccccc_188518c9.jsonl"
+    },
+    "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\task_d_m0_real_api\\task_d_m0_real_api_final_20260821T110521Z\\traces\\20260821T030912605595Z_ctp100_v2_042_llm_direct_d6dccccc_188518c9.jsonl",
+    "evaluation": {
+      "schema_version": "ctp-independent-evaluation-v1",
+      "catalog_id": "day8_formal_independent_evaluator_rules",
+      "case_id": "ctp100_v2_042",
+      "task_type": "budget_query",
+      "output_task_type": "budget_query",
+      "rules": [
+        {
+          "id": "G_SCHEMA_VALID",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "schema_version": "ctp-experiment-output-v1",
+            "expected": "ctp-experiment-output-v1"
+          }
+        },
+        {
+          "id": "G_EXECUTION_STATUS_VALID",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "execution_status": "completed",
+            "trace_status": "completed",
+            "failed_evidence": false,
+            "issues": []
+          }
+        },
+        {
+          "id": "G_FINAL_ANSWER_CONSISTENT",
+          "usage": "stsr_gate",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "final_answer_inconsistent",
+          "details": {
+            "issues": [
+              "structured_poi_missing_from_answer"
+            ],
+            "missing_pois": [
+              "西湖",
+              "灵隐寺",
+              "河坊街/南宋御街"
+            ],
+            "unselected_pois_mentioned": [],
+            "budget_total": null,
+            "weather_terms": [],
+            "missing_clarification_fields": []
+          }
+        },
+        {
+          "id": "G_TASK_TYPE_MATCH",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "expected": "budget_query",
+            "actual": "budget_query"
+          }
+        },
+        {
+          "id": "H_TRIP_DAYS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_ATTRACTION_COUNT_BOUNDS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_DAILY_LOAD_LIMIT",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_LIMIT",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "budget_limit_exceeded",
+          "details": {
+            "limit": 3000.0,
+            "actual": null
+          }
+        },
+        {
+          "id": "H_POI_GROUNDED",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "poi_not_grounded",
+          "details": {
+            "details": {
+              "city_id": "hangzhou",
+              "attraction_count": 3,
+              "unresolved": [
+                "西湖",
+                "灵隐寺",
+                "河坊街/南宋御街"
+              ]
+            }
+          }
+        },
+        {
+          "id": "H_NO_DUPLICATE_POIS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_MUST_INCLUDE_POIS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_FORBIDDEN_POIS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_RAIN_SUITABILITY",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_SENIOR_ACCESSIBILITY",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_WEATHER_ADJUSTMENT_REQUIRED",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_WEATHER_EVIDENCE",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_NO_DATE_WEATHER_REMINDER",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_EVIDENCE",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "budget_evidence_missing",
+          "details": {
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "missing_or_failed": [
+              "budget_calculator"
+            ]
+          }
+        },
+        {
+          "id": "H_BUDGET_POLICY_VERSION",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "budget_policy_version_wrong",
+          "details": {
+            "expected": "budget_policy_v2_0",
+            "actual": ""
+          }
+        },
+        {
+          "id": "H_BUDGET_ACCOMMODATION_NIGHTS",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "budget_accommodation_nights_wrong",
+          "details": {
+            "duration_days": 2,
+            "people_count": 2,
+            "expected_nights": 1,
+            "actual_nights": null,
+            "expected_rooms": 1,
+            "actual_rooms": null,
+            "reference_price_cny": null,
+            "expected_accommodation_cost": null,
+            "actual_accommodation_cost": 600.0,
+            "issues": [
+              "night_count_mismatch"
+            ]
+          }
+        },
+        {
+          "id": "H_BUDGET_CONTINGENCY_LOCAL_ONLY",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "budget_contingency_formula_wrong",
+          "details": {
+            "reason": "missing_formula_field",
+            "local_basic_cost": 600.0,
+            "contingency_amount": null
+          }
+        },
+        {
+          "id": "H_BUDGET_TOTAL_FORMULA",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "budget_total_formula_wrong",
+          "details": {
+            "reason": "missing_formula_field",
+            "local_basic_cost": 600.0,
+            "contingency_amount": null,
+            "intercity_transport_cost": 0.0,
+            "total": null
+          }
+        },
+        {
+          "id": "H_BUDGET_ITINERARY_CONSISTENCY",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "budget_itinerary_inconsistent",
+          "details": {
+            "source": "computed_from_output",
+            "final_itinerary_unique_poi_ids": [
+              "西湖",
+              "灵隐寺",
+              "河坊街/南宋御街"
+            ],
+            "budget_selected_poi_ids": [],
+            "ticket_source": null,
+            "issues": [
+              "itinerary_budget_poi_mismatch"
+            ]
+          }
+        },
+        {
+          "id": "H_BUDGET_UPGRADE_POLICY",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "budget_upgrade_policy_wrong",
+          "details": {
+            "reason": "budget_policy_missing"
+          }
+        },
+        {
+          "id": "H_BUDGET_INDEPENDENT_RECALCULATION",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "budget_independent_recalculation_mismatch",
+          "details": {
+            "source": {
+              "mode": "final_itinerary",
+              "used_final_itinerary": true,
+              "final_poi_refs": [
+                "西湖",
+                "灵隐寺",
+                "河坊街/南宋御街"
+              ],
+              "standard_reference_poi_ids": [
+                "hz001",
+                "hz002",
+                "hz003",
+                "hz004"
+              ]
+            },
+            "unit_id": "ctp100_v2_042",
+            "issues": [
+              "wrong_budget_limit",
+              "wrong_destination_local_basic_cost",
+              "wrong_contingency_amount",
+              "wrong_local_total_recommended",
+              "wrong_intercity_transport_cost",
+              "wrong_final_recommended_total",
+              "wrong_recommended_preparation_amount",
+              "wrong_remaining_budget",
+              "wrong_covered_scope_remaining_budget",
+              "wrong_budget_gap",
+              "wrong_budget_policy_version",
+              "wrong_budget_scope",
+              "wrong_requested_budget_scope",
+              "wrong_computed_budget_scope",
+              "wrong_scope_complete",
+              "wrong_sufficiency_status",
+              "wrong_intercity_transport_included",
+              "wrong_mandatory_budget_disclaimer",
+              "wrong_can_judge_budget_sufficiency",
+              "wrong_is_over_budget",
+              "wrong_transport_recommended",
+              "wrong_accommodation_recommended",
+              "wrong_accommodation_reference_price_cny",
+              "wrong_accommodation_room_count",
+              "wrong_accommodation_night_count",
+              "wrong_accommodation_tier",
+              "wrong_food_recommended",
+              "wrong_food_reference_price_cny",
+              "wrong_food_meal_count_equivalent",
+              "wrong_food_tier",
+              "wrong_tickets_recommended",
+              "wrong_other_recommended",
+              "wrong_buffer_recommended",
+              "wrong_intercity_transport_recommended",
+              "wrong_ticket_selected_poi_ids",
+              "wrong_ticket_source",
+              "wrong_intercity_one_way_fare_per_person_cny",
+              "wrong_intercity_round_trip_multiplier",
+              "wrong_intercity_people_count",
+              "wrong_intercity_total_intercity_transport_cost_cny",
+              "wrong_intercity_status",
+              "wrong_intercity_route_id",
+              "wrong_intercity_budget_scope",
+              "wrong_intercity_intercity_transport_included",
+              "wrong_intercity_mandatory_budget_disclaimer",
+              "wrong_intercity_origin",
+              "wrong_intercity_destination"
+            ],
+            "expected": {
+              "budget_limit": 3000.0,
+              "destination_local_basic_cost": 1090.0,
+              "contingency_amount": 109.0,
+              "intercity_transport_cost": 332.0,
+              "final_recommended_total": 1531.0,
+              "sufficiency_status": "sufficient",
+              "scope_complete": true,
+              "accommodation_reference_price_cny": 320.0,
+              "accommodation_night_count": 1,
+              "accommodation_room_count": 1,
+              "intercity_one_way_fare_per_person_cny": 83.0,
+              "intercity_total": 332.0,
+              "selected_poi_ids": [
+                "hz001",
+                "hz002",
+                "hz003",
+                "hz004"
+              ]
+            },
+            "actual": {
+              "budget_limit": null,
+              "destination_local_basic_cost": 600.0,
+              "contingency_amount": null,
+              "intercity_transport_cost": 0.0,
+              "final_recommended_total": null,
+              "sufficiency_status": null,
+              "scope_complete": null,
+              "accommodation_reference_price_cny": null,
+              "accommodation_night_count": null,
+              "accommodation_room_count": null,
+              "intercity_one_way_fare_per_person_cny": null,
+              "intercity_total": null,
+              "selected_poi_ids": []
+            }
+          }
+        },
+        {
+          "id": "H_INTERCITY_SCOPE",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "intercity_scope_wrong",
+          "details": {
+            "expected_scope": "local_plus_round_trip_intercity",
+            "actual_scope": null,
+            "expected_requested_scope": "local_plus_round_trip_intercity",
+            "actual_requested_scope": null,
+            "expected_computed_scope": "local_plus_round_trip_intercity",
+            "actual_computed_scope": null,
+            "expected_scope_complete": true,
+            "actual_scope_complete": null,
+            "expected_sufficiency_status": "sufficient",
+            "actual_sufficiency_status": null,
+            "expected_included": true,
+            "actual_included": null,
+            "expected_disclaimer": false,
+            "actual_disclaimer": null,
+            "status": null,
+            "route_consistency": {
+              "expected_origin": "shanghai",
+              "expected_destination": "hangzhou",
+              "actual_origin": null,
+              "actual_destination": null,
+              "requested_origin": null,
+              "requested_destination": null,
+              "lookup_origin": null,
+              "lookup_destination": null,
+              "lookup_direction": "",
+              "status": "",
+              "issues": [
+                "origin_mismatch",
+                "destination_mismatch"
+              ]
+            },
+            "issues": [
+              "budget_scope_mismatch",
+              "requested_budget_scope_mismatch",
+              "computed_budget_scope_mismatch",
+              "scope_complete_mismatch",
+              "sufficiency_status_mismatch",
+              "intercity_inclusion_mismatch",
+              "mandatory_disclaimer_mismatch",
+              "origin_mismatch",
+              "destination_mismatch"
+            ]
+          }
+        },
+        {
+          "id": "H_INTERCITY_COST",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "included": null,
+            "status": null
+          }
+        },
+        {
+          "id": "H_INTERCITY_EVIDENCE",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "included": null,
+            "status": null
+          }
+        },
+        {
+          "id": "H_TOOL_EVIDENCE",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "tool_evidence_missing",
+          "details": {
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "missing_or_failed": [
+              "budget_calculator"
+            ]
+          }
+        },
+        {
+          "id": "T_CLARIFICATION_MISSING_FIELDS",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_CLARIFICATION_NO_PREMATURE_PLAN",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_GENERAL_CHAT_NO_BUSINESS_EXECUTION",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_GENERAL_CHAT_NO_TRIP_ARTIFACT",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_ATTRACTION_SINGLE_SCOPE",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_WEATHER_SINGLE_SCOPE",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_BUDGET_SINGLE_SCOPE",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "artifact_present": true,
+            "unrelated_tools": [],
+            "unrelated_agents": []
+          }
+        },
+        {
+          "id": "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_PARTIAL_REUSE_VALIDITY",
+          "usage": "agent_tool_metric",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "S_AGENT_SET_MATCH",
+          "usage": "agent_tool_metric",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "agent_set_mismatch",
+          "details": {
+            "accepted": [
+              [
+                "budget"
+              ]
+            ],
+            "actual": []
+          }
+        },
+        {
+          "id": "S_TOOL_SET_MATCH",
+          "usage": "agent_tool_metric",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "tool_set_mismatch",
+          "details": {
+            "accepted": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "actual": []
+          }
+        },
+        {
+          "id": "S_PLANNED_ACTUAL_AGENT_CONSISTENCY",
+          "usage": "agent_tool_metric",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {}
+        },
+        {
+          "id": "S_PLANNED_ACTUAL_TOOL_CONSISTENCY",
+          "usage": "agent_tool_metric",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {}
+        },
+        {
+          "id": "S_FORBIDDEN_GENERATION_TOOLS",
+          "usage": "agent_tool_metric",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "used": []
+          }
+        }
+      ],
+      "metrics": {
+        "stsr": false,
+        "stsr_gate_applicable_count": 5,
+        "stsr_gate_passed_count": 4,
+        "stsr_gate_failed_count": 1,
+        "evaluation_hcsr": 0.0,
+        "evaluation_hcsr_applicable_count": 12,
+        "evaluation_hcsr_passed_count": 0,
+        "evaluation_hcsr_failed_count": 12,
+        "itcsr": 0.0,
+        "itcsr_applicable_count": 1,
+        "itcsr_passed_count": 0,
+        "itcsr_failed_count": 1,
+        "bpcr": 0.0,
+        "bpcr_applicable_count": 9,
+        "bpcr_passed_count": 0,
+        "bpcr_failed_count": 9,
+        "evaluation_failed_rule_ids": [
+          "G_FINAL_ANSWER_CONSISTENT",
+          "H_BUDGET_LIMIT",
+          "H_POI_GROUNDED",
+          "H_BUDGET_EVIDENCE",
+          "H_BUDGET_POLICY_VERSION",
+          "H_BUDGET_ACCOMMODATION_NIGHTS",
+          "H_BUDGET_CONTINGENCY_LOCAL_ONLY",
+          "H_BUDGET_TOTAL_FORMULA",
+          "H_BUDGET_ITINERARY_CONSISTENCY",
+          "H_BUDGET_UPGRADE_POLICY",
+          "H_BUDGET_INDEPENDENT_RECALCULATION",
+          "H_INTERCITY_SCOPE",
+          "H_TOOL_EVIDENCE",
+          "S_AGENT_SET_MATCH",
+          "S_TOOL_SET_MATCH"
+        ],
+        "evaluation_failed_rule_count": 15,
+        "agent_selection_precision": 0.0,
+        "agent_selection_recall": 0.0,
+        "agent_selection_f1": 0.0,
+        "agent_set_exact_match": false,
+        "necessary_agent_coverage": 0.0,
+        "extra_agent_count": 0,
+        "missing_agent_count": 1,
+        "duplicate_agent_count": 0,
+        "planned_actual_agent_consistency": 1.0,
+        "agent_execution_success_rate": null,
+        "tool_selection_precision": 0.0,
+        "tool_selection_recall": 0.0,
+        "tool_selection_f1": 0.0,
+        "tool_set_exact_match": false,
+        "necessary_tool_coverage": 0.0,
+        "extra_tool_count": 0,
+        "missing_tool_count": 1,
+        "duplicate_tool_count": 0,
+        "forbidden_tool_call_count": 0,
+        "planned_actual_tool_consistency": 1.0,
+        "tool_call_success_rate": null,
+        "tool_failure_count": 0,
+        "tool_failure_types": [],
+        "total_tokens": 1918.0,
+        "estimated_cost": 0.0022,
+        "standardized_estimated_cost": 0.0022,
+        "actual_cost": null,
+        "cost_per_success": null
+      },
+      "guards": [
+        "method_blind",
+        "no_llm_or_live_api",
+        "no_output_repair",
+        "structured_fields_only",
+        "append_only_evidence"
+      ]
+    },
+    "run_audit": {
+      "schema_version": "ctp-run-audit-v1",
+      "method": "llm_direct",
+      "planned_agents": [],
+      "used_agents": [],
+      "executed_agents": [],
+      "planned_tools": [],
+      "called_tools": [],
+      "executed_tools": [],
+      "cost": {
+        "estimated_cost": 0.0022,
+        "standardized_estimated_cost": 0.0022,
+        "actual_cost": null,
+        "actual_cost_available": false,
+        "actual_cost_statuses": [
+          "not_reported_by_provider"
+        ],
+        "price_snapshots": [
+          {
+            "schema_version": "ctp-llm-costing-v1",
+            "provider": "vectorengine_openai_compatible",
+            "model": "gpt-5-mini",
+            "price_snapshot_date": "2026-08-01",
+            "price_source_url": "https://api.vectorengine.ai/pricing",
+            "currency": "USD",
+            "price_unit": "per_1k_tokens",
+            "input_token_unit_price": 0.00025,
+            "output_token_unit_price": 0.002,
+            "pricing_mode": "frozen_default_token_estimate"
+          }
+        ]
+      },
+      "metrics": {
+        "planned_agent_count": 0,
+        "used_agent_count": 0,
+        "executed_agent_count": 0,
+        "agent_call_count": 0,
+        "successful_agent_call_count": 0,
+        "failed_agent_call_count": 0,
+        "duplicate_agent_call_count": 0,
+        "planned_actual_agent_consistency": 1.0,
+        "planned_tool_count": 0,
+        "called_tool_count": 0,
+        "executed_tool_count": 0,
+        "successful_tool_call_count": 0,
+        "failed_tool_call_count": 0,
+        "duplicate_tool_call_count": 0,
+        "planned_actual_tool_consistency": 1.0,
+        "llm_call_count": 1,
+        "llm_retry_attempt_count": 1.0,
+        "llm_retry_count": 0.0,
+        "llm_retry_error_count": 0.0,
+        "api_call_count": 0,
+        "prompt_tokens": 942.0,
+        "completion_tokens": 976.0,
+        "total_tokens": 1918.0,
+        "estimated_cost": 0.0022,
+        "standardized_estimated_cost": 0.0022,
+        "latency_ms": 12633.76,
+        "trace_total_duration_ms": 12626.65,
+        "llm_total_duration_ms": 12423.28
+      }
+    },
+    "audit": {
+      "schema_version": "ctp-run-audit-v1",
+      "method": "llm_direct",
+      "planned_agents": [],
+      "used_agents": [],
+      "executed_agents": [],
+      "planned_tools": [],
+      "called_tools": [],
+      "executed_tools": [],
+      "cost": {
+        "estimated_cost": 0.0022,
+        "standardized_estimated_cost": 0.0022,
+        "actual_cost": null,
+        "actual_cost_available": false,
+        "actual_cost_statuses": [
+          "not_reported_by_provider"
+        ],
+        "price_snapshots": [
+          {
+            "schema_version": "ctp-llm-costing-v1",
+            "provider": "vectorengine_openai_compatible",
+            "model": "gpt-5-mini",
+            "price_snapshot_date": "2026-08-01",
+            "price_source_url": "https://api.vectorengine.ai/pricing",
+            "currency": "USD",
+            "price_unit": "per_1k_tokens",
+            "input_token_unit_price": 0.00025,
+            "output_token_unit_price": 0.002,
+            "pricing_mode": "frozen_default_token_estimate"
+          }
+        ]
+      },
+      "metrics": {
+        "planned_agent_count": 0,
+        "used_agent_count": 0,
+        "executed_agent_count": 0,
+        "agent_call_count": 0,
+        "successful_agent_call_count": 0,
+        "failed_agent_call_count": 0,
+        "duplicate_agent_call_count": 0,
+        "planned_actual_agent_consistency": 1.0,
+        "planned_tool_count": 0,
+        "called_tool_count": 0,
+        "executed_tool_count": 0,
+        "successful_tool_call_count": 0,
+        "failed_tool_call_count": 0,
+        "duplicate_tool_call_count": 0,
+        "planned_actual_tool_consistency": 1.0,
+        "llm_call_count": 1,
+        "llm_retry_attempt_count": 1.0,
+        "llm_retry_count": 0.0,
+        "llm_retry_error_count": 0.0,
+        "api_call_count": 0,
+        "prompt_tokens": 942.0,
+        "completion_tokens": 976.0,
+        "total_tokens": 1918.0,
+        "estimated_cost": 0.0022,
+        "standardized_estimated_cost": 0.0022,
+        "latency_ms": 12633.76,
+        "trace_total_duration_ms": 12626.65,
+        "llm_total_duration_ms": 12423.28
+      }
+    },
+    "status": "completed",
+    "metrics": {
+      "expected_tools": [],
+      "selected_tools": [],
+      "expected_tool_count": 0,
+      "correct_tool_count": null,
+      "tool_selection_accuracy": null,
+      "intent_correct": null,
+      "route_correct": null,
+      "agents_correct": null,
+      "constraint_report": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "constraint_checker",
+        "status": "success",
+        "success": true,
+        "input": {
+          "request": {
+            "origin": "shanghai",
+            "budget_basis": "total",
+            "requested_budget_scope": "local_plus_round_trip_intercity",
+            "budget_scope": "local_plus_round_trip_intercity",
+            "intercity_transport_included": true,
+            "mandatory_budget_disclaimer": false,
+            "intercity_transport_mode": "high_speed_rail",
+            "intercity_seat_class": "second_class",
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 3000,
+            "case_id": "ctp100_v2_042",
+            "user_input": "从上海坐高铁去杭州玩2天，两个人，总预算上限3000元够不够？只算费用。",
+            "city": "hangzhou",
+            "budget": 3000.0
+          },
+          "constraints": {
+            "budget_limit": 3000,
+            "origin": "shanghai",
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2
+          }
+        },
+        "data": {
+          "all_passed": false,
+          "applicable_count": 3,
+          "passed_count": 1,
+          "failed_count": 2,
+          "checks": [
+            {
+              "name": "trip_days",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "expected": null,
+                "actual": 2
+              }
+            },
+            {
+              "name": "budget_limit",
+              "status": "failed",
+              "passed": false,
+              "details": {
+                "limit": 3000,
+                "actual": null
+              }
+            },
+            {
+              "name": "weather_adjustment",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": false,
+                "adjustment_count": 0
+              }
+            },
+            {
+              "name": "min_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "minimum": null,
+                "actual": 3
+              }
+            },
+            {
+              "name": "max_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "maximum": null,
+                "actual": 3
+              }
+            },
+            {
+              "name": "poi_existence",
+              "status": "failed",
+              "passed": false,
+              "details": {
+                "city_id": "hangzhou",
+                "attraction_count": 3,
+                "unresolved": [
+                  "西湖",
+                  "灵隐寺",
+                  "河坊街/南宋御街"
+                ]
+              }
+            },
+            {
+              "name": "duplicate_attractions",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "duplicates": [],
+                "unique_count": 3,
+                "attraction_count": 3
+              }
+            },
+            {
+              "name": "must_include_pois",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": []
+              }
+            },
+            {
+              "name": "forbidden_pois",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "forbidden": []
+              }
+            },
+            {
+              "name": "rain_attraction_suitability",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "rain_detected": false
+              }
+            },
+            {
+              "name": "senior_accessibility",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "senior_request": false
+              }
+            },
+            {
+              "name": "tool_evidence",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": false
+              }
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "deterministic_evaluator",
+          "real_time_api_allowed": false,
+          "contract": "ctp-research-tools-v1.0"
+        }
+      },
+      "hard_constraint_applicable_count": 3,
+      "hard_constraint_passed_count": 1,
+      "hard_constraint_failed_count": 2,
+      "hard_constraints_all_satisfied": false,
+      "hcsr": 0.3333,
+      "stsr": false,
+      "stsr_gate_applicable_count": 5,
+      "stsr_gate_passed_count": 4,
+      "stsr_gate_failed_count": 1,
+      "evaluation_hcsr": 0.0,
+      "evaluation_hcsr_applicable_count": 12,
+      "evaluation_hcsr_passed_count": 0,
+      "evaluation_hcsr_failed_count": 12,
+      "itcsr": 0.0,
+      "itcsr_applicable_count": 1,
+      "itcsr_passed_count": 0,
+      "itcsr_failed_count": 1,
+      "bpcr": 0.0,
+      "bpcr_applicable_count": 9,
+      "bpcr_passed_count": 0,
+      "bpcr_failed_count": 9,
+      "evaluation_failed_rule_ids": [
+        "G_FINAL_ANSWER_CONSISTENT",
+        "H_BUDGET_LIMIT",
+        "H_POI_GROUNDED",
+        "H_BUDGET_EVIDENCE",
+        "H_BUDGET_POLICY_VERSION",
+        "H_BUDGET_ACCOMMODATION_NIGHTS",
+        "H_BUDGET_CONTINGENCY_LOCAL_ONLY",
+        "H_BUDGET_TOTAL_FORMULA",
+        "H_BUDGET_ITINERARY_CONSISTENCY",
+        "H_BUDGET_UPGRADE_POLICY",
+        "H_BUDGET_INDEPENDENT_RECALCULATION",
+        "H_INTERCITY_SCOPE",
+        "H_TOOL_EVIDENCE",
+        "S_AGENT_SET_MATCH",
+        "S_TOOL_SET_MATCH"
+      ],
+      "evaluation_failed_rule_count": 15,
+      "agent_selection_precision": 0.0,
+      "agent_selection_recall": 0.0,
+      "agent_selection_f1": 0.0,
+      "agent_set_exact_match": false,
+      "necessary_agent_coverage": 0.0,
+      "extra_agent_count": 0,
+      "missing_agent_count": 1,
+      "duplicate_agent_count": 0,
+      "planned_actual_agent_consistency": 1.0,
+      "agent_execution_success_rate": null,
+      "tool_selection_precision": 0.0,
+      "tool_selection_recall": 0.0,
+      "tool_selection_f1": 0.0,
+      "tool_set_exact_match": false,
+      "necessary_tool_coverage": 0.0,
+      "extra_tool_count": 0,
+      "missing_tool_count": 1,
+      "duplicate_tool_count": 0,
+      "forbidden_tool_call_count": 0,
+      "planned_actual_tool_consistency": 1.0,
+      "tool_call_success_rate": null,
+      "tool_failure_count": 0,
+      "tool_failure_types": [],
+      "total_tokens": 1918.0,
+      "estimated_cost": 0.0022,
+      "standardized_estimated_cost": 0.0022,
+      "actual_cost": null,
+      "cost_per_success": null,
+      "planned_agent_count": 0,
+      "used_agent_count": 0,
+      "executed_agent_count": 0,
+      "agent_call_count": 0,
+      "successful_agent_call_count": 0,
+      "failed_agent_call_count": 0,
+      "duplicate_agent_call_count": 0,
+      "planned_tool_count": 0,
+      "called_tool_count": 0,
+      "executed_tool_count": 0,
+      "successful_tool_call_count": 0,
+      "failed_tool_call_count": 0,
+      "duplicate_tool_call_count": 0,
+      "llm_call_count": 1,
+      "llm_retry_attempt_count": 1.0,
+      "llm_retry_count": 0.0,
+      "llm_retry_error_count": 0.0,
+      "api_call_count": 0,
+      "prompt_tokens": 942.0,
+      "completion_tokens": 976.0,
+      "latency_ms": 12633.76,
+      "trace_total_duration_ms": 12626.65,
+      "llm_total_duration_ms": 12423.28
+    },
+    "error": null
+  }
+}

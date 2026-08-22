@@ -11,6 +11,8 @@
     "freeze_before_formal_results": true,
     "freeze_date_recorded": true,
     "main_dataset_id_matches": true,
+    "main_dataset_version_matches": true,
+    "benchmark_dataset_version_matches_main": true,
     "main_dataset_role_controlled": true,
     "main_dataset_not_claimed_unseen": true,
     "main_design_role_matches": true,
@@ -33,24 +35,37 @@
     "statistical_tests_frozen": true,
     "secondary_multiplicity_control_recorded": true,
     "no_tuning_after_main_freeze": true,
-    "sealed_validation_no_tuning_policy": true
+    "sealed_validation_no_tuning_policy": true,
+    "formal_hard_timeout_control_recorded": true,
+    "formal_provider_accounting_control_recorded": true,
+    "pre_formal_real_api_smoke_required": true,
+    "pre_formal_ctp20_joint_run_required": true,
+    "pre_formal_ctp20_joint_run_methods_are_four_method": true,
+    "pre_formal_task_d_required": true,
+    "pre_formal_task_e_required": true,
+    "pre_formal_task_f_required": true,
+    "pre_formal_registry_declares_all_tasks": true,
+    "decision_normalization_diagnostic_metrics_declared": true,
+    "decision_normalization_formulas_declared": true,
+    "decision_normalization_marked_as_diagnostic": true
   },
   "design": {
     "path": "experiments/academic_experiment_design_v1.json",
-    "sha256": "51ac4bdac7f5774faa15cc4b61b6b46e944e58fe9c0858a60b5fdc2ab3926421",
+    "sha256": "a67cd57d2648388c753da623dd5bdb3ae2640aab69b9279d5ff40813f89f63fb",
     "doc_path": "docs/Academic_Experiment_Design_v1.md",
-    "doc_sha256": "d93224e1686538d1b94db691b5461bcd508d161361ee41e1335267a3713c7f85",
+    "doc_sha256": "73cf2ad180d0a62f79732ce793000b984b0d3e097054826d2b8b748d1fa6cd78",
     "schema_version": "ctp-academic-experiment-design-v1",
-    "design_version": "CTP-GMAS-ACADEMIC-DESIGN-v1",
+    "design_version": "CTP-GMAS-ACADEMIC-DESIGN-v2",
     "freeze_status": "frozen_before_formal_results",
-    "freeze_date": "2026-08-19"
+    "freeze_date": "2026-08-21"
   },
   "main_benchmark": {
     "manifest_path": "experiments/benchmark.json",
-    "manifest_sha256": "b19bf0de60674d8787f1977ace99fbc321366aef8e41b9f9f7d77015dca34381",
+    "manifest_sha256": "d28490c84ed8d0bb6b15650f7bc7e229e8b4793807f813add17c8f2501703182",
     "dataset_path": "experiments/ctp100_formal_v2.json",
-    "dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
+    "dataset_sha256": "c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e",
     "dataset_id": "ctp100_formal_v2",
+    "dataset_version": "2026-08-21-formal-v3-runtime-control-freeze",
     "dataset_role": "post_development_frozen_controlled_main_benchmark",
     "case_count": 100,
     "turn_count": 130,
@@ -124,5 +139,66 @@
     "duplicate_visible_input_groups": [],
     "cross_split_duplicate_visible_input_groups": [],
     "near_duplicate_visible_input_pairs": []
+  },
+  "runtime_controls": {
+    "version": "ctp-formal-runtime-controls-v1",
+    "real_api_smoke_required": true,
+    "result_soft_timeout_seconds_env": "EXPERIMENT_RESULT_TIMEOUT_SECONDS",
+    "result_hard_timeout_seconds_env": "EXPERIMENT_RESULT_HARD_TIMEOUT_SECONDS",
+    "result_hard_timeout_seconds": 900,
+    "result_hard_timeout_mode": "subprocess_per_result",
+    "timeout_policy": "Each case-method result is isolated in a subprocess during formal runs; a hung gateway call must produce a saved failed row instead of blocking the whole benchmark.",
+    "provider_accounting": "base_url_derived_openai_compatible_provider",
+    "provider_accounting_policy": "LLM trace, manifest, smoke report, and price snapshot must derive provider from LLM_BASE_URL. VectorEngine must be recorded as vectorengine_openai_compatible.",
+    "cost_accounting": "Use provider-reported cost only when available; otherwise use frozen standardized token-cost estimates and mark actual_cost_status explicitly.",
+    "failure_retention_policy": "Timeouts, API failures, parse failures, and invalid structured outputs are retained as experimental evidence and must not be selectively deleted."
+  },
+  "pre_formal_validation": {
+    "version": "ctp-pre-formal-validation-v1",
+    "registry_file": "experiments/generated/pre_formal_validation_registry_v1.json",
+    "real_api_smoke_required": true,
+    "task_d_m0_real_api_required": true,
+    "task_e_four_method_real_api_required": true,
+    "task_f_multiturn_real_api_required": true,
+    "required_tasks": [
+      "task_d_m0_real_api",
+      "task_e_four_method_real_api",
+      "task_f_multiturn_real_api"
+    ],
+    "ctp20_four_method_joint_run_required": true,
+    "case_count": 20,
+    "methods": [
+      "llm_direct",
+      "single_agent",
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ],
+    "warning_policy": "Retry and internal provider-stability warnings are accepted only when transparently reported and when final rows have no failure, mock fallback, model fallback, or hard-timeout substitute.",
+    "acceptance_policy": "Before the full CTP100 run, execute a 20-case mixed-task four-method joint run to verify LLM stability, provider accounting, traces, latency, token/cost fields, timeout isolation, and evaluator calculability."
+  },
+  "diagnostic_metrics": {
+    "version": "ctp-decision-normalization-diagnostics-v1",
+    "decision_normalization": {
+      "paper_usage": "diagnostic_not_primary_effect_metric",
+      "unit": "agent_decision",
+      "agent_decision_filter": "non_reused_agent_decisions_only",
+      "pipeline_completion_unit": "case_method_turn_result",
+      "metrics": [
+        "raw_decision_success_rate",
+        "normalizer_recovery_rate",
+        "pipeline_completion_rate"
+      ],
+      "formulas": {
+        "raw_decision_success_rate": "raw_decision_success_count / agent_decision_total",
+        "normalizer_recovery_rate": "normalizer_recovery_count / agent_decision_total",
+        "pipeline_completion_rate": "pipeline_completion_count / result_count"
+      },
+      "interpretation": {
+        "raw_decision_success_rate": "模型原始 Agent 决策无需程序修复即可执行的比例。",
+        "normalizer_recovery_rate": "模型原始 Agent 决策不规范、但被确定性归一化程序修复后可执行的比例。",
+        "pipeline_completion_rate": "case-method-turn 级结果最终完成的比例；该指标不等同于任务质量，只用于系统稳定性诊断。"
+      },
+      "reporting_policy": "正式论文中作为诊断指标透明报告，不作为主要效果指标；M0/M1 若不存在多 Agent 决策，则 agent_decision_total 为 0，决策率记为 null，但仍统计 pipeline_completion_rate。"
+    }
   }
 }

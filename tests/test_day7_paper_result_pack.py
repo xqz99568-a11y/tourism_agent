@@ -114,12 +114,24 @@ def _write_formal_run_dir(run_dir: Path, *, independent_cases: int) -> Path:
     (run_dir / "paper_tables.md").write_text("# Paper Result Tables\n", encoding="utf-8")
     artifact_integrity = build_formal_artifact_integrity_report()
     git_commit = artifact_integrity["git"]["commit"]
+    benchmark_case_count = independent_cases
+    benchmark_turn_count = 1
     (run_dir / "formal_preflight_report.json").write_text(
         json.dumps(
             {
                 "schema_version": "ctp-formal-preflight-v1",
                 "status": "passed",
-                "run": {"run_id": "unit-formal-run", "expected_raw_run_count": 4},
+                "benchmark": {
+                    "case_count": benchmark_case_count,
+                    "total_turn_count": benchmark_turn_count,
+                },
+                "run": {
+                    "run_id": "unit-formal-run",
+                    "methods": methods,
+                    "method_count": len(methods),
+                    "repeats": 1,
+                    "expected_raw_run_count": 4,
+                },
                 "artifact_integrity": artifact_integrity,
             },
             ensure_ascii=False,
@@ -135,6 +147,10 @@ def _write_formal_run_dir(run_dir: Path, *, independent_cases: int) -> Path:
                 "git": {"commit": git_commit},
                 "dataset_id": "unit-formal-dataset",
                 "dataset_version": "v1",
+                "benchmark_structure": {
+                    "case_count": benchmark_case_count,
+                    "total_turn_count": benchmark_turn_count,
+                },
                 "methods": methods,
                 "repeats": 1,
                 "runtime_config": {
@@ -169,6 +185,7 @@ def _result(method: str, *, tokens: int, trace: dict, trace_path: Path) -> dict:
         "stsr": True,
         "evaluation_hcsr": 1.0,
         "bpcr": 1.0,
+        "bpcr_applicable_count": 1,
         "agent_selection_f1": 1.0,
         "tool_selection_f1": 1.0,
         "agent_set_exact_match": True,
@@ -177,6 +194,7 @@ def _result(method: str, *, tokens: int, trace: dict, trace_path: Path) -> dict:
         "agent_call_count": 1,
         "called_tool_count": 1,
         "total_tokens": tokens,
+        "standardized_estimated_cost": round(tokens / 5000, 4),
         "evaluation_failed_rule_ids": [],
     }
     return {
@@ -236,11 +254,12 @@ def _summary(*, independent_cases: int) -> dict:
         "unique_case_count": independent_cases,
         "independent_case_count": independent_cases,
         "methods": {
-            "llm_direct": _method_summary(tokens=100, agent_calls=0, tool_calls=0),
-            "single_agent": _method_summary(tokens=100, agent_calls=1, tool_calls=1),
-            "fixed_multi_agent": _method_summary(tokens=100, agent_calls=2, tool_calls=2),
-            "adaptive_multi_agent": _method_summary(tokens=50, agent_calls=1, tool_calls=1),
+            "llm_direct": _method_summary(tokens=100, agent_calls=0, tool_calls=0, decisions=0),
+            "single_agent": _method_summary(tokens=100, agent_calls=1, tool_calls=1, decisions=0),
+            "fixed_multi_agent": _method_summary(tokens=100, agent_calls=2, tool_calls=2, decisions=2),
+            "adaptive_multi_agent": _method_summary(tokens=50, agent_calls=1, tool_calls=1, decisions=1),
         },
+        "decision_normalization": _decision_normalization_summary(),
         "paired_statistics": {
             "comparison": "adaptive_multi_agent_vs_fixed_multi_agent",
             "pair_count": 1,
@@ -261,7 +280,8 @@ def _summary(*, independent_cases: int) -> dict:
     }
 
 
-def _method_summary(*, tokens: int, agent_calls: int, tool_calls: int) -> dict:
+def _method_summary(*, tokens: int, agent_calls: int, tool_calls: int, decisions: int) -> dict:
+    decision_summary = _decision_normalization_method_summary(decisions=decisions)
     return {
         "case_count": 1,
         "raw_run_count": 1,
@@ -279,6 +299,49 @@ def _method_summary(*, tokens: int, agent_calls: int, tool_calls: int) -> dict:
         "latency_ms_mean": 100,
         "top_failed_rules": [],
         "top_tool_failure_types": [],
+        "decision_normalization": decision_summary,
+        "agent_decision_total": decision_summary["agent_decision_total"],
+        "raw_decision_success_count": decision_summary["raw_decision_success_count"],
+        "raw_decision_success_rate": decision_summary["raw_decision_success_rate"],
+        "normalizer_recovery_count": decision_summary["normalizer_recovery_count"],
+        "normalizer_recovery_rate": decision_summary["normalizer_recovery_rate"],
+        "pipeline_completion_rate": decision_summary["pipeline_completion_rate"],
+    }
+
+
+def _decision_normalization_summary() -> dict:
+    by_method = {
+        "llm_direct": _decision_normalization_method_summary(decisions=0),
+        "single_agent": _decision_normalization_method_summary(decisions=0),
+        "fixed_multi_agent": _decision_normalization_method_summary(decisions=2),
+        "adaptive_multi_agent": _decision_normalization_method_summary(decisions=1),
+    }
+    return {
+        "schema_version": "ctp-decision-normalization-diagnostics-v1",
+        "result_count": 4,
+        "pipeline_completion_count": 4,
+        "pipeline_completion_rate": 1.0,
+        "agent_decision_total": 3,
+        "raw_decision_success_count": 3,
+        "raw_decision_success_rate": 1.0,
+        "normalizer_recovery_count": 0,
+        "normalizer_recovery_rate": 0.0,
+        "missing_agent_decision_audit_result_count": 0,
+        "by_method": by_method,
+    }
+
+
+def _decision_normalization_method_summary(*, decisions: int) -> dict:
+    return {
+        "result_count": 1,
+        "pipeline_completion_count": 1,
+        "pipeline_completion_rate": 1.0,
+        "agent_decision_total": decisions,
+        "raw_decision_success_count": decisions,
+        "raw_decision_success_rate": 1.0 if decisions else None,
+        "normalizer_recovery_count": 0,
+        "normalizer_recovery_rate": 0.0 if decisions else None,
+        "missing_agent_decision_audit_result_count": 0,
     }
 
 

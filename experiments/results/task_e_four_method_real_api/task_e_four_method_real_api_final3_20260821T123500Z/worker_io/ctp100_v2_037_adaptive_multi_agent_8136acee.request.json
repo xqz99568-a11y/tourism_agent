@@ -1,0 +1,64 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_037",
+    "user_input": "国庆去杭州玩3天，那几天的天气能提前查到吗？",
+    "task_type": "weather_query",
+    "title": "天气查询｜杭州｜国庆｜超范围",
+    "check": "说明数据范围不足，但不能把它称作工具调用失败。",
+    "slots": {
+      "destination": "hangzhou",
+      "start_date": "2026-10-01",
+      "duration_days": 3
+    },
+    "expected": {
+      "task_type": "weather_query",
+      "required_tools": [
+        "weather_query"
+      ],
+      "accepted_agent_sets": [
+        [
+          "weather"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "weather_query"
+        ]
+      ],
+      "forbidden_tools": [
+        "poi_search",
+        "budget_calculator"
+      ],
+      "hard_constraints": {
+        "destination": "hangzhou",
+        "start_date": "2026-10-01",
+        "duration_days": 3
+      },
+      "destination": "hangzhou",
+      "start_date": "2026-10-01",
+      "duration_days": 3,
+      "weather_coverage": "out_of_range",
+      "weather_required": true,
+      "weather_date_policy": "explicit_date_use_qweather_snapshot",
+      "expected_weather_coverage_status": "out_of_range",
+      "expected_weather_covered_dates": [],
+      "expected_weather_missing_dates": [
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03"
+      ],
+      "weather_snapshot_id": "ctp_qweather_20260807_v1"
+    }
+  },
+  "method": "adaptive_multi_agent",
+  "request_id": "ctp100_v2_037_adaptive_multi_agent_8136acee",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "adaptive_multi_agent",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

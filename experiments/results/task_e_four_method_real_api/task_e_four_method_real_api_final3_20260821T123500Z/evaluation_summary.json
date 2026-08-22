@@ -1,0 +1,3799 @@
+{
+  "schema_version": "ctp-evaluation-summary-v1",
+  "result_count": 80,
+  "raw_run_count": 80,
+  "quality_result_count": 80,
+  "unique_case_count": 20,
+  "method_case_count": 80,
+  "independent_case_count": 20,
+  "scenario_case_count": 0,
+  "quality_evaluation_scope": {
+    "single_turn": "all single-turn cases",
+    "multi_turn": "target_turn_only",
+    "default_target_turn": "last turn when target_turn is not specified"
+  },
+  "repeat_aggregation": {
+    "enabled": true,
+    "unit": "evaluation_unit_id",
+    "raw_result_count": 80,
+    "quality_result_count": 80,
+    "scenario_turns_are_repeats": false
+  },
+  "scenario_costs": {
+    "enabled": true,
+    "scope": {
+      "target_increment": "target turn only",
+      "scenario_total": "sum of all turns in the same scenario and repeat"
+    },
+    "scenario_count": 0,
+    "methods": {
+      "adaptive_multi_agent": {
+        "scenario_count": 0,
+        "target_turn_count": 0
+      },
+      "fixed_multi_agent": {
+        "scenario_count": 0,
+        "target_turn_count": 0
+      },
+      "llm_direct": {
+        "scenario_count": 0,
+        "target_turn_count": 0
+      },
+      "single_agent": {
+        "scenario_count": 0,
+        "target_turn_count": 0
+      }
+    }
+  },
+  "methods": {
+    "adaptive_multi_agent": {
+      "case_count": 20,
+      "raw_run_count": 20,
+      "stsr_rate": 0.8,
+      "evaluation_hcsr_mean": 0.9726,
+      "itcsr_mean": 1.0,
+      "agent_selection_f1_mean": 1.0,
+      "tool_selection_f1_mean": 1.0,
+      "latency_ms_mean": 35821.923,
+      "agent_call_count_mean": 1.25,
+      "tool_call_count_mean": 1.05,
+      "successful_case_count": 16,
+      "cost_per_success_mean": 0.0044,
+      "descriptive_statistics": {
+        "stsr": {
+          "n": 20,
+          "mean": 0.8,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "evaluation_hcsr": {
+          "n": 14,
+          "mean": 0.9726,
+          "median": 1.0,
+          "iqr": [
+            0.9375,
+            1.0
+          ],
+          "min": 0.9,
+          "max": 1.0
+        },
+        "bpcr": {
+          "n": 8,
+          "mean": 0.9406,
+          "median": 0.95,
+          "iqr": [
+            0.875,
+            1.0
+          ],
+          "min": 0.875,
+          "max": 1.0
+        },
+        "agent_selection_f1": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "tool_selection_f1": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "agent_set_exact_match": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "necessary_agent_coverage": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "extra_agent_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "duplicate_agent_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "planned_actual_agent_consistency": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "agent_execution_success_rate": {
+          "n": 14,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "tool_set_exact_match": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "necessary_tool_coverage": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "extra_tool_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "duplicate_tool_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "forbidden_tool_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "planned_actual_tool_consistency": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "tool_call_success_rate": {
+          "n": 14,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "tool_failure_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "total_tokens": {
+          "n": 20,
+          "mean": 4461.7,
+          "median": 2014.0,
+          "iqr": [
+            0.0,
+            2561.5
+          ],
+          "min": 0.0,
+          "max": 20757.0
+        },
+        "estimated_cost": {
+          "n": 14,
+          "mean": 0.005,
+          "median": 0.0023,
+          "iqr": [
+            0.0018,
+            0.0069
+          ],
+          "min": 0.0016,
+          "max": 0.0161
+        },
+        "standardized_estimated_cost": {
+          "n": 14,
+          "mean": 0.005,
+          "median": 0.0023,
+          "iqr": [
+            0.0018,
+            0.0069
+          ],
+          "min": 0.0016,
+          "max": 0.0161
+        },
+        "actual_cost": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "llm_call_count": {
+          "n": 20,
+          "mean": 1.25,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 4.0
+        },
+        "agent_llm_call_count": {
+          "n": 14,
+          "mean": 1.7857,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            2.5
+          ],
+          "min": 1.0,
+          "max": 4.0
+        },
+        "api_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "prompt_tokens": {
+          "n": 14,
+          "mean": 4402.2143,
+          "median": 1354.0,
+          "iqr": [
+            1253.75,
+            7313.25
+          ],
+          "min": 1174.0,
+          "max": 14497.0
+        },
+        "completion_tokens": {
+          "n": 14,
+          "mean": 1971.6429,
+          "median": 964.0,
+          "iqr": [
+            741.25,
+            2550.75
+          ],
+          "min": 634.0,
+          "max": 6260.0
+        },
+        "agent_prompt_tokens": {
+          "n": 14,
+          "mean": 4402.2143,
+          "median": 1354.0,
+          "iqr": [
+            1253.75,
+            7313.25
+          ],
+          "min": 1174.0,
+          "max": 14497.0
+        },
+        "agent_completion_tokens": {
+          "n": 14,
+          "mean": 1971.6429,
+          "median": 964.0,
+          "iqr": [
+            741.25,
+            2550.75
+          ],
+          "min": 634.0,
+          "max": 6260.0
+        },
+        "agent_total_tokens": {
+          "n": 14,
+          "mean": 6373.8571,
+          "median": 2412.5,
+          "iqr": [
+            2006.5,
+            9777.25
+          ],
+          "min": 1939.0,
+          "max": 20757.0
+        },
+        "successful_agent_call_count": {
+          "n": 20,
+          "mean": 1.25,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 4.0
+        },
+        "failed_agent_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "successful_tool_call_count": {
+          "n": 20,
+          "mean": 1.05,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 3.0
+        },
+        "failed_tool_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "llm_total_duration_ms": {
+          "n": 14,
+          "mean": 50881.6593,
+          "median": 13535.395,
+          "iqr": [
+            10753.9725,
+            68680.86
+          ],
+          "min": 8334.84,
+          "max": 176390.48
+        },
+        "agent_total_duration_ms": {
+          "n": 14,
+          "mean": 51026.5721,
+          "median": 13648.865,
+          "iqr": [
+            10893.6875,
+            68854.9875
+          ],
+          "min": 8481.48,
+          "max": 176544.23
+        },
+        "tool_total_duration_ms": {
+          "n": 14,
+          "mean": 10.2621,
+          "median": 8.705,
+          "iqr": [
+            7.0,
+            10.0
+          ],
+          "min": 4.0,
+          "max": 21.01
+        },
+        "api_total_duration_ms": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 35821.923,
+          "median": 11189.22,
+          "iqr": [
+            71.5975,
+            29047.075
+          ],
+          "min": 64.37,
+          "max": 176730.56
+        },
+        "agent_call_count": {
+          "n": 20,
+          "mean": 1.25,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 4.0
+        },
+        "tool_call_count": {
+          "n": 20,
+          "mean": 1.05,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 3.0
+        }
+      },
+      "top_failed_rules": [
+        {
+          "rule_id": "H_BUDGET_INDEPENDENT_RECALCULATION",
+          "count": 4
+        }
+      ],
+      "top_tool_failure_types": [],
+      "bpcr_mean": 0.9406,
+      "bpcr_applicable_count_mean": 3.6,
+      "bpcr_failed_count_mean": 0.2,
+      "agent_set_exact_match_mean": 1.0,
+      "necessary_agent_coverage_mean": 1.0,
+      "extra_agent_count_mean": 0.0,
+      "duplicate_agent_count_mean": 0.0,
+      "planned_actual_agent_consistency_mean": 1.0,
+      "agent_execution_success_rate_mean": 1.0,
+      "tool_set_exact_match_mean": 1.0,
+      "necessary_tool_coverage_mean": 1.0,
+      "extra_tool_count_mean": 0.0,
+      "duplicate_tool_count_mean": 0.0,
+      "forbidden_tool_call_count_mean": 0.0,
+      "planned_actual_tool_consistency_mean": 1.0,
+      "tool_call_success_rate_mean": 1.0,
+      "tool_failure_count_mean": 0.0,
+      "total_tokens_mean": 4461.7,
+      "estimated_cost_mean": 0.005,
+      "standardized_estimated_cost_mean": 0.005,
+      "actual_cost_mean": null,
+      "llm_call_count_mean": 1.25,
+      "agent_llm_call_count_mean": 1.7857,
+      "api_call_count_mean": 0.0,
+      "prompt_tokens_mean": 4402.2143,
+      "completion_tokens_mean": 1971.6429,
+      "agent_prompt_tokens_mean": 4402.2143,
+      "agent_completion_tokens_mean": 1971.6429,
+      "agent_total_tokens_mean": 6373.8571,
+      "planned_agent_count_mean": 1.25,
+      "used_agent_count_mean": 1.25,
+      "executed_agent_count_mean": 1.25,
+      "successful_agent_call_count_mean": 1.25,
+      "failed_agent_call_count_mean": 0.0,
+      "duplicate_agent_call_count_mean": 0.0,
+      "planned_executed_agent_coverage_mean": 1.0,
+      "planned_tool_count_mean": 1.05,
+      "called_tool_count_mean": 1.05,
+      "executed_tool_count_mean": 1.05,
+      "successful_tool_call_count_mean": 1.05,
+      "failed_tool_call_count_mean": 0.0,
+      "duplicate_tool_call_count_mean": 0.0,
+      "planned_executed_tool_coverage_mean": 1.0,
+      "llm_total_duration_ms_mean": 50881.6593,
+      "agent_total_duration_ms_mean": 51026.5721,
+      "tool_total_duration_ms_mean": 10.2621,
+      "api_total_duration_ms_mean": null,
+      "stage_total_duration_ms_mean": null
+    },
+    "fixed_multi_agent": {
+      "case_count": 20,
+      "raw_run_count": 20,
+      "stsr_rate": 0.8,
+      "evaluation_hcsr_mean": 0.9726,
+      "itcsr_mean": 1.0,
+      "agent_selection_f1_mean": 1.0,
+      "tool_selection_f1_mean": 1.0,
+      "latency_ms_mean": 23004.481,
+      "agent_call_count_mean": 1.25,
+      "tool_call_count_mean": 1.05,
+      "successful_case_count": 16,
+      "cost_per_success_mean": 0.0046,
+      "descriptive_statistics": {
+        "stsr": {
+          "n": 20,
+          "mean": 0.8,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "evaluation_hcsr": {
+          "n": 14,
+          "mean": 0.9726,
+          "median": 1.0,
+          "iqr": [
+            0.9375,
+            1.0
+          ],
+          "min": 0.9,
+          "max": 1.0
+        },
+        "bpcr": {
+          "n": 8,
+          "mean": 0.9406,
+          "median": 0.95,
+          "iqr": [
+            0.875,
+            1.0
+          ],
+          "min": 0.875,
+          "max": 1.0
+        },
+        "agent_selection_f1": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "tool_selection_f1": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "agent_set_exact_match": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "necessary_agent_coverage": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "extra_agent_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "duplicate_agent_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "planned_actual_agent_consistency": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "agent_execution_success_rate": {
+          "n": 14,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "tool_set_exact_match": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "necessary_tool_coverage": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "extra_tool_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "duplicate_tool_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "forbidden_tool_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "planned_actual_tool_consistency": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "tool_call_success_rate": {
+          "n": 14,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "tool_failure_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "total_tokens": {
+          "n": 20,
+          "mean": 4846.15,
+          "median": 1925.0,
+          "iqr": [
+            0.0,
+            2547.5
+          ],
+          "min": 0.0,
+          "max": 22263.0
+        },
+        "estimated_cost": {
+          "n": 14,
+          "mean": 0.0053,
+          "median": 0.0022,
+          "iqr": [
+            0.0015,
+            0.0078
+          ],
+          "min": 0.0014,
+          "max": 0.0151
+        },
+        "standardized_estimated_cost": {
+          "n": 14,
+          "mean": 0.0053,
+          "median": 0.0022,
+          "iqr": [
+            0.0015,
+            0.0078
+          ],
+          "min": 0.0014,
+          "max": 0.0151
+        },
+        "actual_cost": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "llm_call_count": {
+          "n": 20,
+          "mean": 1.25,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 4.0
+        },
+        "agent_llm_call_count": {
+          "n": 14,
+          "mean": 1.7857,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            2.5
+          ],
+          "min": 1.0,
+          "max": 4.0
+        },
+        "api_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "prompt_tokens": {
+          "n": 14,
+          "mean": 4882.8571,
+          "median": 1354.5,
+          "iqr": [
+            1254.25,
+            6534.0
+          ],
+          "min": 1174.0,
+          "max": 16795.0
+        },
+        "completion_tokens": {
+          "n": 14,
+          "mean": 2040.2143,
+          "median": 935.0,
+          "iqr": [
+            620.75,
+            3070.5
+          ],
+          "min": 522.0,
+          "max": 5673.0
+        },
+        "agent_prompt_tokens": {
+          "n": 14,
+          "mean": 4882.8571,
+          "median": 1354.5,
+          "iqr": [
+            1254.25,
+            6534.0
+          ],
+          "min": 1174.0,
+          "max": 16795.0
+        },
+        "agent_completion_tokens": {
+          "n": 14,
+          "mean": 2040.2143,
+          "median": 935.0,
+          "iqr": [
+            620.75,
+            3070.5
+          ],
+          "min": 522.0,
+          "max": 5673.0
+        },
+        "agent_total_tokens": {
+          "n": 14,
+          "mean": 6923.0714,
+          "median": 2293.5,
+          "iqr": [
+            1921.0,
+            9601.25
+          ],
+          "min": 1829.0,
+          "max": 22263.0
+        },
+        "successful_agent_call_count": {
+          "n": 20,
+          "mean": 1.25,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 4.0
+        },
+        "failed_agent_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "successful_tool_call_count": {
+          "n": 20,
+          "mean": 1.05,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 3.0
+        },
+        "failed_tool_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "llm_total_duration_ms": {
+          "n": 14,
+          "mean": 32572.1157,
+          "median": 14801.29,
+          "iqr": [
+            13103.1025,
+            39453.6175
+          ],
+          "min": 7535.55,
+          "max": 145372.32
+        },
+        "agent_total_duration_ms": {
+          "n": 14,
+          "mean": 32723.2971,
+          "median": 14944.94,
+          "iqr": [
+            13245.7575,
+            39607.275
+          ],
+          "min": 7685.91,
+          "max": 145542.63
+        },
+        "tool_total_duration_ms": {
+          "n": 14,
+          "mean": 10.855,
+          "median": 8.505,
+          "iqr": [
+            7.17,
+            10.0
+          ],
+          "min": 6.0,
+          "max": 22.0
+        },
+        "api_total_duration_ms": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 23004.481,
+          "median": 13379.615,
+          "iqr": [
+            67.6525,
+            24753.155
+          ],
+          "min": 63.0,
+          "max": 145713.24
+        },
+        "agent_call_count": {
+          "n": 20,
+          "mean": 1.25,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 4.0
+        },
+        "tool_call_count": {
+          "n": 20,
+          "mean": 1.05,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 3.0
+        }
+      },
+      "top_failed_rules": [
+        {
+          "rule_id": "H_BUDGET_INDEPENDENT_RECALCULATION",
+          "count": 4
+        }
+      ],
+      "top_tool_failure_types": [],
+      "bpcr_mean": 0.9406,
+      "bpcr_applicable_count_mean": 3.6,
+      "bpcr_failed_count_mean": 0.2,
+      "agent_set_exact_match_mean": 1.0,
+      "necessary_agent_coverage_mean": 1.0,
+      "extra_agent_count_mean": 0.0,
+      "duplicate_agent_count_mean": 0.0,
+      "planned_actual_agent_consistency_mean": 1.0,
+      "agent_execution_success_rate_mean": 1.0,
+      "tool_set_exact_match_mean": 1.0,
+      "necessary_tool_coverage_mean": 1.0,
+      "extra_tool_count_mean": 0.0,
+      "duplicate_tool_count_mean": 0.0,
+      "forbidden_tool_call_count_mean": 0.0,
+      "planned_actual_tool_consistency_mean": 1.0,
+      "tool_call_success_rate_mean": 1.0,
+      "tool_failure_count_mean": 0.0,
+      "total_tokens_mean": 4846.15,
+      "estimated_cost_mean": 0.0053,
+      "standardized_estimated_cost_mean": 0.0053,
+      "actual_cost_mean": null,
+      "llm_call_count_mean": 1.25,
+      "agent_llm_call_count_mean": 1.7857,
+      "api_call_count_mean": 0.0,
+      "prompt_tokens_mean": 4882.8571,
+      "completion_tokens_mean": 2040.2143,
+      "agent_prompt_tokens_mean": 4882.8571,
+      "agent_completion_tokens_mean": 2040.2143,
+      "agent_total_tokens_mean": 6923.0714,
+      "planned_agent_count_mean": 1.25,
+      "used_agent_count_mean": 1.25,
+      "executed_agent_count_mean": 1.25,
+      "successful_agent_call_count_mean": 1.25,
+      "failed_agent_call_count_mean": 0.0,
+      "duplicate_agent_call_count_mean": 0.0,
+      "planned_executed_agent_coverage_mean": 1.0,
+      "planned_tool_count_mean": 1.05,
+      "called_tool_count_mean": 1.05,
+      "executed_tool_count_mean": 1.05,
+      "successful_tool_call_count_mean": 1.05,
+      "failed_tool_call_count_mean": 0.0,
+      "duplicate_tool_call_count_mean": 0.0,
+      "planned_executed_tool_coverage_mean": 1.0,
+      "llm_total_duration_ms_mean": 32572.1157,
+      "agent_total_duration_ms_mean": 32723.2971,
+      "tool_total_duration_ms_mean": 10.855,
+      "api_total_duration_ms_mean": null,
+      "stage_total_duration_ms_mean": null
+    },
+    "llm_direct": {
+      "case_count": 20,
+      "raw_run_count": 20,
+      "stsr_rate": 0.05,
+      "evaluation_hcsr_mean": 0.1844,
+      "itcsr_mean": 0.0,
+      "agent_selection_f1_mean": 0.3,
+      "tool_selection_f1_mean": 0.3,
+      "latency_ms_mean": 13978.8115,
+      "agent_call_count_mean": 0.0,
+      "tool_call_count_mean": 0.0,
+      "successful_case_count": 1,
+      "cost_per_success_mean": 0.0458,
+      "descriptive_statistics": {
+        "stsr": {
+          "n": 20,
+          "mean": 0.05,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "evaluation_hcsr": {
+          "n": 14,
+          "mean": 0.1844,
+          "median": 0.2086,
+          "iqr": [
+            0.0,
+            0.2794
+          ],
+          "min": 0.0,
+          "max": 0.5
+        },
+        "bpcr": {
+          "n": 8,
+          "mean": 0.0139,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.1111
+        },
+        "agent_selection_f1": {
+          "n": 20,
+          "mean": 0.3,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "tool_selection_f1": {
+          "n": 20,
+          "mean": 0.3,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "agent_set_exact_match": {
+          "n": 20,
+          "mean": 0.3,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "necessary_agent_coverage": {
+          "n": 20,
+          "mean": 0.3,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "extra_agent_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "duplicate_agent_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "planned_actual_agent_consistency": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "agent_execution_success_rate": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "tool_set_exact_match": {
+          "n": 20,
+          "mean": 0.3,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "necessary_tool_coverage": {
+          "n": 20,
+          "mean": 0.3,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "extra_tool_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "duplicate_tool_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "forbidden_tool_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "planned_actual_tool_consistency": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "tool_call_success_rate": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "tool_failure_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "total_tokens": {
+          "n": 20,
+          "mean": 1915.6,
+          "median": 1818.0,
+          "iqr": [
+            1671.25,
+            1916.75
+          ],
+          "min": 984.0,
+          "max": 3926.0
+        },
+        "estimated_cost": {
+          "n": 20,
+          "mean": 0.0023,
+          "median": 0.0021,
+          "iqr": [
+            0.0018,
+            0.0024
+          ],
+          "min": 0.0006,
+          "max": 0.0062
+        },
+        "standardized_estimated_cost": {
+          "n": 20,
+          "mean": 0.0023,
+          "median": 0.0021,
+          "iqr": [
+            0.0018,
+            0.0024
+          ],
+          "min": 0.0006,
+          "max": 0.0062
+        },
+        "actual_cost": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "llm_call_count": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "agent_llm_call_count": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "api_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "prompt_tokens": {
+          "n": 20,
+          "mean": 881.15,
+          "median": 888.5,
+          "iqr": [
+            830.25,
+            933.0
+          ],
+          "min": 786.0,
+          "max": 988.0
+        },
+        "completion_tokens": {
+          "n": 20,
+          "mean": 1034.45,
+          "median": 936.5,
+          "iqr": [
+            774.0,
+            1064.75
+          ],
+          "min": 198.0,
+          "max": 2993.0
+        },
+        "agent_prompt_tokens": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "agent_completion_tokens": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "agent_total_tokens": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "successful_agent_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "failed_agent_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "successful_tool_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "failed_tool_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "llm_total_duration_ms": {
+          "n": 20,
+          "mean": 13768.289,
+          "median": 11455.335,
+          "iqr": [
+            10298.8075,
+            13866.145
+          ],
+          "min": 6777.51,
+          "max": 36649.97
+        },
+        "agent_total_duration_ms": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "tool_total_duration_ms": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "api_total_duration_ms": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 13978.8115,
+          "median": 11679.485,
+          "iqr": [
+            10509.305,
+            14074.74
+          ],
+          "min": 6976.35,
+          "max": 36860.46
+        },
+        "agent_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "tool_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        }
+      },
+      "top_failed_rules": [
+        {
+          "rule_id": "G_FINAL_ANSWER_CONSISTENT",
+          "count": 15
+        },
+        {
+          "rule_id": "H_TOOL_EVIDENCE",
+          "count": 14
+        },
+        {
+          "rule_id": "S_AGENT_SET_MATCH",
+          "count": 14
+        },
+        {
+          "rule_id": "S_TOOL_SET_MATCH",
+          "count": 14
+        },
+        {
+          "rule_id": "H_POI_GROUNDED",
+          "count": 10
+        },
+        {
+          "rule_id": "H_BUDGET_ACCOMMODATION_NIGHTS",
+          "count": 8
+        },
+        {
+          "rule_id": "H_BUDGET_CONTINGENCY_LOCAL_ONLY",
+          "count": 8
+        },
+        {
+          "rule_id": "H_BUDGET_EVIDENCE",
+          "count": 8
+        },
+        {
+          "rule_id": "H_BUDGET_INDEPENDENT_RECALCULATION",
+          "count": 8
+        },
+        {
+          "rule_id": "H_BUDGET_POLICY_VERSION",
+          "count": 8
+        }
+      ],
+      "top_tool_failure_types": [],
+      "bpcr_mean": 0.0139,
+      "bpcr_applicable_count_mean": 3.6,
+      "bpcr_failed_count_mean": 3.55,
+      "agent_set_exact_match_mean": 0.3,
+      "necessary_agent_coverage_mean": 0.3,
+      "extra_agent_count_mean": 0.0,
+      "duplicate_agent_count_mean": 0.0,
+      "planned_actual_agent_consistency_mean": 1.0,
+      "agent_execution_success_rate_mean": null,
+      "tool_set_exact_match_mean": 0.3,
+      "necessary_tool_coverage_mean": 0.3,
+      "extra_tool_count_mean": 0.0,
+      "duplicate_tool_count_mean": 0.0,
+      "forbidden_tool_call_count_mean": 0.0,
+      "planned_actual_tool_consistency_mean": 1.0,
+      "tool_call_success_rate_mean": null,
+      "tool_failure_count_mean": 0.0,
+      "total_tokens_mean": 1915.6,
+      "estimated_cost_mean": 0.0023,
+      "standardized_estimated_cost_mean": 0.0023,
+      "actual_cost_mean": null,
+      "llm_call_count_mean": 1.0,
+      "agent_llm_call_count_mean": null,
+      "api_call_count_mean": 0.0,
+      "prompt_tokens_mean": 881.15,
+      "completion_tokens_mean": 1034.45,
+      "agent_prompt_tokens_mean": null,
+      "agent_completion_tokens_mean": null,
+      "agent_total_tokens_mean": null,
+      "planned_agent_count_mean": 0.0,
+      "used_agent_count_mean": 0.0,
+      "executed_agent_count_mean": 0.0,
+      "successful_agent_call_count_mean": 0.0,
+      "failed_agent_call_count_mean": 0.0,
+      "duplicate_agent_call_count_mean": 0.0,
+      "planned_executed_agent_coverage_mean": null,
+      "planned_tool_count_mean": 0.0,
+      "called_tool_count_mean": 0.0,
+      "executed_tool_count_mean": 0.0,
+      "successful_tool_call_count_mean": 0.0,
+      "failed_tool_call_count_mean": 0.0,
+      "duplicate_tool_call_count_mean": 0.0,
+      "planned_executed_tool_coverage_mean": null,
+      "llm_total_duration_ms_mean": 13768.289,
+      "agent_total_duration_ms_mean": null,
+      "tool_total_duration_ms_mean": null,
+      "api_total_duration_ms_mean": null,
+      "stage_total_duration_ms_mean": null
+    },
+    "single_agent": {
+      "case_count": 20,
+      "raw_run_count": 20,
+      "stsr_rate": 0.5,
+      "evaluation_hcsr_mean": 0.8812,
+      "itcsr_mean": 0.9583,
+      "agent_selection_f1_mean": 0.3,
+      "tool_selection_f1_mean": 0.965,
+      "latency_ms_mean": 16059.6035,
+      "agent_call_count_mean": 0.7,
+      "tool_call_count_mean": 1.2,
+      "successful_case_count": 10,
+      "cost_per_success_mean": 0.0017,
+      "descriptive_statistics": {
+        "stsr": {
+          "n": 20,
+          "mean": 0.5,
+          "median": 0.5,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "evaluation_hcsr": {
+          "n": 14,
+          "mean": 0.8812,
+          "median": 0.871,
+          "iqr": [
+            0.8046,
+            0.9881
+          ],
+          "min": 0.75,
+          "max": 1.0
+        },
+        "bpcr": {
+          "n": 8,
+          "mean": 0.8361,
+          "median": 0.8264,
+          "iqr": [
+            0.75,
+            0.9023
+          ],
+          "min": 0.7273,
+          "max": 1.0
+        },
+        "agent_selection_f1": {
+          "n": 20,
+          "mean": 0.3,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "tool_selection_f1": {
+          "n": 20,
+          "mean": 0.965,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 0.5,
+          "max": 1.0
+        },
+        "agent_set_exact_match": {
+          "n": 20,
+          "mean": 0.3,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "necessary_agent_coverage": {
+          "n": 20,
+          "mean": 0.3,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "extra_agent_count": {
+          "n": 20,
+          "mean": 0.7,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "duplicate_agent_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "planned_actual_agent_consistency": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "agent_execution_success_rate": {
+          "n": 14,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "tool_set_exact_match": {
+          "n": 20,
+          "mean": 0.9,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "necessary_tool_coverage": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "extra_tool_count": {
+          "n": 20,
+          "mean": 0.15,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 2.0
+        },
+        "duplicate_tool_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "forbidden_tool_call_count": {
+          "n": 20,
+          "mean": 0.15,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 2.0
+        },
+        "planned_actual_tool_consistency": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "tool_call_success_rate": {
+          "n": 14,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "tool_failure_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "total_tokens": {
+          "n": 20,
+          "mean": 2849.75,
+          "median": 1672.5,
+          "iqr": [
+            0.0,
+            1803.25
+          ],
+          "min": 0.0,
+          "max": 14535.0
+        },
+        "estimated_cost": {
+          "n": 14,
+          "mean": 0.0012,
+          "median": 0.0006,
+          "iqr": [
+            0.0005,
+            0.0008
+          ],
+          "min": 0.0005,
+          "max": 0.004
+        },
+        "standardized_estimated_cost": {
+          "n": 14,
+          "mean": 0.0012,
+          "median": 0.0006,
+          "iqr": [
+            0.0005,
+            0.0008
+          ],
+          "min": 0.0005,
+          "max": 0.004
+        },
+        "actual_cost": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "llm_call_count": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 3.0
+        },
+        "agent_llm_call_count": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "api_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "prompt_tokens": {
+          "n": 14,
+          "mean": 3963.8571,
+          "median": 1663.0,
+          "iqr": [
+            1618.25,
+            1730.5
+          ],
+          "min": 1572.0,
+          "max": 14333.0
+        },
+        "completion_tokens": {
+          "n": 14,
+          "mean": 107.2143,
+          "median": 83.5,
+          "iqr": [
+            40.0,
+            163.0
+          ],
+          "min": 37.0,
+          "max": 250.0
+        },
+        "agent_prompt_tokens": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "agent_completion_tokens": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "agent_total_tokens": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "successful_agent_call_count": {
+          "n": 20,
+          "mean": 0.7,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "failed_agent_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "successful_tool_call_count": {
+          "n": 20,
+          "mean": 1.2,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.5
+          ],
+          "min": 0.0,
+          "max": 3.0
+        },
+        "failed_tool_call_count": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "llm_total_duration_ms": {
+          "n": 14,
+          "mean": 22648.2886,
+          "median": 5549.285,
+          "iqr": [
+            4645.9975,
+            16943.4625
+          ],
+          "min": 3653.78,
+          "max": 113302.6
+        },
+        "agent_total_duration_ms": {
+          "n": 14,
+          "mean": 22673.3693,
+          "median": 5575.32,
+          "iqr": [
+            4660.225,
+            16981.4825
+          ],
+          "min": 3666.37,
+          "max": 113348.49
+        },
+        "tool_total_duration_ms": {
+          "n": 14,
+          "mean": 15.8279,
+          "median": 13.845,
+          "iqr": [
+            11.25,
+            21.2525
+          ],
+          "min": 7.0,
+          "max": 27.0
+        },
+        "api_total_duration_ms": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "latency_ms": {
+          "n": 20,
+          "mean": 16059.6035,
+          "median": 4884.265,
+          "iqr": [
+            69.7675,
+            7068.9
+          ],
+          "min": 62.82,
+          "max": 113651.5
+        },
+        "agent_call_count": {
+          "n": 20,
+          "mean": 0.7,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "tool_call_count": {
+          "n": 20,
+          "mean": 1.2,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.5
+          ],
+          "min": 0.0,
+          "max": 3.0
+        }
+      },
+      "top_failed_rules": [
+        {
+          "rule_id": "S_AGENT_SET_MATCH",
+          "count": 14
+        },
+        {
+          "rule_id": "H_BUDGET_INDEPENDENT_RECALCULATION",
+          "count": 6
+        },
+        {
+          "rule_id": "H_BUDGET_UPGRADE_POLICY",
+          "count": 3
+        },
+        {
+          "rule_id": "H_ATTRACTION_COUNT_BOUNDS",
+          "count": 3
+        },
+        {
+          "rule_id": "H_BUDGET_ITINERARY_CONSISTENCY",
+          "count": 2
+        },
+        {
+          "rule_id": "S_FORBIDDEN_GENERATION_TOOLS",
+          "count": 2
+        },
+        {
+          "rule_id": "S_TOOL_SET_MATCH",
+          "count": 2
+        },
+        {
+          "rule_id": "H_NO_DATE_WEATHER_REMINDER",
+          "count": 1
+        },
+        {
+          "rule_id": "H_BUDGET_LIMIT",
+          "count": 1
+        },
+        {
+          "rule_id": "H_INTERCITY_SCOPE",
+          "count": 1
+        }
+      ],
+      "top_tool_failure_types": [],
+      "bpcr_mean": 0.8362,
+      "bpcr_applicable_count_mean": 3.75,
+      "bpcr_failed_count_mean": 0.6,
+      "agent_set_exact_match_mean": 0.3,
+      "necessary_agent_coverage_mean": 0.3,
+      "extra_agent_count_mean": 0.7,
+      "duplicate_agent_count_mean": 0.0,
+      "planned_actual_agent_consistency_mean": 1.0,
+      "agent_execution_success_rate_mean": 1.0,
+      "tool_set_exact_match_mean": 0.9,
+      "necessary_tool_coverage_mean": 1.0,
+      "extra_tool_count_mean": 0.15,
+      "duplicate_tool_count_mean": 0.0,
+      "forbidden_tool_call_count_mean": 0.15,
+      "planned_actual_tool_consistency_mean": 1.0,
+      "tool_call_success_rate_mean": 1.0,
+      "tool_failure_count_mean": 0.0,
+      "total_tokens_mean": 2849.75,
+      "estimated_cost_mean": 0.0012,
+      "standardized_estimated_cost_mean": 0.0012,
+      "actual_cost_mean": null,
+      "llm_call_count_mean": 1.0,
+      "agent_llm_call_count_mean": null,
+      "api_call_count_mean": 0.0,
+      "prompt_tokens_mean": 3963.8571,
+      "completion_tokens_mean": 107.2143,
+      "agent_prompt_tokens_mean": null,
+      "agent_completion_tokens_mean": null,
+      "agent_total_tokens_mean": null,
+      "planned_agent_count_mean": 0.7,
+      "used_agent_count_mean": 0.7,
+      "executed_agent_count_mean": 0.7,
+      "successful_agent_call_count_mean": 0.7,
+      "failed_agent_call_count_mean": 0.0,
+      "duplicate_agent_call_count_mean": 0.0,
+      "planned_executed_agent_coverage_mean": 1.0,
+      "planned_tool_count_mean": 1.2,
+      "called_tool_count_mean": 1.2,
+      "executed_tool_count_mean": 1.2,
+      "successful_tool_call_count_mean": 1.2,
+      "failed_tool_call_count_mean": 0.0,
+      "duplicate_tool_call_count_mean": 0.0,
+      "planned_executed_tool_coverage_mean": 1.0,
+      "llm_total_duration_ms_mean": 22648.2886,
+      "agent_total_duration_ms_mean": 22673.3693,
+      "tool_total_duration_ms_mean": 15.8279,
+      "api_total_duration_ms_mean": null,
+      "stage_total_duration_ms_mean": null
+    }
+  },
+  "paired_m3_vs_m2": {
+    "pair_count": 20,
+    "stsr_rate_delta": 0.0,
+    "evaluation_hcsr_delta_mean": 0.0,
+    "itcsr_delta_mean": 0.0,
+    "bpcr_delta_mean": 0.0,
+    "agent_call_count_delta_mean": 0.0,
+    "tool_call_count_delta_mean": 0.0
+  },
+  "paired_statistics": {
+    "comparison": "adaptive_multi_agent_vs_fixed_multi_agent",
+    "pair_count": 20,
+    "bootstrap_samples": 2000,
+    "bootstrap_seed": 20260725,
+    "metrics": {
+      "stsr": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 0.8,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 0.8,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": {
+          "m3_only_success": 0,
+          "m2_only_success": 0,
+          "discordant_pairs": 0,
+          "p_value": 1.0,
+          "method": "exact_binomial_two_sided"
+        },
+        "wilcoxon_signed_rank": null
+      },
+      "evaluation_hcsr": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 0.9726,
+          "median": 1.0,
+          "iqr": [
+            0.9375,
+            1.0
+          ],
+          "min": 0.9,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 14,
+          "mean": 0.9726,
+          "median": 1.0,
+          "iqr": [
+            0.9375,
+            1.0
+          ],
+          "min": 0.9,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 14,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "itcsr": {
+        "pair_count": 8,
+        "m3": {
+          "n": 8,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 8,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 8,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "bpcr": {
+        "pair_count": 8,
+        "m3": {
+          "n": 8,
+          "mean": 0.9406,
+          "median": 0.95,
+          "iqr": [
+            0.875,
+            1.0
+          ],
+          "min": 0.875,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 8,
+          "mean": 0.9406,
+          "median": 0.95,
+          "iqr": [
+            0.875,
+            1.0
+          ],
+          "min": 0.875,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 8,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "agent_selection_f1": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "tool_selection_f1": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "agent_set_exact_match": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": {
+          "m3_only_success": 0,
+          "m2_only_success": 0,
+          "discordant_pairs": 0,
+          "p_value": 1.0,
+          "method": "exact_binomial_two_sided"
+        },
+        "wilcoxon_signed_rank": null
+      },
+      "necessary_agent_coverage": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "planned_actual_agent_consistency": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": {
+          "m3_only_success": 0,
+          "m2_only_success": 0,
+          "discordant_pairs": 0,
+          "p_value": 1.0,
+          "method": "exact_binomial_two_sided"
+        },
+        "wilcoxon_signed_rank": null
+      },
+      "agent_execution_success_rate": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 14,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 14,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "tool_set_exact_match": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": {
+          "m3_only_success": 0,
+          "m2_only_success": 0,
+          "discordant_pairs": 0,
+          "p_value": 1.0,
+          "method": "exact_binomial_two_sided"
+        },
+        "wilcoxon_signed_rank": null
+      },
+      "necessary_tool_coverage": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "planned_actual_tool_consistency": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": {
+          "m3_only_success": 0,
+          "m2_only_success": 0,
+          "discordant_pairs": 0,
+          "p_value": 1.0,
+          "method": "exact_binomial_two_sided"
+        },
+        "wilcoxon_signed_rank": null
+      },
+      "tool_call_success_rate": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "m2": {
+          "n": 14,
+          "mean": 1.0,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            1.0
+          ],
+          "min": 1.0,
+          "max": 1.0
+        },
+        "delta": {
+          "n": 14,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "total_tokens": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 4461.7,
+          "median": 2014.0,
+          "iqr": [
+            0.0,
+            2561.5
+          ],
+          "min": 0.0,
+          "max": 20757.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 4846.15,
+          "median": 1925.0,
+          "iqr": [
+            0.0,
+            2547.5
+          ],
+          "min": 0.0,
+          "max": 22263.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": -384.45,
+          "median": 0.0,
+          "iqr": [
+            -43.25,
+            113.0
+          ],
+          "min": -9021.0,
+          "max": 2406.0,
+          "bootstrap_ci_95": [
+            -1449.8463,
+            338.815
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 14,
+          "w_plus": 59.0,
+          "w_minus": 46.0,
+          "statistic": 46.0,
+          "p_value": 0.7034,
+          "method": "exact_signed_rank"
+        }
+      },
+      "estimated_cost": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 0.005,
+          "median": 0.0023,
+          "iqr": [
+            0.0018,
+            0.0069
+          ],
+          "min": 0.0016,
+          "max": 0.0161
+        },
+        "m2": {
+          "n": 14,
+          "mean": 0.0053,
+          "median": 0.0022,
+          "iqr": [
+            0.0015,
+            0.0078
+          ],
+          "min": 0.0014,
+          "max": 0.0151
+        },
+        "delta": {
+          "n": 14,
+          "mean": -0.0003,
+          "median": 0.0002,
+          "iqr": [
+            -0.0002,
+            0.0003
+          ],
+          "min": -0.0069,
+          "max": 0.0014,
+          "bootstrap_ci_95": [
+            -0.0014,
+            0.0005
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 14,
+          "w_plus": 67.5,
+          "w_minus": 37.5,
+          "statistic": 37.5,
+          "p_value": 0.364,
+          "method": "exact_signed_rank"
+        }
+      },
+      "standardized_estimated_cost": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 0.005,
+          "median": 0.0023,
+          "iqr": [
+            0.0018,
+            0.0069
+          ],
+          "min": 0.0016,
+          "max": 0.0161
+        },
+        "m2": {
+          "n": 14,
+          "mean": 0.0053,
+          "median": 0.0022,
+          "iqr": [
+            0.0015,
+            0.0078
+          ],
+          "min": 0.0014,
+          "max": 0.0151
+        },
+        "delta": {
+          "n": 14,
+          "mean": -0.0003,
+          "median": 0.0002,
+          "iqr": [
+            -0.0002,
+            0.0003
+          ],
+          "min": -0.0069,
+          "max": 0.0014,
+          "bootstrap_ci_95": [
+            -0.0014,
+            0.0005
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 14,
+          "w_plus": 67.5,
+          "w_minus": 37.5,
+          "statistic": 37.5,
+          "p_value": 0.364,
+          "method": "exact_signed_rank"
+        }
+      },
+      "actual_cost": {
+        "pair_count": 0,
+        "m3": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "m2": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null,
+          "bootstrap_ci_95": null
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "llm_call_count": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 1.25,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 4.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 1.25,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 4.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "agent_llm_call_count": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 1.7857,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            2.5
+          ],
+          "min": 1.0,
+          "max": 4.0
+        },
+        "m2": {
+          "n": 14,
+          "mean": 1.7857,
+          "median": 1.0,
+          "iqr": [
+            1.0,
+            2.5
+          ],
+          "min": 1.0,
+          "max": 4.0
+        },
+        "delta": {
+          "n": 14,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "api_call_count": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "prompt_tokens": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 4402.2143,
+          "median": 1354.0,
+          "iqr": [
+            1253.75,
+            7313.25
+          ],
+          "min": 1174.0,
+          "max": 14497.0
+        },
+        "m2": {
+          "n": 14,
+          "mean": 4882.8571,
+          "median": 1354.5,
+          "iqr": [
+            1254.25,
+            6534.0
+          ],
+          "min": 1174.0,
+          "max": 16795.0
+        },
+        "delta": {
+          "n": 14,
+          "mean": -480.6429,
+          "median": 0.0,
+          "iqr": [
+            -2.0,
+            0.0
+          ],
+          "min": -6352.0,
+          "max": 2240.0,
+          "bootstrap_ci_95": [
+            -1550.8625,
+            319.4304
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 8,
+          "w_plus": 7.0,
+          "w_minus": 29.0,
+          "statistic": 7.0,
+          "p_value": 0.1484,
+          "method": "exact_signed_rank"
+        }
+      },
+      "completion_tokens": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 1971.6429,
+          "median": 964.0,
+          "iqr": [
+            741.25,
+            2550.75
+          ],
+          "min": 634.0,
+          "max": 6260.0
+        },
+        "m2": {
+          "n": 14,
+          "mean": 2040.2143,
+          "median": 935.0,
+          "iqr": [
+            620.75,
+            3070.5
+          ],
+          "min": 522.0,
+          "max": 5673.0
+        },
+        "delta": {
+          "n": 14,
+          "mean": -68.5714,
+          "median": 113.0,
+          "iqr": [
+            -63.25,
+            161.75
+          ],
+          "min": -2669.0,
+          "max": 706.0,
+          "bootstrap_ci_95": [
+            -527.9125,
+            249.7393
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 14,
+          "w_plus": 69.0,
+          "w_minus": 36.0,
+          "statistic": 36.0,
+          "p_value": 0.3258,
+          "method": "exact_signed_rank"
+        }
+      },
+      "agent_prompt_tokens": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 4402.2143,
+          "median": 1354.0,
+          "iqr": [
+            1253.75,
+            7313.25
+          ],
+          "min": 1174.0,
+          "max": 14497.0
+        },
+        "m2": {
+          "n": 14,
+          "mean": 4882.8571,
+          "median": 1354.5,
+          "iqr": [
+            1254.25,
+            6534.0
+          ],
+          "min": 1174.0,
+          "max": 16795.0
+        },
+        "delta": {
+          "n": 14,
+          "mean": -480.6429,
+          "median": 0.0,
+          "iqr": [
+            -2.0,
+            0.0
+          ],
+          "min": -6352.0,
+          "max": 2240.0,
+          "bootstrap_ci_95": [
+            -1550.7196,
+            316.5714
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 8,
+          "w_plus": 7.0,
+          "w_minus": 29.0,
+          "statistic": 7.0,
+          "p_value": 0.1484,
+          "method": "exact_signed_rank"
+        }
+      },
+      "agent_completion_tokens": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 1971.6429,
+          "median": 964.0,
+          "iqr": [
+            741.25,
+            2550.75
+          ],
+          "min": 634.0,
+          "max": 6260.0
+        },
+        "m2": {
+          "n": 14,
+          "mean": 2040.2143,
+          "median": 935.0,
+          "iqr": [
+            620.75,
+            3070.5
+          ],
+          "min": 522.0,
+          "max": 5673.0
+        },
+        "delta": {
+          "n": 14,
+          "mean": -68.5714,
+          "median": 113.0,
+          "iqr": [
+            -63.25,
+            161.75
+          ],
+          "min": -2669.0,
+          "max": 706.0,
+          "bootstrap_ci_95": [
+            -517.4393,
+            250.6679
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 14,
+          "w_plus": 69.0,
+          "w_minus": 36.0,
+          "statistic": 36.0,
+          "p_value": 0.3258,
+          "method": "exact_signed_rank"
+        }
+      },
+      "agent_total_tokens": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 6373.8571,
+          "median": 2412.5,
+          "iqr": [
+            2006.5,
+            9777.25
+          ],
+          "min": 1939.0,
+          "max": 20757.0
+        },
+        "m2": {
+          "n": 14,
+          "mean": 6923.0714,
+          "median": 2293.5,
+          "iqr": [
+            1921.0,
+            9601.25
+          ],
+          "min": 1829.0,
+          "max": 22263.0
+        },
+        "delta": {
+          "n": 14,
+          "mean": -549.2143,
+          "median": 110.0,
+          "iqr": [
+            -237.5,
+            141.5
+          ],
+          "min": -9021.0,
+          "max": 2406.0,
+          "bootstrap_ci_95": [
+            -2066.1286,
+            497.9518
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 14,
+          "w_plus": 59.0,
+          "w_minus": 46.0,
+          "statistic": 46.0,
+          "p_value": 0.7034,
+          "method": "exact_signed_rank"
+        }
+      },
+      "llm_total_duration_ms": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 50881.6593,
+          "median": 13535.395,
+          "iqr": [
+            10753.9725,
+            68680.86
+          ],
+          "min": 8334.84,
+          "max": 176390.48
+        },
+        "m2": {
+          "n": 14,
+          "mean": 32572.1157,
+          "median": 14801.29,
+          "iqr": [
+            13103.1025,
+            39453.6175
+          ],
+          "min": 7535.55,
+          "max": 145372.32
+        },
+        "delta": {
+          "n": 14,
+          "mean": 18309.5436,
+          "median": 627.62,
+          "iqr": [
+            -1845.4225,
+            8563.35
+          ],
+          "min": -18348.65,
+          "max": 132873.39,
+          "bootstrap_ci_95": [
+            -2383.6523,
+            45595.7148
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 14,
+          "w_plus": 65.0,
+          "w_minus": 40.0,
+          "statistic": 40.0,
+          "p_value": 0.4631,
+          "method": "exact_signed_rank"
+        }
+      },
+      "agent_total_duration_ms": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 51026.5721,
+          "median": 13648.865,
+          "iqr": [
+            10893.6875,
+            68854.9875
+          ],
+          "min": 8481.48,
+          "max": 176544.23
+        },
+        "m2": {
+          "n": 14,
+          "mean": 32723.2971,
+          "median": 14944.94,
+          "iqr": [
+            13245.7575,
+            39607.275
+          ],
+          "min": 7685.91,
+          "max": 145542.63
+        },
+        "delta": {
+          "n": 14,
+          "mean": 18303.275,
+          "median": 619.59,
+          "iqr": [
+            -1843.865,
+            8565.8975
+          ],
+          "min": -18346.25,
+          "max": 132869.01,
+          "bootstrap_ci_95": [
+            -2199.8421,
+            43677.3802
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 14,
+          "w_plus": 65.0,
+          "w_minus": 40.0,
+          "statistic": 40.0,
+          "p_value": 0.4631,
+          "method": "exact_signed_rank"
+        }
+      },
+      "tool_total_duration_ms": {
+        "pair_count": 14,
+        "m3": {
+          "n": 14,
+          "mean": 10.2621,
+          "median": 8.705,
+          "iqr": [
+            7.0,
+            10.0
+          ],
+          "min": 4.0,
+          "max": 21.01
+        },
+        "m2": {
+          "n": 14,
+          "mean": 10.855,
+          "median": 8.505,
+          "iqr": [
+            7.17,
+            10.0
+          ],
+          "min": 6.0,
+          "max": 22.0
+        },
+        "delta": {
+          "n": 14,
+          "mean": -0.5929,
+          "median": -0.325,
+          "iqr": [
+            -1.0,
+            0.31
+          ],
+          "min": -3.01,
+          "max": 1.0,
+          "bootstrap_ci_95": [
+            -1.3057,
+            0.0486
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 12,
+          "w_plus": 21.0,
+          "w_minus": 57.0,
+          "statistic": 21.0,
+          "p_value": 0.1768,
+          "method": "exact_signed_rank"
+        }
+      },
+      "api_total_duration_ms": {
+        "pair_count": 0,
+        "m3": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "m2": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null
+        },
+        "delta": {
+          "n": 0,
+          "mean": null,
+          "median": null,
+          "iqr": null,
+          "min": null,
+          "max": null,
+          "bootstrap_ci_95": null
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "latency_ms": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 35821.923,
+          "median": 11189.22,
+          "iqr": [
+            71.5975,
+            29047.075
+          ],
+          "min": 64.37,
+          "max": 176730.56
+        },
+        "m2": {
+          "n": 20,
+          "mean": 23004.481,
+          "median": 13379.615,
+          "iqr": [
+            67.6525,
+            24753.155
+          ],
+          "min": 63.0,
+          "max": 145713.24
+        },
+        "delta": {
+          "n": 20,
+          "mean": 12817.442,
+          "median": 2.145,
+          "iqr": [
+            -1548.015,
+            2718.9125
+          ],
+          "min": -18381.54,
+          "max": 132926.36,
+          "bootstrap_ci_95": [
+            -1509.7939,
+            32201.3737
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 20,
+          "w_plus": 127.0,
+          "w_minus": 83.0,
+          "statistic": 83.0,
+          "p_value": 0.4304,
+          "method": "exact_signed_rank"
+        }
+      },
+      "agent_call_count": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 1.25,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 4.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 1.25,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 4.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      },
+      "tool_call_count": {
+        "pair_count": 20,
+        "m3": {
+          "n": 20,
+          "mean": 1.05,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 3.0
+        },
+        "m2": {
+          "n": 20,
+          "mean": 1.05,
+          "median": 1.0,
+          "iqr": [
+            0.0,
+            1.0
+          ],
+          "min": 0.0,
+          "max": 3.0
+        },
+        "delta": {
+          "n": 20,
+          "mean": 0.0,
+          "median": 0.0,
+          "iqr": [
+            0.0,
+            0.0
+          ],
+          "min": 0.0,
+          "max": 0.0,
+          "bootstrap_ci_95": [
+            0.0,
+            0.0
+          ]
+        },
+        "mcnemar": null,
+        "wilcoxon_signed_rank": {
+          "n_nonzero": 0,
+          "w_plus": 0.0,
+          "w_minus": 0.0,
+          "statistic": 0.0,
+          "p_value": 1.0,
+          "method": "no_nonzero_deltas"
+        }
+      }
+    }
+  }
+}

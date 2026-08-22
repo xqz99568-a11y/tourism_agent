@@ -25,6 +25,7 @@ from app.core.experiment_method_input import METHOD_INPUT_SCHEMA_VERSION
 from app.core.experiment_run_audit import RUN_AUDIT_SCHEMA_VERSION
 from app.core.experiment_runner import (
     RESEARCH_AGENT_DECISION_SCHEMA_VERSION,
+    RESEARCH_AGENT_PROMPT_VERSION,
     STRUCTURED_LLM_OUTPUT_PROMPT_VERSION,
     ExperimentRunner,
 )
@@ -1406,7 +1407,7 @@ def _prompt_version(messages: List[Any]) -> str:
             versions.append(str(parsed["prompt_version"]))
         for marker in (
             STRUCTURED_LLM_OUTPUT_PROMPT_VERSION,
-            "ctp-research-agent-prompts-v1",
+            RESEARCH_AGENT_PROMPT_VERSION,
         ):
             if marker in content and marker not in versions:
                 versions.append(marker)

@@ -1,0 +1,86 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_014",
+    "user_input": "国庆从长沙去深圳玩4天，我们3个人，总预算上限9000元，帮我做个行程。",
+    "task_type": "trip_planning",
+    "title": "天气规划｜深圳｜国庆｜长沙出发｜超范围",
+    "check": "查询冻结天气（超出快照范围时诚实说明不可用）；明确天气快照只覆盖到9月5日；计算长沙至深圳往返铁路费用。",
+    "slots": {
+      "origin": "changsha",
+      "destination": "shenzhen",
+      "start_date": "2026-10-01",
+      "duration_days": 4,
+      "people_count": 3,
+      "budget_amount": 9000
+    },
+    "expected": {
+      "task_type": "trip_planning",
+      "required_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "accepted_agent_sets": [
+        [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ]
+      ],
+      "forbidden_tools": [],
+      "hard_constraints": {
+        "origin": "changsha",
+        "destination": "shenzhen",
+        "start_date": "2026-10-01",
+        "duration_days": 4,
+        "people_count": 3,
+        "budget_limit": 9000,
+        "min_attractions": 4,
+        "max_pois_per_day": 2
+      },
+      "origin": "changsha",
+      "destination": "shenzhen",
+      "start_date": "2026-10-01",
+      "duration_days": 4,
+      "people_count": 3,
+      "budget_amount": 9000,
+      "intercity_transport_mode": "high_speed_or_d_train",
+      "intercity_seat_class": "second_class",
+      "intercity_transport_included": true,
+      "budget_scope": "local_plus_round_trip_intercity",
+      "intercity_route_id": "changsha_shenzhen_rail_second_class",
+      "intercity_one_way_fare_per_person_cny": 394.5,
+      "intercity_round_trip_cost_cny": 2367.0,
+      "weather_required": true,
+      "weather_date_policy": "explicit_date_use_qweather_snapshot",
+      "expected_weather_coverage_status": "out_of_range",
+      "expected_weather_covered_dates": [],
+      "expected_weather_missing_dates": [
+        "2026-10-01",
+        "2026-10-02",
+        "2026-10-03",
+        "2026-10-04"
+      ],
+      "weather_snapshot_id": "ctp_qweather_20260807_v1"
+    }
+  },
+  "method": "single_agent",
+  "request_id": "ctp100_v2_014_single_agent_e419df72",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "single_agent",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

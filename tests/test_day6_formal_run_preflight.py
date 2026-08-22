@@ -86,6 +86,7 @@ def test_day6_formal_preflight_accepts_scenario_dataset_without_gold_leak(
     assert report["environment"]["LLM_TEMPERATURE"] == 0.0
     assert report["environment"]["LLM_MAX_TOKENS"] >= FORMAL_MIN_MAX_TOKENS
     assert report["environment"]["LLM_TIMEOUT"] >= 1
+    assert report["environment"]["EXPERIMENT_RESULT_HARD_TIMEOUT_SECONDS"] == 900.0
     assert report["environment"]["LLM_RETRY_MAX_ATTEMPTS"] == 3
     assert report["environment"]["LLM_REASONING_EFFORT"] == "minimal"
     assert (
@@ -673,6 +674,7 @@ def test_day6_formal_runner_preflight_only_does_not_create_run_dir(
         report["environment"]["EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER"]
         is True
     )
+    assert report["environment"]["LLM_TIMEOUT"] == 120
     assert not (output_root / "preflight-only").exists()
 
 
@@ -680,6 +682,72 @@ def test_day6_formal_runner_defaults_to_100_case_manifest() -> None:
     from experiments import run_formal_experiment
 
     assert run_formal_experiment.DEFAULT_BENCHMARK_PATH.name == "benchmark.json"
+
+
+def test_pre_formal_real_api_smoke_gate_reports_paths(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from experiments import run_formal_experiment
+
+    async def fake_smoke(**kwargs):
+        output_dir = Path(kwargs["output_dir"])
+        output_dir.mkdir(parents=True, exist_ok=True)
+        manifest = output_dir / "real_api_smoke_manifest.json"
+        report = output_dir / "real_api_smoke_report.md"
+        trace = output_dir / "traces" / "trace.jsonl"
+        trace.parent.mkdir(parents=True, exist_ok=True)
+        manifest.write_text("{}", encoding="utf-8")
+        report.write_text("# ok", encoding="utf-8")
+        trace.write_text("{}", encoding="utf-8")
+        return {
+            "manifest": manifest.as_posix(),
+            "result": (output_dir / "real_api_smoke_result.json").as_posix(),
+            "report": report.as_posix(),
+            "trace": trace.as_posix(),
+            "connectivity_gate": {"status": "passed"},
+        }
+
+    monkeypatch.setenv("LLM_API_KEY", "test-key-not-persisted")
+    monkeypatch.setenv("LLM_BASE_URL", "https://api.vectorengine.ai/v1")
+    monkeypatch.setenv("LLM_MODEL", "gpt-5-mini")
+    monkeypatch.setenv("LLM_TEMPERATURE", "0")
+    monkeypatch.setenv("LLM_TIMEOUT", "120")
+    monkeypatch.setenv("LLM_RETRY_MAX_ATTEMPTS", "3")
+    monkeypatch.setenv("LLM_REASONING_EFFORT", "minimal")
+    monkeypatch.setattr(run_formal_experiment, "run_real_api_smoke", fake_smoke)
+
+    payload = run_formal_experiment._run_pre_formal_real_api_smoke(
+        run_output_dir=tmp_path,
+        run_id="formal-unit",
+        max_tokens=512,
+    )
+
+    assert payload["status"] == "passed"
+    assert payload["connectivity_gate"]["status"] == "passed"
+    assert Path(payload["manifest"]).exists()
+    assert Path(payload["report"]).exists()
+    assert Path(payload["trace"]).exists()
+
+
+def test_pre_formal_real_api_smoke_gate_blocks_failed_gate(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    from experiments import run_formal_experiment
+
+    async def fake_smoke(**kwargs):
+        return {"connectivity_gate": {"status": "failed"}}
+
+    monkeypatch.setenv("LLM_API_KEY", "test-key-not-persisted")
+    monkeypatch.setattr(run_formal_experiment, "run_real_api_smoke", fake_smoke)
+
+    with pytest.raises(RuntimeError, match="pre-formal real API smoke gate failed"):
+        run_formal_experiment._run_pre_formal_real_api_smoke(
+            run_output_dir=tmp_path,
+            run_id="formal-unit",
+            max_tokens=512,
+        )
 
 
 def test_formal_preflight_allows_nonempty_output_only_for_valid_resume(
@@ -884,5 +952,6 @@ def _formal_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("TRACE_SAVE_USER_MESSAGE", "false")
     monkeypatch.setenv("LLM_TEMPERATURE", "0")
     monkeypatch.setenv("LLM_RETRY_MAX_ATTEMPTS", "3")
+    monkeypatch.setenv("EXPERIMENT_RESULT_HARD_TIMEOUT_SECONDS", "900")
     monkeypatch.setenv("LLM_REASONING_EFFORT", "minimal")
     monkeypatch.setenv("EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER", "true")

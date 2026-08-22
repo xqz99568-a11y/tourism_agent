@@ -1,0 +1,99 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_055",
+    "scenario_id": "ctp100_v2_055",
+    "title": "多轮修改｜桂林｜修改人数",
+    "check": "人数变为3；铁路和当地费用都要更新；天气证据可复用。",
+    "turn_id": "t1",
+    "user_input": "明天从广州去桂林玩3天，两个人，总预算上限5000元。",
+    "task_type": "trip_planning",
+    "current_slots": {
+      "origin": "guangzhou",
+      "destination": "guilin",
+      "start_date": "2026-08-07",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000
+    },
+    "slots": {
+      "origin": "guangzhou",
+      "destination": "guilin",
+      "start_date": "2026-08-07",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000
+    },
+    "expected": {
+      "task_type": "trip_planning",
+      "required_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "accepted_agent_sets": [
+        [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ]
+      ],
+      "forbidden_tools": [],
+      "hard_constraints": {
+        "origin": "guangzhou",
+        "destination": "guilin",
+        "start_date": "2026-08-07",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_limit": 5000,
+        "min_attractions": 4,
+        "max_pois_per_day": 2
+      },
+      "origin": "guangzhou",
+      "destination": "guilin",
+      "start_date": "2026-08-07",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000,
+      "intercity_transport_mode": "high_speed_or_d_train",
+      "intercity_seat_class": "second_class",
+      "intercity_transport_included": true,
+      "budget_scope": "local_plus_round_trip_intercity",
+      "intercity_route_id": "guangzhou_guilin_rail_second_class",
+      "intercity_one_way_fare_per_person_cny": 200.0,
+      "intercity_round_trip_cost_cny": 800.0,
+      "weather_required": true,
+      "weather_date_policy": "explicit_date_use_qweather_snapshot",
+      "expected_weather_coverage_status": "full",
+      "expected_weather_covered_dates": [
+        "2026-08-07",
+        "2026-08-08",
+        "2026-08-09"
+      ],
+      "expected_weather_missing_dates": [],
+      "weather_snapshot_id": "ctp_qweather_20260807_v1"
+    },
+    "turn_index": 0,
+    "scenario_turn_count": 2,
+    "target_turn": false,
+    "dialogue_history": []
+  },
+  "method": "fixed_multi_agent",
+  "request_id": "ctp100_v2_055_fixed_multi_agent_88996ff4",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z",
+  "run_id": "task_f_multiturn_real_api_full_recheck_20260822T170309Z",
+  "repeat_index": 0,
+  "system_variant": "fixed_multi_agent",
+  "model_config_name": "task-f-multiturn-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260718,
+  "enable_research_agent_decision_normalizer": true
+}

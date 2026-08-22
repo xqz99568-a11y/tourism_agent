@@ -1,0 +1,506 @@
+{
+  "schema_version": "ctp-pre-formal-validation-registry-v1",
+  "created_at": "2026-08-22T03:18:57.803724+00:00",
+  "hash_strategy": "sha256_file_bytes_v1",
+  "purpose": "Bind Task D/E/F real-API validation reports to the formal experiment preflight and delivery package.",
+  "warning_policy": {
+    "transparent_non_blocking_codes": [
+      "failed_llm_calls_recorded",
+      "llm_retry_errors_recorded"
+    ],
+    "blocking_conditions": [
+      "report_missing",
+      "report_hash_mismatch",
+      "report_status_not_passed",
+      "gate_status_not_passed",
+      "failed_final_result",
+      "mock_or_fallback_call",
+      "hard_timeout_triggered",
+      "critical_code_hash_mismatch"
+    ]
+  },
+  "critical_code_artifacts": [
+    {
+      "key": "academic_experiment_design_code",
+      "path": "app/core/academic_experiment_design.py",
+      "exists": true,
+      "size_bytes": 21529,
+      "sha256": "f44910390a4eaa7484eaf2a6dfcc246bb44e81f4cf6bbd90cc7399cb50ca3017"
+    },
+    {
+      "key": "benchmark_dataset_validator_code",
+      "path": "app/core/benchmark_dataset_validator.py",
+      "exists": true,
+      "size_bytes": 55129,
+      "sha256": "14396d89338c7c020251a2ffa6cf67f1831e89470c61c6748d99e9b05262314b"
+    },
+    {
+      "key": "budget_gold_code",
+      "path": "app/core/budget_gold.py",
+      "exists": true,
+      "size_bytes": 15286,
+      "sha256": "b0a456a5cf7997ddabe138366e41fe73448453c9c1832f70590be07e7de28fc0"
+    },
+    {
+      "key": "budget_manual_review_code",
+      "path": "app/core/budget_manual_review.py",
+      "exists": true,
+      "size_bytes": 12519,
+      "sha256": "81200808a440182027c362bdd664dfd2a878834cda242dbf62841ba47aeb6d00"
+    },
+    {
+      "key": "build_pre_formal_validation_registry_script",
+      "path": "experiments/build_pre_formal_validation_registry.py",
+      "exists": true,
+      "size_bytes": 1454,
+      "sha256": "d500e842316e76776a4c8e1ecb43658eaad3e508b8d96c108731495efe967a81"
+    },
+    {
+      "key": "config_code",
+      "path": "app/core/config.py",
+      "exists": true,
+      "size_bytes": 6519,
+      "sha256": "1d258bea85312ec0245c247ac02188a11e1613d90baa7a6b896db6a190ed3482"
+    },
+    {
+      "key": "day8_delivery_pack_code",
+      "path": "app/core/day8_delivery_pack.py",
+      "exists": true,
+      "size_bytes": 52882,
+      "sha256": "dd20ab8c68d2fdfec9b396c0ccb69a4af459255df194c6b5b259f73a6b884daf"
+    },
+    {
+      "key": "evaluation_rule_catalog",
+      "path": "experiments/evaluation_rule_catalog.json",
+      "exists": true,
+      "size_bytes": 24730,
+      "sha256": "608ba339b446d8d662768d9b62575e48b6df2ccbc97ffb3338d3b16537502d76"
+    },
+    {
+      "key": "experiment_method_contract_code",
+      "path": "app/core/experiment_method_contract.py",
+      "exists": true,
+      "size_bytes": 18812,
+      "sha256": "19d7df01ecbb1c97a204c2eecd507a9b9defda2a70640a980a3229c90b9519eb"
+    },
+    {
+      "key": "experiment_method_input_code",
+      "path": "app/core/experiment_method_input.py",
+      "exists": true,
+      "size_bytes": 43286,
+      "sha256": "d75ea3ea0542a3b3523d51070344847de7a7347cbfc3d5e7ff7bb933ca52ec77"
+    },
+    {
+      "key": "experiment_metrics_code",
+      "path": "app/core/experiment_metrics.py",
+      "exists": true,
+      "size_bytes": 13332,
+      "sha256": "3cf59d3397e2a377ac44d512da4092783550624af3325f5293d580b75ddcad7c"
+    },
+    {
+      "key": "experiment_result_worker_code",
+      "path": "app/core/experiment_result_worker.py",
+      "exists": true,
+      "size_bytes": 3716,
+      "sha256": "7a26514e021c915c0abf6d3d1e74e20d0fc7ef411abf8ffaa67694e9b123ca87"
+    },
+    {
+      "key": "experiment_run_audit_code",
+      "path": "app/core/experiment_run_audit.py",
+      "exists": true,
+      "size_bytes": 17372,
+      "sha256": "50991fc2159e1e4f5fc6f295cf2438b2a6d7cf659ca3eb0fc912aeeec796b7fb"
+    },
+    {
+      "key": "experiment_runner_code",
+      "path": "app/core/experiment_runner.py",
+      "exists": true,
+      "size_bytes": 394844,
+      "sha256": "05de9b331fde11d957b31007d056f847eda251877210a5c284a505197949e30c"
+    },
+    {
+      "key": "experiment_schema_code",
+      "path": "app/schemas/experiment.py",
+      "exists": true,
+      "size_bytes": 14632,
+      "sha256": "1fd3c4193852eb22af6b8d7dbfb0a8b9e91cf4ae0b2fa98a964a530ac912524d"
+    },
+    {
+      "key": "fixed_data_code",
+      "path": "app/core/fixed_data.py",
+      "exists": true,
+      "size_bytes": 81949,
+      "sha256": "8b855e046d43c2b6933e5f4281a83de9ab6c6fa70dc10cd5a534fb41719ea648"
+    },
+    {
+      "key": "formal_artifact_integrity_code",
+      "path": "app/core/formal_artifact_integrity.py",
+      "exists": true,
+      "size_bytes": 10452,
+      "sha256": "71ab6d9095a747d356978b6ef52a4f90f4f7350100bd4082e6d4d3dc0e322638"
+    },
+    {
+      "key": "formal_gate_code",
+      "path": "app/core/formal_experiment_gate.py",
+      "exists": true,
+      "size_bytes": 54234,
+      "sha256": "68c3b82b1dcd8b10f122521b38c1351b17201cf43d4c97ab83d8ba1a6d955dab"
+    },
+    {
+      "key": "formal_preflight_code",
+      "path": "app/core/formal_experiment_preflight.py",
+      "exists": true,
+      "size_bytes": 49150,
+      "sha256": "84a7faa6cebf880dc5f4070c1e0bca49a833e76964d7fe13179de627f7a22134"
+    },
+    {
+      "key": "goal_state_scheduler_code",
+      "path": "app/core/goal_state_scheduler.py",
+      "exists": true,
+      "size_bytes": 97729,
+      "sha256": "972e8b8d679686f0392fdcf05cb4b1f2f2cc613f4397e450969988fd439ba5cc"
+    },
+    {
+      "key": "independent_evaluator_code",
+      "path": "app/core/independent_evaluator.py",
+      "exists": true,
+      "size_bytes": 171682,
+      "sha256": "138943475089372f59b53a4e031d7294991c40a0a93c14861bd44b29f6b4c262"
+    },
+    {
+      "key": "intercity_transport_snapshot_code",
+      "path": "app/core/intercity_transport_snapshot.py",
+      "exists": true,
+      "size_bytes": 32130,
+      "sha256": "6ae926249750156bb1ac5667d554f67e9a08d836c3d757772dabeb9dfd56c23a"
+    },
+    {
+      "key": "llm_client_code",
+      "path": "app/core/llm/client.py",
+      "exists": true,
+      "size_bytes": 58029,
+      "sha256": "aab2e977487fdc1bb5fdb0404d9661c401807a7a72d752b7a1c63383ebe915cc"
+    },
+    {
+      "key": "llm_costing_code",
+      "path": "app/core/llm_costing.py",
+      "exists": true,
+      "size_bytes": 7428,
+      "sha256": "226c0fcdd070dff6897e587914827a82166cc6c78eb28695955965a7a19a3677"
+    },
+    {
+      "key": "llm_manager_code",
+      "path": "app/core/llm/manager.py",
+      "exists": true,
+      "size_bytes": 20204,
+      "sha256": "f4a6be5f0b1bb15bcc9aa3743557b0fd188190d3bcd60e7575f31e0e99f39877"
+    },
+    {
+      "key": "no_date_weather_policy_code",
+      "path": "app/core/no_date_weather_policy.py",
+      "exists": true,
+      "size_bytes": 1918,
+      "sha256": "31da4064c24d10bbdaaad985c3a31475bc289a7a5b4ef49e14a667cbe700dfb4"
+    },
+    {
+      "key": "paper_draft_pack_code",
+      "path": "app/core/paper_draft_pack.py",
+      "exists": true,
+      "size_bytes": 28419,
+      "sha256": "995ed3fc1c8daaf80e9c78159f173c2de9518aa37a4866fdfdf0491aa685a44d"
+    },
+    {
+      "key": "paper_result_pack_code",
+      "path": "app/core/paper_result_pack.py",
+      "exists": true,
+      "size_bytes": 25350,
+      "sha256": "6c2a636e59f6d207f2d7926f4b54aeb8d1d231e19a345ddacc308b2199b8d1a6"
+    },
+    {
+      "key": "paper_submission_pack_code",
+      "path": "app/core/paper_submission_pack.py",
+      "exists": true,
+      "size_bytes": 24336,
+      "sha256": "3dcab0a62dfc9231839296910ea8d52338696a537c112acd809bf0d1b1b7a122"
+    },
+    {
+      "key": "pre_formal_validation_registry_code",
+      "path": "app/core/pre_formal_validation_registry.py",
+      "exists": true,
+      "size_bytes": 25767,
+      "sha256": "fe7a60c53ee84b0c333f04549eea24853df928df504a30b3803aab5c2048207a"
+    },
+    {
+      "key": "qweather_snapshot_code",
+      "path": "app/core/qweather_snapshot.py",
+      "exists": true,
+      "size_bytes": 38732,
+      "sha256": "639fbdb368960c7a57d528ed1b9e61172bdd5844217fad47f828a4e2e9be99e3"
+    },
+    {
+      "key": "research_tools_code",
+      "path": "app/tools/research_tools.py",
+      "exists": true,
+      "size_bytes": 61090,
+      "sha256": "a3a5b1780c358b6c3463c0eb6b71ccaa8979d1fb0b4f29b1ef7de87dd385f01b"
+    },
+    {
+      "key": "run_formal_experiment_script",
+      "path": "experiments/run_formal_experiment.py",
+      "exists": true,
+      "size_bytes": 14898,
+      "sha256": "ad481accb9fc43f56c7eb9252c7e309dd3680efe97241c60727fc14252a112cf"
+    },
+    {
+      "key": "run_real_api_smoke_script",
+      "path": "experiments/run_real_api_smoke.py",
+      "exists": true,
+      "size_bytes": 48690,
+      "sha256": "75c40540e07f599e23e76e57a2d0d184781b5f6f28660642df828d52a72d8baf"
+    },
+    {
+      "key": "task_d_validation_script",
+      "path": "experiments/run_task_d_m0_real_api_validation.py",
+      "exists": true,
+      "size_bytes": 28439,
+      "sha256": "a1e740925b82e7eb7d1ff53957d2138a744465e4d3307f927742d619a1946e8b"
+    },
+    {
+      "key": "task_e_validation_script",
+      "path": "experiments/run_task_e_four_method_real_api_validation.py",
+      "exists": true,
+      "size_bytes": 31299,
+      "sha256": "623eac1ef1ff89f32045be012e53f20d094f2e93aa8706c22ae032a0995d0a62"
+    },
+    {
+      "key": "task_f_validation_script",
+      "path": "experiments/run_task_f_multiturn_real_api_validation.py",
+      "exists": true,
+      "size_bytes": 47176,
+      "sha256": "0a66837f83f6265cfac64c4310cd2e3c3df8844e77bbdad0ddc39dbe5597cd4b"
+    },
+    {
+      "key": "tool_base_code",
+      "path": "app/tools/base.py",
+      "exists": true,
+      "size_bytes": 4159,
+      "sha256": "4bc3efcffe52c005f19da7fb3629eccb908aeb75a3bc3e1d729faae06f9d74db"
+    },
+    {
+      "key": "tool_executor_code",
+      "path": "app/core/tool_executor.py",
+      "exists": true,
+      "size_bytes": 21058,
+      "sha256": "78c5c503758dc65c8dcbd99384a0084edefc9dcaa5348349d10054d871d2a64a"
+    },
+    {
+      "key": "tracing_code",
+      "path": "app/core/tracing.py",
+      "exists": true,
+      "size_bytes": 53866,
+      "sha256": "1aeb9fa903a27ef1f33edf7f956377c2c61416287e045106e213fac0a950dab3"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "task_d_m0_real_api",
+      "required": true,
+      "report_path": "experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/task_d_m0_real_api_report.json",
+      "report_sha256": "913af975ae9970aece8276af7508a20d17de37b28ee0765e1634459d20056c77",
+      "schema_version": "ctp-task-d-m0-real-api-validation-v1",
+      "expected": {
+        "dataset_id": "task_d_m0_real_api_20",
+        "case_count": 20,
+        "turn_count": 20,
+        "expected_result_count": 20,
+        "methods": [
+          "llm_direct"
+        ],
+        "runtime": {
+          "provider": "vectorengine_openai_compatible",
+          "base_url": "https://api.vectorengine.ai/v1",
+          "model": "gpt-5-mini",
+          "temperature": 0.0,
+          "max_tokens": 4096,
+          "timeout_seconds": 120,
+          "retry_max_attempts": 3,
+          "reasoning_effort": "minimal",
+          "strict_mode": true,
+          "cache_disabled": true,
+          "trace_save_user_message": false,
+          "mock_fallback_allowed": false
+        }
+      },
+      "observed": {
+        "schema_version": "ctp-task-d-m0-real-api-validation-v1",
+        "status": "passed",
+        "gate_status": "passed",
+        "failed_checks": [],
+        "dataset_id": "task_d_m0_real_api_20",
+        "case_count": 20,
+        "turn_count": 20,
+        "expected_result_count": 20,
+        "actual_result_count": 20,
+        "methods": [
+          "llm_direct"
+        ],
+        "provider": "vectorengine_openai_compatible",
+        "base_url": "https://api.vectorengine.ai/v1",
+        "model": "gpt-5-mini",
+        "prompt_version_counts": {
+          "ctp-structured-llm-output-prompts-v2": 20
+        },
+        "mock_call_count": 0,
+        "fallback_call_count": 0,
+        "failed_llm_call_count": 0,
+        "retry_error_count": null,
+        "hard_timeout_triggered_count": 0,
+        "transparent_warnings": []
+      }
+    },
+    {
+      "task_id": "task_e_four_method_real_api",
+      "required": true,
+      "report_path": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/task_e_four_method_real_api_report.json",
+      "report_sha256": "2bb28c80dbcba7011de0bdc98fda798a27ba6ab441c078a84c3a860334eb2bd0",
+      "schema_version": "ctp-task-e-four-method-real-api-validation-v1",
+      "expected": {
+        "dataset_id": "task_e_four_method_real_api_20",
+        "case_count": 20,
+        "turn_count": 20,
+        "expected_result_count": 80,
+        "methods": [
+          "llm_direct",
+          "single_agent",
+          "fixed_multi_agent",
+          "adaptive_multi_agent"
+        ],
+        "runtime": {
+          "provider": "vectorengine_openai_compatible",
+          "base_url": "https://api.vectorengine.ai/v1",
+          "model": "gpt-5-mini",
+          "temperature": 0.0,
+          "max_tokens": 4096,
+          "timeout_seconds": 120,
+          "retry_max_attempts": 3,
+          "reasoning_effort": "minimal",
+          "strict_mode": true,
+          "cache_disabled": true,
+          "trace_save_user_message": false,
+          "mock_fallback_allowed": false
+        }
+      },
+      "observed": {
+        "schema_version": "ctp-task-e-four-method-real-api-validation-v1",
+        "status": "passed",
+        "gate_status": "passed",
+        "failed_checks": [],
+        "dataset_id": "task_e_four_method_real_api_20",
+        "case_count": 20,
+        "turn_count": 20,
+        "expected_result_count": 80,
+        "actual_result_count": 80,
+        "methods": [
+          "adaptive_multi_agent",
+          "fixed_multi_agent",
+          "llm_direct",
+          "single_agent"
+        ],
+        "provider": "vectorengine_openai_compatible",
+        "base_url": "https://api.vectorengine.ai/v1",
+        "model": "gpt-5-mini",
+        "prompt_version_counts": {
+          "ctp-research-agent-prompts-v2": 50,
+          "ctp-structured-llm-output-prompts-v2": 40
+        },
+        "mock_call_count": 0,
+        "fallback_call_count": 0,
+        "failed_llm_call_count": 1,
+        "retry_error_count": 13,
+        "hard_timeout_triggered_count": 0,
+        "transparent_warnings": [
+          {
+            "code": "failed_llm_calls_recorded",
+            "count": 1,
+            "meaning": "At least one internal LLM call failed after retries, but Task E treats this as a provider-stability warning when the result grid has no failed result and no hard timeout."
+          },
+          {
+            "code": "llm_retry_errors_recorded",
+            "count": 13,
+            "meaning": "Retryable API errors or network timeouts occurred and were recorded in trace evidence."
+          }
+        ]
+      }
+    },
+    {
+      "task_id": "task_f_multiturn_real_api",
+      "required": true,
+      "report_path": "experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/task_f_multiturn_real_api_report.json",
+      "report_sha256": "7d3b1ce067b43694c755153bd55870c8628b44c96d7a01b00260713f91743dc7",
+      "schema_version": "ctp-task-f-multiturn-real-api-report-v1",
+      "expected": {
+        "dataset_id": "task_f_multiturn_real_api_m2_m3",
+        "case_count": 6,
+        "turn_count": 12,
+        "expected_result_count": 24,
+        "methods": [
+          "fixed_multi_agent",
+          "adaptive_multi_agent"
+        ],
+        "runtime": {
+          "provider": "vectorengine_openai_compatible",
+          "base_url": "https://api.vectorengine.ai/v1",
+          "model": "gpt-5-mini",
+          "temperature": 0.0,
+          "max_tokens": 4096,
+          "timeout_seconds": 120,
+          "retry_max_attempts": 3,
+          "reasoning_effort": "minimal",
+          "strict_mode": true,
+          "cache_disabled": true,
+          "trace_save_user_message": false,
+          "mock_fallback_allowed": false
+        },
+        "decision_normalizer": {
+          "agent_decision_total": 76,
+          "raw_llm_decision_success_count": 37,
+          "decision_normalizer_recovery_count": 39,
+          "pipeline_completion_rate": 1.0
+        }
+      },
+      "observed": {
+        "schema_version": "ctp-task-f-multiturn-real-api-report-v1",
+        "status": "passed",
+        "gate_status": "passed",
+        "failed_checks": [],
+        "dataset_id": "task_f_multiturn_real_api_m2_m3",
+        "case_count": 6,
+        "turn_count": 12,
+        "expected_result_count": 24,
+        "actual_result_count": 24,
+        "methods": [
+          "adaptive_multi_agent",
+          "fixed_multi_agent"
+        ],
+        "provider": "vectorengine_openai_compatible",
+        "base_url": "https://api.vectorengine.ai/v1",
+        "model": "gpt-5-mini",
+        "prompt_version_counts": {
+          "ctp-research-agent-prompts-v2": 76
+        },
+        "mock_call_count": 0,
+        "fallback_call_count": 0,
+        "failed_llm_call_count": 0,
+        "retry_error_count": 10,
+        "hard_timeout_triggered_count": 0,
+        "transparent_warnings": [
+          {
+            "code": "llm_retry_errors_recorded",
+            "count": 10,
+            "meaning": "Retryable API errors or network timeouts were recorded."
+          }
+        ]
+      }
+    }
+  ]
+}

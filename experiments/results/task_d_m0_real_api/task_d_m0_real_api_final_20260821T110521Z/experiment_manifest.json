@@ -1,0 +1,1570 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-08-21T03:11:24.669730Z",
+  "run_id": "task_d_m0_real_api_final_20260821T110521Z",
+  "dataset_id": "task_d_m0_real_api_20",
+  "dataset_version": "2026-08-21-task-d-m0-real-api-v1",
+  "dataset_path": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/task_d_m0_real_api_20_benchmark.json",
+  "dataset_sha256": "5d0972071988b6dfdae89fc853b1857dd958a85e0945c5dd02f50fd4c4352ae0",
+  "dataset_hash_strategy": "canonical_json_utf8_sort_keys_v1",
+  "dataset": {
+    "id": "task_d_m0_real_api_20",
+    "version": "2026-08-21-task-d-m0-real-api-v1",
+    "path": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/task_d_m0_real_api_20_benchmark.json",
+    "sha256": "5d0972071988b6dfdae89fc853b1857dd958a85e0945c5dd02f50fd4c4352ae0",
+    "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+  },
+  "benchmark_structure": {
+    "case_count": 20,
+    "single_turn_case_count": 20,
+    "scenario_case_count": 0,
+    "total_turn_count": 20,
+    "statistical_unit": "evaluation_unit_id",
+    "multi_turn_quality_scope": "target_turn_only",
+    "multi_turn_state_policy": "method_local_previous_state_from_prior_turn_output"
+  },
+  "git_commit": "2b7bb78da2d8a5bd3e824f6ba90077af44e3b339",
+  "working_tree_clean": false,
+  "git_status_short": [
+    " M app/core/academic_experiment_design.py",
+    " M app/core/day7_acceptance_review.py",
+    " M app/core/day8_delivery_pack.py",
+    " M app/core/experiment_method_input.py",
+    " M app/core/experiment_runner.py",
+    " M app/core/fixed_data.py",
+    " M app/core/formal_experiment_gate.py",
+    " M app/core/formal_experiment_preflight.py",
+    " M app/core/independent_evaluator.py",
+    " M app/core/llm/client.py",
+    " M app/core/llm/manager.py",
+    " M app/tools/research_tools.py",
+    " M docs/Academic_Experiment_Design_v1.md",
+    " M experiments/academic_experiment_design_v1.json",
+    " M experiments/benchmark.json",
+    " M experiments/ctp100_formal_v2.json",
+    " M experiments/generate_ctp100_budget_gold_review_v2.py",
+    " M experiments/generate_ctp100_budget_gold_v2.py",
+    " M experiments/generated/academic_experiment_design_validation_v1.json",
+    " M experiments/generated/academic_experiment_design_validation_v1.md",
+    " M experiments/generated/ctp100_budget_gold_v2.json",
+    " M experiments/generated/ctp100_budget_gold_v2_draft.json",
+    " M experiments/generated/ctp100_budget_gold_v2_review.csv",
+    " M experiments/generated/ctp100_budget_gold_v2_review.md",
+    " M experiments/generated/ctp100_formal_v2_dataset_audit.json",
+    " M experiments/generated/ctp100_formal_v2_dataset_audit.md",
+    " M experiments/generated/day8_delivery_pack.json",
+    " M experiments/generated/day8_delivery_report.md",
+    " M experiments/run_day6_acceptance.py",
+    " M experiments/run_day7_dev_experiment.py",
+    " M experiments/run_day7_pilot.py",
+    " M experiments/run_formal_experiment.py",
+    " M experiments/run_real_api_smoke.py",
+    " M tests/test_budget_gold_generator.py",
+    " M tests/test_day6_benchmark_dataset_quality.py",
+    " M tests/test_day6_formal_run_preflight.py",
+    " M tests/test_day6_m0_m1_structured_output.py",
+    " M tests/test_day6_real_api_smoke.py",
+    " M tests/test_day7_dev_experiment.py",
+    " M tests/test_day7_formal_gate.py",
+    " M tests/test_day7_paper_draft_pack.py",
+    " M tests/test_day7_paper_result_pack.py",
+    " M tests/test_day7_pilot.py",
+    " M tests/test_day7_test_draft_dataset.py",
+    " M tests/test_day8_ctp100_weather_gold.py",
+    " M tests/test_day8_dev_experiment_cases.py",
+    " M tests/test_day8_task1_runner_acceptance.py",
+    " M tests/test_day8_task4_academic_design.py",
+    " M tests/test_experiment_runner.py",
+    " M tests/test_fixed_experiment_data.py",
+    " M tests/test_independent_evaluator.py",
+    " M tests/test_research_tools.py",
+    " M tests/test_review_generators.py",
+    " M tests/test_tracing.py",
+    "?? app/core/experiment_result_worker.py",
+    "?? experiments/results/formal_runs/",
+    "?? experiments/results/llm_diag/",
+    "?? experiments/results/real_api_smoke/llm_diag_20260820/",
+    "?? experiments/results/real_api_smoke/llm_diag_env_20260820/",
+    "?? experiments/results/task_d_m0_real_api/",
+    "?? experiments/run_task_d_m0_real_api_validation.py",
+    "?? tests/test_task_d_m0_real_api_validation.py"
+  ],
+  "git": {
+    "commit": "2b7bb78da2d8a5bd3e824f6ba90077af44e3b339",
+    "working_tree_clean": false,
+    "status_short": [
+      " M app/core/academic_experiment_design.py",
+      " M app/core/day7_acceptance_review.py",
+      " M app/core/day8_delivery_pack.py",
+      " M app/core/experiment_method_input.py",
+      " M app/core/experiment_runner.py",
+      " M app/core/fixed_data.py",
+      " M app/core/formal_experiment_gate.py",
+      " M app/core/formal_experiment_preflight.py",
+      " M app/core/independent_evaluator.py",
+      " M app/core/llm/client.py",
+      " M app/core/llm/manager.py",
+      " M app/tools/research_tools.py",
+      " M docs/Academic_Experiment_Design_v1.md",
+      " M experiments/academic_experiment_design_v1.json",
+      " M experiments/benchmark.json",
+      " M experiments/ctp100_formal_v2.json",
+      " M experiments/generate_ctp100_budget_gold_review_v2.py",
+      " M experiments/generate_ctp100_budget_gold_v2.py",
+      " M experiments/generated/academic_experiment_design_validation_v1.json",
+      " M experiments/generated/academic_experiment_design_validation_v1.md",
+      " M experiments/generated/ctp100_budget_gold_v2.json",
+      " M experiments/generated/ctp100_budget_gold_v2_draft.json",
+      " M experiments/generated/ctp100_budget_gold_v2_review.csv",
+      " M experiments/generated/ctp100_budget_gold_v2_review.md",
+      " M experiments/generated/ctp100_formal_v2_dataset_audit.json",
+      " M experiments/generated/ctp100_formal_v2_dataset_audit.md",
+      " M experiments/generated/day8_delivery_pack.json",
+      " M experiments/generated/day8_delivery_report.md",
+      " M experiments/run_day6_acceptance.py",
+      " M experiments/run_day7_dev_experiment.py",
+      " M experiments/run_day7_pilot.py",
+      " M experiments/run_formal_experiment.py",
+      " M experiments/run_real_api_smoke.py",
+      " M tests/test_budget_gold_generator.py",
+      " M tests/test_day6_benchmark_dataset_quality.py",
+      " M tests/test_day6_formal_run_preflight.py",
+      " M tests/test_day6_m0_m1_structured_output.py",
+      " M tests/test_day6_real_api_smoke.py",
+      " M tests/test_day7_dev_experiment.py",
+      " M tests/test_day7_formal_gate.py",
+      " M tests/test_day7_paper_draft_pack.py",
+      " M tests/test_day7_paper_result_pack.py",
+      " M tests/test_day7_pilot.py",
+      " M tests/test_day7_test_draft_dataset.py",
+      " M tests/test_day8_ctp100_weather_gold.py",
+      " M tests/test_day8_dev_experiment_cases.py",
+      " M tests/test_day8_task1_runner_acceptance.py",
+      " M tests/test_day8_task4_academic_design.py",
+      " M tests/test_experiment_runner.py",
+      " M tests/test_fixed_experiment_data.py",
+      " M tests/test_independent_evaluator.py",
+      " M tests/test_research_tools.py",
+      " M tests/test_review_generators.py",
+      " M tests/test_tracing.py",
+      "?? app/core/experiment_result_worker.py",
+      "?? experiments/results/formal_runs/",
+      "?? experiments/results/llm_diag/",
+      "?? experiments/results/real_api_smoke/llm_diag_20260820/",
+      "?? experiments/results/real_api_smoke/llm_diag_env_20260820/",
+      "?? experiments/results/task_d_m0_real_api/",
+      "?? experiments/run_task_d_m0_real_api_validation.py",
+      "?? tests/test_task_d_m0_real_api_validation.py"
+    ]
+  },
+  "formal_artifact_integrity": {
+    "schema_version": "ctp-formal-artifact-integrity-v1",
+    "hash_strategy": "sha256_file_bytes_v1",
+    "artifacts": {
+      "benchmark_manifest": {
+        "path": "experiments/benchmark.json",
+        "exists": true,
+        "size_bytes": 1085,
+        "sha256": "d28490c84ed8d0bb6b15650f7bc7e229e8b4793807f813add17c8f2501703182"
+      },
+      "formal_dataset": {
+        "path": "experiments/ctp100_formal_v2.json",
+        "exists": true,
+        "size_bytes": 258172,
+        "sha256": "5b393acd26385ff2120d2e01033f49c49d4b7ef5653bf50ee258195d7f8b5f50"
+      },
+      "sealed_validation_dataset": {
+        "path": "experiments/ctp30_sealed_validation_v1.json",
+        "exists": true,
+        "size_bytes": 37753,
+        "sha256": "0ea84989537c0428219d9ccb8e0991077afbfd3fd420f4666a9c01a64ea7c527"
+      },
+      "academic_experiment_design": {
+        "path": "experiments/academic_experiment_design_v1.json",
+        "exists": true,
+        "size_bytes": 5028,
+        "sha256": "757d4b530e5987800256f55ad3e8f7a63bf95215bd24fc16fd4f5f60f76b7b50"
+      },
+      "experiment_protocol": {
+        "path": "Phase0_实验协议.md",
+        "exists": true,
+        "size_bytes": 32084,
+        "sha256": "15d9d7eddb532b7a46b30372003a600bf90abadbe9b88dd0db26da2424488f44"
+      },
+      "budget_policy_doc": {
+        "path": "docs/Budget_Policy_v2.md",
+        "exists": true,
+        "size_bytes": 5429,
+        "sha256": "258857325f625577d1a12a7fe8ac03d075fa94ce026118aa6a7e151f4d3a4cb6"
+      },
+      "budget_gold": {
+        "path": "experiments/generated/ctp100_budget_gold_v2.json",
+        "exists": true,
+        "size_bytes": 312938,
+        "sha256": "a755d70f2606d1461cb384bce9da54d90de2192d71c4e0fd00827c849aa21ac5"
+      },
+      "qweather_manifest": {
+        "path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+        "exists": true,
+        "size_bytes": 6014,
+        "sha256": "fdf0f1e106ab735ecb5f647be8528722f7e4832af90923e6f83ef2eb556d99ab"
+      },
+      "qweather_validation": {
+        "path": "data/weather_snapshot/qweather_v1/validation_report.json",
+        "exists": true,
+        "size_bytes": 4174,
+        "sha256": "4a5a150bbd3051ddf832fc9317ed8d1e9bc910ed0ca81bb52a027e299f7778b1"
+      },
+      "intercity_manifest": {
+        "path": "data/intercity_transport/snapshot_manifest.json",
+        "exists": true,
+        "size_bytes": 2772,
+        "sha256": "a49d6dd135e18931cf6e12fe6abe231412387baff55210b5a110182f35941151"
+      },
+      "intercity_fare_table": {
+        "path": "data/intercity_transport/rail_second_class_v1.json",
+        "exists": true,
+        "size_bytes": 10453,
+        "sha256": "c318b2932631d87be0888683b03ede3a18cb3a32eef7d7061d2ca19770146dbc"
+      },
+      "evaluation_rule_catalog": {
+        "path": "experiments/evaluation_rule_catalog.json",
+        "exists": true,
+        "size_bytes": 24730,
+        "sha256": "608ba339b446d8d662768d9b62575e48b6df2ccbc97ffb3338d3b16537502d76"
+      },
+      "independent_evaluator_code": {
+        "path": "app/core/independent_evaluator.py",
+        "exists": true,
+        "size_bytes": 159408,
+        "sha256": "caeb97b2fa948516ca08974c9f9be0a9feac2ae617068fa9beb6131dc9f61e7c"
+      },
+      "experiment_runner_code": {
+        "path": "app/core/experiment_runner.py",
+        "exists": true,
+        "size_bytes": 385908,
+        "sha256": "cc9a989077fbf7c53d4b9be0b65c0573f01b2df9f33adfd2e7623cb5020e04c3"
+      },
+      "method_contract_code": {
+        "path": "app/core/experiment_method_contract.py",
+        "exists": true,
+        "size_bytes": 18812,
+        "sha256": "19d7df01ecbb1c97a204c2eecd507a9b9defda2a70640a980a3229c90b9519eb"
+      },
+      "formal_preflight_code": {
+        "path": "app/core/formal_experiment_preflight.py",
+        "exists": true,
+        "size_bytes": 48606,
+        "sha256": "141bc6ed013d85e2426661107d0cb0725dbe10efdda995352ce5e64d69694822"
+      },
+      "formal_gate_code": {
+        "path": "app/core/formal_experiment_gate.py",
+        "exists": true,
+        "size_bytes": 49589,
+        "sha256": "dd6a4ab3fba957a06a680ef96e878b789a6cbc25c04597a5290056c9e907d075"
+      }
+    },
+    "combined_sha256": "b1f64a838ec123fd9c39366bfc80c9bdb36da583a7b99dde18a64d990921c46b",
+    "all_required_artifacts_exist": true,
+    "missing_artifacts": [],
+    "git": {
+      "checked": true,
+      "commit": "2b7bb78da2d8a5bd3e824f6ba90077af44e3b339",
+      "worktree_clean": false,
+      "status_short": [
+        "M app/core/academic_experiment_design.py",
+        " M app/core/day7_acceptance_review.py",
+        " M app/core/day8_delivery_pack.py",
+        " M app/core/experiment_method_input.py",
+        " M app/core/experiment_runner.py",
+        " M app/core/fixed_data.py",
+        " M app/core/formal_experiment_gate.py",
+        " M app/core/formal_experiment_preflight.py",
+        " M app/core/independent_evaluator.py",
+        " M app/core/llm/client.py",
+        " M app/core/llm/manager.py",
+        " M app/tools/research_tools.py",
+        " M docs/Academic_Experiment_Design_v1.md",
+        " M experiments/academic_experiment_design_v1.json",
+        " M experiments/benchmark.json",
+        " M experiments/ctp100_formal_v2.json",
+        " M experiments/generate_ctp100_budget_gold_review_v2.py",
+        " M experiments/generate_ctp100_budget_gold_v2.py",
+        " M experiments/generated/academic_experiment_design_validation_v1.json",
+        " M experiments/generated/academic_experiment_design_validation_v1.md",
+        " M experiments/generated/ctp100_budget_gold_v2.json",
+        " M experiments/generated/ctp100_budget_gold_v2_draft.json",
+        " M experiments/generated/ctp100_budget_gold_v2_review.csv",
+        " M experiments/generated/ctp100_budget_gold_v2_review.md",
+        " M experiments/generated/ctp100_formal_v2_dataset_audit.json",
+        " M experiments/generated/ctp100_formal_v2_dataset_audit.md",
+        " M experiments/generated/day8_delivery_pack.json",
+        " M experiments/generated/day8_delivery_report.md",
+        " M experiments/run_day6_acceptance.py",
+        " M experiments/run_day7_dev_experiment.py",
+        " M experiments/run_day7_pilot.py",
+        " M experiments/run_formal_experiment.py",
+        " M experiments/run_real_api_smoke.py",
+        " M tests/test_budget_gold_generator.py",
+        " M tests/test_day6_benchmark_dataset_quality.py",
+        " M tests/test_day6_formal_run_preflight.py",
+        " M tests/test_day6_m0_m1_structured_output.py",
+        " M tests/test_day6_real_api_smoke.py",
+        " M tests/test_day7_dev_experiment.py",
+        " M tests/test_day7_formal_gate.py",
+        " M tests/test_day7_paper_draft_pack.py",
+        " M tests/test_day7_paper_result_pack.py",
+        " M tests/test_day7_pilot.py",
+        " M tests/test_day7_test_draft_dataset.py",
+        " M tests/test_day8_ctp100_weather_gold.py",
+        " M tests/test_day8_dev_experiment_cases.py",
+        " M tests/test_day8_task1_runner_acceptance.py",
+        " M tests/test_day8_task4_academic_design.py",
+        " M tests/test_experiment_runner.py",
+        " M tests/test_fixed_experiment_data.py",
+        " M tests/test_independent_evaluator.py",
+        " M tests/test_research_tools.py",
+        " M tests/test_review_generators.py",
+        " M tests/test_tracing.py",
+        "?? app/core/experiment_result_worker.py",
+        "?? experiments/results/formal_runs/",
+        "?? experiments/results/llm_diag/",
+        "?? experiments/results/real_api_smoke/llm_diag_20260820/",
+        "?? experiments/results/real_api_smoke/llm_diag_env_20260820/",
+        "?? experiments/results/task_d_m0_real_api/",
+        "?? experiments/run_task_d_m0_real_api_validation.py",
+        "?? tests/test_task_d_m0_real_api_validation.py"
+      ]
+    }
+  },
+  "methods": [
+    "llm_direct"
+  ],
+  "method_fairness_contract": {
+    "schema_version": "ctp-method-fairness-contract-v1",
+    "contract_id": "day8_fixed_template_method_fairness_20260813",
+    "active_methods": [
+      "llm_direct"
+    ],
+    "primary_comparison": {
+      "baseline": "fixed_multi_agent",
+      "proposed": "adaptive_multi_agent",
+      "comparison_unit": "paired_case",
+      "claim_boundary": "M3 may claim efficiency gains over the fixed-template M2 baseline only when task quality is not lower under the frozen evaluator."
+    },
+    "generation_visibility": {
+      "generation_visible_fields": [
+        "case_id",
+        "user_input",
+        "dialogue_history",
+        "method_input",
+        "method_previous_state",
+        "parsed_slots",
+        "weather_change"
+      ],
+      "evaluator_only_fields": [
+        "task_type",
+        "slots",
+        "current_slots",
+        "previous_slots",
+        "changed_slots",
+        "preserved_slots",
+        "expected",
+        "expected_goal",
+        "standard_answer",
+        "gold",
+        "accepted_agent_sets",
+        "required_tools",
+        "forbidden_tools",
+        "hard_constraints",
+        "evaluation_rules"
+      ],
+      "gold_visible_to_generation": false,
+      "policy": "Generation methods may only use the visible request/history/state fields; gold labels and accepted sets are reserved for the evaluator."
+    },
+    "runtime_controls": {
+      "model_config": "same model, temperature, max tokens, timeout, and retry policy",
+      "offline_data": "same frozen local tourism data snapshot",
+      "output_schema": "ctp-experiment-output-v1",
+      "evaluator": "method-blind independent evaluator after generation",
+      "method_order": "deterministic per-case seeded randomization",
+      "formal_run_policy": "no mocks, no silent fallback, no rerun-to-success"
+    },
+    "dependency_policy": {
+      "agent_order": [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ],
+      "tool_order": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "agent_tool_map": {
+        "attraction": [
+          "poi_search"
+        ],
+        "weather": [
+          "weather_query"
+        ],
+        "itinerary": [],
+        "budget": [
+          "budget_calculator"
+        ]
+      },
+      "result_dependencies": {
+        "itinerary": [
+          "attraction",
+          "weather"
+        ],
+        "budget": [
+          "attraction"
+        ]
+      },
+      "budget_agent_dependencies": [
+        "attraction_result_for_existing_plan_or_ticket_budget",
+        "duration_days",
+        "people_count",
+        "budget_level"
+      ],
+      "budget_query_scope_policy": {
+        "rough_budget_without_history_or_ticket_terms": [
+          "budget"
+        ],
+        "existing_plan_budget_query": [
+          "reused_attraction",
+          "budget"
+        ],
+        "ticket_or_admission_budget_without_reusable_attractions": [
+          "attraction",
+          "budget"
+        ]
+      },
+      "slot_change_invalidation": {
+        "destination": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "duration_days": [
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "start_date": [
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "people_count": [
+          "itinerary",
+          "budget"
+        ],
+        "traveler_group": [
+          "attraction",
+          "itinerary",
+          "budget"
+        ],
+        "preferences": [
+          "attraction",
+          "itinerary",
+          "budget"
+        ],
+        "budget_amount": [
+          "budget"
+        ],
+        "budget_level": [
+          "budget"
+        ],
+        "weather_scenario": [
+          "weather",
+          "itinerary"
+        ]
+      },
+      "multi_turn_counting": {
+        "state_scope": "per method, per case, per repeat",
+        "previous_state_source": "only the same method's own previous turn output",
+        "scenario_unit": "one multi-turn scenario is one paired statistical unit",
+        "warm_start": "no oracle or handcrafted previous_state in formal test runs",
+        "initial_turn_failure": "the scenario remains failed; do not repair with gold state"
+      }
+    },
+    "m2_fixed_template_policy": {
+      "baseline_definition": "fixed_task_type_template_multi_agent",
+      "state_reuse": false,
+      "dynamic_goal_state_scheduling": false,
+      "templates": {
+        "general_chat": {
+          "agents": [],
+          "tools": []
+        },
+        "clarification": {
+          "agents": [],
+          "tools": []
+        },
+        "attraction_recommendation": {
+          "agents": [
+            "attraction"
+          ],
+          "tools": [
+            "poi_search"
+          ]
+        },
+        "weather_query": {
+          "agents": [
+            "weather"
+          ],
+          "tools": [
+            "weather_query"
+          ]
+        },
+        "budget_query": {
+          "agents": [
+            "budget"
+          ],
+          "tools": [
+            "budget_calculator"
+          ],
+          "budget_evidence_policy": "use_frozen_standard_reference_poi_combo_when_no_current_itinerary_is_supplied"
+        },
+        "trip_planning_with_weather_date": {
+          "agents": [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ],
+          "tools": [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        },
+        "trip_planning_without_weather_date": {
+          "agents": [
+            "attraction",
+            "itinerary",
+            "budget"
+          ],
+          "tools": [
+            "poi_search",
+            "budget_calculator"
+          ],
+          "weather_policy": "do_not_query_weather_without_specific_departure_date"
+        },
+        "partial_replan": {
+          "template_policy": "rerun the fixed task-relevant agent subset derived from the current request slots; never reuse previous intermediate results",
+          "slot_templates": {
+            "budget_amount_or_budget_level_changed": {
+              "agents": [
+                "budget"
+              ],
+              "tools": [
+                "budget_calculator"
+              ]
+            },
+            "people_count_or_origin_itinerary_scope_changed": {
+              "agents": [
+                "itinerary",
+                "budget"
+              ],
+              "tools": [
+                "budget_calculator"
+              ]
+            },
+            "start_date_duration_or_weather_changed": {
+              "agents": [
+                "weather",
+                "itinerary",
+                "budget"
+              ],
+              "tools": [
+                "weather_query",
+                "budget_calculator"
+              ]
+            },
+            "preference_traveler_or_requirement_changed": {
+              "agents": [
+                "attraction",
+                "itinerary",
+                "budget"
+              ],
+              "tools": [
+                "poi_search",
+                "budget_calculator"
+              ]
+            },
+            "destination_changed": {
+              "agents": [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ],
+              "tools": [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ]
+            }
+          }
+        },
+        "weather_adjustment": {
+          "agents": [
+            "itinerary",
+            "budget"
+          ],
+          "tools": [
+            "budget_calculator"
+          ],
+          "state_reuse": false,
+          "weather_change_source": "user_supplied_weather_change_condition"
+        }
+      },
+      "policy": "M2 maps the inferred task type to a pre-defined task-relevant agent template. It may use visible current request slots to select a frozen partial-replan subtemplate, but it does not perform result validity checking or reuse previous intermediate results; those are reserved for M3."
+    },
+    "m2_stsr_scope_compatibility": {
+      "T_ATTRACTION_SINGLE_SCOPE": {
+        "template": "attraction_recommendation",
+        "allowed_agents": [
+          "attraction"
+        ],
+        "allowed_tools": [
+          "poi_search"
+        ]
+      },
+      "T_WEATHER_SINGLE_SCOPE": {
+        "template": "weather_query",
+        "allowed_agents": [
+          "weather"
+        ],
+        "allowed_tools": [
+          "weather_query"
+        ]
+      },
+      "T_BUDGET_SINGLE_SCOPE": {
+        "template": "budget_query",
+        "allowed_agents": [
+          "budget"
+        ],
+        "allowed_tools": [
+          "budget_calculator"
+        ]
+      }
+    },
+    "m2_m3_fairness": {
+      "must_match": [
+        "business_agents",
+        "available_generation_tools",
+        "tool_contract_version",
+        "output_schema_version",
+        "model_config_policy",
+        "offline_data_policy",
+        "evaluator_policy"
+      ],
+      "only_allowed_differences": [
+        "scheduler_policy",
+        "state_reuse_policy",
+        "planned_agent_subset",
+        "planned_tool_subset"
+      ]
+    },
+    "methods": {
+      "llm_direct": {
+        "method": "llm_direct",
+        "paper_label": "M0 Direct LLM",
+        "experimental_role": "no-agent/no-tool lower bound",
+        "agent_topology": "none",
+        "business_agents": [],
+        "available_generation_tools": [],
+        "scheduler_policy": "no scheduler",
+        "state_reuse_policy": "no structured result reuse",
+        "can_call_generation_tools": false,
+        "can_reuse_previous_results": false,
+        "output_schema_version": "ctp-experiment-output-v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "model_config_policy": "shared_frozen_model_config",
+        "offline_data_policy": "shared_fixed_offline_data",
+        "evaluator_policy": "method_blind_independent_evaluator"
+      },
+      "single_agent": {
+        "method": "single_agent",
+        "paper_label": "M1 Single Agent",
+        "experimental_role": "single general agent baseline",
+        "agent_topology": "one general tourism agent",
+        "business_agents": [
+          "single_agent"
+        ],
+        "available_generation_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "scheduler_policy": "single agent decides tool use internally",
+        "state_reuse_policy": "no structured result reuse",
+        "can_call_generation_tools": true,
+        "can_reuse_previous_results": false,
+        "output_schema_version": "ctp-experiment-output-v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "model_config_policy": "shared_frozen_model_config",
+        "offline_data_policy": "shared_fixed_offline_data",
+        "evaluator_policy": "method_blind_independent_evaluator"
+      },
+      "fixed_multi_agent": {
+        "method": "fixed_multi_agent",
+        "paper_label": "M2 Fixed Template Multi-Agent",
+        "experimental_role": "fixed task-template multi-agent baseline",
+        "agent_topology": "four shared business agents",
+        "business_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "available_generation_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "scheduler_policy": "fixed task-type template; single-capability and no-date templates are task-relevant",
+        "state_reuse_policy": "no local result reuse; rerun the fixed task-type template",
+        "can_call_generation_tools": true,
+        "can_reuse_previous_results": false,
+        "output_schema_version": "ctp-experiment-output-v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "model_config_policy": "shared_frozen_model_config",
+        "offline_data_policy": "shared_fixed_offline_data",
+        "evaluator_policy": "method_blind_independent_evaluator"
+      },
+      "adaptive_multi_agent": {
+        "method": "adaptive_multi_agent",
+        "paper_label": "M3 Proposed Method",
+        "experimental_role": "goal-state adaptive scheduling method",
+        "agent_topology": "four shared business agents",
+        "business_agents": [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ],
+        "available_generation_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "scheduler_policy": "goal-state scheduler selects the minimal valid subset",
+        "state_reuse_policy": "reuse only same-method valid previous artifacts",
+        "can_call_generation_tools": true,
+        "can_reuse_previous_results": true,
+        "output_schema_version": "ctp-experiment-output-v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "model_config_policy": "shared_frozen_model_config",
+        "offline_data_policy": "shared_fixed_offline_data",
+        "evaluator_policy": "method_blind_independent_evaluator"
+      }
+    },
+    "source_documents": [
+      "Phase0_实验协议.md",
+      "docs/Day4_goal_state_scheduler_rules.md",
+      "docs/Day5_evaluation_rule_catalog.md",
+      "docs/Day6_four_method_fairness.md"
+    ],
+    "contract_sha256": "9280c1c8ce50e2d234dc24179b90c335e20c20e2a29f5df4f4f12c6a1a332319"
+  },
+  "method_order_seed": 20260821,
+  "repeats": 1,
+  "repeat_index_start": 0,
+  "system_variant": "per_method",
+  "model_config_name": "task-d-m0-real-api",
+  "provider": "vectorengine_openai_compatible",
+  "base_url": "https://api.vectorengine.ai/v1",
+  "model": "gpt-5-mini",
+  "temperature": 0.0,
+  "max_tokens": 4096,
+  "timeout_seconds": 120,
+  "result_soft_timeout_seconds": 2920.0,
+  "result_hard_timeout_seconds": 300.0,
+  "result_hard_timeout_mode": "subprocess_per_result",
+  "retry_max_attempts": 3,
+  "reasoning_effort": "minimal",
+  "deterministic_research_final_answer": true,
+  "cache_enabled": false,
+  "cache_disabled": true,
+  "strict_mode": true,
+  "model_config": {
+    "name": "task-d-m0-real-api",
+    "provider": "vectorengine_openai_compatible",
+    "base_url": "https://api.vectorengine.ai/v1",
+    "model": "gpt-5-mini",
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "timeout_seconds": 120,
+    "result_soft_timeout_seconds": 2920.0,
+    "result_hard_timeout_seconds": 300.0,
+    "result_hard_timeout_mode": "subprocess_per_result",
+    "retry_max_attempts": 3,
+    "reasoning_effort": "minimal",
+    "deterministic_research_final_answer": true
+  },
+  "runtime_config": {
+    "schema_version": "ctp-experiment-runtime-config-v1",
+    "provider": "vectorengine_openai_compatible",
+    "base_url": "https://api.vectorengine.ai/v1",
+    "model": "gpt-5-mini",
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "timeout_seconds": 120,
+    "result_soft_timeout_seconds": 2920.0,
+    "result_hard_timeout_seconds": 300.0,
+    "result_hard_timeout_mode": "subprocess_per_result",
+    "retry_max_attempts": 3,
+    "reasoning_effort": "minimal",
+    "deterministic_research_final_answer": true,
+    "final_answer_generation_mode": "deterministic_research_evidence_renderer",
+    "strict_mode": true,
+    "cache_disabled": true,
+    "trace_save_user_message": false,
+    "api_key_configured": true,
+    "mock_fallback_allowed": false
+  },
+  "prompt_versions": {
+    "structured_llm_output": "ctp-structured-llm-output-prompts-v2",
+    "research_agent": "ctp-research-agent-prompts-v2"
+  },
+  "method_controls": {
+    "schema_version": "ctp-method-controls-v1",
+    "research_agent_decision_normalizer_enabled": true,
+    "research_agent_decision_normalizer_version": "ctp-research-agent-decision-normalizer-v1",
+    "deterministic_research_final_answer": true,
+    "final_answer_generation_mode": "deterministic_research_evidence_renderer"
+  },
+  "costing": {
+    "schema_version": "ctp-llm-costing-v1",
+    "price_snapshot": {
+      "schema_version": "ctp-llm-costing-v1",
+      "provider": "vectorengine_openai_compatible",
+      "model": "gpt-5-mini",
+      "price_snapshot_date": "2026-08-01",
+      "price_source_url": "https://api.vectorengine.ai/pricing",
+      "currency": "USD",
+      "price_unit": "per_1k_tokens",
+      "input_token_unit_price": 0.00025,
+      "output_token_unit_price": 0.002,
+      "pricing_mode": "frozen_default_token_estimate"
+    },
+    "price_snapshot_date": "2026-08-01",
+    "price_source_url": "https://api.vectorengine.ai/pricing",
+    "input_token_unit_price": 0.00025,
+    "output_token_unit_price": 0.002,
+    "price_unit": "per_1k_tokens",
+    "currency": "USD",
+    "actual_cost_policy": "provider-reported when available; mock calls record zero; otherwise actual_cost is marked not_reported_by_provider"
+  },
+  "cache": {
+    "enabled": false,
+    "disabled": true
+  },
+  "offline_data": {
+    "enabled": true,
+    "env": "TOURISM_FORMAL_EXPERIMENT_OFFLINE",
+    "policy": "formal experiments use frozen local datasets and forbid real-time tourism APIs",
+    "snapshot": {
+      "schema_version": "fixed_data_manifest_v2",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+      "city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "snapshot_dirs": [
+        "pois",
+        "weather",
+        "restaurants",
+        "accommodation",
+        "transport"
+      ],
+      "file_count": 25,
+      "expected_file_count": 25,
+      "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "expected_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "missing_files": [],
+      "files": [
+        {
+          "kind": "accommodation",
+          "city_id": "beijing",
+          "path": "data/accommodation/beijing.json",
+          "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "guilin",
+          "path": "data/accommodation/guilin.json",
+          "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "hangzhou",
+          "path": "data/accommodation/hangzhou.json",
+          "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "shenzhen",
+          "path": "data/accommodation/shenzhen.json",
+          "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "xian",
+          "path": "data/accommodation/xian.json",
+          "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "beijing",
+          "path": "data/pois/beijing.json",
+          "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "guilin",
+          "path": "data/pois/guilin.json",
+          "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "hangzhou",
+          "path": "data/pois/hangzhou.json",
+          "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "shenzhen",
+          "path": "data/pois/shenzhen.json",
+          "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "xian",
+          "path": "data/pois/xian.json",
+          "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "beijing",
+          "path": "data/restaurants/beijing.json",
+          "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "guilin",
+          "path": "data/restaurants/guilin.json",
+          "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "hangzhou",
+          "path": "data/restaurants/hangzhou.json",
+          "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "shenzhen",
+          "path": "data/restaurants/shenzhen.json",
+          "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "xian",
+          "path": "data/restaurants/xian.json",
+          "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "beijing",
+          "path": "data/transport/beijing.json",
+          "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "guilin",
+          "path": "data/transport/guilin.json",
+          "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "hangzhou",
+          "path": "data/transport/hangzhou.json",
+          "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "shenzhen",
+          "path": "data/transport/shenzhen.json",
+          "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "xian",
+          "path": "data/transport/xian.json",
+          "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "beijing",
+          "path": "data/weather/beijing.json",
+          "sha256": "a6b32944050cc2a638d09a67be8d7747ca2b0153527f856d85b4813651c91d0a",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "guilin",
+          "path": "data/weather/guilin.json",
+          "sha256": "450d86b2f7121f970e7c48e5a38ad113c8e4289c0356f448221ce1d63d412f94",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "hangzhou",
+          "path": "data/weather/hangzhou.json",
+          "sha256": "e4ea7c0b10b350cd4c7ba739746e0634d0aa86d77378d858104c0f789f6f64fd",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "shenzhen",
+          "path": "data/weather/shenzhen.json",
+          "sha256": "533e74a25a72fdc58a0f31746f10dd405611b3ab007f18d0319566deaec5e281",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "xian",
+          "path": "data/weather/xian.json",
+          "sha256": "7d9e244e1bd64d129cb75b641a09adc8521d9ce082b4a28de7bbb2aadb92cef4",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        }
+      ]
+    },
+    "qweather_snapshot": {
+      "schema_version": "ctp-qweather-snapshot-manifest-v1",
+      "provider": "qweather",
+      "snapshot_id": "ctp_qweather_20260807_v1",
+      "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+      "reference_date": "2026-08-07",
+      "fetched_at": "2026-08-07T22:59:29+08:00",
+      "timezone": "Asia/Shanghai",
+      "forecast_endpoint": "/v7/weather/30d",
+      "forecast_start_date": "2026-08-07",
+      "forecast_end_date": "2026-09-05",
+      "forecast_horizon_days": 30,
+      "cities": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "city_summaries": {
+        "beijing": {
+          "city_name": "北京",
+          "location_id": "101010100",
+          "forecast_start_date": "2026-08-07",
+          "forecast_end_date": "2026-09-05",
+          "forecast_horizon_days": 30,
+          "raw_path": "data/weather_snapshot/qweather_v1/raw/beijing.json",
+          "normalized_path": "data/weather_snapshot/qweather_v1/normalized/beijing.json"
+        },
+        "hangzhou": {
+          "city_name": "杭州",
+          "location_id": "101210101",
+          "forecast_start_date": "2026-08-07",
+          "forecast_end_date": "2026-09-05",
+          "forecast_horizon_days": 30,
+          "raw_path": "data/weather_snapshot/qweather_v1/raw/hangzhou.json",
+          "normalized_path": "data/weather_snapshot/qweather_v1/normalized/hangzhou.json"
+        },
+        "xian": {
+          "city_name": "西安",
+          "location_id": "101110101",
+          "forecast_start_date": "2026-08-07",
+          "forecast_end_date": "2026-09-05",
+          "forecast_horizon_days": 30,
+          "raw_path": "data/weather_snapshot/qweather_v1/raw/xian.json",
+          "normalized_path": "data/weather_snapshot/qweather_v1/normalized/xian.json"
+        },
+        "shenzhen": {
+          "city_name": "深圳",
+          "location_id": "101280601",
+          "forecast_start_date": "2026-08-07",
+          "forecast_end_date": "2026-09-05",
+          "forecast_horizon_days": 30,
+          "raw_path": "data/weather_snapshot/qweather_v1/raw/shenzhen.json",
+          "normalized_path": "data/weather_snapshot/qweather_v1/normalized/shenzhen.json"
+        },
+        "guilin": {
+          "city_name": "桂林",
+          "location_id": "101300501",
+          "forecast_start_date": "2026-08-07",
+          "forecast_end_date": "2026-09-05",
+          "forecast_horizon_days": 30,
+          "raw_path": "data/weather_snapshot/qweather_v1/raw/guilin.json",
+          "normalized_path": "data/weather_snapshot/qweather_v1/normalized/guilin.json"
+        }
+      },
+      "location_resolution": "fixed_location_id",
+      "location_ids": {
+        "beijing": "101010100",
+        "hangzhou": "101210101",
+        "xian": "101110101",
+        "shenzhen": "101280601",
+        "guilin": "101300501"
+      },
+      "raw_dir": "data/weather_snapshot/qweather_v1/raw",
+      "normalized_dir": "data/weather_snapshot/qweather_v1/normalized",
+      "real_time_api_allowed": false,
+      "runtime_online_refresh_allowed": false,
+      "api_key_recorded": false,
+      "formal_experiment_policy": "M1/M2/M3 read this frozen local snapshot; formal runs must not refresh weather online.",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+      "combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+      "files": [
+        {
+          "kind": "normalized",
+          "city_id": "beijing",
+          "path": "data/weather_snapshot/qweather_v1/normalized/beijing.json",
+          "sha256": "dfd38d2d39a627d73d256ed576e8d73331c304fcd4d65c2baf0b1ce4d3ec7d4b",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "normalized",
+          "city_id": "guilin",
+          "path": "data/weather_snapshot/qweather_v1/normalized/guilin.json",
+          "sha256": "14022989eb04c4b712db76d49143357cd44e808ca9283f91ec25fa205bcc77cf",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "normalized",
+          "city_id": "hangzhou",
+          "path": "data/weather_snapshot/qweather_v1/normalized/hangzhou.json",
+          "sha256": "d9601d8208a9c77d29da16f87b01977ee1c2411dfe8686f9877cb0e28febd0d5",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "normalized",
+          "city_id": "shenzhen",
+          "path": "data/weather_snapshot/qweather_v1/normalized/shenzhen.json",
+          "sha256": "86d5c7b06d17281fd23e068d4df0f22bb2245a6ce99797ccb90ec80a6590d101",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "normalized",
+          "city_id": "xian",
+          "path": "data/weather_snapshot/qweather_v1/normalized/xian.json",
+          "sha256": "a5c9b36abe49bfd76331c4245156b5f8c6b4dbb5b66897c331d1ef63c6a9a093",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "raw",
+          "city_id": "beijing",
+          "path": "data/weather_snapshot/qweather_v1/raw/beijing.json",
+          "sha256": "e04e32c56b2a691b1d5a130c97bbdaa6afe59368595580eac8d20d6c6ff39b96",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "raw",
+          "city_id": "guilin",
+          "path": "data/weather_snapshot/qweather_v1/raw/guilin.json",
+          "sha256": "9385f17006eaf9cd0e9df9d463efd8c2ef5deb9ed179f6b5ed1b7627972ac3c6",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "raw",
+          "city_id": "hangzhou",
+          "path": "data/weather_snapshot/qweather_v1/raw/hangzhou.json",
+          "sha256": "1264ea5ac3a8ae33c611f6d97e7484ccaf21687b5755abe9f20ec85052b5c0c6",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "raw",
+          "city_id": "shenzhen",
+          "path": "data/weather_snapshot/qweather_v1/raw/shenzhen.json",
+          "sha256": "9f12d31c5b4e714d767de107a207e36acaaee91897dc15d75a10da0cec810d3d",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "raw",
+          "city_id": "xian",
+          "path": "data/weather_snapshot/qweather_v1/raw/xian.json",
+          "sha256": "ce3a7bca976f142e1a3c115b4cdab2b82a6c0aea279532d310d9e4fa019cbe66",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        }
+      ]
+    },
+    "intercity_transport_snapshot": {
+      "schema_version": "ctp-intercity-transport-manifest-v1",
+      "snapshot_id": "ctp_intercity_rail_second_class_20260813_reviewed_v1",
+      "provider": "manual_12306",
+      "source_name": "China Railway 12306",
+      "source_type": "manual_lookup_official_website",
+      "fare_snapshot_date": "2026-08-13",
+      "transport_mode": "high_speed_or_d_train",
+      "seat_class": "second_class",
+      "passenger_type": "adult",
+      "currency": "CNY",
+      "fare_scope": "one_way_per_person",
+      "round_trip_multiplier": 2,
+      "symmetric_route_lookup_allowed": true,
+      "route_count": 50,
+      "supported_origin_cities": [
+        "shanghai",
+        "guangzhou",
+        "chengdu",
+        "chongqing",
+        "wuhan",
+        "changsha",
+        "nanjing",
+        "zhengzhou",
+        "nanchang",
+        "guiyang"
+      ],
+      "supported_destination_cities": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "real_time_api_allowed": false,
+      "runtime_online_refresh_allowed": false,
+      "real_time_price_claim_allowed": false,
+      "api_key_recorded": false,
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+      "combined_sha256": "c0eb0b9048de4cd35c178a866c70cdf85038521833e62acb92469518d0bb53b8",
+      "files": [
+        {
+          "kind": "fare_table",
+          "path": "data/intercity_transport/rail_second_class_v1.json",
+          "sha256": "f453ddb22547c689a750d8651ccd1154a273e03e45560b0d2fe8fb40f4808020",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "fare_evidence_ledger",
+          "path": "data/intercity_transport/evidence/rail_second_class_evidence_v1.json",
+          "sha256": "4b627b57a1244a16452b4e28bb774e638ef659bfd5c93dbadf44339eae806942",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        }
+      ],
+      "policy": {
+        "formal_experiment_online_refresh_allowed": false,
+        "unsupported_route_policy": "do_not_guess_do_not_refresh_do_not_switch_to_flight",
+        "unsupported_route_user_message": "未查询到相关动车信息，此次预算不包含城际交通，建议前往中国铁路12306官网查询。",
+        "missing_origin_budget_scope": "destination_local_only"
+      },
+      "evidence": {
+        "ledger_path": "data/intercity_transport/evidence/rail_second_class_evidence_v1.json",
+        "ledger_schema_version": "ctp-intercity-rail-evidence-ledger-v1",
+        "manual_review_required": true,
+        "manual_review_complete": true,
+        "reviewed_count": 50,
+        "pending_count": 0,
+        "screenshot_required_for_formal_claim": true,
+        "planned_query_date": "2026-08-13",
+        "travel_date": "2026-08-13",
+        "query_date": "2026-08-12",
+        "fare_selection_rule_id": "visible_fastest_second_class_fare",
+        "rejected_count": 0,
+        "status_counts": {
+          "reviewed": 50
+        },
+        "route_count": 50,
+        "ledger_dataset_version": "ctp_intercity_rail_second_class_evidence_20260813_reviewed_v1"
+      }
+    }
+  },
+  "evaluation": {
+    "schema_version": "ctp-independent-evaluation-v1",
+    "summary_schema_version": "ctp-evaluation-summary-v1",
+    "catalog_id": "day8_formal_independent_evaluator_rules",
+    "catalog_path": "D:/Code/Tourism_Agent/experiments/evaluation_rule_catalog.json",
+    "catalog_sha256": "fe665db29128f6281e34a4544f51b25687d8b6fe1819e6d0a62c369497f6463a",
+    "catalog_hash_strategy": "canonical_json_utf8_sort_keys_v1",
+    "guards": [
+      "method_blind",
+      "no_llm_or_live_api",
+      "no_output_repair",
+      "structured_fields_only",
+      "append_only_evidence"
+    ],
+    "budget_gold": {
+      "available": true,
+      "path": "experiments/generated/ctp100_budget_gold_v2.json",
+      "file_sha256": "a755d70f2606d1461cb384bce9da54d90de2192d71c4e0fd00827c849aa21ac5",
+      "hash_strategy": "raw_file_sha256_v1",
+      "schema_version": "ctp100-budget-gold-v2-formal-v1",
+      "gold_status": "formal_frozen",
+      "review_status": "confirmed",
+      "source_dataset_sha256": "c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e",
+      "budget_policy_version": "budget_policy_v2_0",
+      "summary": {
+        "evaluation_unit_count": 130,
+        "budget_gold_count": 90,
+        "skipped_count": 40,
+        "skipped_by_reason": {
+          "budget_not_required": 40
+        },
+        "generated_by_task_type": {
+          "budget_query": 10,
+          "partial_replan": 25,
+          "trip_planning": 50,
+          "weather_adjustment": 5
+        }
+      },
+      "artifact_hashes": {
+        "source_dataset": {
+          "path": "experiments/ctp100_formal_v2.json",
+          "sha256": "c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        "budget_policy_doc": {
+          "path": "docs/Budget_Policy_v2.md",
+          "sha256": "258857325f625577d1a12a7fe8ac03d075fa94ce026118aa6a7e151f4d3a4cb6",
+          "hash_strategy": "raw_file_sha256_v1"
+        },
+        "budget_policy": {
+          "version": "budget_policy_v2_0",
+          "contingency_ratio": 0.1
+        },
+        "fixed_tourism_data": {
+          "schema_version": "fixed_data_manifest_v2",
+          "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+          "file_count": 25,
+          "city_ids": [
+            "beijing",
+            "hangzhou",
+            "xian",
+            "shenzhen",
+            "guilin"
+          ],
+          "files_by_kind": {
+            "accommodation": [
+              {
+                "city_id": "beijing",
+                "path": "data/accommodation/beijing.json",
+                "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "guilin",
+                "path": "data/accommodation/guilin.json",
+                "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "hangzhou",
+                "path": "data/accommodation/hangzhou.json",
+                "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "shenzhen",
+                "path": "data/accommodation/shenzhen.json",
+                "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "xian",
+                "path": "data/accommodation/xian.json",
+                "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              }
+            ],
+            "restaurants": [
+              {
+                "city_id": "beijing",
+                "path": "data/restaurants/beijing.json",
+                "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "guilin",
+                "path": "data/restaurants/guilin.json",
+                "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "hangzhou",
+                "path": "data/restaurants/hangzhou.json",
+                "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "shenzhen",
+                "path": "data/restaurants/shenzhen.json",
+                "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "xian",
+                "path": "data/restaurants/xian.json",
+                "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              }
+            ],
+            "pois": [
+              {
+                "city_id": "beijing",
+                "path": "data/pois/beijing.json",
+                "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "guilin",
+                "path": "data/pois/guilin.json",
+                "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "hangzhou",
+                "path": "data/pois/hangzhou.json",
+                "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "shenzhen",
+                "path": "data/pois/shenzhen.json",
+                "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "xian",
+                "path": "data/pois/xian.json",
+                "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              }
+            ],
+            "transport": [
+              {
+                "city_id": "beijing",
+                "path": "data/transport/beijing.json",
+                "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "guilin",
+                "path": "data/transport/guilin.json",
+                "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "hangzhou",
+                "path": "data/transport/hangzhou.json",
+                "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "shenzhen",
+                "path": "data/transport/shenzhen.json",
+                "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "xian",
+                "path": "data/transport/xian.json",
+                "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              }
+            ]
+          }
+        },
+        "intercity_transport_snapshot": {
+          "schema_version": "ctp-intercity-transport-manifest-v1",
+          "snapshot_id": "ctp_intercity_rail_second_class_20260813_reviewed_v1",
+          "combined_sha256": "c0eb0b9048de4cd35c178a866c70cdf85038521833e62acb92469518d0bb53b8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+          "route_count": 50,
+          "fare_snapshot_date": "2026-08-13",
+          "source_name": "China Railway 12306",
+          "evidence": {
+            "ledger_path": "data/intercity_transport/evidence/rail_second_class_evidence_v1.json",
+            "ledger_schema_version": "ctp-intercity-rail-evidence-ledger-v1",
+            "manual_review_required": true,
+            "manual_review_complete": true,
+            "reviewed_count": 50,
+            "pending_count": 0,
+            "screenshot_required_for_formal_claim": true,
+            "planned_query_date": "2026-08-13",
+            "travel_date": "2026-08-13",
+            "query_date": "2026-08-12",
+            "fare_selection_rule_id": "visible_fastest_second_class_fare",
+            "rejected_count": 0,
+            "status_counts": {
+              "reviewed": 50
+            },
+            "route_count": 50,
+            "ledger_dataset_version": "ctp_intercity_rail_second_class_evidence_20260813_reviewed_v1"
+          }
+        }
+      },
+      "visible_to_generation": false,
+      "used_by": "independent_evaluator_only"
+    }
+  },
+  "results": {
+    "csv": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/benchmark_results.csv",
+    "json": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/benchmark_results.json",
+    "summary": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/evaluation_summary.json",
+    "paper_tables": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/paper_tables.md",
+    "resume_state": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/benchmark_resume_state.json",
+    "checkpoint_csv": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/benchmark_results.checkpoint.csv",
+    "checkpoint_json": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/benchmark_results.checkpoint.json"
+  },
+  "resume": {
+    "schema_version": "ctp-experiment-resume-v1",
+    "state_saved": true,
+    "path": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/benchmark_resume_state.json",
+    "resume_supported": true,
+    "status": "completed",
+    "resume_enabled_for_this_invocation": false,
+    "progress": {
+      "completed_result_count": 20,
+      "completed_unique_key_count": 20,
+      "expected_result_count": 20,
+      "remaining_result_count": 0
+    },
+    "resume_event_count": 0,
+    "unique_key": [
+      "case_id",
+      "turn_id",
+      "method",
+      "repeat_index"
+    ],
+    "contract_sha256": "70bfe029253edf7a659f6d8a17680f82c1e2177f1b299fe0ff7043c80dbda531"
+  }
+}

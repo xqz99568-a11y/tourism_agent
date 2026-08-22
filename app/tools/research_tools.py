@@ -511,6 +511,7 @@ class ResearchBudgetCalculatorTool(BaseTool):
                     "scope_complete": raw.get("scope_complete"),
                     "sufficiency_status": raw.get("sufficiency_status"),
                     "local_total": raw.get("local_total_recommended"),
+                    "local_total_recommended": raw.get("local_total_recommended"),
                     "per_person": raw.get("per_person"),
                     "daily_average": raw.get("daily"),
                     "budget_scope": raw.get("budget_scope"),
@@ -871,6 +872,10 @@ def _collect_plan_attractions(plan: Dict[str, Any]) -> List[Any]:
     results: List[Any] = []
     for day in daily:
         if isinstance(day, dict):
+            for key in ("attraction_poi_ids", "poi_ids", "attraction_ids", "selected_poi_ids"):
+                values = day.get(key)
+                if isinstance(values, list):
+                    results.extend(values)
             items = day.get("attractions") or day.get("pois") or []
             if isinstance(items, list):
                 results.extend(items)
@@ -878,10 +883,11 @@ def _collect_plan_attractions(plan: Dict[str, Any]) -> List[Any]:
 
 
 def _collect_plan_attraction_refs(plan: Dict[str, Any]) -> List[Dict[str, Any]]:
-    refs: List[Dict[str, Any]] = []
+    direct_refs: List[Dict[str, Any]] = []
+    daily_refs: List[Dict[str, Any]] = []
     direct = plan.get("attractions")
     if isinstance(direct, list):
-        refs.extend(_coerce_attraction_refs(direct, day_index=None))
+        direct_refs.extend(_coerce_attraction_refs(direct, day_index=None))
 
     daily = plan.get("daily_itinerary") or plan.get("itinerary") or []
     if isinstance(daily, dict):
@@ -891,14 +897,21 @@ def _collect_plan_attraction_refs(plan: Dict[str, Any]) -> List[Dict[str, Any]]:
             if not isinstance(day, dict):
                 continue
             day_index = _safe_int(day.get("day") or day.get("day_index") or index)
+            for key in ("attraction_poi_ids", "poi_ids", "attraction_ids", "selected_poi_ids"):
+                items = day.get(key)
+                if isinstance(items, list):
+                    daily_refs.extend(_coerce_attraction_refs(items, day_index=day_index))
             for key in ("attractions", "pois", "poi_list"):
                 items = day.get(key)
                 if isinstance(items, list):
-                    refs.extend(_coerce_attraction_refs(items, day_index=day_index))
+                    daily_refs.extend(_coerce_attraction_refs(items, day_index=day_index))
             activities = day.get("activities") or day.get("schedule") or []
             if isinstance(activities, list):
-                refs.extend(_coerce_attraction_refs(activities, day_index=day_index))
-    return refs
+                daily_refs.extend(_coerce_attraction_refs(activities, day_index=day_index))
+    task_type = str(plan.get("task_type") or "").strip().lower()
+    if daily_refs and task_type not in {"attraction_recommendation", "budget_query"}:
+        return daily_refs
+    return [*direct_refs, *daily_refs]
 
 
 def _rain_scoped_attraction_refs(
@@ -1173,10 +1186,16 @@ def _senior_accessibility_check(
 
 def _tool_evidence_check(plan: Dict[str, Any], constraints: Dict[str, Any]) -> Dict[str, Any]:
     tool_results = plan.get("tool_results")
+    context_tool_results = plan.get("context_tool_results")
     requires_evidence = bool(constraints.get("require_tool_evidence"))
-    if not requires_evidence and not isinstance(tool_results, dict):
+    if (
+        not requires_evidence
+        and not isinstance(tool_results, dict)
+        and not isinstance(context_tool_results, dict)
+    ):
         return _check_item("tool_evidence", True, False, {"required": False})
     tool_results = tool_results if isinstance(tool_results, dict) else {}
+    context_tool_results = context_tool_results if isinstance(context_tool_results, dict) else {}
     required_tools: List[str] = []
     if _collect_plan_attraction_refs(plan):
         required_tools.append("poi_search")
@@ -1185,12 +1204,26 @@ def _tool_evidence_check(plan: Dict[str, Any], constraints: Dict[str, Any]) -> D
     if isinstance(plan.get("budget"), dict) and plan.get("budget"):
         required_tools.append("budget_calculator")
     required_tools = _ordered_unique_text(required_tools)
-    missing_or_failed = [tool_name for tool_name in required_tools if not _tool_result_success(tool_results.get(tool_name))]
+    evidence_sources: Dict[str, str] = {}
+    missing_or_failed: List[str] = []
+    for tool_name in required_tools:
+        if _tool_result_success(tool_results.get(tool_name)):
+            evidence_sources[tool_name] = "current"
+        elif _tool_result_success(context_tool_results.get(tool_name)):
+            evidence_sources[tool_name] = "context"
+        else:
+            evidence_sources[tool_name] = "missing_or_failed"
+            missing_or_failed.append(tool_name)
     return _check_item(
         "tool_evidence",
         not required_tools,
         not missing_or_failed,
-        {"required": requires_evidence, "required_tools": required_tools, "missing_or_failed": missing_or_failed},
+        {
+            "required": requires_evidence,
+            "required_tools": required_tools,
+            "missing_or_failed": missing_or_failed,
+            "evidence_sources": evidence_sources,
+        },
     )
 
 

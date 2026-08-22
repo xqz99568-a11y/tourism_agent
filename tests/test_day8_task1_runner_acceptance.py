@@ -177,6 +177,7 @@ def _run_adaptive_multi_agent_runner(
     monkeypatch.setenv("LLM_MAX_TOKENS", "4096")
     monkeypatch.setenv("LLM_TIMEOUT", "60")
     monkeypatch.setenv("LLM_RETRY_MAX_ATTEMPTS", "3")
+    monkeypatch.setenv("EXPERIMENT_RESULT_HARD_TIMEOUT_SECONDS", "900")
     monkeypatch.setenv("LLM_REASONING_EFFORT", "minimal")
 
     benchmark_path = tmp_path / f"{run_id}.json"

@@ -7,6 +7,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.core.benchmark_dataset_validator import build_benchmark_dataset_quality_report
+from app.core.academic_experiment_design import MAIN_DATASET_VERSION
 from app.core.formal_experiment_preflight import load_benchmark_document
 
 
@@ -168,6 +169,6 @@ def test_benchmark_manifest_points_to_weather_fixed_formal_dataset() -> None:
     dataset = json.loads(DATASET_PATH.read_text(encoding="utf-8"))
     benchmark = json.loads(BENCHMARK_PATH.read_text(encoding="utf-8"))
 
-    assert dataset["dataset_version"] == "2026-08-18-day8-formal-v2-weather-gold-fix"
+    assert dataset["dataset_version"] == MAIN_DATASET_VERSION
     assert benchmark["dataset_version"] == dataset["dataset_version"]
     assert benchmark["case_files"] == ["ctp100_formal_v2.json"]

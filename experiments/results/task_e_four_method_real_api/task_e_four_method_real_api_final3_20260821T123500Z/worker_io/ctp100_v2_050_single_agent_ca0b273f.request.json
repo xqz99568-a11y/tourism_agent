@@ -1,0 +1,65 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_050",
+    "user_input": "桂林玩3天，两个人，总预算上限3000元，帮我看看当地旅行费用能不能控制住。",
+    "task_type": "budget_query",
+    "title": "预算查询｜桂林｜无出发地",
+    "check": "只计算当地费用；正确报告预计剩余金额或预算缺口。",
+    "slots": {
+      "destination": "guilin",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 3000
+    },
+    "expected": {
+      "task_type": "budget_query",
+      "required_tools": [
+        "budget_calculator"
+      ],
+      "accepted_agent_sets": [
+        [
+          "budget"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "budget_calculator"
+        ]
+      ],
+      "forbidden_tools": [
+        "poi_search",
+        "weather_query"
+      ],
+      "hard_constraints": {
+        "destination": "guilin",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_limit": 3000
+      },
+      "destination": "guilin",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 3000,
+      "origin": null,
+      "intercity_transport_included": false,
+      "budget_scope": "destination_local_only",
+      "mandatory_budget_disclaimer": true,
+      "weather_required": false,
+      "requested_budget_scope": "destination_local_only",
+      "computed_budget_scope": "destination_local_only",
+      "scope_complete": true,
+      "sufficiency_status": "sufficient"
+    }
+  },
+  "method": "single_agent",
+  "request_id": "ctp100_v2_050_single_agent_ca0b273f",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "single_agent",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

@@ -23,6 +23,9 @@ from app.core.experiment_paper_analysis import (
 from app.core.experiment_run_audit import RUN_AUDIT_SCHEMA_VERSION
 from app.core.formal_artifact_integrity import FORMAL_ARTIFACT_INTEGRITY_SCHEMA_VERSION
 from app.core.formal_experiment_preflight import FORMAL_PREFLIGHT_SCHEMA_VERSION
+from app.core.independent_evaluator import (
+    DECISION_NORMALIZATION_DIAGNOSTIC_SCHEMA_VERSION,
+)
 
 
 FORMAL_EXPERIMENT_GATE_SCHEMA_VERSION = "ctp-formal-experiment-gate-v1"
@@ -131,6 +134,24 @@ def build_formal_experiment_gate(
     expected_result_count = _expected_result_count(preflight, summary)
     required = _normalize_methods(required_methods or DEFAULT_REQUIRED_METHODS)
     effective_min_cases = _effective_min_cases(min_cases)
+    raw_count_summary = _raw_result_count_summary(
+        preflight=preflight,
+        manifest=manifest,
+        expected_result_count=expected_result_count,
+        actual_result_count=len(results),
+        min_cases=effective_min_cases,
+        required_method_count=len(required),
+    )
+    method_grid_summary = _method_result_grid_summary(
+        results,
+        required_methods=required,
+        expected_result_count=expected_result_count,
+    )
+    metric_calculability_summary = _metric_calculability_summary(
+        results,
+        summary,
+        required_methods=required,
+    )
     independent_case_count = _int(
         summary.get("independent_case_count"),
         summary.get("unique_case_count"),
@@ -158,9 +179,15 @@ def build_formal_experiment_gate(
         "minimum_case_count_met": independent_case_count >= effective_min_cases,
         "required_methods_present": all(method in methods for method in required),
         "paired_m3_m2_present": _int(_nested(summary, "paired_statistics", "pair_count"), default=0) > 0,
+        "preflight_expected_result_count_recorded": expected_result_count is not None,
+        "preflight_expected_result_count_matches_structure": raw_count_summary[
+            "expected_matches_structure"
+        ],
         "result_count_matches_expected": (
             expected_result_count is not None and len(results) == expected_result_count
         ),
+        "formal_ctp100_raw_result_count_is_520": raw_count_summary["passed"],
+        "method_result_grid_complete": method_grid_summary["passed"],
         "csv_row_count_matches_results": len(csv_rows) == len(results),
         "all_results_have_execution_status": result_status_summary[
             "missing_execution_status_count"
@@ -179,6 +206,18 @@ def build_formal_experiment_gate(
             results,
             ("stsr", "evaluation_hcsr", "bpcr"),
         ),
+        "metric_values_calculable": metric_calculability_summary[
+            "result_metric_values_calculable"
+        ],
+        "summary_core_metrics_calculable": metric_calculability_summary[
+            "summary_core_metrics_calculable"
+        ],
+        "paired_core_metrics_calculable": metric_calculability_summary[
+            "paired_core_metrics_calculable"
+        ],
+        "decision_normalization_diagnostics_calculable": metric_calculability_summary[
+            "decision_normalization_diagnostics_calculable"
+        ],
         "trace_evidence_saved": bool(results)
         and all(_result_trace_evidence_exists(root, result) for result in results),
         "trace_count_matches_results": len(traces) == len(results),
@@ -236,6 +275,9 @@ def build_formal_experiment_gate(
         "failed_checks": failed_checks,
         "result_status_summary": result_status_summary,
         "api_failure_summary": api_failure_summary,
+        "raw_count_summary": raw_count_summary,
+        "method_result_grid_summary": method_grid_summary,
+        "metric_calculability_summary": metric_calculability_summary,
         "artifact_index": artifact_index,
         "artifact_paths": {
             key: (root / filename).as_posix()
@@ -275,11 +317,44 @@ def render_formal_experiment_report(gate: Dict[str, Any]) -> str:
         f"- failed_checks: `{gate.get('failed_checks') or []}`",
         f"- interpretation: {gate.get('interpretation')}",
         "",
-        "## Gate checks",
+        "## Raw result completeness",
         "",
-        "| Check | Passed |",
-        "|---|---:|",
     ]
+    raw_count = _dict(gate.get("raw_count_summary"))
+    grid = _dict(gate.get("method_result_grid_summary"))
+    metrics = _dict(gate.get("metric_calculability_summary"))
+    lines.extend(
+        [
+            f"- requires_ctp100_520_result_count: `{raw_count.get('requires_ctp100_520_result_count')}`",
+            f"- formal_ctp100_expected_raw_result_count: `{raw_count.get('formal_ctp100_expected_raw_result_count')}`",
+            f"- structure_expected_result_count: `{raw_count.get('structure_expected_result_count')}`",
+            f"- expected_matches_structure: `{raw_count.get('expected_matches_structure')}`",
+            f"- method_result_grid_complete: `{grid.get('passed')}`",
+            f"- expected_group_count: `{grid.get('expected_group_count')}`",
+            f"- observed_group_count: `{grid.get('observed_group_count')}`",
+            f"- missing_method_group_count: `{grid.get('missing_method_group_count')}`",
+            f"- duplicate_method_result_count: `{grid.get('duplicate_method_result_count')}`",
+            f"- unexpected_method_result_count: `{grid.get('unexpected_method_result_count')}`",
+            "",
+            "## Metric calculability",
+            "",
+            f"- result_metric_values_calculable: `{metrics.get('result_metric_values_calculable')}`",
+            f"- summary_core_metrics_calculable: `{metrics.get('summary_core_metrics_calculable')}`",
+            f"- paired_core_metrics_calculable: `{metrics.get('paired_core_metrics_calculable')}`",
+            f"- result_issue_count: `{metrics.get('result_issue_count')}`",
+            f"- summary_issue_count: `{metrics.get('summary_issue_count')}`",
+            f"- paired_issue_count: `{metrics.get('paired_issue_count')}`",
+            "",
+        ]
+    )
+    lines.extend(
+        [
+            "## Gate checks",
+            "",
+            "| Check | Passed |",
+            "|---|---:|",
+        ]
+    )
     for key, value in _dict(gate.get("checks")).items():
         lines.append(f"| {key} | `{value}` |")
 
@@ -408,6 +483,9 @@ def _attach_gate_to_manifest(
         "failed_checks": gate.get("failed_checks") or [],
         "json": gate_path.as_posix(),
         "markdown": report_path.as_posix(),
+        "raw_count_summary": gate.get("raw_count_summary"),
+        "method_result_grid_summary": gate.get("method_result_grid_summary"),
+        "metric_calculability_summary": gate.get("metric_calculability_summary"),
         "artifact_index": gate.get("artifact_index"),
     }
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -458,6 +536,474 @@ def _trace_summary(traces: List[Dict[str, Any]], llm_calls: List[Dict[str, Any]]
         ),
         "actual_cost": _sum_number(call.get("actual_cost") for call in llm_calls),
     }
+
+
+def _raw_result_count_summary(
+    *,
+    preflight: Dict[str, Any],
+    manifest: Dict[str, Any],
+    expected_result_count: Optional[int],
+    actual_result_count: int,
+    min_cases: int,
+    required_method_count: int,
+) -> Dict[str, Any]:
+    """Check the CTP100 formal raw-result count required by the paper protocol."""
+    benchmark_case_count = _first_int(
+        _nested(preflight, "benchmark", "case_count"),
+        _nested(manifest, "benchmark_structure", "case_count"),
+    )
+    benchmark_turn_count = _first_int(
+        _nested(preflight, "benchmark", "total_turn_count"),
+        _nested(manifest, "benchmark_structure", "total_turn_count"),
+    )
+    method_count = _first_int(
+        _nested(preflight, "run", "method_count"),
+        len(_as_list(_nested(preflight, "run", "methods"))),
+        required_method_count,
+    )
+    repeats = _first_int(_nested(preflight, "run", "repeats"), manifest.get("repeats"), 1)
+    structure_expected = (
+        benchmark_turn_count * method_count * repeats
+        if benchmark_turn_count is not None
+        and method_count is not None
+        and repeats is not None
+        else None
+    )
+    requires_ctp100_520 = _requires_ctp100_520_count(
+        preflight=preflight,
+        manifest=manifest,
+        min_cases=min_cases,
+        benchmark_case_count=benchmark_case_count,
+        benchmark_turn_count=benchmark_turn_count,
+    )
+    expected_matches_structure = (
+        expected_result_count is not None
+        and structure_expected is not None
+        and expected_result_count == structure_expected
+    )
+    ctp100_count_passed = (
+        not requires_ctp100_520
+        or (expected_result_count == 520 and actual_result_count == 520)
+    )
+    return {
+        "schema_version": "ctp-formal-raw-result-count-v1",
+        "requires_ctp100_520_result_count": requires_ctp100_520,
+        "benchmark_case_count": benchmark_case_count,
+        "benchmark_turn_count": benchmark_turn_count,
+        "method_count": method_count,
+        "repeats": repeats,
+        "expected_result_count": expected_result_count,
+        "actual_result_count": actual_result_count,
+        "structure_expected_result_count": structure_expected,
+        "expected_matches_structure": expected_matches_structure,
+        "formal_ctp100_expected_raw_result_count": 520 if requires_ctp100_520 else None,
+        "passed": ctp100_count_passed and expected_matches_structure,
+    }
+
+
+def _requires_ctp100_520_count(
+    *,
+    preflight: Dict[str, Any],
+    manifest: Dict[str, Any],
+    min_cases: int,
+    benchmark_case_count: Optional[int],
+    benchmark_turn_count: Optional[int],
+) -> bool:
+    dataset_id = str(
+        manifest.get("dataset_id")
+        or _nested(manifest, "dataset", "id")
+        or _nested(preflight, "benchmark", "dataset_id")
+        or ""
+    ).strip()
+    benchmark_path = str(
+        _nested(preflight, "benchmark", "path")
+        or manifest.get("dataset_path")
+        or _nested(manifest, "dataset", "path")
+        or ""
+    ).replace("\\", "/")
+    return (
+        min_cases >= 100
+        or dataset_id == "ctp100_formal_v2"
+        or benchmark_path.endswith("experiments/benchmark.json")
+        or benchmark_path.endswith("experiments/ctp100_formal_v2.json")
+        or (benchmark_case_count == 100 and benchmark_turn_count == 130)
+    )
+
+
+def _method_result_grid_summary(
+    results: List[Dict[str, Any]],
+    *,
+    required_methods: List[str],
+    expected_result_count: Optional[int],
+) -> Dict[str, Any]:
+    required = set(required_methods)
+    groups: Dict[tuple[str, str, int], Dict[str, int]] = {}
+    duplicate_row_count = 0
+    unexpected_method_row_count = 0
+    invalid_identity_count = 0
+    duplicate_samples: List[Dict[str, Any]] = []
+    missing_samples: List[Dict[str, Any]] = []
+    unexpected_samples: List[Dict[str, Any]] = []
+
+    for result in results:
+        case_id = str(result.get("case_id") or result.get("scenario_id") or "").strip()
+        method = str(result.get("method") or "").strip()
+        if not case_id or not method:
+            invalid_identity_count += 1
+            continue
+        turn_id = str(result.get("turn_id") or "").strip()
+        repeat_index = _int(result.get("repeat_index"), default=0)
+        key = (case_id, turn_id, int(repeat_index or 0))
+        method_counts = groups.setdefault(key, {})
+        method_counts[method] = method_counts.get(method, 0) + 1
+        if method not in required:
+            unexpected_method_row_count += 1
+            if len(unexpected_samples) < 10:
+                unexpected_samples.append(
+                    {
+                        "case_id": case_id,
+                        "turn_id": turn_id or None,
+                        "repeat_index": int(repeat_index or 0),
+                        "method": method,
+                    }
+                )
+
+    missing_group_count = 0
+    duplicate_method_group_count = 0
+    for (case_id, turn_id, repeat_index), method_counts in sorted(groups.items()):
+        missing = sorted(required - set(method_counts))
+        duplicates = {
+            method: count
+            for method, count in sorted(method_counts.items())
+            if count > 1
+        }
+        if missing:
+            missing_group_count += 1
+            if len(missing_samples) < 10:
+                missing_samples.append(
+                    {
+                        "case_id": case_id,
+                        "turn_id": turn_id or None,
+                        "repeat_index": repeat_index,
+                        "missing_methods": missing,
+                    }
+                )
+        if duplicates:
+            duplicate_method_group_count += 1
+            duplicate_row_count += sum(count - 1 for count in duplicates.values())
+            if len(duplicate_samples) < 10:
+                duplicate_samples.append(
+                    {
+                        "case_id": case_id,
+                        "turn_id": turn_id or None,
+                        "repeat_index": repeat_index,
+                        "duplicate_methods": duplicates,
+                    }
+                )
+
+    expected_group_count = None
+    expected_result_count_divisible = True
+    if expected_result_count is not None and required_methods:
+        expected_result_count_divisible = expected_result_count % len(required_methods) == 0
+        if expected_result_count_divisible:
+            expected_group_count = expected_result_count // len(required_methods)
+
+    observed_group_count = len(groups)
+    observed_group_count_matches_expected = (
+        expected_group_count is None or observed_group_count == expected_group_count
+    )
+    passed = (
+        bool(results)
+        and invalid_identity_count == 0
+        and unexpected_method_row_count == 0
+        and missing_group_count == 0
+        and duplicate_row_count == 0
+        and expected_result_count_divisible
+        and observed_group_count_matches_expected
+    )
+    return {
+        "schema_version": "ctp-method-result-grid-v1",
+        "required_methods": required_methods,
+        "expected_result_count": expected_result_count,
+        "expected_group_count": expected_group_count,
+        "observed_group_count": observed_group_count,
+        "expected_result_count_divisible_by_method_count": expected_result_count_divisible,
+        "observed_group_count_matches_expected": observed_group_count_matches_expected,
+        "invalid_identity_count": invalid_identity_count,
+        "missing_method_group_count": missing_group_count,
+        "duplicate_method_group_count": duplicate_method_group_count,
+        "duplicate_method_result_count": duplicate_row_count,
+        "unexpected_method_result_count": unexpected_method_row_count,
+        "missing_samples": missing_samples,
+        "duplicate_samples": duplicate_samples,
+        "unexpected_samples": unexpected_samples,
+        "passed": passed,
+    }
+
+
+def _metric_calculability_summary(
+    results: List[Dict[str, Any]],
+    summary: Dict[str, Any],
+    *,
+    required_methods: List[str],
+) -> Dict[str, Any]:
+    result_issues = _result_metric_calculability_issues(results)
+    summary_issues = _summary_metric_calculability_issues(summary, required_methods)
+    paired_issues = _paired_metric_calculability_issues(summary)
+    decision_issues = _decision_normalization_summary_issues(summary, required_methods)
+    return {
+        "schema_version": "ctp-formal-metric-calculability-v1",
+        "result_metric_values_calculable": not result_issues,
+        "summary_core_metrics_calculable": not summary_issues and not decision_issues,
+        "paired_core_metrics_calculable": not paired_issues,
+        "decision_normalization_diagnostics_calculable": not decision_issues,
+        "result_issue_count": len(result_issues),
+        "summary_issue_count": len(summary_issues),
+        "paired_issue_count": len(paired_issues),
+        "decision_normalization_issue_count": len(decision_issues),
+        "sample_result_issues": result_issues[:10],
+        "sample_summary_issues": summary_issues[:10],
+        "sample_paired_issues": paired_issues[:10],
+        "sample_decision_normalization_issues": decision_issues[:10],
+    }
+
+
+def _result_metric_calculability_issues(results: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    issues: List[Dict[str, Any]] = []
+    for result in results:
+        metrics = _dict(result.get("metrics"))
+        identity = {
+            "case_id": result.get("case_id") or result.get("scenario_id"),
+            "turn_id": result.get("turn_id"),
+            "method": result.get("method"),
+            "repeat_index": result.get("repeat_index"),
+        }
+        for metric in ("stsr", "evaluation_hcsr"):
+            if not _is_rate(metrics.get(metric)):
+                issues.append({**identity, "metric": metric, "value": metrics.get(metric)})
+        bpcr_applicable = _int(metrics.get("bpcr_applicable_count"), default=None)
+        if bpcr_applicable is None:
+            if not _is_rate(metrics.get("bpcr")):
+                issues.append({**identity, "metric": "bpcr", "value": metrics.get("bpcr")})
+        elif bpcr_applicable > 0 and not _is_rate(metrics.get("bpcr")):
+            issues.append(
+                {
+                    **identity,
+                    "metric": "bpcr",
+                    "value": metrics.get("bpcr"),
+                    "bpcr_applicable_count": bpcr_applicable,
+                }
+            )
+        for metric in (
+            "agent_selection_f1",
+            "tool_selection_f1",
+            "llm_call_count",
+            "agent_call_count",
+            "called_tool_count",
+            "total_tokens",
+        ):
+            if not _is_number(metrics.get(metric)):
+                issues.append({**identity, "metric": metric, "value": metrics.get(metric)})
+        if not _is_number(result.get("latency_ms")):
+            issues.append({**identity, "metric": "latency_ms", "value": result.get("latency_ms")})
+        if not _is_number(
+            metrics.get("standardized_estimated_cost")
+            if metrics.get("standardized_estimated_cost") is not None
+            else _nested(result, "run_audit", "metrics", "standardized_estimated_cost")
+        ):
+            issues.append(
+                {
+                    **identity,
+                    "metric": "standardized_estimated_cost",
+                    "value": metrics.get("standardized_estimated_cost"),
+                }
+            )
+    return issues
+
+
+def _summary_metric_calculability_issues(
+    summary: Dict[str, Any],
+    required_methods: List[str],
+) -> List[Dict[str, Any]]:
+    issues: List[Dict[str, Any]] = []
+    methods = _dict(summary.get("methods"))
+    metric_keys = (
+        "stsr_rate",
+        "evaluation_hcsr_mean",
+        "bpcr_mean",
+        "agent_selection_f1_mean",
+        "tool_selection_f1_mean",
+        "llm_call_count_mean",
+        "agent_call_count_mean",
+        "total_tokens_mean",
+        "standardized_estimated_cost_mean",
+        "latency_ms_mean",
+    )
+    for method in required_methods:
+        row = _dict(methods.get(method))
+        for metric in metric_keys:
+            if not _is_number(row.get(metric)):
+                issues.append({"method": method, "metric": metric, "value": row.get(metric)})
+        if not (
+            _is_number(row.get("called_tool_count_mean"))
+            or _is_number(row.get("tool_call_count_mean"))
+        ):
+            issues.append(
+                {
+                    "method": method,
+                    "metric": "called_tool_count_mean/tool_call_count_mean",
+                    "value": {
+                        "called_tool_count_mean": row.get("called_tool_count_mean"),
+                        "tool_call_count_mean": row.get("tool_call_count_mean"),
+                    },
+                }
+            )
+    return issues
+
+
+def _decision_normalization_summary_issues(
+    summary: Dict[str, Any],
+    required_methods: List[str],
+) -> List[Dict[str, Any]]:
+    issues: List[Dict[str, Any]] = []
+    diagnostics = _dict(summary.get("decision_normalization"))
+    if not diagnostics:
+        return [{"section": "decision_normalization", "issue": "missing"}]
+    if diagnostics.get("schema_version") != DECISION_NORMALIZATION_DIAGNOSTIC_SCHEMA_VERSION:
+        issues.append(
+            {
+                "section": "decision_normalization",
+                "metric": "schema_version",
+                "value": diagnostics.get("schema_version"),
+            }
+        )
+    for metric in (
+        "result_count",
+        "pipeline_completion_count",
+        "agent_decision_total",
+        "raw_decision_success_count",
+        "normalizer_recovery_count",
+    ):
+        if not _is_number(diagnostics.get(metric)):
+            issues.append(
+                {
+                    "section": "decision_normalization",
+                    "metric": metric,
+                    "value": diagnostics.get(metric),
+                }
+            )
+    if not _is_rate(diagnostics.get("pipeline_completion_rate")):
+        issues.append(
+            {
+                "section": "decision_normalization",
+                "metric": "pipeline_completion_rate",
+                "value": diagnostics.get("pipeline_completion_rate"),
+            }
+        )
+    total = _int(diagnostics.get("agent_decision_total"), default=0) or 0
+    if total > 0:
+        for metric in ("raw_decision_success_rate", "normalizer_recovery_rate"):
+            if not _is_rate(diagnostics.get(metric)):
+                issues.append(
+                    {
+                        "section": "decision_normalization",
+                        "metric": metric,
+                        "value": diagnostics.get(metric),
+                    }
+                )
+
+    by_method = _dict(diagnostics.get("by_method"))
+    methods = _dict(summary.get("methods"))
+    for method in required_methods:
+        method_diag = _dict(_nested(methods.get(method), "decision_normalization"))
+        if not method_diag:
+            method_diag = _dict(by_method.get(method))
+        if not method_diag:
+            issues.append(
+                {
+                    "section": "decision_normalization.by_method",
+                    "method": method,
+                    "issue": "missing",
+                }
+            )
+            continue
+        for metric in (
+            "result_count",
+            "pipeline_completion_count",
+            "agent_decision_total",
+            "raw_decision_success_count",
+            "normalizer_recovery_count",
+        ):
+            if not _is_number(method_diag.get(metric)):
+                issues.append(
+                    {
+                        "section": "decision_normalization.by_method",
+                        "method": method,
+                        "metric": metric,
+                        "value": method_diag.get(metric),
+                    }
+                )
+        if not _is_rate(method_diag.get("pipeline_completion_rate")):
+            issues.append(
+                {
+                    "section": "decision_normalization.by_method",
+                    "method": method,
+                    "metric": "pipeline_completion_rate",
+                    "value": method_diag.get("pipeline_completion_rate"),
+                }
+            )
+        method_total = _int(method_diag.get("agent_decision_total"), default=0) or 0
+        if method_total > 0:
+            for metric in ("raw_decision_success_rate", "normalizer_recovery_rate"):
+                if not _is_rate(method_diag.get(metric)):
+                    issues.append(
+                        {
+                            "section": "decision_normalization.by_method",
+                            "method": method,
+                            "metric": metric,
+                            "value": method_diag.get(metric),
+                        }
+                    )
+    return issues
+
+
+def _paired_metric_calculability_issues(summary: Dict[str, Any]) -> List[Dict[str, Any]]:
+    issues: List[Dict[str, Any]] = []
+    paired = _dict(summary.get("paired_statistics"))
+    metrics = _dict(paired.get("metrics"))
+    if _int(paired.get("pair_count"), default=0) <= 0:
+        issues.append({"metric": "paired_statistics.pair_count", "value": paired.get("pair_count")})
+        return issues
+    for metric in (
+        "stsr",
+        "evaluation_hcsr",
+        "bpcr",
+        "llm_call_count",
+        "agent_call_count",
+        "tool_call_count",
+        "total_tokens",
+        "standardized_estimated_cost",
+        "latency_ms",
+    ):
+        row = _dict(metrics.get(metric))
+        values = {
+            "m3_mean": _nested(row, "m3", "mean"),
+            "m2_mean": _nested(row, "m2", "mean"),
+            "delta_mean": _nested(row, "delta", "mean"),
+        }
+        for key, value in values.items():
+            if not _is_number(value):
+                issues.append({"metric": metric, "field": key, "value": value})
+    return issues
+
+
+def _is_rate(value: Any) -> bool:
+    number = _number(value)
+    return number is not None and 0.0 <= number <= 1.0
+
+
+def _is_number(value: Any) -> bool:
+    return _number(value) is not None
 
 
 def _all_results_have_run_audit(results: List[Dict[str, Any]]) -> bool:
@@ -798,6 +1344,10 @@ def _int(*values: Any, default: Optional[int] = None) -> Optional[int]:
     return default
 
 
+def _first_int(*values: Any, default: Optional[int] = None) -> Optional[int]:
+    return _int(*values, default=default)
+
+
 def _bool(value: Any) -> bool:
     if isinstance(value, str):
         return value.strip().lower() in {"1", "true", "yes", "on"}
@@ -810,6 +1360,16 @@ def _dict(value: Any) -> Dict[str, Any]:
 
 def _as_dict_list(value: Any) -> List[Dict[str, Any]]:
     return [item for item in value if isinstance(item, dict)] if isinstance(value, list) else []
+
+
+def _as_list(value: Any) -> List[Any]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return list(value)
+    if isinstance(value, tuple):
+        return list(value)
+    return [value]
 
 
 def _nested(value: Any, *keys: str) -> Any:

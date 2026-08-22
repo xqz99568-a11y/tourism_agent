@@ -490,7 +490,8 @@ def test_budget_policy_v2_explicit_local_only_scope_can_judge_without_origin() -
     assert result["scope_complete"] is True
     assert result["sufficiency_status"] == "sufficient"
     assert result["can_judge_budget_sufficiency"] is True
-    assert result["mandatory_budget_disclaimer"] is False
+    assert result["mandatory_budget_disclaimer"] is True
+    assert "未提供出发地" in result["budget_disclaimer"]
     assert result["remaining_budget"] == result["covered_scope_remaining_budget"]
 
 

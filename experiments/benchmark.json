@@ -1,7 +1,7 @@
 {
   "schema_version": "ctp-benchmark-manifest-v1",
   "dataset_id": "tourism_benchmark_v1",
-  "dataset_version": "2026-08-18-day8-formal-v2-weather-gold-fix",
+  "dataset_version": "2026-08-21-formal-v3-runtime-control-freeze",
   "dataset_role": "post_development_frozen_controlled_main_benchmark",
   "split": "formal_test",
   "language": "zh-CN",

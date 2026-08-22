@@ -1,0 +1,93 @@
+{
+  "case": {
+    "case_id": "task_f_custom_001_destination_change",
+    "scenario_id": "task_f_custom_001_destination_change",
+    "title": "Task F自定义多轮验证｜杭州改西安｜目的地变更",
+    "check": "目的地变更后，M3必须废弃旧景点、旧天气、旧行程和旧预算，重新执行完整链路。",
+    "task_f_only": true,
+    "turn_id": "t1",
+    "user_input": "明天去杭州玩3天，两个人，总预算上限5000元，先帮我安排一版。",
+    "task_type": "trip_planning",
+    "current_slots": {
+      "destination": "hangzhou",
+      "start_date": "2026-08-07",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000
+    },
+    "slots": {
+      "destination": "hangzhou",
+      "start_date": "2026-08-07",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000
+    },
+    "expected": {
+      "task_type": "trip_planning",
+      "required_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "accepted_agent_sets": [
+        [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ]
+      ],
+      "forbidden_tools": [],
+      "hard_constraints": {
+        "destination": "hangzhou",
+        "start_date": "2026-08-07",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_limit": 5000,
+        "min_attractions": 4,
+        "max_pois_per_day": 2
+      },
+      "destination": "hangzhou",
+      "start_date": "2026-08-07",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000,
+      "origin": null,
+      "intercity_transport_included": false,
+      "budget_scope": "destination_local_only",
+      "mandatory_budget_disclaimer": true,
+      "weather_required": true,
+      "weather_date_policy": "explicit_date_use_qweather_snapshot",
+      "expected_weather_coverage_status": "full",
+      "expected_weather_covered_dates": [
+        "2026-08-07",
+        "2026-08-08",
+        "2026-08-09"
+      ],
+      "expected_weather_missing_dates": [],
+      "weather_snapshot_id": "ctp_qweather_20260807_v1"
+    },
+    "turn_index": 0,
+    "scenario_turn_count": 2,
+    "target_turn": false,
+    "dialogue_history": []
+  },
+  "method": "adaptive_multi_agent",
+  "request_id": "task_f_custom_001_destination_change_adaptive_multi_agent_2f673962",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z",
+  "run_id": "task_f_multiturn_real_api_full_recheck_20260822T170309Z",
+  "repeat_index": 0,
+  "system_variant": "adaptive_multi_agent",
+  "model_config_name": "task-f-multiturn-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260718,
+  "enable_research_agent_decision_normalizer": true
+}

@@ -250,6 +250,8 @@ def _issue_checks(
 
     for key in ("requested_budget_scope", "computed_budget_scope", "scope_complete", "sufficiency_status"):
         expected = gold.get(key)
+        if _is_no_origin_local_budget_override(row):
+            expected = None
         if expected is not None and row.get(key) != expected:
             issues.append("scope_field_mismatch")
             summaries.append(f"预算范围字段与正式题库不一致：{key}={row.get(key)}，应为{expected}")
@@ -379,6 +381,16 @@ def _check_costs_unchanged(
     if changed:
         issues.append("preserved_cost_mismatch")
         summaries.append(f"{reason}，但这些费用变化了：{changed}")
+
+
+def _is_no_origin_local_budget_override(row: Dict[str, Any]) -> bool:
+    """Formal no-origin policy supersedes stale dataset scope fields."""
+    return (
+        row.get("origin") in (None, "")
+        and row.get("requested_budget_scope") == "destination_local_only"
+        and row.get("budget_scope") == "destination_local_only"
+        and row.get("computed_budget_scope") == "destination_local_only"
+    )
 
 
 def _expected_sufficiency_status(row: Dict[str, Any]) -> str:

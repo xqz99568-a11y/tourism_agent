@@ -834,7 +834,7 @@ def _parse_budget_scope_slots(text: str, slots: Mapping[str, Any]) -> dict[str, 
             {
                 "budget_scope": "destination_local_only",
                 "intercity_transport_included": False,
-                "mandatory_budget_disclaimer": bool(not origin and not local_only),
+                "mandatory_budget_disclaimer": bool(not origin),
             }
         )
         return result

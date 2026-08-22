@@ -278,6 +278,7 @@ def test_research_budget_tool_adds_frozen_round_trip_intercity_rail_cost() -> No
     assert data["real_time_price_claim_allowed"] is False
     assert data["intercity_transport"]["runtime_online_refresh_allowed"] is False
     assert data["intercity_transport"]["real_time_price_claim_allowed"] is False
+    assert data["local_total_recommended"] == data["local_total"]
     assert data["total"] == data["local_total"] + 800.0
     assert data["budget_policy_version"] == "budget_policy_v2_0"
     assert data["economic_baseline_total"] is not None
@@ -368,8 +369,9 @@ def test_research_budget_tool_keeps_budget_basis_and_missing_origin_disclaimer()
     assert data["requested_budget_scope"] == "destination_local_only"
     assert data["budget_scope"] == "destination_local_only"
     assert data["intercity_transport_included"] is False
+    assert data["local_total_recommended"] == data["local_total"]
     assert data["mandatory_budget_disclaimer"] is True
-    assert "城际大交通" in data["budget_disclaimer"]
+    assert "不包含出发地" in data["budget_disclaimer"]
     assert data["ticket_breakdown"]["summary"]["source"] == "final_itinerary_pois"
     assert data["ticket_breakdown"]["summary"]["selected_poi_ids"] == ["gl001", "gl002", "gl003"]
 
@@ -622,6 +624,34 @@ def test_constraint_checker_passes_supported_indoor_senior_rain_plan_with_tool_e
     assert checks["tool_evidence"]["status"] == "passed"
 
 
+def test_constraint_checker_accepts_context_tool_evidence_for_multiturn_plan() -> None:
+    result = asyncio.run(
+        ResearchConstraintCheckerTool().execute(
+            request={"city": "Beijing", "days": 1, "budget": 1000},
+            plan={
+                "daily_itinerary": [{"day": 1, "attractions": [{"poi_id": "bj001"}]}],
+                "budget": {"total": 500},
+                "tool_results": {
+                    "budget_calculator": {"status": "success", "success": True},
+                },
+                "context_tool_results": {
+                    "poi_search": {"status": "success", "success": True},
+                },
+            },
+            constraints={"require_tool_evidence": True},
+        )
+    )
+
+    checks = {item["name"]: item for item in result.data["data"]["checks"]}
+
+    assert checks["tool_evidence"]["status"] == "passed"
+    assert checks["tool_evidence"]["details"]["missing_or_failed"] == []
+    assert checks["tool_evidence"]["details"]["evidence_sources"] == {
+        "poi_search": "context",
+        "budget_calculator": "current",
+    }
+
+
 def test_constraint_checker_accepts_explicit_rain_suitable_mixed_poi() -> None:
     result = asyncio.run(
         ResearchConstraintCheckerTool().execute(
@@ -636,6 +666,41 @@ def test_constraint_checker_accepts_explicit_rain_suitable_mixed_poi() -> None:
 
     checks = {item["name"]: item for item in result.data["data"]["checks"]}
 
+    assert checks["poi_existence"]["status"] == "passed"
+    assert checks["rain_attraction_suitability"]["status"] == "passed"
+
+
+def test_constraint_checker_counts_daily_attraction_poi_ids_without_direct_duplicates() -> None:
+    result = asyncio.run(
+        ResearchConstraintCheckerTool().execute(
+            request={"city": "Hangzhou", "days": 2},
+            plan={
+                "task_type": "trip_planning",
+                "attractions": [
+                    {"poi_id": "hz001"},
+                    {"poi_id": "hz002"},
+                    {"poi_id": "hz003"},
+                    {"poi_id": "hz004"},
+                ],
+                "daily_itinerary": [
+                    {"day": 1, "attraction_poi_ids": ["hz002", "hz004"]},
+                    {"day": 2, "attraction_poi_ids": ["hz005", "hz006"]},
+                ],
+                "weather": {"scenario_type": "rain"},
+                "weather_adjustments": [{"day": 1, "action": "prefer mixed and indoor POIs"}],
+            },
+            constraints={
+                "min_attractions": 4,
+                "max_attractions": 4,
+                "max_pois_per_day": 2,
+            },
+        )
+    )
+
+    checks = {item["name"]: item for item in result.data["data"]["checks"]}
+
+    assert checks["min_attractions"]["status"] == "passed"
+    assert checks["max_attractions"]["status"] == "passed"
     assert checks["poi_existence"]["status"] == "passed"
     assert checks["rain_attraction_suitability"]["status"] == "passed"
 

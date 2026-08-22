@@ -2,17 +2,17 @@
 
 ## 总状态
 
-- delivery_status: `day8_delivery_ready`
-- ready_for_formal_experiment: `True`
-- failed_checks: `[]`
-- interpretation: Day8 formal inputs are frozen and ready for the formal four-method experiment.
+- delivery_status: `day8_delivery_blocked`
+- ready_for_formal_experiment: `False`
+- failed_checks: `['git_worktree_clean']`
+- interpretation: Day8 delivery is blocked; fix failed_checks before running the formal experiment.
 
 ## 正式实验入口
 
 - benchmark_manifest: `experiments/benchmark.json`
 - formal_dataset: `experiments/ctp100_formal_v2.json`
-- dataset_version: `2026-08-18-day8-formal-v2-weather-gold-fix`
-- dataset_sha256: `b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d`
+- dataset_version: `2026-08-21-formal-v3-runtime-control-freeze`
+- dataset_sha256: `c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e`
 - case_count / turn_count: `100` / `130`
 - methods: `['llm_direct', 'single_agent', 'fixed_multi_agent', 'adaptive_multi_agent']`
 - expected_raw_run_count: `520`
@@ -60,10 +60,10 @@
 ## 正式实验指纹
 
 - integrity_schema: `ctp-formal-artifact-integrity-v1`
-- combined_sha256: `40a607fcdde96fbb96c51e63334f6e566e2d7e4c4bc137cebb955fd65ad7f75a`
-- git_commit: `34d40159c6fdba42d92a8b4354556fa52f929a32`
-- git_worktree_clean: `True`
-- git_status_count: `0`
+- combined_sha256: `49a5916d53fdc54eaf96eeca4cdba435665e1d934a7885161c904fafc64e540c`
+- git_commit: `2b7bb78da2d8a5bd3e824f6ba90077af44e3b339`
+- git_worktree_clean: `False`
+- git_status_count: `59`
 
 ## Formal preflight
 
@@ -118,7 +118,7 @@
 | formal_artifact_integrity_schema_valid | `True` |
 | formal_artifact_integrity_all_required_exist | `True` |
 | current_commit_recorded | `True` |
-| git_worktree_clean | `True` |
+| git_worktree_clean | `False` |
 | evaluation_rule_catalog_hash_recorded | `True` |
 | independent_evaluator_code_hash_recorded | `True` |
 | experiment_runner_code_hash_recorded | `True` |
@@ -131,8 +131,8 @@
 
 | key | exists | sha256 | path |
 | --- | ---: | --- | --- |
-| benchmark_manifest | `True` | `b19bf0de60674d8787f1977ace99fbc321366aef8e41b9f9f7d77015dca34381` | `experiments/benchmark.json` |
-| formal_dataset | `True` | `205de804c7a401c2542b3d48fa7195bc4b46a6349a5e67558eeb4b611f3dccb0` | `experiments/ctp100_formal_v2.json` |
+| benchmark_manifest | `True` | `d28490c84ed8d0bb6b15650f7bc7e229e8b4793807f813add17c8f2501703182` | `experiments/benchmark.json` |
+| formal_dataset | `True` | `5b393acd26385ff2120d2e01033f49c49d4b7ef5653bf50ee258195d7f8b5f50` | `experiments/ctp100_formal_v2.json` |
 | qweather_manifest | `True` | `fdf0f1e106ab735ecb5f647be8528722f7e4832af90923e6f83ef2eb556d99ab` | `data/weather_snapshot/qweather_v1/snapshot_manifest.json` |
 | qweather_validation_report | `True` | `4a5a150bbd3051ddf832fc9317ed8d1e9bc910ed0ca81bb52a027e299f7778b1` | `data/weather_snapshot/qweather_v1/validation_report.json` |
 | intercity_manifest | `True` | `a49d6dd135e18931cf6e12fe6abe231412387baff55210b5a110182f35941151` | `data/intercity_transport/snapshot_manifest.json` |
@@ -140,29 +140,28 @@
 | intercity_evidence_ledger | `True` | `4addfcda2ec645e170d17875c0e0a3e86bdc2f1b977d2f9719a80b1adad3fb8e` | `data/intercity_transport/evidence/rail_second_class_evidence_v1.json` |
 | budget_policy_doc | `True` | `258857325f625577d1a12a7fe8ac03d075fa94ce026118aa6a7e151f4d3a4cb6` | `docs/Budget_Policy_v2.md` |
 | evaluation_rule_catalog | `True` | `608ba339b446d8d662768d9b62575e48b6df2ccbc97ffb3338d3b16537502d76` | `experiments/evaluation_rule_catalog.json` |
-| independent_evaluator_code | `True` | `9a9bac68969b84092c13defa334cc047638e16e3a68db7e9441dfccc20f61f31` | `app/core/independent_evaluator.py` |
-| experiment_runner_code | `True` | `08015e91ec4fe948c8a85356fb02ea66d3d48984efb285340d12b9e6ff29115c` | `app/core/experiment_runner.py` |
+| independent_evaluator_code | `True` | `caeb97b2fa948516ca08974c9f9be0a9feac2ae617068fa9beb6131dc9f61e7c` | `app/core/independent_evaluator.py` |
+| experiment_runner_code | `True` | `3f8d71ca8453e80ea15887b0857d4741efb64967b4376e179d590af877bf0bcc` | `app/core/experiment_runner.py` |
 | method_contract_code | `True` | `19d7df01ecbb1c97a204c2eecd507a9b9defda2a70640a980a3229c90b9519eb` | `app/core/experiment_method_contract.py` |
-| formal_preflight_code | `True` | `6d5e16bf0a6b0edb98f0a77c2b274599b304fd1dce6a2fb1665314696560e2fa` | `app/core/formal_experiment_preflight.py` |
-| formal_gate_code | `True` | `3bc0fbe7f691420feaa6acc977be7314586ecb3f78733dc5b2b7919436291602` | `app/core/formal_experiment_gate.py` |
-| day8_runner_acceptance_test | `True` | `bc0a6de27d2f5af4b13ec9267be22989f22867505a2dc4bba4914b8edc80aa56` | `tests/test_day8_task1_runner_acceptance.py` |
-| academic_experiment_design_json | `True` | `51ac4bdac7f5774faa15cc4b61b6b46e944e58fe9c0858a60b5fdc2ab3926421` | `experiments/academic_experiment_design_v1.json` |
-| academic_experiment_design_md | `True` | `106e5ae42ab52e7d1911b6de36461c696688abe1519df7ccfbe92730921405c6` | `docs/Academic_Experiment_Design_v1.md` |
+| formal_preflight_code | `True` | `141bc6ed013d85e2426661107d0cb0725dbe10efdda995352ce5e64d69694822` | `app/core/formal_experiment_preflight.py` |
+| formal_gate_code | `True` | `dd6a4ab3fba957a06a680ef96e878b789a6cbc25c04597a5290056c9e907d075` | `app/core/formal_experiment_gate.py` |
+| day8_runner_acceptance_test | `True` | `c9ca543e84c03a9a27456bdf26696ce2853a80c9b314ed83c2f8d115eeddf39c` | `tests/test_day8_task1_runner_acceptance.py` |
+| academic_experiment_design_json | `True` | `757d4b530e5987800256f55ad3e8f7a63bf95215bd24fc16fd4f5f60f76b7b50` | `experiments/academic_experiment_design_v1.json` |
+| academic_experiment_design_md | `True` | `fbe8d3152743dbe810161a3e422995019f454eab28cbf46f1fa1f323792cd86f` | `docs/Academic_Experiment_Design_v1.md` |
 | sealed_validation_dataset | `True` | `0ea84989537c0428219d9ccb8e0991077afbfd3fd420f4666a9c01a64ea7c527` | `experiments/ctp30_sealed_validation_v1.json` |
-| academic_design_validation_json | `True` | `dfea5612c3870e662871e6ef704d805ec62e9993f5e5f16061fbc64f24f6e15c` | `experiments/generated/academic_experiment_design_validation_v1.json` |
-| academic_design_validation_md | `True` | `5cb264ff4439bac1d48b4c7726d4f71a5f2028296ae0268b451630d7320086fa` | `experiments/generated/academic_experiment_design_validation_v1.md` |
-| budget_gold_json | `True` | `65cd9e680548af0b8a44cf4870a146a2730cddfceb2ee0d9320f2c7543e890b0` | `experiments/generated/ctp100_budget_gold_v2.json` |
+| academic_design_validation_json | `True` | `694897c6eb7c2b6c73c88ce3f3cf6cf1dcc56fd6272404096134f81ecec6e578` | `experiments/generated/academic_experiment_design_validation_v1.json` |
+| academic_design_validation_md | `True` | `8ce190bf6bfa95db5b3e96bdbc4a2a12038a5c623a6c22c5dba1ea8929cf812b` | `experiments/generated/academic_experiment_design_validation_v1.md` |
+| budget_gold_json | `True` | `a755d70f2606d1461cb384bce9da54d90de2192d71c4e0fd00827c849aa21ac5` | `experiments/generated/ctp100_budget_gold_v2.json` |
 | economy_budget_manual_review_json | `True` | `8ea717633318d38f858a99d3735b68673d926b4b815fb4ba3643f43ab0964a17` | `experiments/generated/economy_budget_manual_review_v1.json` |
 | economy_budget_manual_review_md | `True` | `0a1ffc0ed84870728aa47ab923b86f343736dbbdd04714008f5c39705a90fc63` | `experiments/generated/economy_budget_manual_review_v1.md` |
-| budget_review_md | `True` | `b67acf4dde8dcb16b50666feae78f32d87008a159a2af4ef79595d40797d50af` | `experiments/generated/ctp100_budget_gold_v2_review.md` |
-| budget_review_csv | `True` | `b9ea1c519522921ee7fdd521d7d5f53a584146cf4a851fc3707b0d5fc27140bf` | `experiments/generated/ctp100_budget_gold_v2_review.csv` |
-| dataset_audit_json | `True` | `4ce065f0a6ef1f0aa321e31b16f7996b862e677e0fdc0a82e55b21027b2b7e07` | `experiments/generated/ctp100_formal_v2_dataset_audit.json` |
-| dataset_audit_md | `True` | `6df9ff1421d7635bce94ceb8be2855c97e7ce9aff2b0e040eb9218e5d096f2ee` | `experiments/generated/ctp100_formal_v2_dataset_audit.md` |
+| budget_review_md | `True` | `d38d497a064ba8bccf6fd1957ae05593207bee0cfec1d9f565d820d046b23f20` | `experiments/generated/ctp100_budget_gold_v2_review.md` |
+| budget_review_csv | `True` | `f7165bdf5804fe51f84f39a1809e44bc3926dd6a013532e6d38cb9c07e29344a` | `experiments/generated/ctp100_budget_gold_v2_review.csv` |
+| dataset_audit_json | `True` | `df870b0bcdf3f72d2fcac040282a876cea0d242f694c66a12e055d7d00e4b189` | `experiments/generated/ctp100_formal_v2_dataset_audit.json` |
+| dataset_audit_md | `True` | `2b18ccf8c0d182e7568f5c51543a59993181ae7169be83087b3142b65acb94a0` | `experiments/generated/ctp100_formal_v2_dataset_audit.md` |
 
 ## 下一步
 
-- [P0] 可以进入正式四方法实验；运行前不要再修改题库、预算金标或冻结快照。
-- [P1] 正式实验完成后，再生成论文结果包和论文初稿材料。
+- [P0] 先修复 Day8 交付包阻塞项：git_worktree_clean
 
 ## 可复制命令
 

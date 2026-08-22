@@ -1,0 +1,74 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_001",
+    "user_input": "我和对象想去北京玩3天，时间还没定，我们总共最多花5000元，帮我们排个轻松点的行程。",
+    "task_type": "trip_planning",
+    "title": "普通规划｜北京｜无日期｜无出发地",
+    "check": "不查询天气；默认经济型；只计算北京当地费用，并说明不含往返城际交通；提醒用户出发前自行查询实时天气。",
+    "slots": {
+      "destination": "beijing",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000,
+      "special_requirements": [
+        "low_intensity"
+      ]
+    },
+    "expected": {
+      "task_type": "trip_planning",
+      "required_tools": [
+        "poi_search",
+        "budget_calculator"
+      ],
+      "accepted_agent_sets": [
+        [
+          "attraction",
+          "itinerary",
+          "budget"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "poi_search",
+          "budget_calculator"
+        ]
+      ],
+      "forbidden_tools": [
+        "weather_query"
+      ],
+      "hard_constraints": {
+        "destination": "beijing",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_limit": 5000,
+        "min_attractions": 4,
+        "max_pois_per_day": 2
+      },
+      "destination": "beijing",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000,
+      "special_requirements": [
+        "low_intensity"
+      ],
+      "origin": null,
+      "intercity_transport_included": false,
+      "budget_scope": "destination_local_only",
+      "mandatory_budget_disclaimer": true,
+      "weather_required": false,
+      "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+      "no_date_weather_reminder_required": true
+    }
+  },
+  "method": "llm_direct",
+  "request_id": "ctp100_v2_001_llm_direct_cdf7a70f",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z",
+  "run_id": "task_d_m0_real_api_final_20260821T110521Z",
+  "repeat_index": 0,
+  "system_variant": "llm_direct",
+  "model_config_name": "task-d-m0-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

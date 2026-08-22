@@ -151,4 +151,5 @@ def _formal_preflight_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("LLM_MAX_TOKENS", "4096")
     monkeypatch.setenv("LLM_TIMEOUT", "60")
     monkeypatch.setenv("LLM_RETRY_MAX_ATTEMPTS", "3")
+    monkeypatch.setenv("EXPERIMENT_RESULT_HARD_TIMEOUT_SECONDS", "900")
     monkeypatch.setenv("LLM_REASONING_EFFORT", "minimal")

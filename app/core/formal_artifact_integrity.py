@@ -25,7 +25,7 @@ FILE_HASH_STRATEGY = "sha256_file_bytes_v1"
 
 ROOT = Path(__file__).resolve().parents[2]
 
-DEFAULT_FORMAL_INTEGRITY_PATHS: dict[str, Path] = {
+FORMAL_INPUT_ARTIFACT_PATHS: dict[str, Path] = {
     "benchmark_manifest": ROOT / "experiments" / "benchmark.json",
     "formal_dataset": ROOT / "experiments" / "ctp100_formal_v2.json",
     "sealed_validation_dataset": ROOT / "experiments" / "ctp30_sealed_validation_v1.json",
@@ -33,16 +33,108 @@ DEFAULT_FORMAL_INTEGRITY_PATHS: dict[str, Path] = {
     "experiment_protocol": ROOT / "Phase0_实验协议.md",
     "budget_policy_doc": ROOT / "docs" / "Budget_Policy_v2.md",
     "budget_gold": ROOT / "experiments" / "generated" / "ctp100_budget_gold_v2.json",
+    "pre_formal_validation_registry": ROOT
+    / "experiments"
+    / "generated"
+    / "pre_formal_validation_registry_v1.json",
     "qweather_manifest": ROOT / "data" / "weather_snapshot" / "qweather_v1" / "snapshot_manifest.json",
     "qweather_validation": ROOT / "data" / "weather_snapshot" / "qweather_v1" / "validation_report.json",
     "intercity_manifest": ROOT / "data" / "intercity_transport" / "snapshot_manifest.json",
     "intercity_fare_table": ROOT / "data" / "intercity_transport" / "rail_second_class_v1.json",
+    "dataset_audit": ROOT / "experiments" / "generated" / "ctp100_formal_v2_dataset_audit.json",
+    "economy_budget_manual_review": ROOT
+    / "experiments"
+    / "generated"
+    / "economy_budget_manual_review_v1.json",
     "evaluation_rule_catalog": ROOT / "experiments" / "evaluation_rule_catalog.json",
     "independent_evaluator_code": ROOT / "app" / "core" / "independent_evaluator.py",
     "experiment_runner_code": ROOT / "app" / "core" / "experiment_runner.py",
     "method_contract_code": ROOT / "app" / "core" / "experiment_method_contract.py",
     "formal_preflight_code": ROOT / "app" / "core" / "formal_experiment_preflight.py",
     "formal_gate_code": ROOT / "app" / "core" / "formal_experiment_gate.py",
+}
+
+FORMAL_RUNTIME_CODE_PATHS: dict[str, Path] = {
+    "academic_experiment_design_code": ROOT / "app" / "core" / "academic_experiment_design.py",
+    "benchmark_dataset_validator_code": ROOT / "app" / "core" / "benchmark_dataset_validator.py",
+    "budget_gold_code": ROOT / "app" / "core" / "budget_gold.py",
+    "budget_manual_review_code": ROOT / "app" / "core" / "budget_manual_review.py",
+    "config_code": ROOT / "app" / "core" / "config.py",
+    "day8_delivery_pack_code": ROOT / "app" / "core" / "day8_delivery_pack.py",
+    "experiment_method_contract_code": ROOT / "app" / "core" / "experiment_method_contract.py",
+    "experiment_method_input_code": ROOT / "app" / "core" / "experiment_method_input.py",
+    "experiment_metrics_code": ROOT / "app" / "core" / "experiment_metrics.py",
+    "experiment_result_worker_code": ROOT / "app" / "core" / "experiment_result_worker.py",
+    "experiment_run_audit_code": ROOT / "app" / "core" / "experiment_run_audit.py",
+    "experiment_runner_code": ROOT / "app" / "core" / "experiment_runner.py",
+    "experiment_schema_code": ROOT / "app" / "schemas" / "experiment.py",
+    "fixed_data_code": ROOT / "app" / "core" / "fixed_data.py",
+    "formal_artifact_integrity_code": ROOT / "app" / "core" / "formal_artifact_integrity.py",
+    "formal_gate_code": ROOT / "app" / "core" / "formal_experiment_gate.py",
+    "formal_preflight_code": ROOT / "app" / "core" / "formal_experiment_preflight.py",
+    "goal_state_scheduler_code": ROOT / "app" / "core" / "goal_state_scheduler.py",
+    "independent_evaluator_code": ROOT / "app" / "core" / "independent_evaluator.py",
+    "intercity_transport_snapshot_code": ROOT
+    / "app"
+    / "core"
+    / "intercity_transport_snapshot.py",
+    "llm_client_code": ROOT / "app" / "core" / "llm" / "client.py",
+    "llm_costing_code": ROOT / "app" / "core" / "llm_costing.py",
+    "llm_manager_code": ROOT / "app" / "core" / "llm" / "manager.py",
+    "no_date_weather_policy_code": ROOT / "app" / "core" / "no_date_weather_policy.py",
+    "pre_formal_validation_registry_code": ROOT
+    / "app"
+    / "core"
+    / "pre_formal_validation_registry.py",
+    "qweather_snapshot_code": ROOT / "app" / "core" / "qweather_snapshot.py",
+    "research_tools_code": ROOT / "app" / "tools" / "research_tools.py",
+    "tool_base_code": ROOT / "app" / "tools" / "base.py",
+    "tool_executor_code": ROOT / "app" / "core" / "tool_executor.py",
+    "tracing_code": ROOT / "app" / "core" / "tracing.py",
+}
+
+FORMAL_OUTPUT_PACK_CODE_PATHS: dict[str, Path] = {
+    "paper_draft_pack_code": ROOT / "app" / "core" / "paper_draft_pack.py",
+    "paper_result_pack_code": ROOT / "app" / "core" / "paper_result_pack.py",
+    "paper_submission_pack_code": ROOT / "app" / "core" / "paper_submission_pack.py",
+}
+
+FORMAL_RUN_SCRIPT_PATHS: dict[str, Path] = {
+    "run_formal_experiment_script": ROOT / "experiments" / "run_formal_experiment.py",
+    "run_real_api_smoke_script": ROOT / "experiments" / "run_real_api_smoke.py",
+}
+
+PRE_FORMAL_VALIDATION_SCRIPT_PATHS: dict[str, Path] = {
+    "build_pre_formal_validation_registry_script": ROOT
+    / "experiments"
+    / "build_pre_formal_validation_registry.py",
+    "task_d_validation_script": ROOT / "experiments" / "run_task_d_m0_real_api_validation.py",
+    "task_e_validation_script": ROOT
+    / "experiments"
+    / "run_task_e_four_method_real_api_validation.py",
+    "task_f_validation_script": ROOT
+    / "experiments"
+    / "run_task_f_multiturn_real_api_validation.py",
+}
+
+BUDGET_AND_DATASET_PROVENANCE_SCRIPT_PATHS: dict[str, Path] = {
+    "budget_gold_generator_script": ROOT / "experiments" / "generate_ctp100_budget_gold_v2.py",
+    "budget_gold_review_generator_script": ROOT
+    / "experiments"
+    / "generate_ctp100_budget_gold_review_v2.py",
+    "dataset_audit_script": ROOT / "experiments" / "audit_ctp100_formal_v2.py",
+    "academic_design_validator_script": ROOT
+    / "experiments"
+    / "validate_academic_experiment_design.py",
+}
+
+DEFAULT_FORMAL_INTEGRITY_PATHS: dict[str, Path] = {
+    **FORMAL_INPUT_ARTIFACT_PATHS,
+    **FORMAL_RUNTIME_CODE_PATHS,
+    **FORMAL_OUTPUT_PACK_CODE_PATHS,
+    **FORMAL_RUN_SCRIPT_PATHS,
+    **PRE_FORMAL_VALIDATION_SCRIPT_PATHS,
+    **BUDGET_AND_DATASET_PROVENANCE_SCRIPT_PATHS,
 }
 
 

@@ -1,0 +1,44 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_088",
+    "user_input": "我想去桂林玩几天，两个人，帮我做个完整行程。",
+    "task_type": "clarification",
+    "title": "澄清｜桂林｜缺明确天数",
+    "check": "“几天”不是明确天数，应追问旅行天数。",
+    "slots": {
+      "destination": "guilin",
+      "people_count": 2
+    },
+    "expected": {
+      "task_type": "clarification",
+      "required_tools": [],
+      "accepted_agent_sets": [
+        []
+      ],
+      "accepted_tool_sets": [
+        []
+      ],
+      "forbidden_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "destination": "guilin",
+      "people_count": 2,
+      "missing_slots": [
+        "duration_days"
+      ]
+    }
+  },
+  "method": "adaptive_multi_agent",
+  "request_id": "ctp100_v2_088_adaptive_multi_agent_a6b1a3f2",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "adaptive_multi_agent",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

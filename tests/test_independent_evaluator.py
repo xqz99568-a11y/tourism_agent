@@ -8,6 +8,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.core.independent_evaluator import (
+    DECISION_NORMALIZATION_DIAGNOSTIC_SCHEMA_VERSION,
     EVALUATION_SCHEMA_VERSION,
     EVALUATION_SUMMARY_SCHEMA_VERSION,
     evaluate_case,
@@ -357,6 +358,25 @@ def test_independent_evaluator_scores_one_case_against_frozen_rules() -> None:
     assert report["metrics"]["bpcr"] == 1.0
     assert report["metrics"]["agent_selection_f1"] == 1.0
     assert report["metrics"]["tool_selection_f1"] == 1.0
+
+
+def test_evaluator_counts_daily_attraction_poi_ids_for_bounds_and_daily_load() -> None:
+    case = deepcopy(_case())
+    case["expected"]["min_attractions"] = 4
+    case["expected"]["max_attractions"] = 4
+    case["expected"]["max_pois_per_day"] = 2
+    output = deepcopy(_output())
+    output["attractions"] = []
+    output["daily_itinerary"] = [
+        {"day": 1, "attraction_poi_ids": ["poi_a", "poi_b"]},
+        {"day": 2, "attraction_poi_ids": ["poi_c", "poi_d"]},
+    ]
+
+    report = evaluate_case(case=case, output=output, trace={})
+    rules = {item["id"]: item for item in report["rules"]}
+
+    assert rules["H_ATTRACTION_COUNT_BOUNDS"]["status"] == "passed"
+    assert rules["H_DAILY_LOAD_LIMIT"]["status"] == "passed"
 
 
 def test_independent_evaluator_is_method_blind() -> None:
@@ -813,6 +833,27 @@ def test_budget_independent_recalculation_passes_formal_case() -> None:
     assert output["budget"]["intercity_transport"]["total_intercity_transport_cost_cny"] == 3738.0
 
 
+def test_budget_independent_recalculation_accepts_local_total_alias() -> None:
+    output = _formal_budget_output()
+    output["budget"]["local_total"] = output["budget"].pop("local_total_recommended")
+    _sync_formal_budget_tool_result(output)
+
+    report = evaluate_case(case=_formal_case(), output=output)
+    rules = {item["id"]: item for item in report["rules"]}
+
+    assert rules["H_BUDGET_INDEPENDENT_RECALCULATION"]["status"] == "passed"
+
+
+def test_budget_gold_overrides_stale_dataset_disclaimer_for_no_origin_local_budget() -> None:
+    output = _formal_budget_output("ctp100_v2_049")
+
+    report = evaluate_case(case=_formal_case("ctp100_v2_049"), output=output)
+    rules = {item["id"]: item for item in report["rules"]}
+
+    assert output["budget"]["mandatory_budget_disclaimer"] is True
+    assert rules["H_BUDGET_INDEPENDENT_RECALCULATION"]["status"] == "passed"
+
+
 def test_budget_independent_recalculation_fails_wrong_hotel_reference_price() -> None:
     output = _formal_budget_output()
     accommodation = output["budget"]["breakdown"]["accommodation"]
@@ -939,6 +980,48 @@ def test_bpcr_fails_itinerary_budget_poi_mismatch() -> None:
     assert rules["H_BUDGET_ITINERARY_CONSISTENCY"]["status"] == "failed"
     assert "itinerary_budget_poi_mismatch" in rules["H_BUDGET_ITINERARY_CONSISTENCY"]["details"]["issues"]
     assert report["metrics"]["bpcr"] < 1.0
+
+
+def test_bpcr_accepts_itinerary_budget_same_pois_in_different_order() -> None:
+    output = _output()
+    output["budget"] = _budget_data()
+    output["budget"]["ticket_breakdown"]["summary"]["selected_poi_ids"] = ["poi_b", "poi_a"]
+    output["budget"]["breakdown"]["tickets"]["selected_poi_ids"] = ["poi_b", "poi_a"]
+    output["tool_results"]["budget_calculator"] = _tool_result(
+        "budget_calculator",
+        data=output["budget"],
+    )
+
+    report = evaluate_case(case=_case(), output=output)
+    rules = {item["id"]: item for item in report["rules"]}
+
+    assert rules["H_BUDGET_ITINERARY_CONSISTENCY"]["status"] == "passed"
+    assert rules["H_BUDGET_ITINERARY_CONSISTENCY"]["details"]["issues"] == []
+
+
+def test_bpcr_accepts_order_insensitive_metadata_audit() -> None:
+    output = _output()
+    output["budget"] = _budget_data()
+    output["tool_results"]["budget_calculator"] = _tool_result(
+        "budget_calculator",
+        data=output["budget"],
+    )
+    output["metadata"] = {
+        "budget_itinerary_consistency": {
+            "schema_version": "budget-itinerary-consistency-audit-v1",
+            "status": "mismatched",
+            "consistent": False,
+            "final_itinerary_unique_poi_ids": ["poi_a", "poi_b"],
+            "budget_selected_poi_ids": ["poi_b", "poi_a"],
+            "ticket_source": "final_itinerary_pois",
+        }
+    }
+
+    report = evaluate_case(case=_case(), output=output)
+    rules = {item["id"]: item for item in report["rules"]}
+
+    assert rules["H_BUDGET_ITINERARY_CONSISTENCY"]["status"] == "passed"
+    assert rules["H_BUDGET_ITINERARY_CONSISTENCY"]["details"]["issues"] == []
 
 
 def test_bpcr_fails_forbidden_auto_upgrade() -> None:
@@ -1507,6 +1590,117 @@ def test_evaluation_summary_aggregates_methods_and_pairs_m3_vs_m2() -> None:
     assert summary["paired_statistics"]["pair_count"] == 1
     assert summary["paired_statistics"]["metrics"]["stsr"]["delta"]["bootstrap_ci_95"] == [0.0, 0.0]
     assert summary["methods"]["adaptive_multi_agent"]["descriptive_statistics"]["tool_call_count"]["median"] == 2.0
+
+
+def test_evaluation_summary_records_decision_normalization_diagnostics() -> None:
+    def row(
+        method: str,
+        *,
+        status: str = "completed",
+        audit: dict | None = None,
+    ) -> dict:
+        output = {
+            "method": method,
+            "execution_status": status,
+            "metadata": {},
+        }
+        if audit is not None:
+            output["metadata"]["agent_decision_audit"] = audit
+        return {
+            "case_id": f"case-{method}",
+            "method": method,
+            "repeat_index": 0,
+            "status": status,
+            "latency_ms": 100,
+            "output": output,
+            "trace": {"agent_call_count": 1, "tool_call_count": 1},
+            "metrics": {
+                "stsr": True,
+                "evaluation_hcsr": 1.0,
+                "bpcr": 1.0,
+                "agent_selection_f1": 1.0,
+                "tool_selection_f1": 1.0,
+            },
+        }
+
+    m2_audit = {
+        "attraction": {
+            "reused": False,
+            "decision_source": "llm",
+            "decision_fallback_used": False,
+            "llm_decision_error_count": 0,
+        },
+        "itinerary": {
+            "reused": False,
+            "decision_source": "deterministic_evidence_normalizer",
+            "decision_fallback_used": True,
+            "llm_decision_error_count": 1,
+        },
+        "weather": {
+            "reused": True,
+            "decision_source": "llm",
+            "decision_fallback_used": False,
+            "llm_decision_error_count": 0,
+        },
+    }
+    m3_audit = {
+        "budget": {
+            "reused": False,
+            "decision_source": "llm",
+            "decision_fallback_used": False,
+            "llm_decision_error_count": 0,
+        }
+    }
+    results = [
+        row("llm_direct"),
+        row("single_agent", status="failed"),
+        row("fixed_multi_agent", audit=m2_audit),
+        row("adaptive_multi_agent", audit=m3_audit),
+    ]
+
+    summary = summarize_evaluation_results(results)
+    diagnostics = summary["decision_normalization"]
+
+    assert diagnostics["schema_version"] == DECISION_NORMALIZATION_DIAGNOSTIC_SCHEMA_VERSION
+    assert diagnostics["result_count"] == 4
+    assert diagnostics["pipeline_completion_count"] == 3
+    assert diagnostics["pipeline_completion_rate"] == 0.75
+    assert diagnostics["agent_decision_total"] == 3
+    assert diagnostics["raw_decision_success_count"] == 2
+    assert diagnostics["raw_decision_success_rate"] == 0.6667
+    assert diagnostics["normalizer_recovery_count"] == 1
+    assert diagnostics["normalizer_recovery_rate"] == 0.3333
+    assert diagnostics["by_method"]["llm_direct"]["agent_decision_total"] == 0
+    assert diagnostics["by_method"]["single_agent"]["pipeline_completion_rate"] == 0.0
+    assert diagnostics["by_method"]["fixed_multi_agent"]["normalizer_recovery_count"] == 1
+    assert summary["methods"]["fixed_multi_agent"]["raw_decision_success_rate"] == 0.5
+    assert summary["methods"]["adaptive_multi_agent"]["decision_normalization"][
+        "raw_decision_success_count"
+    ] == 1
+
+
+def test_evaluation_summary_can_recompute_task_f_decision_normalizer_counts() -> None:
+    path = (
+        ROOT
+        / "experiments"
+        / "results"
+        / "task_f_multiturn_real_api"
+        / "task_f_multiturn_real_api_full_recheck_20260822T170309Z"
+        / "benchmark_results.json"
+    )
+    if not path.exists():
+        return
+    results = json.loads(path.read_text(encoding="utf-8"))
+
+    summary = summarize_evaluation_results(results)
+    diagnostics = summary["decision_normalization"]
+
+    assert diagnostics["agent_decision_total"] == 76
+    assert diagnostics["raw_decision_success_count"] == 37
+    assert diagnostics["normalizer_recovery_count"] == 39
+    assert diagnostics["raw_decision_success_rate"] == 0.4868
+    assert diagnostics["normalizer_recovery_rate"] == 0.5132
+    assert diagnostics["pipeline_completion_rate"] == 1.0
 
 
 def test_evaluation_summary_adds_paper_statistics_for_paired_results() -> None:

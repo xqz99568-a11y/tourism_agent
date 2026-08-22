@@ -1,0 +1,518 @@
+{
+  "schema_version": "ctp-task-f-multiturn-real-api-report-v1",
+  "created_at": "2026-08-21T17:30:28.087235Z",
+  "run_id": "task_f_multiturn_real_api_full_recheck_20260822T170309Z",
+  "task": "Task F - multi-turn M2/M3 real API reuse validation",
+  "status": "passed",
+  "skipped_reason": null,
+  "gate": {
+    "status": "passed",
+    "checks": {
+      "not_skipped": true,
+      "expected_result_count": true,
+      "m2_m3_methods_only": true,
+      "turn_method_grid_complete": true,
+      "all_results_completed": true,
+      "trace_count_matches_results": true,
+      "llm_calls_recorded": true,
+      "agent_or_tool_evidence_recorded": true,
+      "second_turn_previous_state_present": true,
+      "m2_second_turn_no_reuse": true,
+      "m3_second_turn_reuse_expectations_met": true,
+      "m3_destination_change_invalidates_all": true,
+      "no_mock_calls": true,
+      "no_mock_or_model_fallback": true,
+      "no_hard_timeout": true,
+      "provider_is_vectorengine_openai_compatible": true,
+      "token_usage_recorded": true,
+      "latency_recorded": true,
+      "cost_accounting_recorded": true,
+      "no_length_finish_reason": true
+    },
+    "failed_checks": [],
+    "warnings": [
+      {
+        "code": "llm_retry_errors_recorded",
+        "count": 10,
+        "meaning": "Retryable API errors or network timeouts were recorded."
+      }
+    ],
+    "paper_claim_policy": "This run is a pre-formal multi-turn runtime validation gate only. It must not be reported as the paper's formal M2/M3 comparison result."
+  },
+  "benchmark": {
+    "path": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/task_f_multiturn_real_api_benchmark.json",
+    "dataset_id": "task_f_multiturn_real_api_m2_m3",
+    "dataset_version": "2026-08-21-task-f-multiturn-real-api-validation-v1",
+    "case_count": 6,
+    "turn_count": 12,
+    "expected_raw_result_count": 24,
+    "selected_scenario_ids": [
+      "ctp100_v2_051",
+      "ctp100_v2_055",
+      "ctp100_v2_066",
+      "ctp100_v2_070",
+      "ctp100_v2_077",
+      "task_f_custom_001_destination_change"
+    ],
+    "coverage": {
+      "task_type_counts": {
+        "partial_replan": 5,
+        "trip_planning": 6,
+        "weather_adjustment": 1
+      },
+      "changed_slot_counts": {
+        "budget_amount": 1,
+        "destination": 1,
+        "people_count": 1,
+        "preferences": 1,
+        "start_date": 1
+      }
+    }
+  },
+  "runtime_config": {
+    "schema_version": "ctp-task-f-runtime-config-v1",
+    "provider": "vectorengine_openai_compatible",
+    "base_url": "https://api.vectorengine.ai/v1",
+    "model": "gpt-5-mini",
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "timeout_seconds": 120,
+    "hard_timeout_seconds": 900,
+    "retry_max_attempts": 3,
+    "reasoning_effort": "minimal",
+    "strict_mode": true,
+    "cache_disabled": true,
+    "trace_save_user_message": false,
+    "api_key_configured": true,
+    "mock_fallback_allowed": false,
+    "methods": [
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ],
+    "method_order_seed": 20260718,
+    "expected_raw_result_count": 24
+  },
+  "results": {
+    "expected_result_count": 24,
+    "actual_result_count": 24,
+    "status_counts": {
+      "completed": 24
+    },
+    "method_counts": {
+      "adaptive_multi_agent": 12,
+      "fixed_multi_agent": 12
+    },
+    "failed_results": [],
+    "hard_timeout_triggered_count": 0,
+    "elapsed_seconds": 1636.255983199997
+  },
+  "turn_method_grid": {
+    "expected_turn_count": 12,
+    "expected_methods": [
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ],
+    "expected_result_count": 24,
+    "missing_count": 0,
+    "duplicate_count": 0,
+    "unexpected_count": 0,
+    "missing": [],
+    "duplicates": [],
+    "unexpected": []
+  },
+  "second_turn_reuse_audit": {
+    "second_turn_result_count": 12,
+    "missing_previous_state_count": 0,
+    "missing_previous_state": [],
+    "m2_reuse_violation_count": 0,
+    "m2_reuse_violations": [],
+    "m3_expectation_violation_count": 0,
+    "m3_expectation_violations": [],
+    "destination_change_invalidation_passed": true,
+    "violations": []
+  },
+  "decision_normalizer": {
+    "agent_decision_total": 76,
+    "raw_llm_decision_success_count": 37,
+    "raw_llm_decision_success_rate": 0.486842,
+    "decision_normalizer_recovery_count": 39,
+    "decision_normalizer_recovery_rate": 0.513158,
+    "pipeline_completion_rate": 1.0,
+    "recovery_by_method": {
+      "adaptive_multi_agent": {
+        "total": 38,
+        "raw_success": 17,
+        "recovered": 21
+      },
+      "fixed_multi_agent": {
+        "total": 38,
+        "raw_success": 20,
+        "recovered": 18
+      }
+    },
+    "recovery_by_agent": {
+      "attraction": {
+        "total": 16,
+        "raw_success": 2,
+        "recovered": 14
+      },
+      "budget": {
+        "total": 24,
+        "raw_success": 22,
+        "recovered": 2
+      },
+      "itinerary": {
+        "total": 22,
+        "raw_success": 0,
+        "recovered": 22
+      },
+      "weather": {
+        "total": 14,
+        "raw_success": 13,
+        "recovered": 1
+      }
+    },
+    "recovery_reason_counts": {
+      "deterministic_evidence_normalizer": 39
+    },
+    "recovered_result_labels": [
+      {
+        "case_id": "ctp100_v2_051",
+        "turn_id": "t1",
+        "method": "fixed_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_051",
+        "turn_id": "t1",
+        "method": "fixed_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_051",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_051",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_051",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "budget",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_055",
+        "turn_id": "t1",
+        "method": "fixed_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_055",
+        "turn_id": "t2",
+        "method": "fixed_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_055",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_055",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_055",
+        "turn_id": "t2",
+        "method": "adaptive_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_066",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_066",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_066",
+        "turn_id": "t2",
+        "method": "adaptive_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_066",
+        "turn_id": "t2",
+        "method": "adaptive_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_066",
+        "turn_id": "t1",
+        "method": "fixed_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_066",
+        "turn_id": "t1",
+        "method": "fixed_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_066",
+        "turn_id": "t2",
+        "method": "fixed_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_066",
+        "turn_id": "t2",
+        "method": "fixed_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_070",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_070",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_070",
+        "turn_id": "t2",
+        "method": "adaptive_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_070",
+        "turn_id": "t1",
+        "method": "fixed_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_070",
+        "turn_id": "t1",
+        "method": "fixed_multi_agent",
+        "agent": "weather",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_070",
+        "turn_id": "t1",
+        "method": "fixed_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_070",
+        "turn_id": "t2",
+        "method": "fixed_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_077",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_077",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_077",
+        "turn_id": "t2",
+        "method": "adaptive_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_077",
+        "turn_id": "t2",
+        "method": "adaptive_multi_agent",
+        "agent": "budget",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_077",
+        "turn_id": "t1",
+        "method": "fixed_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_077",
+        "turn_id": "t1",
+        "method": "fixed_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "ctp100_v2_077",
+        "turn_id": "t2",
+        "method": "fixed_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "task_f_custom_001_destination_change",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "task_f_custom_001_destination_change",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "task_f_custom_001_destination_change",
+        "turn_id": "t2",
+        "method": "adaptive_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "task_f_custom_001_destination_change",
+        "turn_id": "t2",
+        "method": "adaptive_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "task_f_custom_001_destination_change",
+        "turn_id": "t1",
+        "method": "fixed_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "task_f_custom_001_destination_change",
+        "turn_id": "t2",
+        "method": "fixed_multi_agent",
+        "agent": "attraction",
+        "decision_source": "deterministic_evidence_normalizer"
+      },
+      {
+        "case_id": "task_f_custom_001_destination_change",
+        "turn_id": "t2",
+        "method": "fixed_multi_agent",
+        "agent": "itinerary",
+        "decision_source": "deterministic_evidence_normalizer"
+      }
+    ]
+  },
+  "trace_audit": {
+    "trace_file_count": 24,
+    "llm_call_count": 76,
+    "llm_calls_by_method": {
+      "adaptive_multi_agent": 38,
+      "fixed_multi_agent": 38
+    },
+    "tool_calls_by_method": {
+      "adaptive_multi_agent": 27,
+      "fixed_multi_agent": 27
+    },
+    "agent_runs_by_method": {
+      "adaptive_multi_agent": 38,
+      "fixed_multi_agent": 38
+    },
+    "provider_counts": {
+      "vectorengine_openai_compatible": 76
+    },
+    "prompt_version_counts": {
+      "ctp-research-agent-prompts-v2": 76
+    },
+    "mock_call_count": 0,
+    "fallback_call_count": 0,
+    "failed_llm_call_count": 0,
+    "retry_error_count": 10,
+    "length_finish_reason_attempt_count": 0
+  },
+  "warnings": [
+    {
+      "code": "llm_retry_errors_recorded",
+      "count": 10,
+      "meaning": "Retryable API errors or network timeouts were recorded."
+    }
+  ],
+  "token_usage": {
+    "prompt_tokens": 281876.0,
+    "completion_tokens": 107937.0,
+    "total_tokens": 389813.0
+  },
+  "latency": {
+    "result_latency_ms_total": 1537837.41,
+    "result_latency_ms_mean": 64076.55875,
+    "llm_duration_ms_total": 1530693.16,
+    "llm_duration_ms_mean": 20140.69947368
+  },
+  "cost": {
+    "estimated_cost_total": 0.286343,
+    "standardized_estimated_cost_total": 0.286343,
+    "actual_cost_total": null
+  },
+  "artifacts": {
+    "benchmark": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/task_f_multiturn_real_api_benchmark.json",
+    "benchmark_results_json": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/benchmark_results.json",
+    "benchmark_results_csv": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/benchmark_results.csv",
+    "evaluation_summary": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/evaluation_summary.json",
+    "paper_tables": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/paper_tables.md",
+    "manifest": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/experiment_manifest.json",
+    "checkpoint_json": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/benchmark_results.checkpoint.json",
+    "checkpoint_csv": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/benchmark_results.checkpoint.csv",
+    "resume_state": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/benchmark_resume_state.json",
+    "traces": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/traces",
+    "report_json": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/task_f_multiturn_real_api_report.json",
+    "report_md": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/task_f_multiturn_real_api_report.md"
+  }
+}

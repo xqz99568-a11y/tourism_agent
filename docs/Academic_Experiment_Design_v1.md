@@ -1,6 +1,19 @@
-# 学术实验设计冻结说明 v1
+# 学术实验设计冻结说明 v2
 
 本文件对应 `experiments/academic_experiment_design_v1.json`，用于把 Day8 后的论文实验边界固定下来。它不包含实验结果，也不调用大模型。
+
+> 说明：文件名仍保留 `_v1`，是为了兼容现有 preflight 和 delivery pack 的固定路径；当前文件内部设计版本已经升级为 `CTP-GMAS-ACADEMIC-DESIGN-v2`。
+
+## 0. v2 相比 v1 增加了什么
+
+v2 不是重新换题，也不是改变论文方法，而是把正式实验运行控制补充冻结：
+
+- 每条 `case × method` 结果在正式运行时启用子进程级硬超时隔离，避免单次中转 API 卡死导致整轮实验停住；
+- LLM provider 记录必须从 `LLM_BASE_URL` 推断，VectorEngine 中转 API 统一记录为 `vectorengine_openai_compatible`；
+- trace、manifest、real API smoke、price snapshot 中的 provider/cost 口径必须一致；
+- 正式 CTP100 全量实验前必须先完成 20 题四方法联调，用来检查 API 稳定性、trace 完整性、耗时/token/成本字段、超时隔离和评价器可计算性；
+- API 失败、超时、解析失败等结果必须保留为实验事实，不能选择性删除后重跑到成功。
+- 正式结果必须透明报告 Agent 决策归一化诊断指标，区分“大模型原始决策可直接执行”和“经确定性归一化修复后可执行”。
 
 ## 1. 为什么要重新冻结实验设计
 
@@ -46,6 +59,16 @@ CTP30 不进入 `experiments/benchmark.json`，也不作为正式主实验入口
 - 多个次要指标采用 Holm-Bonferroni 校正；
 - 重复实验必须先按 `case_id` 聚合，不能把重复运行当作更多独立样本。
 
+## 4.1 决策归一化诊断指标
+
+Task F 真实 API 复验显示，多 Agent 决策中存在一部分格式不规范但可由确定性归一化程序修复的情况。因此正式实验必须额外报告以下诊断指标：
+
+- `raw_decision_success_rate`：`raw_decision_success_count / agent_decision_total`，表示模型原始 Agent 决策无需程序修复即可执行的比例；
+- `normalizer_recovery_rate`：`normalizer_recovery_count / agent_decision_total`，表示模型原始 Agent 决策不规范、但被确定性归一化程序修复后可执行的比例；
+- `pipeline_completion_rate`：`pipeline_completion_count / result_count`，表示 case-method-turn 级结果最终完成的比例。
+
+这些指标只作为系统稳定性和可执行性诊断指标，不作为论文主要效果指标。M0/M1 若不存在多 Agent 决策，则 `agent_decision_total` 为 0，决策率记为 null，但仍统计 `pipeline_completion_rate`。
+
 ## 5. 论文表述边界
 
 允许写：
@@ -79,7 +102,8 @@ CTP30 不进入 `experiments/benchmark.json`，也不作为正式主实验入口
 1. 启动前 preflight 检查 CTP100 入口、Day8 delivery pack、Git 清洁状态、冻结数据哈希、评价规则目录哈希和独立评价器代码哈希；
 2. 实验 manifest 记录同一份正式证据综合哈希，保证运行时没有换题库、换数据或换评价器；
 3. 结束后 final gate 检查 520 条原始方法结果、合法执行状态、trace 完整性、无 API 失败/超时、无 LLM fallback，以及 STSR/HCSR/BPCR 是否可计算；
-4. 结果报告必须区分 `experiment_integrity_passed` 与 `hypothesis_supported`，不得因为假设不被支持而删除或重跑失败结果。
+4. 结果报告必须包含决策归一化诊断指标，缺少 `raw_decision_success_rate`、`normalizer_recovery_rate` 或 `pipeline_completion_rate` 时不得进入论文结论；
+5. 结果报告必须区分 `experiment_integrity_passed` 与 `hypothesis_supported`，不得因为假设不被支持而删除或重跑失败结果。
 
 ## 8. 任务6断点续跑补充
 

@@ -1,0 +1,92 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_077",
+    "scenario_id": "ctp100_v2_077",
+    "title": "日期变化｜西安｜完整覆盖变超范围",
+    "check": "重新判断天气范围；不得编造超范围天气。",
+    "turn_id": "t1",
+    "user_input": "明天去西安玩3天，两个人，总预算上限5000元。",
+    "task_type": "trip_planning",
+    "current_slots": {
+      "destination": "xian",
+      "start_date": "2026-08-07",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000
+    },
+    "slots": {
+      "destination": "xian",
+      "start_date": "2026-08-07",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000
+    },
+    "expected": {
+      "task_type": "trip_planning",
+      "required_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "accepted_agent_sets": [
+        [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ]
+      ],
+      "forbidden_tools": [],
+      "hard_constraints": {
+        "destination": "xian",
+        "start_date": "2026-08-07",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_limit": 5000,
+        "min_attractions": 4,
+        "max_pois_per_day": 2
+      },
+      "destination": "xian",
+      "start_date": "2026-08-07",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000,
+      "origin": null,
+      "intercity_transport_included": false,
+      "budget_scope": "destination_local_only",
+      "mandatory_budget_disclaimer": true,
+      "weather_required": true,
+      "weather_date_policy": "explicit_date_use_qweather_snapshot",
+      "expected_weather_coverage_status": "full",
+      "expected_weather_covered_dates": [
+        "2026-08-07",
+        "2026-08-08",
+        "2026-08-09"
+      ],
+      "expected_weather_missing_dates": [],
+      "weather_snapshot_id": "ctp_qweather_20260807_v1"
+    },
+    "turn_index": 0,
+    "scenario_turn_count": 2,
+    "target_turn": false,
+    "dialogue_history": []
+  },
+  "method": "adaptive_multi_agent",
+  "request_id": "ctp100_v2_077_adaptive_multi_agent_7977d302",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z",
+  "run_id": "task_f_multiturn_real_api_full_recheck_20260822T170309Z",
+  "repeat_index": 0,
+  "system_variant": "adaptive_multi_agent",
+  "model_config_name": "task-f-multiturn-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260718,
+  "enable_research_agent_decision_normalizer": true
+}

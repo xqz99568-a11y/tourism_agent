@@ -31,7 +31,10 @@ from app.core.academic_experiment_design import (  # noqa: E402
     SEALED_VALIDATION_ROLE,
 )
 from app.core.fixed_data import canonical_json_sha256  # noqa: E402
-from app.core.formal_artifact_integrity import build_formal_artifact_integrity_report  # noqa: E402
+from app.core.formal_artifact_integrity import (  # noqa: E402
+    DEFAULT_FORMAL_INTEGRITY_PATHS,
+    build_formal_artifact_integrity_report,
+)
 
 
 def test_day8_delivery_pack_is_ready_for_current_formal_inputs(tmp_path: Path) -> None:
@@ -84,6 +87,23 @@ def test_day8_delivery_pack_is_ready_for_current_formal_inputs(tmp_path: Path) -
     assert tuple(academic["sealed_validation"]["methods"]) == SEALED_VALIDATION_METHODS
     assert academic["checks"]["sealed_dataset_not_in_main_benchmark"] is True
     assert pack["formal_preflight"]["status"] == "passed"
+    pre_formal = pack["pre_formal_validation"]
+    assert pre_formal["status"] == "passed"
+    assert pre_formal["summary"]["passed_task_count"] == 3
+    assert pre_formal["summary"]["transparent_warning_policy"] == "accepted_but_reported"
+    assert pack["readiness"]["checks"]["pre_formal_validation_passed"] is True
+    assert any(
+        item["key"] == "pre_formal_validation_registry"
+        for item in pack["artifact_inventory"]
+    )
+    inventory_by_key = {
+        item["key"]: item
+        for item in pack["artifact_inventory"]
+    }
+    assert set(DEFAULT_FORMAL_INTEGRITY_PATHS) <= set(inventory_by_key)
+    for key in DEFAULT_FORMAL_INTEGRITY_PATHS:
+        assert inventory_by_key[key]["exists"] is True
+        assert len(inventory_by_key[key]["sha256"]) == 64
     integrity = pack["formal_artifact_integrity"]
     assert integrity["schema_version"] == "ctp-formal-artifact-integrity-v1"
     assert integrity["artifacts"]["evaluation_rule_catalog"]["sha256"]

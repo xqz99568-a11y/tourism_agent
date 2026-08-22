@@ -225,6 +225,16 @@ M2 的固定模板含义如下：
 - 单案例费用；
 - 每个成功案例的平均费用。
 
+### 4. 决策归一化诊断指标
+
+正式实验还必须记录 Agent 决策归一化诊断指标，用于区分“大模型原始决策已经合格”和“经确定性归一化程序修复后才合格”。这些指标只作为系统稳定性诊断，不作为论文主要效果指标。
+
+- `raw_decision_success_rate = raw_decision_success_count / agent_decision_total`：模型原始 Agent 决策无需修复即可执行的比例；
+- `normalizer_recovery_rate = normalizer_recovery_count / agent_decision_total`：模型原始 Agent 决策不规范、但被确定性归一化程序修复后可执行的比例；
+- `pipeline_completion_rate = pipeline_completion_count / result_count`：case-method-turn 级结果最终完成的比例。
+
+统计口径固定为：只统计非复用的 Agent 决策；M0/M1 若不存在多 Agent 决策，则 `agent_decision_total` 为 0，决策率记为 null，但仍统计 `pipeline_completion_rate`。论文中必须透明报告归一化修复率，不能只报告最终完成率。
+
 ## 八、正式实验规则
 
 基础主实验为：
@@ -556,6 +566,6 @@ Day8 任务五已将人工查询的 12306 成人高铁/动车二等座票价冻�
 
 - 100 个主基准案例 / 130 个评测轮次 × 4 种方法 × 1 次 = 520 条原始方法结果全部保存；
 - 每条结果必须有合法 `execution_status`，不得存在 API 失败、超时、LLM fallback 或缺失 trace；
-- STSR、HCSR、BPCR、Agent/Tool 选择指标和资源指标均可计算；
+- STSR、HCSR、BPCR、Agent/Tool 选择指标、决策归一化诊断指标和资源指标均可计算；
 - 最终结果 gate 写入 `formal_experiment_gate.json`，并同步进入 `experiment_manifest.json`；
 - 评价规则目录以 `day8_formal_independent_evaluator_rules` 为当前正式版本，历史 Day5 规则文档只作为演化记录，不再作为正式论文引用口径。

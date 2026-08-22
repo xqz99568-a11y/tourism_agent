@@ -1,0 +1,51 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_080",
+    "user_input": "我们两个人想出去玩3天，总预算上限5000元，喜欢自然风景但不想太累，你先推荐几个目的地。",
+    "task_type": "general_chat",
+    "title": "目的地推荐｜山水｜低强度",
+    "check": "给出候选目的地和理由，不直接生成完整行程。",
+    "slots": {
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000,
+      "preferences": [
+        "nature"
+      ]
+    },
+    "expected": {
+      "task_type": "general_chat",
+      "required_tools": [],
+      "accepted_agent_sets": [
+        []
+      ],
+      "accepted_tool_sets": [
+        []
+      ],
+      "forbidden_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000,
+      "preferences": [
+        "nature"
+      ],
+      "subtask_type": "destination_recommendation",
+      "destination_recommendation_required": true
+    }
+  },
+  "method": "fixed_multi_agent",
+  "request_id": "ctp100_v2_080_fixed_multi_agent_2c1c242d",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "fixed_multi_agent",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

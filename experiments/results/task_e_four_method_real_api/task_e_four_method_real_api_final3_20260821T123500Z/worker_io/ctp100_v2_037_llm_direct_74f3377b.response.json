@@ -1,0 +1,2332 @@
+{
+  "status": "completed",
+  "result": {
+    "case_id": "ctp100_v2_037",
+    "method": "llm_direct",
+    "request_id": "ctp100_v2_037_llm_direct_74f3377b",
+    "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+    "repeat_index": 0,
+    "system_variant": "llm_direct",
+    "model_config_name": "task-e-four-method-real-api",
+    "evaluation_mode": "end_to_end",
+    "input_hash": "d6a05f38bce801bfc518818f8cde65d0322196f6c34dafa59600cf9b31d86e5d",
+    "result_hash": "638cfb585783984b08269864f57c268809946a092894af29c245ff826aaa272e",
+    "offline_data": {
+      "schema_version": "fixed_data_manifest_v2",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+      "city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "snapshot_dirs": [
+        "pois",
+        "weather",
+        "restaurants",
+        "accommodation",
+        "transport"
+      ],
+      "file_count": 25,
+      "expected_file_count": 25,
+      "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "expected_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "missing_files": [],
+      "files": [
+        {
+          "kind": "accommodation",
+          "city_id": "beijing",
+          "path": "data/accommodation/beijing.json",
+          "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "guilin",
+          "path": "data/accommodation/guilin.json",
+          "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "hangzhou",
+          "path": "data/accommodation/hangzhou.json",
+          "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "shenzhen",
+          "path": "data/accommodation/shenzhen.json",
+          "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "xian",
+          "path": "data/accommodation/xian.json",
+          "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "beijing",
+          "path": "data/pois/beijing.json",
+          "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "guilin",
+          "path": "data/pois/guilin.json",
+          "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "hangzhou",
+          "path": "data/pois/hangzhou.json",
+          "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "shenzhen",
+          "path": "data/pois/shenzhen.json",
+          "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "xian",
+          "path": "data/pois/xian.json",
+          "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "beijing",
+          "path": "data/restaurants/beijing.json",
+          "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "guilin",
+          "path": "data/restaurants/guilin.json",
+          "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "hangzhou",
+          "path": "data/restaurants/hangzhou.json",
+          "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "shenzhen",
+          "path": "data/restaurants/shenzhen.json",
+          "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "xian",
+          "path": "data/restaurants/xian.json",
+          "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "beijing",
+          "path": "data/transport/beijing.json",
+          "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "guilin",
+          "path": "data/transport/guilin.json",
+          "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "hangzhou",
+          "path": "data/transport/hangzhou.json",
+          "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "shenzhen",
+          "path": "data/transport/shenzhen.json",
+          "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "xian",
+          "path": "data/transport/xian.json",
+          "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "beijing",
+          "path": "data/weather/beijing.json",
+          "sha256": "a6b32944050cc2a638d09a67be8d7747ca2b0153527f856d85b4813651c91d0a",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "guilin",
+          "path": "data/weather/guilin.json",
+          "sha256": "450d86b2f7121f970e7c48e5a38ad113c8e4289c0356f448221ce1d63d412f94",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "hangzhou",
+          "path": "data/weather/hangzhou.json",
+          "sha256": "e4ea7c0b10b350cd4c7ba739746e0634d0aa86d77378d858104c0f789f6f64fd",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "shenzhen",
+          "path": "data/weather/shenzhen.json",
+          "sha256": "533e74a25a72fdc58a0f31746f10dd405611b3ab007f18d0319566deaec5e281",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "xian",
+          "path": "data/weather/xian.json",
+          "sha256": "7d9e244e1bd64d129cb75b641a09adc8521d9ce082b4a28de7bbb2aadb92cef4",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        }
+      ]
+    },
+    "output": {
+      "schema_version": "ctp-experiment-output-v1",
+      "case_id": "ctp100_v2_037",
+      "method": "llm_direct",
+      "task_type": "weather_query",
+      "planned_agents": [],
+      "used_agents": [],
+      "planned_tools": [],
+      "called_tools": [],
+      "tool_results": {},
+      "agent_outputs": {},
+      "attractions": [
+        {
+          "name": "西湖",
+          "poi_id": null,
+          "notes": "国庆热门，早晚人流较少适合散步和船游"
+        },
+        {
+          "name": "灵隐寺",
+          "poi_id": null,
+          "notes": "室外步行为主，遇雨需带伞"
+        },
+        {
+          "name": "河坊街/清河坊",
+          "poi_id": null,
+          "notes": "室内外结合，适合雨天游览与美食"
+        }
+      ],
+      "trip_days": 3,
+      "daily_itinerary": [
+        {
+          "day": "Day 1",
+          "day_index": 1,
+          "summary": "抵达后游览西湖（断桥、苏堤）与周边小吃",
+          "attraction_names": [
+            "西湖"
+          ],
+          "notes": "若有雨可改为西湖周边博物馆或下午茶"
+        },
+        {
+          "day": "Day 2",
+          "day_index": 2,
+          "summary": "灵隐寺 + 飞来峰，傍晚返回河坊街体验美食",
+          "attraction_names": [
+            "灵隐寺",
+            "河坊街"
+          ],
+          "notes": "灵隐寺多户外路段，备好雨具"
+        },
+        {
+          "day": "Day 3",
+          "day_index": 3,
+          "summary": "西溪湿地或博物馆轻松游，下午返程",
+          "attraction_names": [
+            "西溪湿地"
+          ],
+          "notes": "西溪湿地湿滑，雨天注意安全或改室内行程"
+        }
+      ],
+      "budget": {
+        "currency": "CNY",
+        "estimated_total": 2000,
+        "notes": "含交通、住宿（中档）、门票和餐饮的粗略预估，实际费用视选择而定"
+      },
+      "weather": {
+        "available_ahead": "partial",
+        "explanation": "当前能提前查询到大致趋势与短期（7-10天）预报，但具体逐小时降雨与温度在出行前48小时内更准确。国庆期间（2026-10-01到10-03）确切数值需在出行前几天或两天内查看权威气象源获取最终预报。"
+      },
+      "weather_adjustments": [
+        {
+          "day": 1,
+          "day_index": 1,
+          "reason": "可能有降雨或早晚温差",
+          "action": "携带便携雨具与薄外套，计划可灵活改为室内博物馆/茶馆",
+          "candidate_indoor_pois": [
+            "中国茶叶博物馆",
+            "杭州博物馆"
+          ]
+        },
+        {
+          "day": 2,
+          "day_index": 2,
+          "reason": "灵隐寺周边多户外步行",
+          "action": "备防滑鞋和雨具，若大雨改为室内美食与购物路线",
+          "candidate_indoor_pois": [
+            "河坊街商铺",
+            "杭州茶文化体验店"
+          ]
+        },
+        {
+          "day": 3,
+          "day_index": 3,
+          "reason": "西溪湿地湿滑或风大",
+          "action": "如天气不佳改至博物馆或室内景点",
+          "candidate_indoor_pois": [
+            "浙江省博物馆",
+            "丝绸博物馆"
+          ]
+        }
+      ],
+      "constraint_report": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "constraint_checker",
+        "status": "success",
+        "success": true,
+        "input": {
+          "request": {
+            "destination": "hangzhou",
+            "start_date": "2026-10-01",
+            "duration_days": 3,
+            "case_id": "ctp100_v2_037",
+            "user_input": "国庆去杭州玩3天，那几天的天气能提前查到吗？",
+            "city": "hangzhou",
+            "budget": null
+          },
+          "constraints": {
+            "destination": "hangzhou",
+            "start_date": "2026-10-01",
+            "duration_days": 3
+          }
+        },
+        "data": {
+          "all_passed": false,
+          "applicable_count": 2,
+          "passed_count": 1,
+          "failed_count": 1,
+          "checks": [
+            {
+              "name": "trip_days",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "expected": null,
+                "actual": 3
+              }
+            },
+            {
+              "name": "budget_limit",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "limit": null,
+                "actual": 2000
+              }
+            },
+            {
+              "name": "weather_adjustment",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": false,
+                "adjustment_count": 3
+              }
+            },
+            {
+              "name": "min_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "minimum": null,
+                "actual": 3
+              }
+            },
+            {
+              "name": "max_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "maximum": null,
+                "actual": 3
+              }
+            },
+            {
+              "name": "poi_existence",
+              "status": "failed",
+              "passed": false,
+              "details": {
+                "city_id": "hangzhou",
+                "attraction_count": 3,
+                "unresolved": [
+                  "西湖",
+                  "灵隐寺",
+                  "河坊街/清河坊"
+                ]
+              }
+            },
+            {
+              "name": "duplicate_attractions",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "duplicates": [],
+                "unique_count": 3,
+                "attraction_count": 3
+              }
+            },
+            {
+              "name": "must_include_pois",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": []
+              }
+            },
+            {
+              "name": "forbidden_pois",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "forbidden": []
+              }
+            },
+            {
+              "name": "rain_attraction_suitability",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "rain_detected": false
+              }
+            },
+            {
+              "name": "senior_accessibility",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "senior_request": false
+              }
+            },
+            {
+              "name": "tool_evidence",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": false
+              }
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "deterministic_evaluator",
+          "real_time_api_allowed": false,
+          "contract": "ctp-research-tools-v1.0"
+        }
+      },
+      "hard_constraint_passed_count": 1,
+      "hard_constraint_failed_count": 1,
+      "hard_constraint_applicable_count": 2,
+      "hard_constraints_all_satisfied": false,
+      "hcsr": 0.5,
+      "execution_status": "completed",
+      "final_answer": "可以提前查到国庆期间的天气趋势与短期预报，但精确降雨与逐小时数据要在出行前48小时内向权威气象机构查询以获取更可靠信息。出行带好雨具与薄外套，备可替代的室内行程。",
+      "raw_output": {
+        "schema_version": "ctp-experiment-output-v1",
+        "case_id": "ctp100_v2_037",
+        "method": "llm_direct",
+        "task_type": "weather_query",
+        "planned_agents": [],
+        "used_agents": [],
+        "planned_tools": [],
+        "called_tools": [],
+        "tool_results": {},
+        "attractions": [
+          {
+            "name": "西湖",
+            "poi_id": null,
+            "notes": "国庆热门，早晚人流较少适合散步和船游"
+          },
+          {
+            "name": "灵隐寺",
+            "poi_id": null,
+            "notes": "室外步行为主，遇雨需带伞"
+          },
+          {
+            "name": "河坊街/清河坊",
+            "poi_id": null,
+            "notes": "室内外结合，适合雨天游览与美食"
+          }
+        ],
+        "trip_days": 3,
+        "daily_itinerary": [
+          {
+            "day": "Day 1",
+            "day_index": 1,
+            "summary": "抵达后游览西湖（断桥、苏堤）与周边小吃",
+            "attraction_names": [
+              "西湖"
+            ],
+            "notes": "若有雨可改为西湖周边博物馆或下午茶"
+          },
+          {
+            "day": "Day 2",
+            "day_index": 2,
+            "summary": "灵隐寺 + 飞来峰，傍晚返回河坊街体验美食",
+            "attraction_names": [
+              "灵隐寺",
+              "河坊街"
+            ],
+            "notes": "灵隐寺多户外路段，备好雨具"
+          },
+          {
+            "day": "Day 3",
+            "day_index": 3,
+            "summary": "西溪湿地或博物馆轻松游，下午返程",
+            "attraction_names": [
+              "西溪湿地"
+            ],
+            "notes": "西溪湿地湿滑，雨天注意安全或改室内行程"
+          }
+        ],
+        "budget": {
+          "currency": "CNY",
+          "estimated_total": 2000,
+          "notes": "含交通、住宿（中档）、门票和餐饮的粗略预估，实际费用视选择而定"
+        },
+        "weather": {
+          "available_ahead": "partial",
+          "explanation": "当前能提前查询到大致趋势与短期（7-10天）预报，但具体逐小时降雨与温度在出行前48小时内更准确。国庆期间（2026-10-01到10-03）确切数值需在出行前几天或两天内查看权威气象源获取最终预报。"
+        },
+        "weather_adjustments": [
+          {
+            "day": 1,
+            "day_index": 1,
+            "reason": "可能有降雨或早晚温差",
+            "action": "携带便携雨具与薄外套，计划可灵活改为室内博物馆/茶馆",
+            "candidate_indoor_pois": [
+              "中国茶叶博物馆",
+              "杭州博物馆"
+            ]
+          },
+          {
+            "day": 2,
+            "day_index": 2,
+            "reason": "灵隐寺周边多户外步行",
+            "action": "备防滑鞋和雨具，若大雨改为室内美食与购物路线",
+            "candidate_indoor_pois": [
+              "河坊街商铺",
+              "杭州茶文化体验店"
+            ]
+          },
+          {
+            "day": 3,
+            "day_index": 3,
+            "reason": "西溪湿地湿滑或风大",
+            "action": "如天气不佳改至博物馆或室内景点",
+            "candidate_indoor_pois": [
+              "浙江省博物馆",
+              "丝绸博物馆"
+            ]
+          }
+        ],
+        "execution_status": "completed",
+        "final_answer": "可以提前查到国庆期间的天气趋势与短期预报，但精确降雨与逐小时数据要在出行前48小时内向权威气象机构查询以获取更可靠信息。出行带好雨具与薄外套，备可替代的室内行程。",
+        "metadata": {
+          "structured_by_llm": true,
+          "prompt_version": "ctp-structured-llm-output-prompts-v2"
+        }
+      },
+      "metadata": {
+        "research_method": "llm_direct",
+        "output_contract": "ctp-experiment-output-v1",
+        "structured_llm_output": {
+          "prompt_version": "ctp-structured-llm-output-prompts-v2",
+          "json_required": true,
+          "parse_status": "passed",
+          "validation_status": "passed",
+          "validation_errors": [],
+          "failure_reason": null
+        },
+        "model_metadata": {
+          "structured_by_llm": true,
+          "prompt_version": "ctp-structured-llm-output-prompts-v2"
+        },
+        "generation_policy": "direct_llm_no_tools",
+        "method_input_schema_version": "ctp-method-input-v1",
+        "visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-10-01",
+          "duration_days": 3
+        },
+        "goal_state_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-10-01",
+          "duration_days": 3
+        },
+        "run_audit_schema_version": "ctp-run-audit-v1"
+      }
+    },
+    "constraint_report": {
+      "schema_version": "research_tool_result_v1",
+      "tool_contract_version": "ctp-research-tools-v1.0",
+      "tool_name": "constraint_checker",
+      "status": "success",
+      "success": true,
+      "input": {
+        "request": {
+          "destination": "hangzhou",
+          "start_date": "2026-10-01",
+          "duration_days": 3,
+          "case_id": "ctp100_v2_037",
+          "user_input": "国庆去杭州玩3天，那几天的天气能提前查到吗？",
+          "city": "hangzhou",
+          "budget": null
+        },
+        "constraints": {
+          "destination": "hangzhou",
+          "start_date": "2026-10-01",
+          "duration_days": 3
+        }
+      },
+      "data": {
+        "all_passed": false,
+        "applicable_count": 2,
+        "passed_count": 1,
+        "failed_count": 1,
+        "checks": [
+          {
+            "name": "trip_days",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "expected": null,
+              "actual": 3
+            }
+          },
+          {
+            "name": "budget_limit",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "limit": null,
+              "actual": 2000
+            }
+          },
+          {
+            "name": "weather_adjustment",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": false,
+              "adjustment_count": 3
+            }
+          },
+          {
+            "name": "min_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "minimum": null,
+              "actual": 3
+            }
+          },
+          {
+            "name": "max_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "maximum": null,
+              "actual": 3
+            }
+          },
+          {
+            "name": "poi_existence",
+            "status": "failed",
+            "passed": false,
+            "details": {
+              "city_id": "hangzhou",
+              "attraction_count": 3,
+              "unresolved": [
+                "西湖",
+                "灵隐寺",
+                "河坊街/清河坊"
+              ]
+            }
+          },
+          {
+            "name": "duplicate_attractions",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "duplicates": [],
+              "unique_count": 3,
+              "attraction_count": 3
+            }
+          },
+          {
+            "name": "must_include_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": []
+            }
+          },
+          {
+            "name": "forbidden_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "forbidden": []
+            }
+          },
+          {
+            "name": "rain_attraction_suitability",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "rain_detected": false
+            }
+          },
+          {
+            "name": "senior_accessibility",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "senior_request": false
+            }
+          },
+          {
+            "name": "tool_evidence",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": false
+            }
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "offline": true,
+        "source_mode": "deterministic_evaluator",
+        "real_time_api_allowed": false,
+        "contract": "ctp-research-tools-v1.0"
+      }
+    },
+    "hard_constraint_applicable_count": 2,
+    "hard_constraint_passed_count": 1,
+    "hard_constraint_failed_count": 1,
+    "hard_constraints_all_satisfied": false,
+    "hcsr": 0.5,
+    "raw_output": {
+      "schema_version": "ctp-experiment-output-v1",
+      "case_id": "ctp100_v2_037",
+      "method": "llm_direct",
+      "task_type": "weather_query",
+      "planned_agents": [],
+      "used_agents": [],
+      "planned_tools": [],
+      "called_tools": [],
+      "tool_results": {},
+      "agent_outputs": {},
+      "attractions": [
+        {
+          "name": "西湖",
+          "poi_id": null,
+          "notes": "国庆热门，早晚人流较少适合散步和船游"
+        },
+        {
+          "name": "灵隐寺",
+          "poi_id": null,
+          "notes": "室外步行为主，遇雨需带伞"
+        },
+        {
+          "name": "河坊街/清河坊",
+          "poi_id": null,
+          "notes": "室内外结合，适合雨天游览与美食"
+        }
+      ],
+      "trip_days": 3,
+      "daily_itinerary": [
+        {
+          "day": "Day 1",
+          "day_index": 1,
+          "summary": "抵达后游览西湖（断桥、苏堤）与周边小吃",
+          "attraction_names": [
+            "西湖"
+          ],
+          "notes": "若有雨可改为西湖周边博物馆或下午茶"
+        },
+        {
+          "day": "Day 2",
+          "day_index": 2,
+          "summary": "灵隐寺 + 飞来峰，傍晚返回河坊街体验美食",
+          "attraction_names": [
+            "灵隐寺",
+            "河坊街"
+          ],
+          "notes": "灵隐寺多户外路段，备好雨具"
+        },
+        {
+          "day": "Day 3",
+          "day_index": 3,
+          "summary": "西溪湿地或博物馆轻松游，下午返程",
+          "attraction_names": [
+            "西溪湿地"
+          ],
+          "notes": "西溪湿地湿滑，雨天注意安全或改室内行程"
+        }
+      ],
+      "budget": {
+        "currency": "CNY",
+        "estimated_total": 2000,
+        "notes": "含交通、住宿（中档）、门票和餐饮的粗略预估，实际费用视选择而定"
+      },
+      "weather": {
+        "available_ahead": "partial",
+        "explanation": "当前能提前查询到大致趋势与短期（7-10天）预报，但具体逐小时降雨与温度在出行前48小时内更准确。国庆期间（2026-10-01到10-03）确切数值需在出行前几天或两天内查看权威气象源获取最终预报。"
+      },
+      "weather_adjustments": [
+        {
+          "day": 1,
+          "day_index": 1,
+          "reason": "可能有降雨或早晚温差",
+          "action": "携带便携雨具与薄外套，计划可灵活改为室内博物馆/茶馆",
+          "candidate_indoor_pois": [
+            "中国茶叶博物馆",
+            "杭州博物馆"
+          ]
+        },
+        {
+          "day": 2,
+          "day_index": 2,
+          "reason": "灵隐寺周边多户外步行",
+          "action": "备防滑鞋和雨具，若大雨改为室内美食与购物路线",
+          "candidate_indoor_pois": [
+            "河坊街商铺",
+            "杭州茶文化体验店"
+          ]
+        },
+        {
+          "day": 3,
+          "day_index": 3,
+          "reason": "西溪湿地湿滑或风大",
+          "action": "如天气不佳改至博物馆或室内景点",
+          "candidate_indoor_pois": [
+            "浙江省博物馆",
+            "丝绸博物馆"
+          ]
+        }
+      ],
+      "constraint_report": {},
+      "hard_constraint_passed_count": 0,
+      "hard_constraint_failed_count": 0,
+      "hard_constraint_applicable_count": 0,
+      "hard_constraints_all_satisfied": null,
+      "hcsr": null,
+      "execution_status": "completed",
+      "final_answer": "可以提前查到国庆期间的天气趋势与短期预报，但精确降雨与逐小时数据要在出行前48小时内向权威气象机构查询以获取更可靠信息。出行带好雨具与薄外套，备可替代的室内行程。",
+      "raw_output": {
+        "schema_version": "ctp-experiment-output-v1",
+        "case_id": "ctp100_v2_037",
+        "method": "llm_direct",
+        "task_type": "weather_query",
+        "planned_agents": [],
+        "used_agents": [],
+        "planned_tools": [],
+        "called_tools": [],
+        "tool_results": {},
+        "attractions": [
+          {
+            "name": "西湖",
+            "poi_id": null,
+            "notes": "国庆热门，早晚人流较少适合散步和船游"
+          },
+          {
+            "name": "灵隐寺",
+            "poi_id": null,
+            "notes": "室外步行为主，遇雨需带伞"
+          },
+          {
+            "name": "河坊街/清河坊",
+            "poi_id": null,
+            "notes": "室内外结合，适合雨天游览与美食"
+          }
+        ],
+        "trip_days": 3,
+        "daily_itinerary": [
+          {
+            "day": "Day 1",
+            "day_index": 1,
+            "summary": "抵达后游览西湖（断桥、苏堤）与周边小吃",
+            "attraction_names": [
+              "西湖"
+            ],
+            "notes": "若有雨可改为西湖周边博物馆或下午茶"
+          },
+          {
+            "day": "Day 2",
+            "day_index": 2,
+            "summary": "灵隐寺 + 飞来峰，傍晚返回河坊街体验美食",
+            "attraction_names": [
+              "灵隐寺",
+              "河坊街"
+            ],
+            "notes": "灵隐寺多户外路段，备好雨具"
+          },
+          {
+            "day": "Day 3",
+            "day_index": 3,
+            "summary": "西溪湿地或博物馆轻松游，下午返程",
+            "attraction_names": [
+              "西溪湿地"
+            ],
+            "notes": "西溪湿地湿滑，雨天注意安全或改室内行程"
+          }
+        ],
+        "budget": {
+          "currency": "CNY",
+          "estimated_total": 2000,
+          "notes": "含交通、住宿（中档）、门票和餐饮的粗略预估，实际费用视选择而定"
+        },
+        "weather": {
+          "available_ahead": "partial",
+          "explanation": "当前能提前查询到大致趋势与短期（7-10天）预报，但具体逐小时降雨与温度在出行前48小时内更准确。国庆期间（2026-10-01到10-03）确切数值需在出行前几天或两天内查看权威气象源获取最终预报。"
+        },
+        "weather_adjustments": [
+          {
+            "day": 1,
+            "day_index": 1,
+            "reason": "可能有降雨或早晚温差",
+            "action": "携带便携雨具与薄外套，计划可灵活改为室内博物馆/茶馆",
+            "candidate_indoor_pois": [
+              "中国茶叶博物馆",
+              "杭州博物馆"
+            ]
+          },
+          {
+            "day": 2,
+            "day_index": 2,
+            "reason": "灵隐寺周边多户外步行",
+            "action": "备防滑鞋和雨具，若大雨改为室内美食与购物路线",
+            "candidate_indoor_pois": [
+              "河坊街商铺",
+              "杭州茶文化体验店"
+            ]
+          },
+          {
+            "day": 3,
+            "day_index": 3,
+            "reason": "西溪湿地湿滑或风大",
+            "action": "如天气不佳改至博物馆或室内景点",
+            "candidate_indoor_pois": [
+              "浙江省博物馆",
+              "丝绸博物馆"
+            ]
+          }
+        ],
+        "execution_status": "completed",
+        "final_answer": "可以提前查到国庆期间的天气趋势与短期预报，但精确降雨与逐小时数据要在出行前48小时内向权威气象机构查询以获取更可靠信息。出行带好雨具与薄外套，备可替代的室内行程。",
+        "metadata": {
+          "structured_by_llm": true,
+          "prompt_version": "ctp-structured-llm-output-prompts-v2"
+        }
+      },
+      "metadata": {
+        "research_method": "llm_direct",
+        "output_contract": "ctp-experiment-output-v1",
+        "structured_llm_output": {
+          "prompt_version": "ctp-structured-llm-output-prompts-v2",
+          "json_required": true,
+          "parse_status": "passed",
+          "validation_status": "passed",
+          "validation_errors": [],
+          "failure_reason": null
+        },
+        "model_metadata": {
+          "structured_by_llm": true,
+          "prompt_version": "ctp-structured-llm-output-prompts-v2"
+        },
+        "generation_policy": "direct_llm_no_tools",
+        "method_input_schema_version": "ctp-method-input-v1",
+        "visible_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-10-01",
+          "duration_days": 3
+        },
+        "goal_state_slots": {
+          "destination": "hangzhou",
+          "start_date": "2026-10-01",
+          "duration_days": 3
+        }
+      }
+    },
+    "latency": 26409.98,
+    "latency_ms": 26409.98,
+    "ttft_ms": null,
+    "trace": {
+      "schema_version": "1.8",
+      "created_at": "2026-08-21T04:46:42.584251+00:00",
+      "request_id": "ctp100_v2_037_llm_direct_74f3377b",
+      "session_id": "exp-ctp100_v2_037-llm_direct-run-task_e_four_method_real_api_final3_20260821T123500Z-r0",
+      "case_id": "ctp100_v2_037",
+      "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+      "experiment_case_id": "ctp100_v2_037",
+      "experiment_group": null,
+      "repeat_index": 0,
+      "system_variant": "llm_direct",
+      "method": "llm_direct",
+      "evaluation_mode": "end_to_end",
+      "model_config_name": "task-e-four-method-real-api",
+      "input_hash": "d6a05f38bce801bfc518818f8cde65d0322196f6c34dafa59600cf9b31d86e5d",
+      "user_message_hash": "d6a05f38bce801bfc518818f8cde65d0322196f6c34dafa59600cf9b31d86e5d",
+      "user_message": null,
+      "result_hash": "638cfb585783984b08269864f57c268809946a092894af29c245ff826aaa272e",
+      "offline_data": {
+        "schema_version": "fixed_data_manifest_v2",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+        "city_ids": [
+          "beijing",
+          "hangzhou",
+          "xian",
+          "shenzhen",
+          "guilin"
+        ],
+        "snapshot_dirs": [
+          "pois",
+          "weather",
+          "restaurants",
+          "accommodation",
+          "transport"
+        ],
+        "file_count": 25,
+        "expected_file_count": 25,
+        "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+        "expected_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+        "missing_files": [],
+        "files": [
+          {
+            "kind": "accommodation",
+            "city_id": "beijing",
+            "path": "data/accommodation/beijing.json",
+            "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "guilin",
+            "path": "data/accommodation/guilin.json",
+            "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "hangzhou",
+            "path": "data/accommodation/hangzhou.json",
+            "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "shenzhen",
+            "path": "data/accommodation/shenzhen.json",
+            "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "xian",
+            "path": "data/accommodation/xian.json",
+            "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "beijing",
+            "path": "data/pois/beijing.json",
+            "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "guilin",
+            "path": "data/pois/guilin.json",
+            "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "hangzhou",
+            "path": "data/pois/hangzhou.json",
+            "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "shenzhen",
+            "path": "data/pois/shenzhen.json",
+            "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "xian",
+            "path": "data/pois/xian.json",
+            "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "beijing",
+            "path": "data/restaurants/beijing.json",
+            "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "guilin",
+            "path": "data/restaurants/guilin.json",
+            "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "hangzhou",
+            "path": "data/restaurants/hangzhou.json",
+            "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "shenzhen",
+            "path": "data/restaurants/shenzhen.json",
+            "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "xian",
+            "path": "data/restaurants/xian.json",
+            "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "beijing",
+            "path": "data/transport/beijing.json",
+            "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "guilin",
+            "path": "data/transport/guilin.json",
+            "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "hangzhou",
+            "path": "data/transport/hangzhou.json",
+            "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "shenzhen",
+            "path": "data/transport/shenzhen.json",
+            "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "xian",
+            "path": "data/transport/xian.json",
+            "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "beijing",
+            "path": "data/weather/beijing.json",
+            "sha256": "a6b32944050cc2a638d09a67be8d7747ca2b0153527f856d85b4813651c91d0a",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "guilin",
+            "path": "data/weather/guilin.json",
+            "sha256": "450d86b2f7121f970e7c48e5a38ad113c8e4289c0356f448221ce1d63d412f94",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "hangzhou",
+            "path": "data/weather/hangzhou.json",
+            "sha256": "e4ea7c0b10b350cd4c7ba739746e0634d0aa86d77378d858104c0f789f6f64fd",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "shenzhen",
+            "path": "data/weather/shenzhen.json",
+            "sha256": "533e74a25a72fdc58a0f31746f10dd405611b3ab007f18d0319566deaec5e281",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "xian",
+            "path": "data/weather/xian.json",
+            "sha256": "7d9e244e1bd64d129cb75b641a09adc8521d9ce082b4a28de7bbb2aadb92cef4",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          }
+        ]
+      },
+      "status": "completed",
+      "mode": "planning",
+      "intent": "general_chat",
+      "route": "GENERAL_CHAT",
+      "extracted_info": {},
+      "constraints": [],
+      "missing_fields": [],
+      "planned_agents": [],
+      "executed_agents": [],
+      "planned_tools": [],
+      "executed_tools": [],
+      "selected_agents": [],
+      "selected_tools": [],
+      "goal": {
+        "intent": "general_chat",
+        "route": "GENERAL_CHAT",
+        "slots": {},
+        "constraints": [],
+        "planned_agents": [],
+        "selected_agents": []
+      },
+      "stage_timings": {},
+      "agent_timings": {},
+      "agent_runs": [],
+      "llm_calls": [
+        {
+          "call_id": "df3a2540ccde48cebd3a903b0da1c34e",
+          "id": "df3a2540ccde48cebd3a903b0da1c34e",
+          "agent_name": null,
+          "component": null,
+          "provider": "vectorengine_openai_compatible",
+          "model": "gpt-5-mini",
+          "streaming": false,
+          "duration_ms": 26200.2,
+          "ttft_ms": null,
+          "tokens": {
+            "prompt_tokens": 835,
+            "completion_tokens": 999,
+            "total_tokens": 1834
+          },
+          "usage": {
+            "prompt_tokens": 835,
+            "completion_tokens": 999,
+            "total_tokens": 1834
+          },
+          "cached_source_usage": null,
+          "chunk_count": null,
+          "mock_used": false,
+          "fallback_used": false,
+          "cache_hit": false,
+          "mock": false,
+          "fallback": false,
+          "success": true,
+          "error": null,
+          "message_count": 2,
+          "message_chars": 3335,
+          "tool_count": 0,
+          "prompt_version": "ctp-structured-llm-output-prompts-v2",
+          "prompt_hash": "979b81193bc5b1a11473f7c65a666a64c92644b6174272c526035870112a7c9a",
+          "request_options": {
+            "schema_version": "ctp-llm-runtime-options-v1",
+            "model": "gpt-5-mini",
+            "base_url": "https://api.vectorengine.ai/v1",
+            "temperature": 0.0,
+            "max_tokens": 4096,
+            "completion_limit_parameter": "max_completion_tokens",
+            "timeout_seconds": 120,
+            "reasoning_effort": "minimal",
+            "tool_count": 0,
+            "tool_choice": null,
+            "streaming": false,
+            "sdk_max_retries": 0
+          },
+          "retry": {
+            "schema_version": "ctp-llm-retry-audit-v1",
+            "max_attempts": 3,
+            "attempt_count": 1,
+            "retry_count": 0,
+            "error_count": 0,
+            "succeeded": true,
+            "attempts": [
+              {
+                "attempt_index": 1,
+                "success": true,
+                "duration_ms": 26199.97,
+                "finish_reason": "stop",
+                "output_chars": 2190,
+                "usage": {
+                  "prompt_tokens": 835,
+                  "completion_tokens": 999,
+                  "total_tokens": 1834,
+                  "completion_tokens_details": "[REDACTED]",
+                  "prompt_tokens_details": "[REDACTED]"
+                }
+              }
+            ]
+          },
+          "cost_schema_version": "ctp-llm-costing-v1",
+          "cost_currency": "USD",
+          "estimated_cost": 0.00220675,
+          "standardized_estimated_cost": 0.00220675,
+          "estimated_cost_cny": null,
+          "standardized_estimated_cost_cny": null,
+          "actual_cost": null,
+          "actual_cost_status": "not_reported_by_provider",
+          "input_token_unit_price": 0.00025,
+          "output_token_unit_price": 0.002,
+          "price_unit": "per_1k_tokens",
+          "price_snapshot_date": "2026-08-01",
+          "price_source_url": "https://api.vectorengine.ai/pricing",
+          "pricing_mode": "frozen_default_token_estimate",
+          "price_snapshot": {
+            "schema_version": "ctp-llm-costing-v1",
+            "provider": "vectorengine_openai_compatible",
+            "model": "gpt-5-mini",
+            "price_snapshot_date": "2026-08-01",
+            "price_source_url": "https://api.vectorengine.ai/pricing",
+            "currency": "USD",
+            "price_unit": "per_1k_tokens",
+            "input_token_unit_price": 0.00025,
+            "output_token_unit_price": 0.002,
+            "pricing_mode": "frozen_default_token_estimate"
+          },
+          "temperature": 0.0,
+          "max_tokens": 4096,
+          "timeout_seconds": 120,
+          "reasoning_effort": "minimal",
+          "retry_max_attempts": 3,
+          "retry_attempt_count": 1,
+          "retry_count": 0,
+          "retry_error_count": 0,
+          "output_chars": 2190
+        }
+      ],
+      "tool_calls": [],
+      "api_calls": [],
+      "adaptive_scheduler": null,
+      "scheduler": null,
+      "total_duration_ms": 26400.72,
+      "first_body_token_ms": null,
+      "first_token_ms": null,
+      "error": null,
+      "llm_call_count": 1,
+      "tool_call_count": 0,
+      "successful_tool_call_count": 0,
+      "failed_tool_call_count": 0,
+      "tool_call_success_rate": null,
+      "planned_tool_count": 0,
+      "executed_tool_count": 0,
+      "selected_tool_count": 0,
+      "api_call_count": 0,
+      "agent_call_count": 0,
+      "failed_agent_count": 0,
+      "cache_hit_count": 0,
+      "fallback_count": 0,
+      "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\task_e_four_method_real_api\\task_e_four_method_real_api_final3_20260821T123500Z\\traces\\20260821T044708987447Z_ctp100_v2_037_llm_direct_74f3377b_3edd4368.jsonl"
+    },
+    "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\task_e_four_method_real_api\\task_e_four_method_real_api_final3_20260821T123500Z\\traces\\20260821T044708987447Z_ctp100_v2_037_llm_direct_74f3377b_3edd4368.jsonl",
+    "evaluation": {
+      "schema_version": "ctp-independent-evaluation-v1",
+      "catalog_id": "day8_formal_independent_evaluator_rules",
+      "case_id": "ctp100_v2_037",
+      "task_type": "weather_query",
+      "output_task_type": "weather_query",
+      "rules": [
+        {
+          "id": "G_SCHEMA_VALID",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "schema_version": "ctp-experiment-output-v1",
+            "expected": "ctp-experiment-output-v1"
+          }
+        },
+        {
+          "id": "G_EXECUTION_STATUS_VALID",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "execution_status": "completed",
+            "trace_status": "completed",
+            "failed_evidence": false,
+            "issues": []
+          }
+        },
+        {
+          "id": "G_FINAL_ANSWER_CONSISTENT",
+          "usage": "stsr_gate",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "final_answer_inconsistent",
+          "details": {
+            "issues": [
+              "structured_poi_missing_from_answer",
+              "budget_total_missing_from_answer"
+            ],
+            "missing_pois": [
+              "西湖",
+              "灵隐寺",
+              "河坊街/清河坊"
+            ],
+            "unselected_pois_mentioned": [],
+            "budget_total": 2000.0,
+            "weather_terms": [],
+            "missing_clarification_fields": []
+          }
+        },
+        {
+          "id": "G_TASK_TYPE_MATCH",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "expected": "weather_query",
+            "actual": "weather_query"
+          }
+        },
+        {
+          "id": "H_TRIP_DAYS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_ATTRACTION_COUNT_BOUNDS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_DAILY_LOAD_LIMIT",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_LIMIT",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_POI_GROUNDED",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_NO_DUPLICATE_POIS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_MUST_INCLUDE_POIS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_FORBIDDEN_POIS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_RAIN_SUITABILITY",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_SENIOR_ACCESSIBILITY",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_WEATHER_ADJUSTMENT_REQUIRED",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_WEATHER_EVIDENCE",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "weather_evidence_missing",
+          "details": {
+            "issues": [
+              "weather_tool_evidence_missing_or_invalid",
+              "weather_output_without_tool_data",
+              "expected_coverage_status_mismatch",
+              "expected_missing_dates_mismatch"
+            ],
+            "tool_evidence": {
+              "required_tools": [
+                "weather_query"
+              ],
+              "missing_or_failed": [
+                "weather_query"
+              ]
+            },
+            "mismatch_issues": [],
+            "snapshot_issues": [],
+            "expected_issues": [
+              "expected_coverage_status_mismatch",
+              "expected_missing_dates_mismatch"
+            ],
+            "fabrication_issues": [],
+            "expected_coverage_status": "out_of_range",
+            "actual_coverage_status": null,
+            "expected_missing_dates": [
+              "2026-10-01",
+              "2026-10-02",
+              "2026-10-03"
+            ],
+            "actual_missing_dates": []
+          }
+        },
+        {
+          "id": "H_NO_DATE_WEATHER_REMINDER",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_EVIDENCE",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_POLICY_VERSION",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_ACCOMMODATION_NIGHTS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_CONTINGENCY_LOCAL_ONLY",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_TOTAL_FORMULA",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_ITINERARY_CONSISTENCY",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_UPGRADE_POLICY",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_INDEPENDENT_RECALCULATION",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_INTERCITY_SCOPE",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_INTERCITY_COST",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_INTERCITY_EVIDENCE",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_TOOL_EVIDENCE",
+          "usage": "hcsr",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "tool_evidence_missing",
+          "details": {
+            "required_tools": [
+              "weather_query"
+            ],
+            "missing_or_failed": [
+              "weather_query"
+            ]
+          }
+        },
+        {
+          "id": "T_CLARIFICATION_MISSING_FIELDS",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_CLARIFICATION_NO_PREMATURE_PLAN",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_GENERAL_CHAT_NO_BUSINESS_EXECUTION",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_GENERAL_CHAT_NO_TRIP_ARTIFACT",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_ATTRACTION_SINGLE_SCOPE",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_WEATHER_SINGLE_SCOPE",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "artifact_present": true,
+            "unrelated_tools": [],
+            "unrelated_agents": []
+          }
+        },
+        {
+          "id": "T_BUDGET_SINGLE_SCOPE",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_PARTIAL_REUSE_VALIDITY",
+          "usage": "agent_tool_metric",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "S_AGENT_SET_MATCH",
+          "usage": "agent_tool_metric",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "agent_set_mismatch",
+          "details": {
+            "accepted": [
+              [
+                "weather"
+              ]
+            ],
+            "actual": []
+          }
+        },
+        {
+          "id": "S_TOOL_SET_MATCH",
+          "usage": "agent_tool_metric",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "tool_set_mismatch",
+          "details": {
+            "accepted": [
+              [
+                "weather_query"
+              ]
+            ],
+            "actual": []
+          }
+        },
+        {
+          "id": "S_PLANNED_ACTUAL_AGENT_CONSISTENCY",
+          "usage": "agent_tool_metric",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {}
+        },
+        {
+          "id": "S_PLANNED_ACTUAL_TOOL_CONSISTENCY",
+          "usage": "agent_tool_metric",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {}
+        },
+        {
+          "id": "S_FORBIDDEN_GENERATION_TOOLS",
+          "usage": "agent_tool_metric",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "used": []
+          }
+        }
+      ],
+      "metrics": {
+        "stsr": false,
+        "stsr_gate_applicable_count": 5,
+        "stsr_gate_passed_count": 4,
+        "stsr_gate_failed_count": 1,
+        "evaluation_hcsr": 0.0,
+        "evaluation_hcsr_applicable_count": 2,
+        "evaluation_hcsr_passed_count": 0,
+        "evaluation_hcsr_failed_count": 2,
+        "itcsr": null,
+        "itcsr_applicable_count": 0,
+        "itcsr_passed_count": 0,
+        "itcsr_failed_count": 0,
+        "bpcr": null,
+        "bpcr_applicable_count": 0,
+        "bpcr_passed_count": 0,
+        "bpcr_failed_count": 0,
+        "evaluation_failed_rule_ids": [
+          "G_FINAL_ANSWER_CONSISTENT",
+          "H_WEATHER_EVIDENCE",
+          "H_TOOL_EVIDENCE",
+          "S_AGENT_SET_MATCH",
+          "S_TOOL_SET_MATCH"
+        ],
+        "evaluation_failed_rule_count": 5,
+        "agent_selection_precision": 0.0,
+        "agent_selection_recall": 0.0,
+        "agent_selection_f1": 0.0,
+        "agent_set_exact_match": false,
+        "necessary_agent_coverage": 0.0,
+        "extra_agent_count": 0,
+        "missing_agent_count": 1,
+        "duplicate_agent_count": 0,
+        "planned_actual_agent_consistency": 1.0,
+        "agent_execution_success_rate": null,
+        "tool_selection_precision": 0.0,
+        "tool_selection_recall": 0.0,
+        "tool_selection_f1": 0.0,
+        "tool_set_exact_match": false,
+        "necessary_tool_coverage": 0.0,
+        "extra_tool_count": 0,
+        "missing_tool_count": 1,
+        "duplicate_tool_count": 0,
+        "forbidden_tool_call_count": 0,
+        "planned_actual_tool_consistency": 1.0,
+        "tool_call_success_rate": null,
+        "tool_failure_count": 0,
+        "tool_failure_types": [],
+        "total_tokens": 1834.0,
+        "estimated_cost": 0.0022,
+        "standardized_estimated_cost": 0.0022,
+        "actual_cost": null,
+        "cost_per_success": null
+      },
+      "guards": [
+        "method_blind",
+        "no_llm_or_live_api",
+        "no_output_repair",
+        "structured_fields_only",
+        "append_only_evidence"
+      ]
+    },
+    "run_audit": {
+      "schema_version": "ctp-run-audit-v1",
+      "method": "llm_direct",
+      "planned_agents": [],
+      "used_agents": [],
+      "executed_agents": [],
+      "planned_tools": [],
+      "called_tools": [],
+      "executed_tools": [],
+      "cost": {
+        "estimated_cost": 0.0022,
+        "standardized_estimated_cost": 0.0022,
+        "actual_cost": null,
+        "actual_cost_available": false,
+        "actual_cost_statuses": [
+          "not_reported_by_provider"
+        ],
+        "price_snapshots": [
+          {
+            "schema_version": "ctp-llm-costing-v1",
+            "provider": "vectorengine_openai_compatible",
+            "model": "gpt-5-mini",
+            "price_snapshot_date": "2026-08-01",
+            "price_source_url": "https://api.vectorengine.ai/pricing",
+            "currency": "USD",
+            "price_unit": "per_1k_tokens",
+            "input_token_unit_price": 0.00025,
+            "output_token_unit_price": 0.002,
+            "pricing_mode": "frozen_default_token_estimate"
+          }
+        ]
+      },
+      "metrics": {
+        "planned_agent_count": 0,
+        "used_agent_count": 0,
+        "executed_agent_count": 0,
+        "agent_call_count": 0,
+        "successful_agent_call_count": 0,
+        "failed_agent_call_count": 0,
+        "duplicate_agent_call_count": 0,
+        "planned_actual_agent_consistency": 1.0,
+        "planned_tool_count": 0,
+        "called_tool_count": 0,
+        "executed_tool_count": 0,
+        "successful_tool_call_count": 0,
+        "failed_tool_call_count": 0,
+        "duplicate_tool_call_count": 0,
+        "planned_actual_tool_consistency": 1.0,
+        "llm_call_count": 1,
+        "llm_retry_attempt_count": 1.0,
+        "llm_retry_count": 0.0,
+        "llm_retry_error_count": 0.0,
+        "api_call_count": 0,
+        "prompt_tokens": 835.0,
+        "completion_tokens": 999.0,
+        "total_tokens": 1834.0,
+        "estimated_cost": 0.0022,
+        "standardized_estimated_cost": 0.0022,
+        "latency_ms": 26409.98,
+        "trace_total_duration_ms": 26400.72,
+        "llm_total_duration_ms": 26200.2
+      }
+    },
+    "audit": {
+      "schema_version": "ctp-run-audit-v1",
+      "method": "llm_direct",
+      "planned_agents": [],
+      "used_agents": [],
+      "executed_agents": [],
+      "planned_tools": [],
+      "called_tools": [],
+      "executed_tools": [],
+      "cost": {
+        "estimated_cost": 0.0022,
+        "standardized_estimated_cost": 0.0022,
+        "actual_cost": null,
+        "actual_cost_available": false,
+        "actual_cost_statuses": [
+          "not_reported_by_provider"
+        ],
+        "price_snapshots": [
+          {
+            "schema_version": "ctp-llm-costing-v1",
+            "provider": "vectorengine_openai_compatible",
+            "model": "gpt-5-mini",
+            "price_snapshot_date": "2026-08-01",
+            "price_source_url": "https://api.vectorengine.ai/pricing",
+            "currency": "USD",
+            "price_unit": "per_1k_tokens",
+            "input_token_unit_price": 0.00025,
+            "output_token_unit_price": 0.002,
+            "pricing_mode": "frozen_default_token_estimate"
+          }
+        ]
+      },
+      "metrics": {
+        "planned_agent_count": 0,
+        "used_agent_count": 0,
+        "executed_agent_count": 0,
+        "agent_call_count": 0,
+        "successful_agent_call_count": 0,
+        "failed_agent_call_count": 0,
+        "duplicate_agent_call_count": 0,
+        "planned_actual_agent_consistency": 1.0,
+        "planned_tool_count": 0,
+        "called_tool_count": 0,
+        "executed_tool_count": 0,
+        "successful_tool_call_count": 0,
+        "failed_tool_call_count": 0,
+        "duplicate_tool_call_count": 0,
+        "planned_actual_tool_consistency": 1.0,
+        "llm_call_count": 1,
+        "llm_retry_attempt_count": 1.0,
+        "llm_retry_count": 0.0,
+        "llm_retry_error_count": 0.0,
+        "api_call_count": 0,
+        "prompt_tokens": 835.0,
+        "completion_tokens": 999.0,
+        "total_tokens": 1834.0,
+        "estimated_cost": 0.0022,
+        "standardized_estimated_cost": 0.0022,
+        "latency_ms": 26409.98,
+        "trace_total_duration_ms": 26400.72,
+        "llm_total_duration_ms": 26200.2
+      }
+    },
+    "status": "completed",
+    "metrics": {
+      "expected_tools": [],
+      "selected_tools": [],
+      "expected_tool_count": 0,
+      "correct_tool_count": null,
+      "tool_selection_accuracy": null,
+      "intent_correct": null,
+      "route_correct": null,
+      "agents_correct": null,
+      "constraint_report": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "constraint_checker",
+        "status": "success",
+        "success": true,
+        "input": {
+          "request": {
+            "destination": "hangzhou",
+            "start_date": "2026-10-01",
+            "duration_days": 3,
+            "case_id": "ctp100_v2_037",
+            "user_input": "国庆去杭州玩3天，那几天的天气能提前查到吗？",
+            "city": "hangzhou",
+            "budget": null
+          },
+          "constraints": {
+            "destination": "hangzhou",
+            "start_date": "2026-10-01",
+            "duration_days": 3
+          }
+        },
+        "data": {
+          "all_passed": false,
+          "applicable_count": 2,
+          "passed_count": 1,
+          "failed_count": 1,
+          "checks": [
+            {
+              "name": "trip_days",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "expected": null,
+                "actual": 3
+              }
+            },
+            {
+              "name": "budget_limit",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "limit": null,
+                "actual": 2000
+              }
+            },
+            {
+              "name": "weather_adjustment",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": false,
+                "adjustment_count": 3
+              }
+            },
+            {
+              "name": "min_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "minimum": null,
+                "actual": 3
+              }
+            },
+            {
+              "name": "max_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "maximum": null,
+                "actual": 3
+              }
+            },
+            {
+              "name": "poi_existence",
+              "status": "failed",
+              "passed": false,
+              "details": {
+                "city_id": "hangzhou",
+                "attraction_count": 3,
+                "unresolved": [
+                  "西湖",
+                  "灵隐寺",
+                  "河坊街/清河坊"
+                ]
+              }
+            },
+            {
+              "name": "duplicate_attractions",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "duplicates": [],
+                "unique_count": 3,
+                "attraction_count": 3
+              }
+            },
+            {
+              "name": "must_include_pois",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": []
+              }
+            },
+            {
+              "name": "forbidden_pois",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "forbidden": []
+              }
+            },
+            {
+              "name": "rain_attraction_suitability",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "rain_detected": false
+              }
+            },
+            {
+              "name": "senior_accessibility",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "senior_request": false
+              }
+            },
+            {
+              "name": "tool_evidence",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": false
+              }
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "deterministic_evaluator",
+          "real_time_api_allowed": false,
+          "contract": "ctp-research-tools-v1.0"
+        }
+      },
+      "hard_constraint_applicable_count": 2,
+      "hard_constraint_passed_count": 1,
+      "hard_constraint_failed_count": 1,
+      "hard_constraints_all_satisfied": false,
+      "hcsr": 0.5,
+      "stsr": false,
+      "stsr_gate_applicable_count": 5,
+      "stsr_gate_passed_count": 4,
+      "stsr_gate_failed_count": 1,
+      "evaluation_hcsr": 0.0,
+      "evaluation_hcsr_applicable_count": 2,
+      "evaluation_hcsr_passed_count": 0,
+      "evaluation_hcsr_failed_count": 2,
+      "itcsr": null,
+      "itcsr_applicable_count": 0,
+      "itcsr_passed_count": 0,
+      "itcsr_failed_count": 0,
+      "bpcr": null,
+      "bpcr_applicable_count": 0,
+      "bpcr_passed_count": 0,
+      "bpcr_failed_count": 0,
+      "evaluation_failed_rule_ids": [
+        "G_FINAL_ANSWER_CONSISTENT",
+        "H_WEATHER_EVIDENCE",
+        "H_TOOL_EVIDENCE",
+        "S_AGENT_SET_MATCH",
+        "S_TOOL_SET_MATCH"
+      ],
+      "evaluation_failed_rule_count": 5,
+      "agent_selection_precision": 0.0,
+      "agent_selection_recall": 0.0,
+      "agent_selection_f1": 0.0,
+      "agent_set_exact_match": false,
+      "necessary_agent_coverage": 0.0,
+      "extra_agent_count": 0,
+      "missing_agent_count": 1,
+      "duplicate_agent_count": 0,
+      "planned_actual_agent_consistency": 1.0,
+      "agent_execution_success_rate": null,
+      "tool_selection_precision": 0.0,
+      "tool_selection_recall": 0.0,
+      "tool_selection_f1": 0.0,
+      "tool_set_exact_match": false,
+      "necessary_tool_coverage": 0.0,
+      "extra_tool_count": 0,
+      "missing_tool_count": 1,
+      "duplicate_tool_count": 0,
+      "forbidden_tool_call_count": 0,
+      "planned_actual_tool_consistency": 1.0,
+      "tool_call_success_rate": null,
+      "tool_failure_count": 0,
+      "tool_failure_types": [],
+      "total_tokens": 1834.0,
+      "estimated_cost": 0.0022,
+      "standardized_estimated_cost": 0.0022,
+      "actual_cost": null,
+      "cost_per_success": null,
+      "planned_agent_count": 0,
+      "used_agent_count": 0,
+      "executed_agent_count": 0,
+      "agent_call_count": 0,
+      "successful_agent_call_count": 0,
+      "failed_agent_call_count": 0,
+      "duplicate_agent_call_count": 0,
+      "planned_tool_count": 0,
+      "called_tool_count": 0,
+      "executed_tool_count": 0,
+      "successful_tool_call_count": 0,
+      "failed_tool_call_count": 0,
+      "duplicate_tool_call_count": 0,
+      "llm_call_count": 1,
+      "llm_retry_attempt_count": 1.0,
+      "llm_retry_count": 0.0,
+      "llm_retry_error_count": 0.0,
+      "api_call_count": 0,
+      "prompt_tokens": 835.0,
+      "completion_tokens": 999.0,
+      "latency_ms": 26409.98,
+      "trace_total_duration_ms": 26400.72,
+      "llm_total_duration_ms": 26200.2
+    },
+    "error": null
+  }
+}

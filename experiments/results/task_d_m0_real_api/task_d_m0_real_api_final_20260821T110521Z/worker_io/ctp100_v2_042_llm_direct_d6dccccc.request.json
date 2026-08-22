@@ -1,0 +1,67 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_042",
+    "user_input": "从上海坐高铁去杭州玩2天，两个人，总预算上限3000元够不够？只算费用。",
+    "task_type": "budget_query",
+    "title": "预算查询｜杭州｜上海出发",
+    "check": "包含上海至杭州成人二等座往返费用。",
+    "slots": {
+      "origin": "shanghai",
+      "destination": "hangzhou",
+      "duration_days": 2,
+      "people_count": 2,
+      "budget_amount": 3000
+    },
+    "expected": {
+      "task_type": "budget_query",
+      "required_tools": [
+        "budget_calculator"
+      ],
+      "accepted_agent_sets": [
+        [
+          "budget"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "budget_calculator"
+        ]
+      ],
+      "forbidden_tools": [
+        "poi_search",
+        "weather_query"
+      ],
+      "hard_constraints": {
+        "origin": "shanghai",
+        "destination": "hangzhou",
+        "duration_days": 2,
+        "people_count": 2,
+        "budget_limit": 3000
+      },
+      "origin": "shanghai",
+      "destination": "hangzhou",
+      "duration_days": 2,
+      "people_count": 2,
+      "budget_amount": 3000,
+      "intercity_transport_mode": "high_speed_or_d_train",
+      "intercity_seat_class": "second_class",
+      "intercity_transport_included": true,
+      "budget_scope": "local_plus_round_trip_intercity",
+      "intercity_route_id": "shanghai_hangzhou_rail_second_class",
+      "intercity_one_way_fare_per_person_cny": 83.0,
+      "intercity_round_trip_cost_cny": 332.0,
+      "weather_required": false
+    }
+  },
+  "method": "llm_direct",
+  "request_id": "ctp100_v2_042_llm_direct_d6dccccc",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z",
+  "run_id": "task_d_m0_real_api_final_20260821T110521Z",
+  "repeat_index": 0,
+  "system_variant": "llm_direct",
+  "model_config_name": "task-d-m0-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

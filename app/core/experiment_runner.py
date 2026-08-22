@@ -15,6 +15,7 @@ import os
 import random
 import re
 import subprocess
+import sys
 import time
 import uuid
 from contextlib import contextmanager
@@ -75,7 +76,7 @@ from app.core.independent_evaluator import (
     render_paper_tables,
     summarize_evaluation_results,
 )
-from app.core.llm.client import LLMMessage, ToolDefinition, get_llm
+from app.core.llm.client import LLMMessage, ToolDefinition, get_llm, llm_provider_from_base_url
 from app.core.llm_costing import COSTING_SCHEMA_VERSION, build_price_snapshot
 from app.core.no_date_weather_policy import (
     append_no_date_weather_reminder,
@@ -117,8 +118,8 @@ METHOD_PREVIOUS_STATE_SCHEMA_VERSION = "ctp-method-previous-state-v1"
 RESEARCH_AGENT_OUTPUT_SCHEMA_VERSION = "ctp-research-agent-output-v1"
 RESEARCH_AGENT_DECISION_SCHEMA_VERSION = "ctp-research-agent-decision-v1"
 RESEARCH_AGENT_DECISION_NORMALIZER_VERSION = "ctp-research-agent-decision-normalizer-v1"
-RESEARCH_AGENT_PROMPT_VERSION = "ctp-research-agent-prompts-v1"
-STRUCTURED_LLM_OUTPUT_PROMPT_VERSION = "ctp-structured-llm-output-prompts-v1"
+RESEARCH_AGENT_PROMPT_VERSION = "ctp-research-agent-prompts-v2"
+STRUCTURED_LLM_OUTPUT_PROMPT_VERSION = "ctp-structured-llm-output-prompts-v2"
 STRUCTURED_LLM_CONTENT_FIELDS = (
     "task_type",
     "attractions",
@@ -149,6 +150,14 @@ BENCHMARK_CHECKPOINT_JSON_NAME = "benchmark_results.checkpoint.json"
 BENCHMARK_RESUME_STATE_NAME = "benchmark_resume_state.json"
 SINGLE_TURN_RESUME_ID = ""
 EXPERIMENT_LLM_CALL_TIMEOUT_ENV = "EXPERIMENT_LLM_CALL_TIMEOUT_SECONDS"
+EXPERIMENT_RESULT_HARD_TIMEOUT_ENV = "EXPERIMENT_RESULT_HARD_TIMEOUT_SECONDS"
+EXPERIMENT_RESULT_HARD_TIMEOUT_CHILD_ENV = "EXPERIMENT_RESULT_HARD_TIMEOUT_CHILD"
+EXPERIMENT_RESULT_WORKER_STARTUP_DELAY_ENV = (
+    "EXPERIMENT_RESULT_WORKER_STARTUP_DELAY_SECONDS"
+)
+EXPERIMENT_RESULT_HARD_TIMEOUT_SCHEMA_VERSION = (
+    "ctp-experiment-result-hard-timeout-v1"
+)
 EXPERIMENT_AGENT_DECISION_NORMALIZER_ENV = "EXPERIMENT_AGENT_DECISION_NORMALIZER"
 FROZEN_RESEARCH_TASK_TYPES = {
     "trip_planning",
@@ -233,6 +242,9 @@ class ExperimentRunner:
         self.trace_dir = Path(trace_dir)
         self.output_dir = Path(output_dir)
         self.method_handlers = method_handlers or {}
+        self._has_custom_method_handlers = bool(method_handlers)
+        self._has_custom_app_factory = app_factory is not None
+        self._has_custom_llm_factory = llm_factory is not None
         self.app_factory = app_factory
         self.llm_factory = llm_factory or get_llm
         self.repeats = _validate_repeats(repeats)
@@ -267,6 +279,7 @@ class ExperimentRunner:
         repeat_index: Optional[int] = None,
         system_variant: Optional[str] = None,
         model_config_name: Optional[str] = None,
+        request_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Synchronously run one case through one method."""
         try:
@@ -280,6 +293,7 @@ class ExperimentRunner:
                     repeat_index=repeat_index,
                     system_variant=system_variant,
                     model_config_name=model_config_name,
+                    request_id=request_id,
                 )
             )
         raise RuntimeError("ExperimentRunner.run() cannot be used inside a running event loop; use arun().")
@@ -293,12 +307,13 @@ class ExperimentRunner:
         repeat_index: Optional[int] = None,
         system_variant: Optional[str] = None,
         model_config_name: Optional[str] = None,
+        request_id: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Asynchronously run one case through one method."""
         method = self._normalize_method(method)
         normalized_case = self._normalize_case(case)
         case_id = normalized_case["case_id"]
-        request_id = f"{case_id}_{method}_{uuid.uuid4().hex[:8]}"
+        request_id = _optional_text(request_id) or f"{case_id}_{method}_{uuid.uuid4().hex[:8]}"
         effective_run_id = str(run_id or self.run_id)
         effective_repeat_index = (
             self.repeat_index
@@ -311,6 +326,22 @@ class ExperimentRunner:
         effective_model_config_name = (
             _optional_text(model_config_name) or self.model_config_name
         )
+
+        hard_timeout_seconds = _experiment_result_hard_timeout_seconds()
+        if self._should_use_result_hard_timeout_worker(hard_timeout_seconds):
+            result = await self._arun_with_result_hard_timeout_worker(
+                case=case,
+                normalized_case=normalized_case,
+                method=method,
+                request_id=request_id,
+                run_id=effective_run_id,
+                repeat_index=effective_repeat_index,
+                system_variant=effective_system_variant,
+                model_config_name=effective_model_config_name,
+                timeout_seconds=float(hard_timeout_seconds or 0.0),
+            )
+            self.experiment_records.append(result)
+            return result
 
         started = time.perf_counter()
         output: Any = None
@@ -356,6 +387,370 @@ class ExperimentRunner:
         )
         self.experiment_records.append(result)
         return result
+
+    def _should_use_result_hard_timeout_worker(
+        self,
+        timeout_seconds: Optional[float],
+    ) -> bool:
+        if timeout_seconds is None or timeout_seconds <= 0:
+            return False
+        if _environment_bool(EXPERIMENT_RESULT_HARD_TIMEOUT_CHILD_ENV, False):
+            return False
+        if (
+            self._has_custom_method_handlers
+            or self._has_custom_app_factory
+            or self._has_custom_llm_factory
+        ):
+            return False
+        return True
+
+    async def _arun_with_result_hard_timeout_worker(
+        self,
+        *,
+        case: Dict[str, Any],
+        normalized_case: Dict[str, Any],
+        method: ExperimentMethod,
+        request_id: str,
+        run_id: str,
+        repeat_index: int,
+        system_variant: str,
+        model_config_name: str,
+        timeout_seconds: float,
+    ) -> Dict[str, Any]:
+        started = time.perf_counter()
+        worker_payload = {
+            "case": _jsonable_value(case),
+            "method": method,
+            "request_id": request_id,
+            "trace_dir": self.trace_dir.as_posix(),
+            "output_dir": self.output_dir.as_posix(),
+            "run_id": run_id,
+            "repeat_index": repeat_index,
+            "system_variant": system_variant,
+            "model_config_name": model_config_name,
+            "repeats": self.repeats,
+            "method_order_seed": self.method_order_seed,
+            "enable_research_agent_decision_normalizer": (
+                self.enable_research_agent_decision_normalizer
+            ),
+        }
+        worker_result = await asyncio.to_thread(
+            self._run_result_hard_timeout_worker_process,
+            worker_payload,
+            timeout_seconds,
+        )
+        elapsed_ms = round((time.perf_counter() - started) * 1000, 2)
+        if worker_result.get("status") == "completed" and isinstance(
+            worker_result.get("result"),
+            dict,
+        ):
+            result = worker_result["result"]
+            self._attach_result_hard_timeout_metadata(
+                result,
+                timeout_seconds=timeout_seconds,
+                triggered=False,
+                worker_status="completed",
+                worker_elapsed_ms=elapsed_ms,
+                worker_pid=worker_result.get("pid"),
+                worker_returncode=worker_result.get("returncode"),
+            )
+            return result
+
+        worker_status = str(worker_result.get("status") or "failed")
+        triggered = worker_status == "timeout"
+        if triggered:
+            error = (
+                f"experiment result hard timeout after {timeout_seconds:g}s; "
+                "worker process was terminated"
+            )
+        else:
+            error = (
+                "experiment result worker failed before producing a valid result: "
+                f"{worker_result.get('error') or worker_status}"
+            )
+        trace = {
+            "request_id": request_id,
+            "run_id": run_id,
+            "repeat_index": repeat_index,
+            "system_variant": system_variant,
+            "model_config_name": model_config_name,
+            "status": "failed",
+            "error": error,
+            "trace_file": None,
+        }
+        output = {
+            "error": error,
+            "execution_status": "failed",
+            "final_answer": "该条实验因执行超时或子进程失败而中止，系统已保存失败原因并继续后续实验。",
+            "metadata": {
+                "result_hard_timeout": self._result_hard_timeout_metadata(
+                    timeout_seconds=timeout_seconds,
+                    triggered=triggered,
+                    worker_status=worker_status,
+                    worker_elapsed_ms=elapsed_ms,
+                    worker_pid=worker_result.get("pid"),
+                    worker_returncode=worker_result.get("returncode"),
+                    worker_stdout=worker_result.get("stdout"),
+                    worker_stderr=worker_result.get("stderr"),
+                )
+            },
+        }
+        result = await self._build_unified_result(
+            case=normalized_case,
+            method=method,
+            output=output,
+            latency_ms=elapsed_ms,
+            trace=trace,
+            error=error,
+        )
+        self._attach_result_hard_timeout_metadata(
+            result,
+            timeout_seconds=timeout_seconds,
+            triggered=triggered,
+            worker_status=worker_status,
+            worker_elapsed_ms=elapsed_ms,
+            worker_pid=worker_result.get("pid"),
+            worker_returncode=worker_result.get("returncode"),
+            worker_stdout=worker_result.get("stdout"),
+            worker_stderr=worker_result.get("stderr"),
+        )
+        return result
+
+    def _run_result_hard_timeout_worker_process(
+        self,
+        payload: Dict[str, Any],
+        timeout_seconds: float,
+    ) -> Dict[str, Any]:
+        run_id = str(payload.get("run_id") or self.run_id)
+        request_id = str(payload.get("request_id") or uuid.uuid4().hex)
+        worker_dir = self._benchmark_output_dir(run_id) / "worker_io"
+        worker_dir.mkdir(parents=True, exist_ok=True)
+        file_stem = _session_component(request_id)
+        request_path = worker_dir / f"{file_stem}.request.json"
+        response_path = worker_dir / f"{file_stem}.response.json"
+        request_path.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2, default=str),
+            encoding="utf-8",
+        )
+        repo_root = Path(__file__).resolve().parents[2]
+        env = os.environ.copy()
+        env[EXPERIMENT_RESULT_HARD_TIMEOUT_CHILD_ENV] = "true"
+        env.setdefault("PYTHONIOENCODING", "utf-8")
+        command = [
+            sys.executable,
+            "-m",
+            "app.core.experiment_result_worker",
+            request_path.as_posix(),
+            response_path.as_posix(),
+        ]
+        process = subprocess.Popen(
+            command,
+            cwd=repo_root,
+            env=env,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        timed_out, stdout, stderr = self._wait_result_worker_process(
+            process,
+            timeout_seconds=timeout_seconds,
+        )
+        if timed_out:
+            return {
+                "status": "timeout",
+                "pid": process.pid,
+                "returncode": process.returncode,
+                "stdout": _truncate_text(stdout),
+                "stderr": _truncate_text(stderr),
+                "request_path": request_path.as_posix(),
+                "response_path": response_path.as_posix(),
+            }
+
+        if process.returncode != 0:
+            return {
+                "status": "failed",
+                "pid": process.pid,
+                "returncode": process.returncode,
+                "stdout": _truncate_text(stdout),
+                "stderr": _truncate_text(stderr),
+                "error": f"worker exited with code {process.returncode}",
+                "request_path": request_path.as_posix(),
+                "response_path": response_path.as_posix(),
+            }
+        if not response_path.exists():
+            return {
+                "status": "failed",
+                "pid": process.pid,
+                "returncode": process.returncode,
+                "stdout": _truncate_text(stdout),
+                "stderr": _truncate_text(stderr),
+                "error": "worker did not write response file",
+                "request_path": request_path.as_posix(),
+                "response_path": response_path.as_posix(),
+            }
+        try:
+            response = json.loads(response_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            return {
+                "status": "failed",
+                "pid": process.pid,
+                "returncode": process.returncode,
+                "stdout": _truncate_text(stdout),
+                "stderr": _truncate_text(stderr),
+                "error": f"worker response is invalid JSON: {exc}",
+                "request_path": request_path.as_posix(),
+                "response_path": response_path.as_posix(),
+            }
+        if not isinstance(response, dict):
+            return {
+                "status": "failed",
+                "pid": process.pid,
+                "returncode": process.returncode,
+                "stdout": _truncate_text(stdout),
+                "stderr": _truncate_text(stderr),
+                "error": "worker response must be a JSON object",
+                "request_path": request_path.as_posix(),
+                "response_path": response_path.as_posix(),
+            }
+        response.setdefault("stdout", _truncate_text(stdout))
+        response.setdefault("stderr", _truncate_text(stderr))
+        response.setdefault("pid", process.pid)
+        response.setdefault("returncode", process.returncode)
+        response.setdefault("request_path", request_path.as_posix())
+        response.setdefault("response_path", response_path.as_posix())
+        return response
+
+    def _wait_result_worker_process(
+        self,
+        process: subprocess.Popen[str],
+        *,
+        timeout_seconds: float,
+    ) -> tuple[bool, str, str]:
+        """Wait for a worker with an explicit monotonic watchdog.
+
+        ``subprocess.communicate(timeout=...)`` is normally sufficient, but the
+        real VectorEngine/OpenAI-compatible run exposed a Windows case where a
+        long child process was not interrupted at the configured deadline.  This
+        loop keeps the deadline in our own code and terminates the worker process
+        tree as soon as the monotonic clock crosses it.
+        """
+        deadline = time.monotonic() + max(0.001, float(timeout_seconds))
+        while process.poll() is None:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                self._terminate_result_worker_process(process)
+                stdout, stderr = self._communicate_after_worker_termination(process)
+                return True, stdout, stderr
+            time.sleep(min(0.25, max(0.001, remaining)))
+        stdout, stderr = process.communicate()
+        return False, stdout, stderr
+
+    def _terminate_result_worker_process(self, process: subprocess.Popen[str]) -> None:
+        if process.poll() is not None:
+            return
+        if os.name == "nt":
+            try:
+                subprocess.run(
+                    ["taskkill", "/PID", str(process.pid), "/T", "/F"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    timeout=5,
+                    check=False,
+                )
+            except Exception:
+                try:
+                    process.kill()
+                except Exception:
+                    pass
+        else:
+            try:
+                process.kill()
+            except Exception:
+                pass
+
+    def _communicate_after_worker_termination(
+        self,
+        process: subprocess.Popen[str],
+    ) -> tuple[str, str]:
+        try:
+            return process.communicate(timeout=5)
+        except subprocess.TimeoutExpired:
+            try:
+                process.kill()
+            except Exception:
+                pass
+            try:
+                return process.communicate(timeout=5)
+            except Exception:
+                return "", ""
+
+    def _result_hard_timeout_metadata(
+        self,
+        *,
+        timeout_seconds: float,
+        triggered: bool,
+        worker_status: str,
+        worker_elapsed_ms: float,
+        worker_pid: Any = None,
+        worker_returncode: Any = None,
+        worker_stdout: Any = None,
+        worker_stderr: Any = None,
+    ) -> Dict[str, Any]:
+        metadata = {
+            "schema_version": EXPERIMENT_RESULT_HARD_TIMEOUT_SCHEMA_VERSION,
+            "enabled": True,
+            "mode": "subprocess_per_result",
+            "timeout_seconds": float(timeout_seconds),
+            "triggered": bool(triggered),
+            "worker_status": str(worker_status or ""),
+            "worker_elapsed_ms": float(worker_elapsed_ms),
+            "worker_pid": worker_pid,
+            "worker_returncode": worker_returncode,
+        }
+        if worker_stdout:
+            metadata["worker_stdout"] = _truncate_text(worker_stdout)
+        if worker_stderr:
+            metadata["worker_stderr"] = _truncate_text(worker_stderr)
+        return metadata
+
+    def _attach_result_hard_timeout_metadata(
+        self,
+        result: Dict[str, Any],
+        *,
+        timeout_seconds: float,
+        triggered: bool,
+        worker_status: str,
+        worker_elapsed_ms: float,
+        worker_pid: Any = None,
+        worker_returncode: Any = None,
+        worker_stdout: Any = None,
+        worker_stderr: Any = None,
+    ) -> None:
+        metadata = self._result_hard_timeout_metadata(
+            timeout_seconds=timeout_seconds,
+            triggered=triggered,
+            worker_status=worker_status,
+            worker_elapsed_ms=worker_elapsed_ms,
+            worker_pid=worker_pid,
+            worker_returncode=worker_returncode,
+            worker_stdout=worker_stdout,
+            worker_stderr=worker_stderr,
+        )
+        result["result_isolation"] = "subprocess"
+        result["hard_timeout_triggered"] = bool(triggered)
+        result["result_hard_timeout"] = metadata
+        metrics = result.setdefault("metrics", {})
+        if isinstance(metrics, dict):
+            metrics["hard_timeout_triggered"] = bool(triggered)
+            metrics["result_isolation"] = "subprocess"
+        output = result.get("output")
+        if isinstance(output, dict):
+            output_metadata = output.setdefault("metadata", {})
+            if isinstance(output_metadata, dict):
+                output_metadata["result_hard_timeout"] = metadata
 
     def run_benchmark(
         self,
@@ -658,6 +1053,13 @@ class ExperimentRunner:
                 "temperature": _environment_float("LLM_TEMPERATURE", settings.llm.temperature),
                 "max_tokens": _environment_int("LLM_MAX_TOKENS", settings.llm.max_tokens),
                 "timeout_seconds": _environment_int("LLM_TIMEOUT", settings.llm.timeout),
+                "result_soft_timeout_seconds": _experiment_result_timeout_seconds(),
+                "result_hard_timeout_seconds": _experiment_result_hard_timeout_seconds(),
+                "result_hard_timeout_mode": (
+                    "subprocess_per_result"
+                    if _experiment_result_hard_timeout_seconds()
+                    else "disabled"
+                ),
                 "retry_max_attempts": _environment_int(
                     "LLM_RETRY_MAX_ATTEMPTS",
                     settings.llm.retry_max_attempts,
@@ -1426,6 +1828,11 @@ class ExperimentRunner:
         temperature = _environment_float("LLM_TEMPERATURE", settings.llm.temperature)
         max_tokens = _environment_int("LLM_MAX_TOKENS", settings.llm.max_tokens)
         timeout_seconds = _environment_int("LLM_TIMEOUT", settings.llm.timeout)
+        result_soft_timeout_seconds = _experiment_result_timeout_seconds()
+        result_hard_timeout_seconds = _experiment_result_hard_timeout_seconds()
+        result_hard_timeout_mode = (
+            "subprocess_per_result" if result_hard_timeout_seconds else "disabled"
+        )
         retry_max_attempts = _environment_int(
             "LLM_RETRY_MAX_ATTEMPTS",
             settings.llm.retry_max_attempts,
@@ -1440,8 +1847,9 @@ class ExperimentRunner:
             _optional_text(model_config_name) or self.model_config_name
         )
         mock_pricing = "fake" in str(model).lower() or "offline" in str(resolved_model_config).lower()
+        llm_provider = _llm_provider_from_base_url(base_url)
         price_snapshot = build_price_snapshot(
-            provider="experiment_llm",
+            provider=llm_provider,
             model=model,
             mock=mock_pricing,
         )
@@ -1489,12 +1897,15 @@ class ExperimentRunner:
             "repeat_index_start": self.repeat_index,
             "system_variant": resolved_system_variant or "per_method",
             "model_config_name": resolved_model_config,
-            "provider": _llm_provider_from_base_url(base_url),
+            "provider": llm_provider,
             "base_url": str(base_url),
             "model": str(model),
             "temperature": temperature,
             "max_tokens": max_tokens,
             "timeout_seconds": timeout_seconds,
+            "result_soft_timeout_seconds": result_soft_timeout_seconds,
+            "result_hard_timeout_seconds": result_hard_timeout_seconds,
+            "result_hard_timeout_mode": result_hard_timeout_mode,
             "retry_max_attempts": retry_max_attempts,
             "reasoning_effort": reasoning_effort,
             "deterministic_research_final_answer": deterministic_research_final_answer,
@@ -1503,24 +1914,30 @@ class ExperimentRunner:
             "strict_mode": strict_mode,
             "model_config": {
                 "name": resolved_model_config,
-                "provider": _llm_provider_from_base_url(base_url),
+                "provider": llm_provider,
                 "base_url": str(base_url),
                 "model": str(model),
                 "temperature": temperature,
                 "max_tokens": max_tokens,
                 "timeout_seconds": timeout_seconds,
+                "result_soft_timeout_seconds": result_soft_timeout_seconds,
+                "result_hard_timeout_seconds": result_hard_timeout_seconds,
+                "result_hard_timeout_mode": result_hard_timeout_mode,
                 "retry_max_attempts": retry_max_attempts,
                 "reasoning_effort": reasoning_effort,
                 "deterministic_research_final_answer": deterministic_research_final_answer,
             },
             "runtime_config": {
                 "schema_version": "ctp-experiment-runtime-config-v1",
-                "provider": _llm_provider_from_base_url(base_url),
+                "provider": llm_provider,
                 "base_url": str(base_url),
                 "model": str(model),
                 "temperature": temperature,
                 "max_tokens": max_tokens,
                 "timeout_seconds": timeout_seconds,
+                "result_soft_timeout_seconds": result_soft_timeout_seconds,
+                "result_hard_timeout_seconds": result_hard_timeout_seconds,
+                "result_hard_timeout_mode": result_hard_timeout_mode,
                 "retry_max_attempts": retry_max_attempts,
                 "reasoning_effort": reasoning_effort,
                 "deterministic_research_final_answer": deterministic_research_final_answer,
@@ -1695,6 +2112,11 @@ class ExperimentRunner:
             "model_config_name",
             "evaluation_mode",
             "status",
+            "result_isolation",
+            "hard_timeout_enabled",
+            "hard_timeout_triggered",
+            "hard_timeout_seconds",
+            "hard_timeout_worker_status",
             "latency_ms",
             "ttft_ms",
             "intent",
@@ -2656,7 +3078,14 @@ class ExperimentRunner:
             f"{role}\n"
             "Return exactly one valid JSON object that follows the experiment output schema. "
             "Do not wrap it in Markdown. Do not add explanatory text outside JSON. "
-            "If information is unavailable, use null or an empty list/object in the correct field."
+            "If information is unavailable, use null or an empty list/object in the correct field. "
+            "Fields attractions, daily_itinerary, and weather_adjustments must always be arrays "
+            "of JSON objects; never return arrays of strings for these fields. "
+            "Fields budget and weather must be JSON objects or null; never return arrays or strings "
+            "for budget or weather. Field trip_days must be an integer or null. "
+            "Keep the JSON compact and shallow: avoid deeply nested step-by-step arrays, "
+            "limit attractions to at most five items, keep final_answer concise, and check "
+            "all brackets and commas before returning."
         )
 
     def _structured_llm_user_prompt(
@@ -2693,6 +3122,29 @@ class ExperimentRunner:
                 *STRUCTURED_LLM_CONTENT_FIELDS,
                 "metadata",
             ],
+            "field_type_contract": {
+                "trip_days": "integer|null; never string",
+                "budget": "object|null; never array/string",
+                "weather": "object|null; never array/string",
+                "attractions": "array<object>; use [] when no attraction is recommended",
+                "daily_itinerary": (
+                    "array<object>; use [] when no day-level itinerary is needed; "
+                    "prefer shallow day objects with day/day_index, summary, attraction_names or "
+                    "attraction_poi_ids, and notes; avoid nested steps arrays"
+                ),
+                "weather_adjustments": (
+                    "array<object>; use [] when no weather adjustment is needed; "
+                    "never use string items"
+                ),
+                "final_answer": "string; concise Chinese summary, preferably under 240 characters",
+                "weather_adjustment_object_example": {
+                    "day": 1,
+                    "day_index": 1,
+                    "reason": "rain",
+                    "action": "prefer indoor or rain-suitable attractions",
+                    "candidate_indoor_pois": [],
+                },
+            },
             "output_template": {
                 "schema_version": EXPERIMENT_OUTPUT_SCHEMA_VERSION,
                 "case_id": str(case.get("case_id") or ""),
@@ -3906,7 +4358,14 @@ class ExperimentRunner:
         daily = decisions.get("daily_itinerary")
         if not isinstance(daily, list) or not daily:
             return ["itinerary decision must include non-empty daily_itinerary"]
-        evidence_ids = set(self._poi_ids_from_result(tool_results.get("poi_search")))
+        evidence_ids = set(
+            self._poi_ids_from_attractions(
+                self._itinerary_evidence_attractions(
+                    case=case,
+                    tool_results=tool_results,
+                )
+            )
+        )
         trip_days = self._case_duration(case)
         errors: List[str] = []
         seen_days: set[int] = set()
@@ -4006,7 +4465,10 @@ class ExperimentRunner:
             return decision
 
         if agent_name == "itinerary":
-            attractions = self._attractions_from_tool_result(tool_results.get("poi_search"))
+            attractions = self._itinerary_evidence_attractions(
+                case=case,
+                tool_results=tool_results,
+            )
             if not attractions:
                 return None
             daily_itinerary = self._normalized_decision_daily_itinerary(
@@ -4322,7 +4784,10 @@ class ExperimentRunner:
             "draft_daily_itinerary": (
                 self._build_daily_itinerary(
                     self._case_duration(case),
-                    self._attractions_from_tool_result(tool_results.get("poi_search")),
+                    self._itinerary_evidence_attractions(
+                        case=case,
+                        tool_results=tool_results,
+                    ),
                 )
                 if agent_name == "itinerary"
                 else []
@@ -4816,6 +5281,72 @@ class ExperimentRunner:
                 ]
         return []
 
+    def _itinerary_evidence_attractions(
+        self,
+        *,
+        case: Dict[str, Any],
+        tool_results: Dict[str, Any],
+    ) -> List[Dict[str, Any]]:
+        """Return POI evidence that an itinerary decision may legally use.
+
+        Current ``poi_search`` evidence is preferred.  In multi-turn partial
+        replans and weather adjustments, M2 may recompute itinerary and budget
+        without rerunning attraction search, so previous-turn POIs remain valid
+        context evidence unless the destination changed.
+        """
+        current = self._attractions_from_tool_result(tool_results.get("poi_search"))
+        if current:
+            return current
+        previous_state = self._goal_state_previous_state(case)
+        task_type = self._case_constraint_task_type(case)
+        if isinstance(previous_state, dict):
+            ticket = build_goal_state_ticket(
+                user_input=str(case.get("user_input") or ""),
+                current_slots=self._goal_state_current_slots(case),
+                previous_state=previous_state,
+            )
+            ticket_task_type = self._canonical_research_task_type(ticket.task_type)
+            if ticket_task_type in {
+                "trip_planning",
+                "partial_replan",
+                "weather_adjustment",
+            }:
+                task_type = ticket_task_type
+        if task_type not in {
+            "partial_replan",
+            "weather_adjustment",
+        }:
+            return []
+        if self._case_has_destination_change(case):
+            return []
+        return self._previous_attractions_from_state(previous_state)
+
+    def _poi_ids_from_attractions(self, attractions: Any) -> List[str]:
+        if not isinstance(attractions, list):
+            return []
+        return [
+            str(item.get("poi_id"))
+            for item in attractions
+            if isinstance(item, dict) and item.get("poi_id")
+        ]
+
+    def _case_has_destination_change(self, case: Dict[str, Any]) -> bool:
+        changed_slots: set[str] = set()
+        for candidate in (
+            _nested_mapping(case, "expected", "changed_slots"),
+            case.get("changed_slots"),
+        ):
+            changed_slots.update(str(value) for value in _as_list(candidate))
+        previous_state = self._goal_state_previous_state(case)
+        if isinstance(previous_state, dict):
+            ticket = build_goal_state_ticket(
+                user_input=str(case.get("user_input") or ""),
+                current_slots=self._goal_state_current_slots(case),
+                previous_state=previous_state,
+            )
+            changed_slots.update(str(value) for value in ticket.changed_slots)
+        return "destination" in changed_slots
+
     def _scheduler_requires_clarification(
         self,
         scheduler_metadata: Optional[Dict[str, Any]],
@@ -4913,12 +5444,10 @@ class ExperimentRunner:
         weather: Optional[Dict[str, Any]] = None,
     ) -> List[Dict[str, Any]]:
         tool_attractions = self._attractions_from_tool_result(tool_results.get("poi_search"))
-        if not tool_attractions and self._case_constraint_task_type(case) in {
-            "partial_replan",
-            "weather_adjustment",
-        }:
-            tool_attractions = self._previous_attractions_from_state(
-                self._goal_state_previous_state(case)
+        if not tool_attractions:
+            tool_attractions = self._itinerary_evidence_attractions(
+                case=case,
+                tool_results=tool_results,
             )
         selected_ids = _as_list(
             self._agent_decision_payload("attraction", agent_outputs).get("selected_poi_ids")
@@ -5142,20 +5671,39 @@ class ExperimentRunner:
             ]
         )
         source = ticket_summary.get("source") or ticket_section.get("source")
+        final_poi_id_set = self._normalized_poi_id_set(final_poi_ids)
+        budget_poi_id_set = self._normalized_poi_id_set(budget_poi_ids)
         if not final_poi_ids and source == "standard_reference_poi_combo":
             consistency_status = "standard_reference_no_final_itinerary"
             consistent = True
         else:
-            consistent = final_poi_ids == budget_poi_ids
-            consistency_status = "matched" if consistent else "mismatched"
+            consistent = bool(final_poi_id_set) and final_poi_id_set == budget_poi_id_set
+            if consistent and final_poi_ids == budget_poi_ids:
+                consistency_status = "matched"
+            elif consistent:
+                consistency_status = "matched_order_insensitive"
+            else:
+                consistency_status = "mismatched"
         return {
             "schema_version": "budget-itinerary-consistency-audit-v1",
             "status": consistency_status,
             "consistent": consistent,
             "final_itinerary_unique_poi_ids": final_poi_ids,
             "budget_selected_poi_ids": budget_poi_ids,
+            "final_itinerary_poi_id_set": final_poi_id_set,
+            "budget_selected_poi_id_set": budget_poi_id_set,
             "ticket_source": source,
         }
+
+    @staticmethod
+    def _normalized_poi_id_set(values: Any) -> List[str]:
+        return sorted(
+            {
+                str(value or "").strip().lower()
+                for value in _as_list(values)
+                if str(value or "").strip()
+            }
+        )
 
     def _previous_budget_from_state(
         self,
@@ -5190,9 +5738,12 @@ class ExperimentRunner:
         agent_outputs: Dict[str, Any],
         previous_state: Optional[Dict[str, Any]],
     ) -> List[Dict[str, Any]]:
+        if self._case_constraint_task_type(case) == "weather_adjustment":
+            previous_itinerary = self._previous_daily_itinerary_from_state(previous_state)
+            if previous_itinerary:
+                return previous_itinerary
         if (
             "itinerary" in planned_agents
-            and self._agent_output_available("itinerary", agent_outputs)
             and attractions
         ):
             agent_itinerary = self._daily_itinerary_from_agent_decision(
@@ -5200,7 +5751,12 @@ class ExperimentRunner:
                 attractions=attractions,
                 agent_outputs=agent_outputs,
             )
-            return agent_itinerary or self._build_daily_itinerary(trip_days, attractions)
+            return agent_itinerary or self._normalized_decision_daily_itinerary(
+                trip_days,
+                attractions,
+                case=case,
+                weather=weather,
+            )
         if "itinerary" in reused_agents:
             previous_itinerary = self._previous_daily_itinerary_from_state(previous_state)
             if previous_itinerary:
@@ -5211,11 +5767,56 @@ class ExperimentRunner:
                     attractions=attractions,
                     agent_outputs=agent_outputs,
                 )
-        if self._case_constraint_task_type(case) == "weather_adjustment":
-            previous_itinerary = self._previous_daily_itinerary_from_state(previous_state)
-            if previous_itinerary:
-                return previous_itinerary
+        previous_itinerary = self._previous_daily_itinerary_for_current_replan(
+            case=case,
+            trip_days=trip_days,
+            attractions=attractions,
+            previous_state=previous_state,
+        )
+        if previous_itinerary:
+            return previous_itinerary
+        if (
+            "single_agent" in planned_agents
+            and attractions
+            and self._case_constraint_task_type(case)
+            in {"trip_planning", "partial_replan", "weather_adjustment"}
+        ):
+            return self._normalized_decision_daily_itinerary(
+                trip_days,
+                attractions,
+                case=case,
+                weather=weather,
+            )
         return []
+
+    def _previous_daily_itinerary_for_current_replan(
+        self,
+        *,
+        case: Dict[str, Any],
+        trip_days: int,
+        attractions: List[Dict[str, Any]],
+        previous_state: Optional[Dict[str, Any]],
+    ) -> List[Dict[str, Any]]:
+        if self._case_constraint_task_type(case) != "partial_replan":
+            return []
+        if self._case_has_destination_change(case):
+            return []
+        previous_itinerary = self._previous_daily_itinerary_from_state(previous_state)
+        if not previous_itinerary:
+            return []
+        if trip_days > 0 and len(previous_itinerary) != trip_days:
+            return []
+        previous_poi_ids = set(self._daily_itinerary_poi_ids(previous_itinerary))
+        if not previous_poi_ids:
+            return []
+        attraction_poi_ids = {
+            str(item.get("poi_id"))
+            for item in attractions
+            if isinstance(item, dict) and item.get("poi_id")
+        }
+        if attraction_poi_ids and not previous_poi_ids <= attraction_poi_ids:
+            return []
+        return previous_itinerary
 
     def _normalize_daily_itinerary_for_evidence_constraints(
         self,
@@ -5520,6 +6121,15 @@ class ExperimentRunner:
 
     def _day_itinerary_poi_ids(self, day: Dict[str, Any]) -> List[str]:
         ids: List[str] = []
+        for field in (
+            "attraction_poi_ids",
+            "poi_ids",
+            "attraction_ids",
+            "selected_poi_ids",
+        ):
+            for value in _as_list(day.get(field)):
+                if str(value or "").strip():
+                    ids.append(str(value))
         for item in day.get("attractions") or day.get("pois") or day.get("activities") or []:
             if isinstance(item, str):
                 ids.append(item)
@@ -5528,7 +6138,7 @@ class ExperimentRunner:
                 poi_id = item.get("poi_id") or item.get("id") or poi.get("poi_id") or poi.get("id")
                 if poi_id:
                     ids.append(str(poi_id))
-        return ids
+        return _ordered_unique(ids)
 
     def _daily_itinerary_from_agent_decision(
         self,
@@ -6921,7 +7531,40 @@ class ExperimentRunner:
         requested_count = self._case_requested_poi_count(case)
         if requested_count is not None:
             return requested_count
-        return max(3, min(self._case_duration(case) * 2, 10))
+        duration_limit = max(3, min(self._case_duration(case) * 2, 10))
+        task_type = self._case_constraint_task_type(case)
+        if task_type == "attraction_recommendation":
+            maximum = self._case_max_attractions(case)
+            if maximum is not None and maximum > 0:
+                return max(1, min(maximum, 20))
+            return 5
+
+        minimum = self._case_min_attractions(case) or 0
+        limit = max(duration_limit, minimum)
+        if self._case_should_expand_poi_candidates_for_weather(case):
+            limit = max(limit, minimum * 3, self._case_duration(case) * 4, 10)
+        return max(1, min(limit, 20))
+
+    def _case_should_expand_poi_candidates_for_weather(self, case: Dict[str, Any]) -> bool:
+        forbidden_tools = {
+            str(item)
+            for item in _as_list(_nested_mapping(case, "expected", "forbidden_tools"))
+        }
+        if "weather_query" in forbidden_tools:
+            return False
+        required_tools = {
+            str(item)
+            for item in _as_list(_nested_mapping(case, "expected", "required_tools"))
+        }
+        if "weather_query" in required_tools:
+            return True
+        if case.get("weather_change") or _nested_mapping(case, "expected", "weather_change"):
+            return True
+        return bool(self._case_start_date(case) and self._case_constraint_task_type(case) in {
+            "trip_planning",
+            "partial_replan",
+            "weather_adjustment",
+        })
 
     def _case_requested_poi_count(self, case: Dict[str, Any]) -> Optional[int]:
         text = str(case.get("user_input") or "")
@@ -7528,6 +8171,7 @@ class ExperimentRunner:
     ) -> Dict[str, Any]:
         checker = ResearchConstraintCheckerTool()
         plan = self._constraint_checker_plan(
+            case=case,
             structured_output=structured_output,
             raw_output=raw_output,
         )
@@ -7557,6 +8201,7 @@ class ExperimentRunner:
     def _constraint_checker_plan(
         self,
         *,
+        case: Optional[Dict[str, Any]] = None,
         structured_output: Dict[str, Any],
         raw_output: Any = None,
     ) -> Dict[str, Any]:
@@ -7589,7 +8234,40 @@ class ExperimentRunner:
         )
         if isinstance(tool_results, dict) and tool_results:
             plan["tool_results"] = tool_results
+        context_tool_results = self._context_tool_results_for_constraint_checker(
+            case=case,
+            current_tool_results=tool_results,
+        )
+        if context_tool_results:
+            plan["context_tool_results"] = context_tool_results
         return plan
+
+    def _context_tool_results_for_constraint_checker(
+        self,
+        *,
+        case: Optional[Dict[str, Any]],
+        current_tool_results: Optional[Dict[str, Any]],
+    ) -> Dict[str, Any]:
+        if not isinstance(case, dict):
+            return {}
+        if self._case_constraint_task_type(case) not in {"partial_replan", "weather_adjustment"}:
+            return {}
+        if self._case_has_destination_change(case):
+            return {}
+        previous_tool_results = self._previous_tool_results_from_state(
+            self._goal_state_previous_state(case)
+        )
+        if not isinstance(previous_tool_results, dict) or not previous_tool_results:
+            return {}
+        current_tool_results = current_tool_results if isinstance(current_tool_results, dict) else {}
+        context: Dict[str, Any] = {}
+        for tool_name in GENERATION_TOOL_NAMES:
+            if self._is_successful_reusable_tool_result(current_tool_results.get(tool_name)):
+                continue
+            previous_result = previous_tool_results.get(tool_name)
+            if self._is_successful_reusable_tool_result(previous_result):
+                context[tool_name] = previous_result
+        return context
 
     def _tool_results_for_constraint_checker(
         self,
@@ -7873,6 +8551,11 @@ class ExperimentRunner:
     def _flatten_result_for_csv(self, result: Dict[str, Any]) -> Dict[str, Any]:
         trace = result.get("trace") or {}
         metrics = result.get("metrics") or {}
+        hard_timeout = (
+            result.get("result_hard_timeout")
+            if isinstance(result.get("result_hard_timeout"), dict)
+            else {}
+        )
         run_audit = result.get("run_audit") if isinstance(result.get("run_audit"), dict) else {}
         audit_metrics = run_audit.get("metrics") if isinstance(run_audit.get("metrics"), dict) else {}
         output = result.get("output")
@@ -7902,6 +8585,11 @@ class ExperimentRunner:
             "model_config_name": result.get("model_config_name"),
             "evaluation_mode": result.get("evaluation_mode"),
             "status": result.get("status"),
+            "result_isolation": result.get("result_isolation"),
+            "hard_timeout_enabled": hard_timeout.get("enabled"),
+            "hard_timeout_triggered": result.get("hard_timeout_triggered"),
+            "hard_timeout_seconds": hard_timeout.get("timeout_seconds"),
+            "hard_timeout_worker_status": hard_timeout.get("worker_status"),
             "latency_ms": result.get("latency_ms"),
             "ttft_ms": result.get("ttft_ms"),
             "intent": trace.get("intent"),
@@ -8502,15 +9190,26 @@ def _environment_text(name: str) -> Optional[str]:
     return value or None
 
 
+def _experiment_result_hard_timeout_seconds() -> Optional[float]:
+    raw = os.getenv(EXPERIMENT_RESULT_HARD_TIMEOUT_ENV)
+    if raw is None or not str(raw).strip():
+        return None
+    try:
+        value = float(raw)
+    except (TypeError, ValueError):
+        return None
+    return value if value > 0 else None
+
+
+def _truncate_text(value: Any, limit: int = 4000) -> str:
+    text = str(value or "")
+    if len(text) <= limit:
+        return text
+    return text[:limit] + "...<truncated>"
+
+
 def _llm_provider_from_base_url(base_url: Any) -> str:
-    text = str(base_url or "").casefold()
-    if "vectorengine" in text:
-        return "vectorengine_openai_compatible"
-    if "openrouter" in text:
-        return "openrouter"
-    if "openai" in text:
-        return "openai"
-    return "openai_compatible"
+    return llm_provider_from_base_url(base_url)
 
 
 def _git_commit() -> str:

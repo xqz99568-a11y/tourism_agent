@@ -21,6 +21,7 @@ from app.core.llm.client import (
     LLMResponse,
     MockLLMClient,
     OpenRouterClient,
+    llm_provider_from_base_url,
 )
 from app.core.llm.manager import EnhancedLLMManager, LLMCallMetrics, SimpleLLMCache
 from app.core.llm_costing import build_llm_cost_record
@@ -609,6 +610,93 @@ class _FakeOpenAICompletions:
         )
 
 
+def test_llm_provider_from_base_url_identifies_openai_compatible_gateways() -> None:
+    assert (
+        llm_provider_from_base_url("https://api.vectorengine.ai/v1")
+        == "vectorengine_openai_compatible"
+    )
+    assert llm_provider_from_base_url("https://openrouter.ai/api/v1") == "openrouter"
+    assert llm_provider_from_base_url("https://api.openai.com/v1") == "openai"
+    assert llm_provider_from_base_url("https://gateway.example.test/v1") == "openai_compatible"
+
+
+def test_llm_manager_trace_uses_base_url_provider_for_vectorengine(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+
+    completions = _FakeOpenAICompletions()
+    client = OpenRouterClient(
+        api_key="test-key-not-persisted",
+        base_url="https://api.vectorengine.ai/v1",
+        model="gpt-5-mini",
+        timeout=7,
+        retry_wait_min_seconds=0,
+    )
+    client.client = _fake_openai_client(completions)
+    manager = LLMManager.__new__(LLMManager)
+    manager._client = client
+
+    async def run_call() -> None:
+        with request_trace("vector-provider-request", "vector-provider-session"):
+            await manager.chat(
+                [LLMMessage(role="user", content="hello")],
+                temperature=0,
+                max_tokens=64,
+                reasoning_effort="minimal",
+            )
+
+    asyncio.run(run_call())
+
+    call = _trace_records(tmp_path)[0]["llm_calls"][0]
+    assert call["provider"] == "vectorengine_openai_compatible"
+    assert call["price_snapshot"]["provider"] == "vectorengine_openai_compatible"
+    assert call["request_options"]["base_url"] == "https://api.vectorengine.ai/v1"
+
+
+def test_enhanced_llm_manager_trace_uses_base_url_provider_for_vectorengine(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setenv("ENABLE_TRACING", "true")
+    monkeypatch.setenv("TRACE_OUTPUT_DIR", str(tmp_path))
+
+    completions = _FakeOpenAICompletions()
+    client = OpenRouterClient(
+        api_key="test-key-not-persisted",
+        base_url="https://api.vectorengine.ai/v1",
+        model="gpt-5-mini",
+        timeout=7,
+        retry_wait_min_seconds=0,
+    )
+    client.client = _fake_openai_client(completions)
+    manager = EnhancedLLMManager.__new__(EnhancedLLMManager)
+    manager._client = client
+    manager._mock_client = MockLLMClient()
+    manager._using_mock = False
+    manager.metrics = LLMCallMetrics()
+    manager._cache = None
+
+    async def run_call() -> None:
+        with request_trace("enhanced-vector-provider-request", "enhanced-vector-provider-session"):
+            await manager.chat(
+                [LLMMessage(role="user", content="hello")],
+                use_cache=False,
+                temperature=0,
+                max_tokens=64,
+                reasoning_effort="minimal",
+            )
+
+    asyncio.run(run_call())
+
+    call = _trace_records(tmp_path)[0]["llm_calls"][0]
+    assert call["provider"] == "vectorengine_openai_compatible"
+    assert call["price_snapshot"]["provider"] == "vectorengine_openai_compatible"
+    assert call["request_options"]["base_url"] == "https://api.vectorengine.ai/v1"
+
+
 def _fake_openai_client(completions: _FakeOpenAICompletions) -> SimpleNamespace:
     return SimpleNamespace(chat=SimpleNamespace(completions=completions))
 
@@ -772,6 +860,78 @@ def test_openrouter_client_uses_runtime_env_after_settings_loaded(
     assert response.metadata["request_options"]["timeout_seconds"] == 9
     assert response.metadata["request_options"]["reasoning_effort"] == "minimal"
     assert response.metadata["retry"]["max_attempts"] == 3
+
+
+def test_openrouter_client_uses_max_completion_tokens_for_gpt5_by_default(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("LLM_CHAT_TOKEN_PARAM", raising=False)
+    completions = _FakeOpenAICompletions()
+    client = OpenRouterClient(
+        api_key="test-key-not-persisted",
+        base_url="https://api.vectorengine.ai/v1",
+        model="gpt-5-mini",
+        timeout=7,
+        retry_wait_min_seconds=0,
+    )
+    client.client = _fake_openai_client(completions)
+
+    response = asyncio.run(
+        client.chat(
+            [LLMMessage(role="user", content="hello")],
+            temperature=0,
+            max_tokens=4096,
+            reasoning_effort="minimal",
+        )
+    )
+
+    assert completions.requests == [
+        {
+            "model": "gpt-5-mini",
+            "messages": [{"role": "user", "content": "hello"}],
+            "temperature": 0,
+            "timeout": 7,
+            "max_completion_tokens": 4096,
+            "reasoning_effort": "minimal",
+        }
+    ]
+    assert response.metadata["request_options"]["max_tokens"] == 4096
+    assert (
+        response.metadata["request_options"]["completion_limit_parameter"]
+        == "max_completion_tokens"
+    )
+
+
+def test_openrouter_client_token_parameter_can_be_overridden_for_gateways(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("LLM_CHAT_TOKEN_PARAM", "max_tokens")
+    completions = _FakeOpenAICompletions()
+    client = OpenRouterClient(
+        api_key="test-key-not-persisted",
+        base_url="https://api.vectorengine.ai/v1",
+        model="gpt-5-mini",
+        timeout=7,
+        retry_wait_min_seconds=0,
+    )
+    client.client = _fake_openai_client(completions)
+
+    response = asyncio.run(
+        client.chat(
+            [LLMMessage(role="user", content="hello")],
+            temperature=0,
+            max_tokens=2048,
+            reasoning_effort="minimal",
+        )
+    )
+
+    assert "max_tokens" in completions.requests[0]
+    assert "max_completion_tokens" not in completions.requests[0]
+    assert completions.requests[0]["max_tokens"] == 2048
+    assert (
+        response.metadata["request_options"]["completion_limit_parameter"]
+        == "max_tokens"
+    )
 
 
 @pytest.mark.parametrize(

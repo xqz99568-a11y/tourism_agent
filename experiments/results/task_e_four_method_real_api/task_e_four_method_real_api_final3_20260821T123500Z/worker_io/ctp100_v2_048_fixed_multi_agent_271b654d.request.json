@@ -1,0 +1,66 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_048",
+    "user_input": "从拉萨去西安玩3天，两个人，总预算上限8000元够不够？",
+    "task_type": "budget_query",
+    "title": "预算查询｜西安｜拉萨出发｜铁路未覆盖",
+    "check": "冻结铁路表不支持该路线；不得猜票价；只能给当地费用和铁路缺失说明。",
+    "slots": {
+      "origin": "lhasa",
+      "destination": "xian",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 8000
+    },
+    "expected": {
+      "task_type": "budget_query",
+      "required_tools": [
+        "budget_calculator"
+      ],
+      "accepted_agent_sets": [
+        [
+          "budget"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "budget_calculator"
+        ]
+      ],
+      "forbidden_tools": [
+        "poi_search",
+        "weather_query"
+      ],
+      "hard_constraints": {
+        "origin": "lhasa",
+        "destination": "xian",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_limit": 8000
+      },
+      "origin": "lhasa",
+      "destination": "xian",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 8000,
+      "intercity_transport_mode": "high_speed_or_d_train",
+      "intercity_seat_class": "second_class",
+      "intercity_transport_included": false,
+      "intercity_route_status": "route_not_supported",
+      "budget_scope": "local_only_route_uncovered",
+      "mandatory_budget_disclaimer": true,
+      "weather_required": false
+    }
+  },
+  "method": "fixed_multi_agent",
+  "request_id": "ctp100_v2_048_fixed_multi_agent_271b654d",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "fixed_multi_agent",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

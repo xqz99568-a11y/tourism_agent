@@ -58,9 +58,12 @@ def test_generate_ctp100_budget_gold_v2_formal_without_mutating_dataset(tmp_path
     assert first["budget_policy_v2"]["nights"] == 2
     assert first["budget_policy_v2"]["rooms"] == 1
     assert first["budget_policy_v2"]["budget_scope"] == "destination_local_only"
-    assert first["budget_policy_v2"]["requested_budget_scope"] == "local_plus_round_trip_intercity"
-    assert first["budget_policy_v2"]["scope_complete"] is False
-    assert first["budget_policy_v2"]["sufficiency_status"] == "indeterminate"
+    assert first["budget_policy_v2"]["requested_budget_scope"] == "destination_local_only"
+    assert first["budget_policy_v2"]["scope_complete"] is True
+    assert first["budget_policy_v2"]["sufficiency_status"] == "sufficient"
+    assert first["budget_policy_v2"]["can_judge_budget_sufficiency"] is True
+    assert first["budget_policy_v2"]["remaining_budget"] == 2866.0
+    assert first["budget_policy_v2"]["covered_scope_remaining_budget"] == 2866.0
     assert first["budget_policy_v2"]["mandatory_budget_disclaimer"] is True
 
     shanghai_hangzhou = next(
@@ -73,6 +76,13 @@ def test_generate_ctp100_budget_gold_v2_formal_without_mutating_dataset(tmp_path
     assert shanghai_hangzhou["budget_policy_v2"]["upgrade_applied"] == []
     assert shanghai_hangzhou["budget_policy_v2"]["scope_complete"] is True
     assert shanghai_hangzhou["budget_policy_v2"]["sufficiency_status"] == "sufficient"
+
+    unsupported_route = next(
+        record for record in result["records"] if record["unit_id"] == "ctp100_v2_048"
+    )
+    assert unsupported_route["budget_policy_v2"]["requested_budget_scope"] == "local_plus_round_trip_intercity"
+    assert unsupported_route["budget_policy_v2"]["budget_scope"] == "local_only_route_uncovered"
+    assert unsupported_route["budget_policy_v2"]["scope_complete"] is False
 
     wuhan_beijing = next(
         record for record in result["records"] if record["unit_id"] == "ctp100_v2_016"

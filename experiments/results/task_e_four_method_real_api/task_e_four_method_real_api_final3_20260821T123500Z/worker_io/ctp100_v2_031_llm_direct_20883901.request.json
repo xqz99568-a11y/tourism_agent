@@ -1,0 +1,70 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_031",
+    "user_input": "北京从明天开始连续三天天气怎么样？适不适合长时间在户外？",
+    "task_type": "weather_query",
+    "title": "天气查询｜北京｜完整覆盖",
+    "check": "查询8月7日至8月9日冻结天气；不生成完整行程。",
+    "slots": {
+      "destination": "beijing",
+      "start_date": "2026-08-07",
+      "duration_days": 3,
+      "preferences": [
+        "nature"
+      ]
+    },
+    "expected": {
+      "task_type": "weather_query",
+      "required_tools": [
+        "weather_query"
+      ],
+      "accepted_agent_sets": [
+        [
+          "weather"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "weather_query"
+        ]
+      ],
+      "forbidden_tools": [
+        "poi_search",
+        "budget_calculator"
+      ],
+      "hard_constraints": {
+        "destination": "beijing",
+        "start_date": "2026-08-07",
+        "duration_days": 3
+      },
+      "destination": "beijing",
+      "start_date": "2026-08-07",
+      "duration_days": 3,
+      "preferences": [
+        "nature"
+      ],
+      "weather_coverage": "full",
+      "weather_required": true,
+      "weather_date_policy": "explicit_date_use_qweather_snapshot",
+      "expected_weather_coverage_status": "full",
+      "expected_weather_covered_dates": [
+        "2026-08-07",
+        "2026-08-08",
+        "2026-08-09"
+      ],
+      "expected_weather_missing_dates": [],
+      "weather_snapshot_id": "ctp_qweather_20260807_v1"
+    }
+  },
+  "method": "llm_direct",
+  "request_id": "ctp100_v2_031_llm_direct_20883901",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "llm_direct",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

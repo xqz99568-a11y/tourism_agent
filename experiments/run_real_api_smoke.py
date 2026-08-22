@@ -24,7 +24,12 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.core.config import settings
-from app.core.llm.client import LLMMessage, OpenRouterClient
+from app.core.llm.client import (
+    LLMMessage,
+    OpenRouterClient,
+    _runtime_llm_chat_token_param,
+    llm_provider_from_base_url,
+)
 from app.core.llm_costing import COSTING_SCHEMA_VERSION, build_price_snapshot
 from app.core.tracing import (
     finish_llm_call,
@@ -1056,14 +1061,7 @@ def _render_report(
 
 
 def _provider_name(base_url: Any) -> str:
-    text = str(base_url or "").casefold()
-    if "vectorengine" in text:
-        return "vectorengine_openai_compatible"
-    if "openrouter" in text:
-        return "openrouter"
-    if "openai" in text:
-        return "openai"
-    return "openai_compatible"
+    return llm_provider_from_base_url(base_url)
 
 
 def _build_runtime_config(
@@ -1084,6 +1082,7 @@ def _build_runtime_config(
         "model": model,
         "temperature": float(temperature),
         "max_tokens": int(max_tokens),
+        "completion_limit_parameter": _runtime_llm_chat_token_param(model),
         "timeout_seconds": int(timeout),
         "retry_max_attempts": int(retry_max_attempts),
         "reasoning_effort": str(reasoning_effort or "").strip().lower() or None,

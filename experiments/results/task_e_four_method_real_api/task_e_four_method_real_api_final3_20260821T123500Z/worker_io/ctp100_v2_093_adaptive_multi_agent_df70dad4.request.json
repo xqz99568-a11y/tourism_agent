@@ -1,0 +1,36 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_093",
+    "user_input": "早呀，先来打个招呼。",
+    "task_type": "general_chat",
+    "title": "正常闲聊｜问候",
+    "check": "正常回应；0个旅游业务Agent和工具。",
+    "slots": {},
+    "expected": {
+      "task_type": "general_chat",
+      "required_tools": [],
+      "accepted_agent_sets": [
+        []
+      ],
+      "accepted_tool_sets": [
+        []
+      ],
+      "forbidden_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ]
+    }
+  },
+  "method": "adaptive_multi_agent",
+  "request_id": "ctp100_v2_093_adaptive_multi_agent_df70dad4",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "adaptive_multi_agent",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

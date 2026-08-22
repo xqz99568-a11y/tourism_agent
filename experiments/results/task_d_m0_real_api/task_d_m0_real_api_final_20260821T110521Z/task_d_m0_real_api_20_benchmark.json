@@ -1,0 +1,1047 @@
+{
+  "schema_version": "ctp-task-d-m0-real-api-benchmark-v1",
+  "dataset_id": "task_d_m0_real_api_20",
+  "dataset_version": "2026-08-21-task-d-m0-real-api-v1",
+  "dataset_role": "pre_formal_real_api_stability_validation",
+  "language": "zh-CN",
+  "method_scope": [
+    "llm_direct"
+  ],
+  "case_count": 20,
+  "turn_count": 20,
+  "source_benchmark": {
+    "path": "D:/Code/Tourism_Agent/experiments/ctp100_formal_v2.json",
+    "dataset_id": "ctp100_formal_v2",
+    "dataset_version": "2026-08-21-formal-v3-runtime-control-freeze",
+    "dataset_sha256": "c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e",
+    "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+  },
+  "selection_policy": {
+    "fixed_case_ids": [
+      "ctp100_v2_001",
+      "ctp100_v2_002",
+      "ctp100_v2_014",
+      "ctp100_v2_020",
+      "ctp100_v2_021",
+      "ctp100_v2_024",
+      "ctp100_v2_030",
+      "ctp100_v2_031",
+      "ctp100_v2_034",
+      "ctp100_v2_037",
+      "ctp100_v2_041",
+      "ctp100_v2_042",
+      "ctp100_v2_048",
+      "ctp100_v2_050",
+      "ctp100_v2_084",
+      "ctp100_v2_088",
+      "ctp100_v2_091",
+      "ctp100_v2_038",
+      "ctp100_v2_080",
+      "ctp100_v2_093"
+    ],
+    "random_sampling": false,
+    "single_turn_only": true,
+    "purpose": "Real-API stability validation for M0 before the formal run; not used as a paper-level method comparison result.",
+    "coverage": {
+      "task_type_counts": {
+        "attraction_recommendation": 3,
+        "budget_query": 4,
+        "clarification": 3,
+        "general_chat": 3,
+        "trip_planning": 4,
+        "weather_query": 3
+      },
+      "weather_scope": [
+        "full",
+        "partial",
+        "out_of_range",
+        "no_date"
+      ],
+      "budget_scope": [
+        "destination_local_only",
+        "supported_intercity",
+        "unsupported_intercity"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "case_id": "ctp100_v2_001",
+      "user_input": "我和对象想去北京玩3天，时间还没定，我们总共最多花5000元，帮我们排个轻松点的行程。",
+      "task_type": "trip_planning",
+      "title": "普通规划｜北京｜无日期｜无出发地",
+      "check": "不查询天气；默认经济型；只计算北京当地费用，并说明不含往返城际交通；提醒用户出发前自行查询实时天气。",
+      "slots": {
+        "destination": "beijing",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 5000,
+        "special_requirements": [
+          "low_intensity"
+        ]
+      },
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "budget_calculator"
+          ]
+        ],
+        "forbidden_tools": [
+          "weather_query"
+        ],
+        "hard_constraints": {
+          "destination": "beijing",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_limit": 5000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "destination": "beijing",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 5000,
+        "special_requirements": [
+          "low_intensity"
+        ],
+        "origin": null,
+        "intercity_transport_included": false,
+        "budget_scope": "destination_local_only",
+        "mandatory_budget_disclaimer": true,
+        "weather_required": false,
+        "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+        "no_date_weather_reminder_required": true
+      }
+    },
+    {
+      "case_id": "ctp100_v2_002",
+      "user_input": "我和朋友明天从上海出发去杭州玩2天，两个人，总共最多花3000元，帮我安排一下。",
+      "task_type": "trip_planning",
+      "title": "天气规划｜杭州｜明天｜上海出发",
+      "check": "查询冻结天气（完整覆盖）；计算上海至杭州成人二等座往返费用。",
+      "slots": {
+        "origin": "shanghai",
+        "destination": "hangzhou",
+        "start_date": "2026-08-07",
+        "duration_days": 2,
+        "people_count": 2,
+        "budget_amount": 3000
+      },
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "forbidden_tools": [],
+        "hard_constraints": {
+          "origin": "shanghai",
+          "destination": "hangzhou",
+          "start_date": "2026-08-07",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_limit": 3000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "origin": "shanghai",
+        "destination": "hangzhou",
+        "start_date": "2026-08-07",
+        "duration_days": 2,
+        "people_count": 2,
+        "budget_amount": 3000,
+        "intercity_transport_mode": "high_speed_or_d_train",
+        "intercity_seat_class": "second_class",
+        "intercity_transport_included": true,
+        "budget_scope": "local_plus_round_trip_intercity",
+        "intercity_route_id": "shanghai_hangzhou_rail_second_class",
+        "intercity_one_way_fare_per_person_cny": 83.0,
+        "intercity_round_trip_cost_cny": 332.0,
+        "weather_required": true,
+        "weather_date_policy": "explicit_date_use_qweather_snapshot",
+        "expected_weather_coverage_status": "full",
+        "expected_weather_covered_dates": [
+          "2026-08-07",
+          "2026-08-08"
+        ],
+        "expected_weather_missing_dates": [],
+        "weather_snapshot_id": "ctp_qweather_20260807_v1"
+      }
+    },
+    {
+      "case_id": "ctp100_v2_014",
+      "user_input": "国庆从长沙去深圳玩4天，我们3个人，总预算上限9000元，帮我做个行程。",
+      "task_type": "trip_planning",
+      "title": "天气规划｜深圳｜国庆｜长沙出发｜超范围",
+      "check": "查询冻结天气（超出快照范围时诚实说明不可用）；明确天气快照只覆盖到9月5日；计算长沙至深圳往返铁路费用。",
+      "slots": {
+        "origin": "changsha",
+        "destination": "shenzhen",
+        "start_date": "2026-10-01",
+        "duration_days": 4,
+        "people_count": 3,
+        "budget_amount": 9000
+      },
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "forbidden_tools": [],
+        "hard_constraints": {
+          "origin": "changsha",
+          "destination": "shenzhen",
+          "start_date": "2026-10-01",
+          "duration_days": 4,
+          "people_count": 3,
+          "budget_limit": 9000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "origin": "changsha",
+        "destination": "shenzhen",
+        "start_date": "2026-10-01",
+        "duration_days": 4,
+        "people_count": 3,
+        "budget_amount": 9000,
+        "intercity_transport_mode": "high_speed_or_d_train",
+        "intercity_seat_class": "second_class",
+        "intercity_transport_included": true,
+        "budget_scope": "local_plus_round_trip_intercity",
+        "intercity_route_id": "changsha_shenzhen_rail_second_class",
+        "intercity_one_way_fare_per_person_cny": 394.5,
+        "intercity_round_trip_cost_cny": 2367.0,
+        "weather_required": true,
+        "weather_date_policy": "explicit_date_use_qweather_snapshot",
+        "expected_weather_coverage_status": "out_of_range",
+        "expected_weather_covered_dates": [],
+        "expected_weather_missing_dates": [
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03",
+          "2026-10-04"
+        ],
+        "weather_snapshot_id": "ctp_qweather_20260807_v1"
+      }
+    },
+    {
+      "case_id": "ctp100_v2_020",
+      "user_input": "一个月后从广州去桂林玩3天，我们4个人，总预算上限10000元，想轻松看看山水。",
+      "task_type": "trip_planning",
+      "title": "天气规划｜桂林｜一个月后｜广州出发｜超范围",
+      "check": "查询冻结天气（超出快照范围时诚实说明不可用）；不得编造天气；计算4人的广州至桂林往返铁路费用；不得强行花完预算。",
+      "slots": {
+        "origin": "guangzhou",
+        "destination": "guilin",
+        "start_date": "2026-09-06",
+        "duration_days": 3,
+        "people_count": 4,
+        "budget_amount": 10000,
+        "preferences": [
+          "nature"
+        ],
+        "special_requirements": [
+          "low_intensity"
+        ]
+      },
+      "expected": {
+        "task_type": "trip_planning",
+        "required_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction",
+            "weather",
+            "itinerary",
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search",
+            "weather_query",
+            "budget_calculator"
+          ]
+        ],
+        "forbidden_tools": [],
+        "hard_constraints": {
+          "origin": "guangzhou",
+          "destination": "guilin",
+          "start_date": "2026-09-06",
+          "duration_days": 3,
+          "people_count": 4,
+          "budget_limit": 10000,
+          "min_attractions": 4,
+          "max_pois_per_day": 2
+        },
+        "origin": "guangzhou",
+        "destination": "guilin",
+        "start_date": "2026-09-06",
+        "duration_days": 3,
+        "people_count": 4,
+        "budget_amount": 10000,
+        "preferences": [
+          "nature"
+        ],
+        "special_requirements": [
+          "low_intensity"
+        ],
+        "intercity_transport_mode": "high_speed_or_d_train",
+        "intercity_seat_class": "second_class",
+        "intercity_transport_included": true,
+        "budget_scope": "local_plus_round_trip_intercity",
+        "intercity_route_id": "guangzhou_guilin_rail_second_class",
+        "intercity_one_way_fare_per_person_cny": 200.0,
+        "intercity_round_trip_cost_cny": 1600.0,
+        "weather_required": true,
+        "weather_date_policy": "explicit_date_use_qweather_snapshot",
+        "expected_weather_coverage_status": "out_of_range",
+        "expected_weather_covered_dates": [],
+        "expected_weather_missing_dates": [
+          "2026-09-06",
+          "2026-09-07",
+          "2026-09-08"
+        ],
+        "weather_snapshot_id": "ctp_qweather_20260807_v1"
+      }
+    },
+    {
+      "case_id": "ctp100_v2_021",
+      "user_input": "北京有哪些适合带父母参观、少走路的历史文化景点？只推荐景点，不用做完整行程。",
+      "task_type": "attraction_recommendation",
+      "title": "景点推荐｜北京｜老人友好",
+      "check": "只查询景点，不调用天气和预算工具。",
+      "slots": {
+        "destination": "beijing",
+        "people_count": 3,
+        "preferences": [
+          "history_culture"
+        ],
+        "special_requirements": [
+          "low_intensity"
+        ]
+      },
+      "expected": {
+        "task_type": "attraction_recommendation",
+        "required_tools": [
+          "poi_search"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search"
+          ]
+        ],
+        "forbidden_tools": [
+          "weather_query",
+          "budget_calculator"
+        ],
+        "hard_constraints": {
+          "destination": "beijing",
+          "people_count": 3,
+          "min_attractions": 3,
+          "max_attractions": 5
+        },
+        "destination": "beijing",
+        "people_count": 3,
+        "preferences": [
+          "history_culture"
+        ],
+        "special_requirements": [
+          "low_intensity"
+        ]
+      }
+    },
+    {
+      "case_id": "ctp100_v2_024",
+      "user_input": "深圳有哪些适合亲子参观的室内场馆？先别算费用和路线。",
+      "task_type": "attraction_recommendation",
+      "title": "景点推荐｜深圳｜亲子｜室内",
+      "check": "不得调用天气和预算工具。",
+      "slots": {
+        "destination": "shenzhen",
+        "traveler_group": "family",
+        "preferences": [
+          "family",
+          "indoor"
+        ],
+        "special_requirements": [
+          "indoor_preferred"
+        ]
+      },
+      "expected": {
+        "task_type": "attraction_recommendation",
+        "required_tools": [
+          "poi_search"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search"
+          ]
+        ],
+        "forbidden_tools": [
+          "weather_query",
+          "budget_calculator"
+        ],
+        "hard_constraints": {
+          "destination": "shenzhen",
+          "min_attractions": 3,
+          "max_attractions": 5
+        },
+        "destination": "shenzhen",
+        "preferences": [
+          "family",
+          "indoor"
+        ],
+        "special_requirements": [
+          "indoor_preferred"
+        ],
+        "traveler_group": "family"
+      }
+    },
+    {
+      "case_id": "ctp100_v2_030",
+      "user_input": "桂林市区里有哪些值得看的地方？这次先不考虑阳朔。",
+      "task_type": "attraction_recommendation",
+      "title": "景点推荐｜桂林｜限定市区",
+      "check": "不得推荐明确位于阳朔的景点。",
+      "slots": {
+        "destination": "guilin"
+      },
+      "expected": {
+        "task_type": "attraction_recommendation",
+        "required_tools": [
+          "poi_search"
+        ],
+        "accepted_agent_sets": [
+          [
+            "attraction"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "poi_search"
+          ]
+        ],
+        "forbidden_tools": [
+          "weather_query",
+          "budget_calculator"
+        ],
+        "hard_constraints": {
+          "destination": "guilin",
+          "min_attractions": 3,
+          "max_attractions": 5
+        },
+        "destination": "guilin"
+      }
+    },
+    {
+      "case_id": "ctp100_v2_031",
+      "user_input": "北京从明天开始连续三天天气怎么样？适不适合长时间在户外？",
+      "task_type": "weather_query",
+      "title": "天气查询｜北京｜完整覆盖",
+      "check": "查询8月7日至8月9日冻结天气；不生成完整行程。",
+      "slots": {
+        "destination": "beijing",
+        "start_date": "2026-08-07",
+        "duration_days": 3,
+        "preferences": [
+          "nature"
+        ]
+      },
+      "expected": {
+        "task_type": "weather_query",
+        "required_tools": [
+          "weather_query"
+        ],
+        "accepted_agent_sets": [
+          [
+            "weather"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "weather_query"
+          ]
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "budget_calculator"
+        ],
+        "hard_constraints": {
+          "destination": "beijing",
+          "start_date": "2026-08-07",
+          "duration_days": 3
+        },
+        "destination": "beijing",
+        "start_date": "2026-08-07",
+        "duration_days": 3,
+        "preferences": [
+          "nature"
+        ],
+        "weather_coverage": "full",
+        "weather_required": true,
+        "weather_date_policy": "explicit_date_use_qweather_snapshot",
+        "expected_weather_coverage_status": "full",
+        "expected_weather_covered_dates": [
+          "2026-08-07",
+          "2026-08-08",
+          "2026-08-09"
+        ],
+        "expected_weather_missing_dates": [],
+        "weather_snapshot_id": "ctp_qweather_20260807_v1"
+      }
+    },
+    {
+      "case_id": "ctp100_v2_034",
+      "user_input": "深圳9月4号到6号天气怎么样？",
+      "task_type": "weather_query",
+      "title": "天气查询｜深圳｜部分覆盖",
+      "check": "只回答9月4日、9月5日天气；明确9月6日无数据。",
+      "slots": {
+        "destination": "shenzhen",
+        "start_date": "2026-09-04",
+        "end_date": "2026-09-06",
+        "duration_days": 3
+      },
+      "expected": {
+        "task_type": "weather_query",
+        "required_tools": [
+          "weather_query"
+        ],
+        "accepted_agent_sets": [
+          [
+            "weather"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "weather_query"
+          ]
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "budget_calculator"
+        ],
+        "hard_constraints": {
+          "destination": "shenzhen",
+          "start_date": "2026-09-04",
+          "end_date": "2026-09-06",
+          "duration_days": 3
+        },
+        "destination": "shenzhen",
+        "start_date": "2026-09-04",
+        "end_date": "2026-09-06",
+        "duration_days": 3,
+        "weather_coverage": "partial",
+        "weather_required": true,
+        "weather_date_policy": "explicit_date_use_qweather_snapshot",
+        "expected_weather_coverage_status": "partial",
+        "expected_weather_covered_dates": [
+          "2026-09-04",
+          "2026-09-05"
+        ],
+        "expected_weather_missing_dates": [
+          "2026-09-06"
+        ],
+        "weather_snapshot_id": "ctp_qweather_20260807_v1"
+      }
+    },
+    {
+      "case_id": "ctp100_v2_037",
+      "user_input": "国庆去杭州玩3天，那几天的天气能提前查到吗？",
+      "task_type": "weather_query",
+      "title": "天气查询｜杭州｜国庆｜超范围",
+      "check": "说明数据范围不足，但不能把它称作工具调用失败。",
+      "slots": {
+        "destination": "hangzhou",
+        "start_date": "2026-10-01",
+        "duration_days": 3
+      },
+      "expected": {
+        "task_type": "weather_query",
+        "required_tools": [
+          "weather_query"
+        ],
+        "accepted_agent_sets": [
+          [
+            "weather"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "weather_query"
+          ]
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "budget_calculator"
+        ],
+        "hard_constraints": {
+          "destination": "hangzhou",
+          "start_date": "2026-10-01",
+          "duration_days": 3
+        },
+        "destination": "hangzhou",
+        "start_date": "2026-10-01",
+        "duration_days": 3,
+        "weather_coverage": "out_of_range",
+        "weather_required": true,
+        "weather_date_policy": "explicit_date_use_qweather_snapshot",
+        "expected_weather_coverage_status": "out_of_range",
+        "expected_weather_covered_dates": [],
+        "expected_weather_missing_dates": [
+          "2026-10-01",
+          "2026-10-02",
+          "2026-10-03"
+        ],
+        "weather_snapshot_id": "ctp_qweather_20260807_v1"
+      }
+    },
+    {
+      "case_id": "ctp100_v2_041",
+      "user_input": "北京玩3天，两个人，总预算上限10000元，帮我看看大概需要多少钱，不用排路线。",
+      "task_type": "budget_query",
+      "title": "预算查询｜北京｜高预算｜无出发地",
+      "check": "先计算经济型基准；无出发地免责声明；不得自动采用豪华型。",
+      "slots": {
+        "destination": "beijing",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 10000
+      },
+      "expected": {
+        "task_type": "budget_query",
+        "required_tools": [
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "budget_calculator"
+          ]
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query"
+        ],
+        "hard_constraints": {
+          "destination": "beijing",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_limit": 10000
+        },
+        "destination": "beijing",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 10000,
+        "origin": null,
+        "intercity_transport_included": false,
+        "budget_scope": "destination_local_only",
+        "mandatory_budget_disclaimer": true,
+        "weather_required": false
+      }
+    },
+    {
+      "case_id": "ctp100_v2_042",
+      "user_input": "从上海坐高铁去杭州玩2天，两个人，总预算上限3000元够不够？只算费用。",
+      "task_type": "budget_query",
+      "title": "预算查询｜杭州｜上海出发",
+      "check": "包含上海至杭州成人二等座往返费用。",
+      "slots": {
+        "origin": "shanghai",
+        "destination": "hangzhou",
+        "duration_days": 2,
+        "people_count": 2,
+        "budget_amount": 3000
+      },
+      "expected": {
+        "task_type": "budget_query",
+        "required_tools": [
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "budget_calculator"
+          ]
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query"
+        ],
+        "hard_constraints": {
+          "origin": "shanghai",
+          "destination": "hangzhou",
+          "duration_days": 2,
+          "people_count": 2,
+          "budget_limit": 3000
+        },
+        "origin": "shanghai",
+        "destination": "hangzhou",
+        "duration_days": 2,
+        "people_count": 2,
+        "budget_amount": 3000,
+        "intercity_transport_mode": "high_speed_or_d_train",
+        "intercity_seat_class": "second_class",
+        "intercity_transport_included": true,
+        "budget_scope": "local_plus_round_trip_intercity",
+        "intercity_route_id": "shanghai_hangzhou_rail_second_class",
+        "intercity_one_way_fare_per_person_cny": 83.0,
+        "intercity_round_trip_cost_cny": 332.0,
+        "weather_required": false
+      }
+    },
+    {
+      "case_id": "ctp100_v2_048",
+      "user_input": "从拉萨去西安玩3天，两个人，总预算上限8000元够不够？",
+      "task_type": "budget_query",
+      "title": "预算查询｜西安｜拉萨出发｜铁路未覆盖",
+      "check": "冻结铁路表不支持该路线；不得猜票价；只能给当地费用和铁路缺失说明。",
+      "slots": {
+        "origin": "lhasa",
+        "destination": "xian",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 8000
+      },
+      "expected": {
+        "task_type": "budget_query",
+        "required_tools": [
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "budget_calculator"
+          ]
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query"
+        ],
+        "hard_constraints": {
+          "origin": "lhasa",
+          "destination": "xian",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_limit": 8000
+        },
+        "origin": "lhasa",
+        "destination": "xian",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 8000,
+        "intercity_transport_mode": "high_speed_or_d_train",
+        "intercity_seat_class": "second_class",
+        "intercity_transport_included": false,
+        "intercity_route_status": "route_not_supported",
+        "budget_scope": "local_only_route_uncovered",
+        "mandatory_budget_disclaimer": true,
+        "weather_required": false
+      }
+    },
+    {
+      "case_id": "ctp100_v2_050",
+      "user_input": "桂林玩3天，两个人，总预算上限3000元，帮我看看当地旅行费用能不能控制住。",
+      "task_type": "budget_query",
+      "title": "预算查询｜桂林｜无出发地",
+      "check": "只计算当地费用；正确报告预计剩余金额或预算缺口。",
+      "slots": {
+        "destination": "guilin",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 3000
+      },
+      "expected": {
+        "task_type": "budget_query",
+        "required_tools": [
+          "budget_calculator"
+        ],
+        "accepted_agent_sets": [
+          [
+            "budget"
+          ]
+        ],
+        "accepted_tool_sets": [
+          [
+            "budget_calculator"
+          ]
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query"
+        ],
+        "hard_constraints": {
+          "destination": "guilin",
+          "duration_days": 3,
+          "people_count": 2,
+          "budget_limit": 3000
+        },
+        "destination": "guilin",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 3000,
+        "origin": null,
+        "intercity_transport_included": false,
+        "budget_scope": "destination_local_only",
+        "mandatory_budget_disclaimer": true,
+        "weather_required": false,
+        "requested_budget_scope": "destination_local_only",
+        "computed_budget_scope": "destination_local_only",
+        "scope_complete": true,
+        "sufficiency_status": "sufficient"
+      }
+    },
+    {
+      "case_id": "ctp100_v2_084",
+      "user_input": "我已经想好要旅行了，你帮我做一份完整行程吧。",
+      "task_type": "clarification",
+      "title": "澄清｜缺目的地、天数和人数",
+      "check": "追问目的地、旅行天数和人数；不得提前调用业务工具。",
+      "slots": {},
+      "expected": {
+        "task_type": "clarification",
+        "required_tools": [],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "missing_slots": [
+          "destination",
+          "duration_days",
+          "people_count"
+        ]
+      }
+    },
+    {
+      "case_id": "ctp100_v2_088",
+      "user_input": "我想去桂林玩几天，两个人，帮我做个完整行程。",
+      "task_type": "clarification",
+      "title": "澄清｜桂林｜缺明确天数",
+      "check": "“几天”不是明确天数，应追问旅行天数。",
+      "slots": {
+        "destination": "guilin",
+        "people_count": 2
+      },
+      "expected": {
+        "task_type": "clarification",
+        "required_tools": [],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "destination": "guilin",
+        "people_count": 2,
+        "missing_slots": [
+          "duration_days"
+        ]
+      }
+    },
+    {
+      "case_id": "ctp100_v2_091",
+      "user_input": "明天想去深圳，帮我做一份完整行程。",
+      "task_type": "clarification",
+      "title": "澄清｜深圳｜明天｜缺天数和人数",
+      "check": "日期和目的地已知；追问旅行天数和人数。",
+      "slots": {
+        "destination": "shenzhen",
+        "start_date": "2026-08-07"
+      },
+      "expected": {
+        "task_type": "clarification",
+        "required_tools": [],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "destination": "shenzhen",
+        "start_date": "2026-08-07",
+        "missing_slots": [
+          "duration_days",
+          "people_count"
+        ]
+      }
+    },
+    {
+      "case_id": "ctp100_v2_038",
+      "user_input": "西安十一月份通常冷不冷，需要准备什么衣服？",
+      "task_type": "general_chat",
+      "title": "长期气候问题｜西安｜十一月",
+      "check": "属于长期气候问题，不调用冻结逐日天气工具伪造十一月预报。",
+      "slots": {
+        "destination": "xian"
+      },
+      "expected": {
+        "task_type": "general_chat",
+        "required_tools": [],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "destination": "xian",
+        "subtask_type": "weather_climate_question",
+        "climate_question_not_forecast": true
+      }
+    },
+    {
+      "case_id": "ctp100_v2_080",
+      "user_input": "我们两个人想出去玩3天，总预算上限5000元，喜欢自然风景但不想太累，你先推荐几个目的地。",
+      "task_type": "general_chat",
+      "title": "目的地推荐｜山水｜低强度",
+      "check": "给出候选目的地和理由，不直接生成完整行程。",
+      "slots": {
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 5000,
+        "preferences": [
+          "nature"
+        ]
+      },
+      "expected": {
+        "task_type": "general_chat",
+        "required_tools": [],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ],
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_amount": 5000,
+        "preferences": [
+          "nature"
+        ],
+        "subtask_type": "destination_recommendation",
+        "destination_recommendation_required": true
+      }
+    },
+    {
+      "case_id": "ctp100_v2_093",
+      "user_input": "早呀，先来打个招呼。",
+      "task_type": "general_chat",
+      "title": "正常闲聊｜问候",
+      "check": "正常回应；0个旅游业务Agent和工具。",
+      "slots": {},
+      "expected": {
+        "task_type": "general_chat",
+        "required_tools": [],
+        "accepted_agent_sets": [
+          []
+        ],
+        "accepted_tool_sets": [
+          []
+        ],
+        "forbidden_tools": [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ]
+      }
+    }
+  ]
+}

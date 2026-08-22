@@ -1,0 +1,752 @@
+{
+  "schema_version": "ctp-experiment-resume-v1",
+  "updated_at": "2026-08-21T04:58:47.404771Z",
+  "status": "completed",
+  "resume_enabled_for_this_invocation": false,
+  "contract": {
+    "schema_version": "ctp-experiment-resume-contract-v1",
+    "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+    "git_commit": "2b7bb78da2d8a5bd3e824f6ba90077af44e3b339",
+    "dataset": {
+      "path": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/task_e_four_method_real_api_20_benchmark.json",
+      "sha256": "23d11f587e6f73a4df689887f35819b810ddde5f190f3b41ed25f6a65e01866b",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    },
+    "methods": [
+      "llm_direct",
+      "single_agent",
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ],
+    "method_contract_sha256": "a8c21db17e78c1324dcbc148f5095e06577cae01ca391ea1d5b05927ad4a1ef8",
+    "repeats": 1,
+    "repeat_index_start": 0,
+    "method_order_seed": 20260821,
+    "system_variant": "per_method",
+    "model_config_name": "task-e-four-method-real-api",
+    "model_config": {
+      "provider": "vectorengine_openai_compatible",
+      "base_url": "https://api.vectorengine.ai/v1",
+      "model": "gpt-5-mini",
+      "temperature": 0.0,
+      "max_tokens": 4096,
+      "timeout_seconds": 120,
+      "result_soft_timeout_seconds": 2920.0,
+      "result_hard_timeout_seconds": 600.0,
+      "result_hard_timeout_mode": "subprocess_per_result",
+      "retry_max_attempts": 3,
+      "reasoning_effort": "minimal",
+      "deterministic_research_final_answer": true
+    },
+    "runtime_config": {
+      "strict_mode": true,
+      "cache_disabled": true,
+      "trace_save_user_message": false
+    },
+    "prompt_versions": {
+      "structured_llm_output": "ctp-structured-llm-output-prompts-v2",
+      "research_agent": "ctp-research-agent-prompts-v2"
+    },
+    "method_controls": {
+      "research_agent_decision_normalizer_enabled": true,
+      "research_agent_decision_normalizer_version": "ctp-research-agent-decision-normalizer-v1"
+    },
+    "offline_data": {
+      "fixed_data_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "qweather_snapshot_id": "ctp_qweather_20260807_v1",
+      "qweather_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+      "intercity_snapshot_id": "ctp_intercity_rail_second_class_20260813_reviewed_v1",
+      "intercity_combined_sha256": "c0eb0b9048de4cd35c178a866c70cdf85038521833e62acb92469518d0bb53b8",
+      "budget_gold_path": "experiments/generated/ctp100_budget_gold_v2.json",
+      "budget_gold_file_sha256": "a755d70f2606d1461cb384bce9da54d90de2192d71c4e0fd00827c849aa21ac5",
+      "budget_gold_review_status": "confirmed",
+      "budget_gold_artifact_hashes": {
+        "source_dataset": {
+          "path": "experiments/ctp100_formal_v2.json",
+          "sha256": "c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        "budget_policy_doc": {
+          "path": "docs/Budget_Policy_v2.md",
+          "sha256": "258857325f625577d1a12a7fe8ac03d075fa94ce026118aa6a7e151f4d3a4cb6",
+          "hash_strategy": "raw_file_sha256_v1"
+        },
+        "budget_policy": {
+          "version": "budget_policy_v2_0",
+          "contingency_ratio": 0.1
+        },
+        "fixed_tourism_data": {
+          "schema_version": "fixed_data_manifest_v2",
+          "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+          "file_count": 25,
+          "city_ids": [
+            "beijing",
+            "hangzhou",
+            "xian",
+            "shenzhen",
+            "guilin"
+          ],
+          "files_by_kind": {
+            "accommodation": [
+              {
+                "city_id": "beijing",
+                "path": "data/accommodation/beijing.json",
+                "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "guilin",
+                "path": "data/accommodation/guilin.json",
+                "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "hangzhou",
+                "path": "data/accommodation/hangzhou.json",
+                "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "shenzhen",
+                "path": "data/accommodation/shenzhen.json",
+                "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "xian",
+                "path": "data/accommodation/xian.json",
+                "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              }
+            ],
+            "restaurants": [
+              {
+                "city_id": "beijing",
+                "path": "data/restaurants/beijing.json",
+                "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "guilin",
+                "path": "data/restaurants/guilin.json",
+                "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "hangzhou",
+                "path": "data/restaurants/hangzhou.json",
+                "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "shenzhen",
+                "path": "data/restaurants/shenzhen.json",
+                "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "xian",
+                "path": "data/restaurants/xian.json",
+                "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              }
+            ],
+            "pois": [
+              {
+                "city_id": "beijing",
+                "path": "data/pois/beijing.json",
+                "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "guilin",
+                "path": "data/pois/guilin.json",
+                "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "hangzhou",
+                "path": "data/pois/hangzhou.json",
+                "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "shenzhen",
+                "path": "data/pois/shenzhen.json",
+                "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "xian",
+                "path": "data/pois/xian.json",
+                "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              }
+            ],
+            "transport": [
+              {
+                "city_id": "beijing",
+                "path": "data/transport/beijing.json",
+                "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "guilin",
+                "path": "data/transport/guilin.json",
+                "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "hangzhou",
+                "path": "data/transport/hangzhou.json",
+                "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "shenzhen",
+                "path": "data/transport/shenzhen.json",
+                "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              },
+              {
+                "city_id": "xian",
+                "path": "data/transport/xian.json",
+                "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+                "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+              }
+            ]
+          }
+        },
+        "intercity_transport_snapshot": {
+          "schema_version": "ctp-intercity-transport-manifest-v1",
+          "snapshot_id": "ctp_intercity_rail_second_class_20260813_reviewed_v1",
+          "combined_sha256": "c0eb0b9048de4cd35c178a866c70cdf85038521833e62acb92469518d0bb53b8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+          "route_count": 50,
+          "fare_snapshot_date": "2026-08-13",
+          "source_name": "China Railway 12306",
+          "evidence": {
+            "ledger_path": "data/intercity_transport/evidence/rail_second_class_evidence_v1.json",
+            "ledger_schema_version": "ctp-intercity-rail-evidence-ledger-v1",
+            "manual_review_required": true,
+            "manual_review_complete": true,
+            "reviewed_count": 50,
+            "pending_count": 0,
+            "screenshot_required_for_formal_claim": true,
+            "planned_query_date": "2026-08-13",
+            "travel_date": "2026-08-13",
+            "query_date": "2026-08-12",
+            "fare_selection_rule_id": "visible_fastest_second_class_fare",
+            "rejected_count": 0,
+            "status_counts": {
+              "reviewed": 50
+            },
+            "route_count": 50,
+            "ledger_dataset_version": "ctp_intercity_rail_second_class_evidence_20260813_reviewed_v1"
+          }
+        }
+      }
+    }
+  },
+  "progress": {
+    "completed_result_count": 80,
+    "completed_unique_key_count": 80,
+    "expected_result_count": 80,
+    "remaining_result_count": 0
+  },
+  "completed_keys": [
+    {
+      "case_id": "ctp100_v2_001",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_001",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_001",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_001",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_002",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_002",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_002",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_002",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_014",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_014",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_014",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_014",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_020",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_020",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_020",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_020",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_021",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_021",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_021",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_021",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_024",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_024",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_024",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_024",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_030",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_030",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_030",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_030",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_031",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_031",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_031",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_031",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_034",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_034",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_034",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_034",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_037",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_037",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_037",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_037",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_041",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_041",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_041",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_041",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_042",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_042",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_042",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_042",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_048",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_048",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_048",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_048",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_050",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_050",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_050",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_050",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_084",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_084",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_084",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_084",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_088",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_088",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_088",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_088",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_091",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_091",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_091",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_091",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_038",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_038",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_038",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_038",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_080",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_080",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_080",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_080",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_093",
+      "turn_id": null,
+      "method": "fixed_multi_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_093",
+      "turn_id": null,
+      "method": "llm_direct",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_093",
+      "turn_id": null,
+      "method": "single_agent",
+      "repeat_index": 0
+    },
+    {
+      "case_id": "ctp100_v2_093",
+      "turn_id": null,
+      "method": "adaptive_multi_agent",
+      "repeat_index": 0
+    }
+  ],
+  "resume_events": [],
+  "policy": {
+    "unique_key": [
+      "case_id",
+      "turn_id",
+      "method",
+      "repeat_index"
+    ],
+    "skip_completed_results": true,
+    "failed_results_are_preserved": true,
+    "contract_mismatch_requires_new_run_id": true
+  }
+}

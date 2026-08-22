@@ -41,7 +41,27 @@ LLM_RUNTIME_OPTIONS_SCHEMA_VERSION = "ctp-llm-runtime-options-v1"
 LLM_RETRY_AUDIT_SCHEMA_VERSION = "ctp-llm-retry-audit-v1"
 OPENAI_SDK_MAX_RETRIES = 0
 LLM_REASONING_EFFORT_ENV = "LLM_REASONING_EFFORT"
+LLM_CHAT_TOKEN_PARAM_ENV = "LLM_CHAT_TOKEN_PARAM"
 SUPPORTED_REASONING_EFFORTS = {"minimal", "low", "medium", "high"}
+SUPPORTED_CHAT_TOKEN_PARAMS = {"auto", "max_tokens", "max_completion_tokens"}
+
+
+def llm_provider_from_base_url(base_url: Any) -> str:
+    """Return the experiment-facing provider label for an OpenAI-compatible URL.
+
+    ``OpenRouterClient`` is the historical client class name in this project,
+    but formal experiments may route requests through other OpenAI-compatible
+    gateways such as VectorEngine.  Paper artifacts should identify the actual
+    gateway from ``base_url`` instead of leaking the implementation class name.
+    """
+    text = str(base_url or "").casefold()
+    if "vectorengine" in text:
+        return "vectorengine_openai_compatible"
+    if "openrouter" in text:
+        return "openrouter"
+    if "openai" in text:
+        return "openai"
+    return "openai_compatible"
 
 
 def _coalesce(value: Any, default: Any) -> Any:
@@ -123,6 +143,32 @@ def _runtime_llm_reasoning_effort(explicit: Any = None) -> Optional[str]:
     return value if value in SUPPORTED_REASONING_EFFORTS else None
 
 
+def _prefers_max_completion_tokens(model: Any) -> bool:
+    """Return true for OpenAI reasoning-family model names.
+
+    OpenAI-compatible gateways are not perfectly consistent, but gpt-5/o-series
+    chat-completion endpoints generally understand `max_completion_tokens` as
+    the output budget that includes visible and reasoning tokens.  Keeping this
+    choice deterministic prevents a formal run from silently using a token cap
+    parameter that the gateway ignores for reasoning models.
+    """
+    value = str(model or "").strip().lower()
+    if not value:
+        return False
+    normalized = value.split("/")[-1]
+    return normalized.startswith(("gpt-5", "o1", "o3", "o4"))
+
+
+def _runtime_llm_chat_token_param(model: Any, explicit: Any = None) -> str:
+    raw = explicit if explicit is not None else os.getenv(LLM_CHAT_TOKEN_PARAM_ENV)
+    value = str(raw or "auto").strip().lower()
+    if value not in SUPPORTED_CHAT_TOKEN_PARAMS:
+        value = "auto"
+    if value == "auto":
+        return "max_completion_tokens" if _prefers_max_completion_tokens(model) else "max_tokens"
+    return value
+
+
 def _runtime_llm_timeout_for_client(client: Any, explicit: Any = None) -> int:
     if explicit is not None or getattr(client, "_timeout_explicit", False):
         return _runtime_llm_timeout(
@@ -187,6 +233,7 @@ def _runtime_options(
     base_url: Any = None,
     tool_choice: Any = None,
     reasoning_effort: Any = None,
+    completion_limit_parameter: Any = None,
 ) -> Dict[str, Any]:
     return {
         "schema_version": LLM_RUNTIME_OPTIONS_SCHEMA_VERSION,
@@ -194,6 +241,7 @@ def _runtime_options(
         "base_url": str(base_url or ""),
         "temperature": temperature,
         "max_tokens": max_tokens,
+        "completion_limit_parameter": completion_limit_parameter,
         "timeout_seconds": timeout_seconds,
         "reasoning_effort": reasoning_effort,
         "tool_count": int(tool_count),
@@ -494,6 +542,10 @@ class OpenRouterClient(BaseLLMClient):
         resolved_reasoning_effort = _runtime_llm_reasoning_effort(
             kwargs.pop("reasoning_effort", reasoning_effort)
         )
+        resolved_token_param = _runtime_llm_chat_token_param(
+            self.model,
+            kwargs.pop("token_limit_parameter", None),
+        )
         resolved_timeout = _runtime_llm_timeout_for_client(
             self,
             kwargs.pop("timeout", None),
@@ -509,6 +561,7 @@ class OpenRouterClient(BaseLLMClient):
             max_tokens=resolved_max_tokens,
             timeout_seconds=resolved_timeout,
             reasoning_effort=resolved_reasoning_effort,
+            completion_limit_parameter=resolved_token_param,
             tool_count=len(tools or []),
             tool_choice="auto" if tools else None,
             streaming=False,
@@ -520,9 +573,9 @@ class OpenRouterClient(BaseLLMClient):
             "model": self.model,
             "messages": api_messages,
             "temperature": resolved_temperature,
-            "max_tokens": resolved_max_tokens,
             "timeout": resolved_timeout,
         }
+        request_kwargs[resolved_token_param] = resolved_max_tokens
         if resolved_reasoning_effort is not None:
             request_kwargs["reasoning_effort"] = resolved_reasoning_effort
 
@@ -691,6 +744,11 @@ class OpenRouterClient(BaseLLMClient):
         resolved_reasoning_effort = _runtime_llm_reasoning_effort(
             kwargs.pop("reasoning_effort", None)
         )
+        resolved_max_tokens = _runtime_llm_max_tokens(kwargs.pop("max_tokens", None))
+        resolved_token_param = _runtime_llm_chat_token_param(
+            self.model,
+            kwargs.pop("token_limit_parameter", None),
+        )
         resolved_timeout = _runtime_llm_timeout_for_client(
             self,
             kwargs.pop("timeout", None),
@@ -703,6 +761,7 @@ class OpenRouterClient(BaseLLMClient):
             "timeout": resolved_timeout,
             "stream": True,
         }
+        request_kwargs[resolved_token_param] = resolved_max_tokens
         if resolved_reasoning_effort is not None:
             request_kwargs["reasoning_effort"] = resolved_reasoning_effort
 
@@ -1284,6 +1343,8 @@ class LLMManager:
             if isinstance(parsed, dict) and parsed.get("prompt_version"):
                 versions.append(str(parsed["prompt_version"]))
             for marker in (
+                "ctp-structured-llm-output-prompts-v2",
+                "ctp-research-agent-prompts-v2",
                 "ctp-structured-llm-output-prompts-v1",
                 "ctp-research-agent-prompts-v1",
             ):
@@ -1300,7 +1361,9 @@ class LLMManager:
         if isinstance(client, OllamaClient):
             return "ollama"
         if isinstance(client, OpenRouterClient):
-            return "openrouter"
+            return llm_provider_from_base_url(getattr(client, "base_url", ""))
+        if getattr(client, "base_url", None):
+            return llm_provider_from_base_url(getattr(client, "base_url", ""))
         return client.__class__.__name__.replace("Client", "").lower() or "unknown"
 
     def _request_options(
@@ -1318,6 +1381,10 @@ class LLMManager:
             max_tokens=_runtime_llm_max_tokens(kwargs.get("max_tokens")),
             timeout_seconds=_runtime_llm_timeout_for_client(client, kwargs.get("timeout")),
             reasoning_effort=_runtime_llm_reasoning_effort(kwargs.get("reasoning_effort")),
+            completion_limit_parameter=_runtime_llm_chat_token_param(
+                self._client_model_name(client),
+                kwargs.get("token_limit_parameter"),
+            ),
             tool_count=len(tools or []),
             tool_choice="auto" if tools else None,
             streaming=streaming,

@@ -1,7 +1,7 @@
 {
   "schema_version": "ctp-benchmark-v2",
   "dataset_id": "ctp100_formal_v2",
-  "dataset_version": "2026-08-18-day8-formal-v2-weather-gold-fix",
+  "dataset_version": "2026-08-21-formal-v3-runtime-control-freeze",
   "dataset_role": "post_development_frozen_controlled_main_benchmark",
   "split": "formal_test",
   "language": "zh-CN",
@@ -25,7 +25,7 @@
     "fare_scope": "one_way_per_person",
     "round_trip_multiplier": 2
   },
-  "description": "Day8 v2 post-development frozen controlled main benchmark rewritten for frozen QWeather 30-day snapshot, relative-date/no-date expressions, intercity rail budget labels, and multi-agent scheduling/reuse evaluation. This dataset is the paper's main controlled benchmark, not a fully unseen test set.",
+  "description": "Formal v3 post-development frozen controlled main benchmark for the paper run. It keeps the Day8 v2 QWeather snapshot, relative-date/no-date expressions, intercity rail budget labels, and multi-agent scheduling/reuse evaluation, and adds the TaskA/TaskB runtime-control freeze for hard-timeout isolation and base-url-derived provider accounting. This dataset is the paper's main controlled benchmark, not a fully unseen test set.",
   "claim_policy": {
     "paper_label_zh": "开发后冻结的受控主基准",
     "claim_allowed_as_unseen": false,
@@ -2821,7 +2821,7 @@
         "origin": null,
         "intercity_transport_included": false,
         "budget_scope": "destination_local_only",
-        "mandatory_budget_disclaimer": false,
+        "mandatory_budget_disclaimer": true,
         "weather_required": false,
         "requested_budget_scope": "destination_local_only",
         "computed_budget_scope": "destination_local_only",
@@ -2873,7 +2873,7 @@
         "origin": null,
         "intercity_transport_included": false,
         "budget_scope": "destination_local_only",
-        "mandatory_budget_disclaimer": false,
+        "mandatory_budget_disclaimer": true,
         "weather_required": false,
         "requested_budget_scope": "destination_local_only",
         "computed_budget_scope": "destination_local_only",

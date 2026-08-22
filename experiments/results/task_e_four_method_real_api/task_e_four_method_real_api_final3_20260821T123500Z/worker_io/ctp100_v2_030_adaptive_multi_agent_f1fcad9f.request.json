@@ -1,0 +1,49 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_030",
+    "user_input": "桂林市区里有哪些值得看的地方？这次先不考虑阳朔。",
+    "task_type": "attraction_recommendation",
+    "title": "景点推荐｜桂林｜限定市区",
+    "check": "不得推荐明确位于阳朔的景点。",
+    "slots": {
+      "destination": "guilin"
+    },
+    "expected": {
+      "task_type": "attraction_recommendation",
+      "required_tools": [
+        "poi_search"
+      ],
+      "accepted_agent_sets": [
+        [
+          "attraction"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "poi_search"
+        ]
+      ],
+      "forbidden_tools": [
+        "weather_query",
+        "budget_calculator"
+      ],
+      "hard_constraints": {
+        "destination": "guilin",
+        "min_attractions": 3,
+        "max_attractions": 5
+      },
+      "destination": "guilin"
+    }
+  },
+  "method": "adaptive_multi_agent",
+  "request_id": "ctp100_v2_030_adaptive_multi_agent_f1fcad9f",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "adaptive_multi_agent",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

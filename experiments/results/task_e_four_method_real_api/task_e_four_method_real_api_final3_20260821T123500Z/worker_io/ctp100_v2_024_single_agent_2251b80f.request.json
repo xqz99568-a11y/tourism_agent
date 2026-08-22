@@ -1,0 +1,65 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_024",
+    "user_input": "深圳有哪些适合亲子参观的室内场馆？先别算费用和路线。",
+    "task_type": "attraction_recommendation",
+    "title": "景点推荐｜深圳｜亲子｜室内",
+    "check": "不得调用天气和预算工具。",
+    "slots": {
+      "destination": "shenzhen",
+      "traveler_group": "family",
+      "preferences": [
+        "family",
+        "indoor"
+      ],
+      "special_requirements": [
+        "indoor_preferred"
+      ]
+    },
+    "expected": {
+      "task_type": "attraction_recommendation",
+      "required_tools": [
+        "poi_search"
+      ],
+      "accepted_agent_sets": [
+        [
+          "attraction"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "poi_search"
+        ]
+      ],
+      "forbidden_tools": [
+        "weather_query",
+        "budget_calculator"
+      ],
+      "hard_constraints": {
+        "destination": "shenzhen",
+        "min_attractions": 3,
+        "max_attractions": 5
+      },
+      "destination": "shenzhen",
+      "preferences": [
+        "family",
+        "indoor"
+      ],
+      "special_requirements": [
+        "indoor_preferred"
+      ],
+      "traveler_group": "family"
+    }
+  },
+  "method": "single_agent",
+  "request_id": "ctp100_v2_024_single_agent_2251b80f",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "single_agent",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

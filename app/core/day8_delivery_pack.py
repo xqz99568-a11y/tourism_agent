@@ -52,6 +52,7 @@ from app.core.budget_manual_review import (
 )
 from app.core.fixed_data import BUDGET_POLICY_VERSION, canonical_json_sha256
 from app.core.formal_artifact_integrity import (
+    DEFAULT_FORMAL_INTEGRITY_PATHS,
     FORMAL_ARTIFACT_INTEGRITY_SCHEMA_VERSION,
     FORMAL_EVALUATION_RULE_CATALOG_ID,
     build_formal_artifact_integrity_report,
@@ -62,6 +63,10 @@ from app.core.formal_experiment_preflight import (
     load_benchmark_document,
 )
 from app.core.intercity_transport_snapshot import validate_intercity_transport_snapshot
+from app.core.pre_formal_validation_registry import (
+    DEFAULT_PRE_FORMAL_VALIDATION_REGISTRY_PATH,
+    validate_pre_formal_validation_registry,
+)
 from app.core.qweather_snapshot import validate_qweather_snapshot
 
 
@@ -123,6 +128,9 @@ DEFAULT_ACADEMIC_DESIGN_VALIDATION_JSON_PATH = (
 DEFAULT_ACADEMIC_DESIGN_VALIDATION_MD_PATH = (
     ROOT / "experiments" / "generated" / "academic_experiment_design_validation_v1.md"
 )
+DEFAULT_PRE_FORMAL_VALIDATION_REGISTRY_JSON_PATH = (
+    DEFAULT_PRE_FORMAL_VALIDATION_REGISTRY_PATH
+)
 DEFAULT_OUTPUT_DIR = ROOT / "experiments" / "generated"
 DEFAULT_PREFLIGHT_OUTPUT_DIR = ROOT / "experiments" / "results" / "formal_runs"
 DEFAULT_EXPECTED_CASE_COUNT = 100
@@ -137,8 +145,9 @@ PREFLIGHT_RUNTIME_DEFAULTS = {
     "TRACE_SAVE_USER_MESSAGE": "false",
     "LLM_TEMPERATURE": "0",
     "LLM_MAX_TOKENS": "4096",
-    "LLM_TIMEOUT": "60",
+    "LLM_TIMEOUT": "120",
     "LLM_RETRY_MAX_ATTEMPTS": "3",
+    "EXPERIMENT_RESULT_HARD_TIMEOUT_SECONDS": "900",
     "LLM_REASONING_EFFORT": "minimal",
     "EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER": "true",
 }
@@ -167,6 +176,7 @@ def build_day8_delivery_pack(
     sealed_validation_dataset_path: str | Path = DEFAULT_SEALED_VALIDATION_DATASET_PATH,
     academic_design_validation_json_path: str | Path = DEFAULT_ACADEMIC_DESIGN_VALIDATION_JSON_PATH,
     academic_design_validation_md_path: str | Path = DEFAULT_ACADEMIC_DESIGN_VALIDATION_MD_PATH,
+    pre_formal_validation_registry_path: str | Path = DEFAULT_PRE_FORMAL_VALIDATION_REGISTRY_JSON_PATH,
     preflight_output_dir: str | Path = DEFAULT_PREFLIGHT_OUTPUT_DIR,
     run_id: str | None = None,
     methods: Iterable[str] | None = None,
@@ -207,6 +217,7 @@ def build_day8_delivery_pack(
     sealed_validation_dataset = Path(sealed_validation_dataset_path)
     academic_design_validation_json = Path(academic_design_validation_json_path)
     academic_design_validation_md = Path(academic_design_validation_md_path)
+    pre_formal_validation_registry = Path(pre_formal_validation_registry_path)
 
     benchmark_doc, benchmark_cases, benchmark_error = _load_document(benchmark_path)
     dataset_doc, dataset_cases, dataset_error = _load_document(dataset_path)
@@ -218,6 +229,10 @@ def build_day8_delivery_pack(
     qweather_report = _validated_qweather_snapshot()
     intercity_report = _validated_intercity_snapshot()
     formal_artifact_integrity_report = build_formal_artifact_integrity_report()
+    pre_formal_validation_report = validate_pre_formal_validation_registry(
+        pre_formal_validation_registry,
+        required=True,
+    )
     academic_design_report = build_academic_experiment_design_report(
         design_path=academic_design,
         design_doc_path=academic_design_doc,
@@ -242,37 +257,38 @@ def build_day8_delivery_pack(
             require_clean_git=False,
         )
 
-    artifacts = _artifact_inventory(
-        {
-            "benchmark_manifest": benchmark_path,
-            "formal_dataset": dataset_path,
-            "qweather_manifest": qweather_manifest,
-            "qweather_validation_report": qweather_validation,
-            "intercity_manifest": intercity_manifest,
-            "intercity_fare_table": intercity_fare_table,
-            "intercity_evidence_ledger": intercity_evidence,
-            "budget_policy_doc": budget_policy_doc,
-            "evaluation_rule_catalog": evaluation_rule_catalog,
-            "independent_evaluator_code": independent_evaluator_code,
-            "experiment_runner_code": experiment_runner_code,
-            "method_contract_code": method_contract_code,
-            "formal_preflight_code": formal_preflight_code,
-            "formal_gate_code": formal_gate_code,
-            "day8_runner_acceptance_test": runner_acceptance_test,
-            "academic_experiment_design_json": academic_design,
-            "academic_experiment_design_md": academic_design_doc,
-            "sealed_validation_dataset": sealed_validation_dataset,
-            "academic_design_validation_json": academic_design_validation_json,
-            "academic_design_validation_md": academic_design_validation_md,
-            "budget_gold_json": gold_path,
-            "economy_budget_manual_review_json": economy_review_json_path,
-            "economy_budget_manual_review_md": economy_review_md_path,
-            "budget_review_md": review_md_path,
-            "budget_review_csv": review_csv_path,
-            "dataset_audit_json": audit_json_path,
-            "dataset_audit_md": audit_md_path,
-        }
-    )
+    artifact_paths = {
+        "benchmark_manifest": benchmark_path,
+        "formal_dataset": dataset_path,
+        "qweather_manifest": qweather_manifest,
+        "qweather_validation_report": qweather_validation,
+        "intercity_manifest": intercity_manifest,
+        "intercity_fare_table": intercity_fare_table,
+        "intercity_evidence_ledger": intercity_evidence,
+        "budget_policy_doc": budget_policy_doc,
+        "evaluation_rule_catalog": evaluation_rule_catalog,
+        "independent_evaluator_code": independent_evaluator_code,
+        "experiment_runner_code": experiment_runner_code,
+        "method_contract_code": method_contract_code,
+        "formal_preflight_code": formal_preflight_code,
+        "formal_gate_code": formal_gate_code,
+        "day8_runner_acceptance_test": runner_acceptance_test,
+        "academic_experiment_design_json": academic_design,
+        "academic_experiment_design_md": academic_design_doc,
+        "sealed_validation_dataset": sealed_validation_dataset,
+        "academic_design_validation_json": academic_design_validation_json,
+        "academic_design_validation_md": academic_design_validation_md,
+        "pre_formal_validation_registry": pre_formal_validation_registry,
+        "budget_gold_json": gold_path,
+        "economy_budget_manual_review_json": economy_review_json_path,
+        "economy_budget_manual_review_md": economy_review_md_path,
+        "budget_review_md": review_md_path,
+        "budget_review_csv": review_csv_path,
+        "dataset_audit_json": audit_json_path,
+        "dataset_audit_md": audit_md_path,
+    }
+    artifact_paths.update(DEFAULT_FORMAL_INTEGRITY_PATHS)
+    artifacts = _artifact_inventory(artifact_paths)
 
     checks = _readiness_checks(
         benchmark_doc=benchmark_doc,
@@ -290,6 +306,7 @@ def build_day8_delivery_pack(
         economy_review_report=economy_review_report,
         academic_design_report=academic_design_report,
         formal_artifact_integrity_report=formal_artifact_integrity_report,
+        pre_formal_validation_report=pre_formal_validation_report,
         preflight_report=preflight_report,
         artifacts=artifacts,
         expected_case_count=expected_case_count,
@@ -367,6 +384,7 @@ def build_day8_delivery_pack(
             "sealed_quality": academic_design_report.get("sealed_quality") or {},
         },
         "formal_artifact_integrity": formal_artifact_integrity_report,
+        "pre_formal_validation": pre_formal_validation_report,
         "formal_preflight": _compact_preflight(preflight_report),
         "artifact_inventory": artifacts,
         "handoff_commands": _handoff_commands(),
@@ -438,6 +456,7 @@ def render_day8_delivery_report(pack: Mapping[str, Any]) -> str:
     acceptance = _dict(pack.get("day8_acceptance_gates"))
     academic_design = _dict(pack.get("academic_experiment_design"))
     artifact_integrity = _dict(pack.get("formal_artifact_integrity"))
+    pre_formal_validation = _dict(pack.get("pre_formal_validation"))
     preflight = _dict(pack.get("formal_preflight"))
     lines = [
         "# Day8 小任务五：正式实验输入冻结交付报告",
@@ -523,6 +542,30 @@ def render_day8_delivery_report(pack: Mapping[str, Any]) -> str:
     for key, value in _dict(readiness.get("checks")).items():
         lines.append(f"| {key} | `{value}` |")
 
+    lines.extend(
+        [
+            "",
+            "## Task D/E/F pre-formal real-API validation",
+            "",
+            f"- registry_status: `{pre_formal_validation.get('status')}`",
+            f"- registry_path: `{pre_formal_validation.get('path')}`",
+            f"- registry_sha256: `{pre_formal_validation.get('registry_sha256')}`",
+            f"- transparent_warning_policy: "
+            f"`{_nested(pre_formal_validation, 'summary', 'transparent_warning_policy')}`",
+            f"- transparent_warning_count: "
+            f"`{_nested(pre_formal_validation, 'summary', 'transparent_warning_count')}`",
+            "",
+            "| task | status | report hash match | warnings |",
+            "| --- | --- | --- | ---: |",
+        ]
+    )
+    for item in _as_dict_list(pre_formal_validation.get("tasks")):
+        lines.append(
+            f"| {item.get('task_id')} | `{item.get('status')}` | "
+            f"`{item.get('registered_report_sha256') == item.get('actual_report_sha256')}` | "
+            f"`{len(_as_dict_list(item.get('transparent_warnings')))}` |"
+        )
+
     lines.extend(["", "## 交付文件清单", "", "| key | exists | sha256 | path |", "| --- | ---: | --- | --- |"])
     for item in _as_dict_list(pack.get("artifact_inventory")):
         lines.append(
@@ -560,6 +603,7 @@ def _readiness_checks(
     economy_review_report: Mapping[str, Any],
     academic_design_report: Mapping[str, Any],
     formal_artifact_integrity_report: Mapping[str, Any],
+    pre_formal_validation_report: Mapping[str, Any],
     preflight_report: Mapping[str, Any],
     artifacts: list[dict[str, Any]],
     expected_case_count: int,
@@ -599,6 +643,7 @@ def _readiness_checks(
         "formal_dataset_turn_count_matches": _turn_count(dataset_cases) == expected_turn_count,
         "benchmark_expanded_case_count_matches": len(benchmark_cases) == expected_case_count,
         "benchmark_expanded_turn_count_matches": _turn_count(benchmark_cases) == expected_turn_count,
+        "pre_formal_validation_passed": pre_formal_validation_report.get("status") == "passed",
         "formal_preflight_passed": preflight_report.get("status") == "passed",
         "qweather_snapshot_valid": qweather_report.get("valid") is True,
         "qweather_runtime_refresh_forbidden": qweather_report.get("runtime_online_refresh_allowed") is False
@@ -908,10 +953,12 @@ def _compact_preflight(report: Mapping[str, Any]) -> dict[str, Any]:
         "warnings": report.get("warnings") or [],
         "benchmark": report.get("benchmark") or {},
         "run": report.get("run") or {},
+        "environment": report.get("environment") or {},
         "qweather_snapshot": report.get("qweather_snapshot") or {},
         "intercity_transport_snapshot": report.get("intercity_transport_snapshot") or {},
         "academic_experiment_design": report.get("academic_experiment_design") or {},
         "artifact_integrity": report.get("artifact_integrity") or {},
+        "pre_formal_validation": report.get("pre_formal_validation") or {},
         "day8_delivery_pack": report.get("day8_delivery_pack") or {},
         "policy": report.get("policy") or {},
     }
@@ -949,6 +996,10 @@ def _handoff_commands() -> list[dict[str, str]]:
         {
             "name": "重新生成题库审计报告",
             "command": "python experiments/audit_ctp100_formal_v2.py",
+        },
+        {
+            "name": "重新生成 Task D/E/F 预正式验证注册表",
+            "command": "python experiments/build_pre_formal_validation_registry.py",
         },
         {
             "name": "重新生成 Day8 交付包",

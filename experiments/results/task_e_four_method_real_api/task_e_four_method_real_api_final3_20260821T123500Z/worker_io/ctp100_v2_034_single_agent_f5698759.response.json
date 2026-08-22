@@ -1,0 +1,5585 @@
+{
+  "status": "completed",
+  "result": {
+    "case_id": "ctp100_v2_034",
+    "method": "single_agent",
+    "request_id": "ctp100_v2_034_single_agent_f5698759",
+    "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+    "repeat_index": 0,
+    "system_variant": "single_agent",
+    "model_config_name": "task-e-four-method-real-api",
+    "evaluation_mode": "end_to_end",
+    "input_hash": "cb3189a3ff03016336af15b8a6139b4ea9557a1d399dc9e1ff442bbd11f8193d",
+    "result_hash": "e3cefc1d1869dacc315cd22b61a0ad3026b4436d1090dedafb1c8c43454bdf63",
+    "offline_data": {
+      "schema_version": "fixed_data_manifest_v2",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+      "city_ids": [
+        "beijing",
+        "hangzhou",
+        "xian",
+        "shenzhen",
+        "guilin"
+      ],
+      "snapshot_dirs": [
+        "pois",
+        "weather",
+        "restaurants",
+        "accommodation",
+        "transport"
+      ],
+      "file_count": 25,
+      "expected_file_count": 25,
+      "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "expected_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+      "missing_files": [],
+      "files": [
+        {
+          "kind": "accommodation",
+          "city_id": "beijing",
+          "path": "data/accommodation/beijing.json",
+          "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "guilin",
+          "path": "data/accommodation/guilin.json",
+          "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "hangzhou",
+          "path": "data/accommodation/hangzhou.json",
+          "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "shenzhen",
+          "path": "data/accommodation/shenzhen.json",
+          "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "accommodation",
+          "city_id": "xian",
+          "path": "data/accommodation/xian.json",
+          "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "beijing",
+          "path": "data/pois/beijing.json",
+          "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "guilin",
+          "path": "data/pois/guilin.json",
+          "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "hangzhou",
+          "path": "data/pois/hangzhou.json",
+          "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "shenzhen",
+          "path": "data/pois/shenzhen.json",
+          "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "pois",
+          "city_id": "xian",
+          "path": "data/pois/xian.json",
+          "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "beijing",
+          "path": "data/restaurants/beijing.json",
+          "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "guilin",
+          "path": "data/restaurants/guilin.json",
+          "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "hangzhou",
+          "path": "data/restaurants/hangzhou.json",
+          "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "shenzhen",
+          "path": "data/restaurants/shenzhen.json",
+          "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "restaurants",
+          "city_id": "xian",
+          "path": "data/restaurants/xian.json",
+          "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "beijing",
+          "path": "data/transport/beijing.json",
+          "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "guilin",
+          "path": "data/transport/guilin.json",
+          "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "hangzhou",
+          "path": "data/transport/hangzhou.json",
+          "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "shenzhen",
+          "path": "data/transport/shenzhen.json",
+          "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "transport",
+          "city_id": "xian",
+          "path": "data/transport/xian.json",
+          "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "beijing",
+          "path": "data/weather/beijing.json",
+          "sha256": "a6b32944050cc2a638d09a67be8d7747ca2b0153527f856d85b4813651c91d0a",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "guilin",
+          "path": "data/weather/guilin.json",
+          "sha256": "450d86b2f7121f970e7c48e5a38ad113c8e4289c0356f448221ce1d63d412f94",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "hangzhou",
+          "path": "data/weather/hangzhou.json",
+          "sha256": "e4ea7c0b10b350cd4c7ba739746e0634d0aa86d77378d858104c0f789f6f64fd",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "shenzhen",
+          "path": "data/weather/shenzhen.json",
+          "sha256": "533e74a25a72fdc58a0f31746f10dd405611b3ab007f18d0319566deaec5e281",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        },
+        {
+          "kind": "weather",
+          "city_id": "xian",
+          "path": "data/weather/xian.json",
+          "sha256": "7d9e244e1bd64d129cb75b641a09adc8521d9ce082b4a28de7bbb2aadb92cef4",
+          "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+        }
+      ]
+    },
+    "output": {
+      "schema_version": "ctp-experiment-output-v1",
+      "case_id": "ctp100_v2_034",
+      "method": "single_agent",
+      "task_type": "weather_query",
+      "planned_agents": [
+        "single_agent"
+      ],
+      "used_agents": [
+        "single_agent"
+      ],
+      "planned_tools": [
+        "weather_query"
+      ],
+      "called_tools": [
+        {
+          "tool_name": "weather_query",
+          "status": "completed",
+          "success": true,
+          "arguments": {
+            "city": "shenzhen",
+            "date": "2026-09-04",
+            "days": 3,
+            "scenario_type": "sunny"
+          },
+          "duration_ms": 6.998,
+          "error": null
+        }
+      ],
+      "tool_results": {
+        "weather_query": {
+          "schema_version": "research_tool_result_v1",
+          "tool_contract_version": "ctp-research-tools-v1.0",
+          "tool_name": "weather_query",
+          "status": "success",
+          "success": true,
+          "input": {
+            "city": "shenzhen",
+            "date": "2026-09-04",
+            "days": 3,
+            "scenario_type": "sunny",
+            "date_defaulted_to_snapshot_start": false
+          },
+          "data": {
+            "city": "深圳",
+            "city_id": "shenzhen",
+            "date": "2026-09-04",
+            "start_date": "2026-09-04",
+            "end_date": "2026-09-06",
+            "provider": "qweather_snapshot",
+            "location_id": "101280601",
+            "scenario_type": "high_temperature",
+            "requested_scenario_type": "sunny",
+            "scenario_selection": "qweather_frozen_snapshot_date_range",
+            "weather_type": "high_temperature",
+            "risk_level": "high",
+            "risk_tags": [
+              "rain",
+              "heat",
+              "heavy_rain"
+            ],
+            "requested_days": 3,
+            "coverage_days": 2,
+            "coverage_status": "partial",
+            "covered_dates": [
+              "2026-09-04",
+              "2026-09-05"
+            ],
+            "missing_dates": [
+              "2026-09-06"
+            ],
+            "forecast_start_date": "2026-08-07",
+            "forecast_end_date": "2026-09-05",
+            "snapshot_forecast_start_date": "2026-08-07",
+            "snapshot_forecast_end_date": "2026-09-05",
+            "daily_weather": [
+              {
+                "date": "2026-09-04",
+                "day_index": 1,
+                "snapshot_day_index": 29,
+                "state": "high_temperature",
+                "weather": "雷阵雨",
+                "day_weather": "雷阵雨",
+                "night_weather": "雷阵雨",
+                "temperature_min_c": 26,
+                "temperature_max_c": 33,
+                "precipitation_mm": 2.9,
+                "precipitation_probability": null,
+                "wind_direction_day": "东北风",
+                "wind_scale_day": 1,
+                "wind_speed_day_kmh": 13.0,
+                "humidity_percent": 74,
+                "uv_index": 6,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain",
+                  "heat"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "evening",
+                  "indoor"
+                ],
+                "avoid_periods": [
+                  "midday_outdoor",
+                  "long_outdoor_exposure"
+                ],
+                "evidence": {
+                  "provider": "qweather",
+                  "source_mode": "qweather_frozen_snapshot",
+                  "city_id": "shenzhen",
+                  "snapshot_id": "ctp_qweather_20260807_v1",
+                  "source_endpoint": "/v7/weather/30d",
+                  "offline": true,
+                  "real_time_api_allowed": false
+                },
+                "provider_raw_fields": {
+                  "fxDate": "2026-09-04",
+                  "tempMin": "26",
+                  "tempMax": "33",
+                  "textDay": "雷阵雨",
+                  "textNight": "雷阵雨",
+                  "windDirDay": "东北风",
+                  "windScaleDay": "1-3",
+                  "windSpeedDay": "13",
+                  "humidity": "74",
+                  "precip": "2.9",
+                  "pop": null,
+                  "uvIndex": "6"
+                },
+                "request_day_index": 1
+              },
+              {
+                "date": "2026-09-05",
+                "day_index": 2,
+                "snapshot_day_index": 30,
+                "state": "rain",
+                "weather": "雷阵雨",
+                "day_weather": "雷阵雨",
+                "night_weather": "雷阵雨",
+                "temperature_min_c": 26,
+                "temperature_max_c": 32,
+                "precipitation_mm": 15.2,
+                "precipitation_probability": null,
+                "wind_direction_day": "东北风",
+                "wind_scale_day": 1,
+                "wind_speed_day_kmh": 4.0,
+                "humidity_percent": 73,
+                "uv_index": 3,
+                "risk_level": "high",
+                "risk_tags": [
+                  "rain",
+                  "heavy_rain"
+                ],
+                "suitable_periods": [
+                  "indoor",
+                  "short_outdoor_window"
+                ],
+                "avoid_periods": [
+                  "long_outdoor_exposure"
+                ],
+                "evidence": {
+                  "provider": "qweather",
+                  "source_mode": "qweather_frozen_snapshot",
+                  "city_id": "shenzhen",
+                  "snapshot_id": "ctp_qweather_20260807_v1",
+                  "source_endpoint": "/v7/weather/30d",
+                  "offline": true,
+                  "real_time_api_allowed": false
+                },
+                "provider_raw_fields": {
+                  "fxDate": "2026-09-05",
+                  "tempMin": "26",
+                  "tempMax": "32",
+                  "textDay": "雷阵雨",
+                  "textNight": "雷阵雨",
+                  "windDirDay": "东北风",
+                  "windScaleDay": "1-3",
+                  "windSpeedDay": "4",
+                  "humidity": "73",
+                  "precip": "15.2",
+                  "pop": null,
+                  "uvIndex": "3"
+                },
+                "request_day_index": 2
+              }
+            ],
+            "daily_forecasts": [
+              {
+                "date": "2026-09-04",
+                "day_index": 1,
+                "snapshot_day_index": 29,
+                "state": "high_temperature",
+                "weather": "雷阵雨",
+                "day_weather": "雷阵雨",
+                "night_weather": "雷阵雨",
+                "temperature_min_c": 26,
+                "temperature_max_c": 33,
+                "precipitation_mm": 2.9,
+                "precipitation_probability": null,
+                "wind_direction_day": "东北风",
+                "wind_scale_day": 1,
+                "wind_speed_day_kmh": 13.0,
+                "humidity_percent": 74,
+                "uv_index": 6,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain",
+                  "heat"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "evening",
+                  "indoor"
+                ],
+                "avoid_periods": [
+                  "midday_outdoor",
+                  "long_outdoor_exposure"
+                ],
+                "evidence": {
+                  "provider": "qweather",
+                  "source_mode": "qweather_frozen_snapshot",
+                  "city_id": "shenzhen",
+                  "snapshot_id": "ctp_qweather_20260807_v1",
+                  "source_endpoint": "/v7/weather/30d",
+                  "offline": true,
+                  "real_time_api_allowed": false
+                },
+                "provider_raw_fields": {
+                  "fxDate": "2026-09-04",
+                  "tempMin": "26",
+                  "tempMax": "33",
+                  "textDay": "雷阵雨",
+                  "textNight": "雷阵雨",
+                  "windDirDay": "东北风",
+                  "windScaleDay": "1-3",
+                  "windSpeedDay": "13",
+                  "humidity": "74",
+                  "precip": "2.9",
+                  "pop": null,
+                  "uvIndex": "6"
+                },
+                "request_day_index": 1
+              },
+              {
+                "date": "2026-09-05",
+                "day_index": 2,
+                "snapshot_day_index": 30,
+                "state": "rain",
+                "weather": "雷阵雨",
+                "day_weather": "雷阵雨",
+                "night_weather": "雷阵雨",
+                "temperature_min_c": 26,
+                "temperature_max_c": 32,
+                "precipitation_mm": 15.2,
+                "precipitation_probability": null,
+                "wind_direction_day": "东北风",
+                "wind_scale_day": 1,
+                "wind_speed_day_kmh": 4.0,
+                "humidity_percent": 73,
+                "uv_index": 3,
+                "risk_level": "high",
+                "risk_tags": [
+                  "rain",
+                  "heavy_rain"
+                ],
+                "suitable_periods": [
+                  "indoor",
+                  "short_outdoor_window"
+                ],
+                "avoid_periods": [
+                  "long_outdoor_exposure"
+                ],
+                "evidence": {
+                  "provider": "qweather",
+                  "source_mode": "qweather_frozen_snapshot",
+                  "city_id": "shenzhen",
+                  "snapshot_id": "ctp_qweather_20260807_v1",
+                  "source_endpoint": "/v7/weather/30d",
+                  "offline": true,
+                  "real_time_api_allowed": false
+                },
+                "provider_raw_fields": {
+                  "fxDate": "2026-09-05",
+                  "tempMin": "26",
+                  "tempMax": "32",
+                  "textDay": "雷阵雨",
+                  "textNight": "雷阵雨",
+                  "windDirDay": "东北风",
+                  "windScaleDay": "1-3",
+                  "windSpeedDay": "4",
+                  "humidity": "73",
+                  "precip": "15.2",
+                  "pop": null,
+                  "uvIndex": "3"
+                },
+                "request_day_index": 2
+              }
+            ],
+            "forecast": [
+              {
+                "date": "2026-09-04",
+                "day_index": 1,
+                "snapshot_day_index": 29,
+                "state": "high_temperature",
+                "weather": "雷阵雨",
+                "day_weather": "雷阵雨",
+                "night_weather": "雷阵雨",
+                "temperature_min_c": 26,
+                "temperature_max_c": 33,
+                "precipitation_mm": 2.9,
+                "precipitation_probability": null,
+                "wind_direction_day": "东北风",
+                "wind_scale_day": 1,
+                "wind_speed_day_kmh": 13.0,
+                "humidity_percent": 74,
+                "uv_index": 6,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain",
+                  "heat"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "evening",
+                  "indoor"
+                ],
+                "avoid_periods": [
+                  "midday_outdoor",
+                  "long_outdoor_exposure"
+                ],
+                "evidence": {
+                  "provider": "qweather",
+                  "source_mode": "qweather_frozen_snapshot",
+                  "city_id": "shenzhen",
+                  "snapshot_id": "ctp_qweather_20260807_v1",
+                  "source_endpoint": "/v7/weather/30d",
+                  "offline": true,
+                  "real_time_api_allowed": false
+                },
+                "provider_raw_fields": {
+                  "fxDate": "2026-09-04",
+                  "tempMin": "26",
+                  "tempMax": "33",
+                  "textDay": "雷阵雨",
+                  "textNight": "雷阵雨",
+                  "windDirDay": "东北风",
+                  "windScaleDay": "1-3",
+                  "windSpeedDay": "13",
+                  "humidity": "74",
+                  "precip": "2.9",
+                  "pop": null,
+                  "uvIndex": "6"
+                },
+                "request_day_index": 1
+              },
+              {
+                "date": "2026-09-05",
+                "day_index": 2,
+                "snapshot_day_index": 30,
+                "state": "rain",
+                "weather": "雷阵雨",
+                "day_weather": "雷阵雨",
+                "night_weather": "雷阵雨",
+                "temperature_min_c": 26,
+                "temperature_max_c": 32,
+                "precipitation_mm": 15.2,
+                "precipitation_probability": null,
+                "wind_direction_day": "东北风",
+                "wind_scale_day": 1,
+                "wind_speed_day_kmh": 4.0,
+                "humidity_percent": 73,
+                "uv_index": 3,
+                "risk_level": "high",
+                "risk_tags": [
+                  "rain",
+                  "heavy_rain"
+                ],
+                "suitable_periods": [
+                  "indoor",
+                  "short_outdoor_window"
+                ],
+                "avoid_periods": [
+                  "long_outdoor_exposure"
+                ],
+                "evidence": {
+                  "provider": "qweather",
+                  "source_mode": "qweather_frozen_snapshot",
+                  "city_id": "shenzhen",
+                  "snapshot_id": "ctp_qweather_20260807_v1",
+                  "source_endpoint": "/v7/weather/30d",
+                  "offline": true,
+                  "real_time_api_allowed": false
+                },
+                "provider_raw_fields": {
+                  "fxDate": "2026-09-05",
+                  "tempMin": "26",
+                  "tempMax": "32",
+                  "textDay": "雷阵雨",
+                  "textNight": "雷阵雨",
+                  "windDirDay": "东北风",
+                  "windScaleDay": "1-3",
+                  "windSpeedDay": "4",
+                  "humidity": "73",
+                  "precip": "15.2",
+                  "pop": null,
+                  "uvIndex": "3"
+                },
+                "request_day_index": 2
+              }
+            ],
+            "planning_constraints": {
+              "coverage_status": "partial",
+              "missing_dates": [
+                "2026-09-06"
+              ],
+              "dynamic_adjustment_required": true,
+              "indoor_backup_recommended": true,
+              "missing_weather_must_not_be_fabricated": true
+            },
+            "weather_adjustment_required": true,
+            "warnings": [
+              "Frozen QWeather snapshot only covers part of the requested trip; missing dates must not be fabricated.",
+              "Missing weather dates: 2026-09-06"
+            ],
+            "applied_rules": [
+              "qweather_frozen_snapshot",
+              "fixed_location_id",
+              "date_range_coverage"
+            ],
+            "snapshot_id": "ctp_qweather_20260807_v1",
+            "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+            "metadata": {
+              "offline": true,
+              "source_mode": "qweather_frozen_snapshot",
+              "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+              "source_file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "snapshot_manifest_path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+              "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+              "forecast_endpoint": "/v7/weather/30d",
+              "forecast_horizon_days": 30,
+              "coverage_status": "partial",
+              "real_time_api_allowed": false,
+              "runtime_online_refresh_allowed": false
+            },
+            "date_defaulted_to_snapshot_start": false
+          },
+          "error": null,
+          "metadata": {
+            "offline": true,
+            "source_mode": "qweather_frozen_snapshot",
+            "real_time_api_allowed": false,
+            "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+            "source_file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+            "record_count": 2,
+            "canonical_city_id": "shenzhen",
+            "coverage_status": "partial",
+            "snapshot_id": "ctp_qweather_20260807_v1",
+            "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+            "weather_date_mapping_rule": "city_id + requested date range selects rows from frozen QWeather snapshot",
+            "date_defaulted_to_snapshot_start": false
+          }
+        }
+      },
+      "agent_outputs": {},
+      "attractions": [],
+      "trip_days": 3,
+      "daily_itinerary": [],
+      "budget": null,
+      "weather": {
+        "city": "深圳",
+        "city_id": "shenzhen",
+        "date": "2026-09-04",
+        "start_date": "2026-09-04",
+        "end_date": "2026-09-06",
+        "provider": "qweather_snapshot",
+        "location_id": "101280601",
+        "scenario_type": "high_temperature",
+        "requested_scenario_type": "sunny",
+        "scenario_selection": "qweather_frozen_snapshot_date_range",
+        "weather_type": "high_temperature",
+        "risk_level": "high",
+        "risk_tags": [
+          "rain",
+          "heat",
+          "heavy_rain"
+        ],
+        "requested_days": 3,
+        "coverage_days": 2,
+        "coverage_status": "partial",
+        "covered_dates": [
+          "2026-09-04",
+          "2026-09-05"
+        ],
+        "missing_dates": [
+          "2026-09-06"
+        ],
+        "forecast_start_date": "2026-08-07",
+        "forecast_end_date": "2026-09-05",
+        "snapshot_forecast_start_date": "2026-08-07",
+        "snapshot_forecast_end_date": "2026-09-05",
+        "daily_weather": [
+          {
+            "date": "2026-09-04",
+            "day_index": 1,
+            "snapshot_day_index": 29,
+            "state": "high_temperature",
+            "weather": "雷阵雨",
+            "day_weather": "雷阵雨",
+            "night_weather": "雷阵雨",
+            "temperature_min_c": 26,
+            "temperature_max_c": 33,
+            "precipitation_mm": 2.9,
+            "precipitation_probability": null,
+            "wind_direction_day": "东北风",
+            "wind_scale_day": 1,
+            "wind_speed_day_kmh": 13.0,
+            "humidity_percent": 74,
+            "uv_index": 6,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain",
+              "heat"
+            ],
+            "suitable_periods": [
+              "morning",
+              "evening",
+              "indoor"
+            ],
+            "avoid_periods": [
+              "midday_outdoor",
+              "long_outdoor_exposure"
+            ],
+            "evidence": {
+              "provider": "qweather",
+              "source_mode": "qweather_frozen_snapshot",
+              "city_id": "shenzhen",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "source_endpoint": "/v7/weather/30d",
+              "offline": true,
+              "real_time_api_allowed": false
+            },
+            "provider_raw_fields": {
+              "fxDate": "2026-09-04",
+              "tempMin": "26",
+              "tempMax": "33",
+              "textDay": "雷阵雨",
+              "textNight": "雷阵雨",
+              "windDirDay": "东北风",
+              "windScaleDay": "1-3",
+              "windSpeedDay": "13",
+              "humidity": "74",
+              "precip": "2.9",
+              "pop": null,
+              "uvIndex": "6"
+            },
+            "request_day_index": 1
+          },
+          {
+            "date": "2026-09-05",
+            "day_index": 2,
+            "snapshot_day_index": 30,
+            "state": "rain",
+            "weather": "雷阵雨",
+            "day_weather": "雷阵雨",
+            "night_weather": "雷阵雨",
+            "temperature_min_c": 26,
+            "temperature_max_c": 32,
+            "precipitation_mm": 15.2,
+            "precipitation_probability": null,
+            "wind_direction_day": "东北风",
+            "wind_scale_day": 1,
+            "wind_speed_day_kmh": 4.0,
+            "humidity_percent": 73,
+            "uv_index": 3,
+            "risk_level": "high",
+            "risk_tags": [
+              "rain",
+              "heavy_rain"
+            ],
+            "suitable_periods": [
+              "indoor",
+              "short_outdoor_window"
+            ],
+            "avoid_periods": [
+              "long_outdoor_exposure"
+            ],
+            "evidence": {
+              "provider": "qweather",
+              "source_mode": "qweather_frozen_snapshot",
+              "city_id": "shenzhen",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "source_endpoint": "/v7/weather/30d",
+              "offline": true,
+              "real_time_api_allowed": false
+            },
+            "provider_raw_fields": {
+              "fxDate": "2026-09-05",
+              "tempMin": "26",
+              "tempMax": "32",
+              "textDay": "雷阵雨",
+              "textNight": "雷阵雨",
+              "windDirDay": "东北风",
+              "windScaleDay": "1-3",
+              "windSpeedDay": "4",
+              "humidity": "73",
+              "precip": "15.2",
+              "pop": null,
+              "uvIndex": "3"
+            },
+            "request_day_index": 2
+          }
+        ],
+        "daily_forecasts": [
+          {
+            "date": "2026-09-04",
+            "day_index": 1,
+            "snapshot_day_index": 29,
+            "state": "high_temperature",
+            "weather": "雷阵雨",
+            "day_weather": "雷阵雨",
+            "night_weather": "雷阵雨",
+            "temperature_min_c": 26,
+            "temperature_max_c": 33,
+            "precipitation_mm": 2.9,
+            "precipitation_probability": null,
+            "wind_direction_day": "东北风",
+            "wind_scale_day": 1,
+            "wind_speed_day_kmh": 13.0,
+            "humidity_percent": 74,
+            "uv_index": 6,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain",
+              "heat"
+            ],
+            "suitable_periods": [
+              "morning",
+              "evening",
+              "indoor"
+            ],
+            "avoid_periods": [
+              "midday_outdoor",
+              "long_outdoor_exposure"
+            ],
+            "evidence": {
+              "provider": "qweather",
+              "source_mode": "qweather_frozen_snapshot",
+              "city_id": "shenzhen",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "source_endpoint": "/v7/weather/30d",
+              "offline": true,
+              "real_time_api_allowed": false
+            },
+            "provider_raw_fields": {
+              "fxDate": "2026-09-04",
+              "tempMin": "26",
+              "tempMax": "33",
+              "textDay": "雷阵雨",
+              "textNight": "雷阵雨",
+              "windDirDay": "东北风",
+              "windScaleDay": "1-3",
+              "windSpeedDay": "13",
+              "humidity": "74",
+              "precip": "2.9",
+              "pop": null,
+              "uvIndex": "6"
+            },
+            "request_day_index": 1
+          },
+          {
+            "date": "2026-09-05",
+            "day_index": 2,
+            "snapshot_day_index": 30,
+            "state": "rain",
+            "weather": "雷阵雨",
+            "day_weather": "雷阵雨",
+            "night_weather": "雷阵雨",
+            "temperature_min_c": 26,
+            "temperature_max_c": 32,
+            "precipitation_mm": 15.2,
+            "precipitation_probability": null,
+            "wind_direction_day": "东北风",
+            "wind_scale_day": 1,
+            "wind_speed_day_kmh": 4.0,
+            "humidity_percent": 73,
+            "uv_index": 3,
+            "risk_level": "high",
+            "risk_tags": [
+              "rain",
+              "heavy_rain"
+            ],
+            "suitable_periods": [
+              "indoor",
+              "short_outdoor_window"
+            ],
+            "avoid_periods": [
+              "long_outdoor_exposure"
+            ],
+            "evidence": {
+              "provider": "qweather",
+              "source_mode": "qweather_frozen_snapshot",
+              "city_id": "shenzhen",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "source_endpoint": "/v7/weather/30d",
+              "offline": true,
+              "real_time_api_allowed": false
+            },
+            "provider_raw_fields": {
+              "fxDate": "2026-09-05",
+              "tempMin": "26",
+              "tempMax": "32",
+              "textDay": "雷阵雨",
+              "textNight": "雷阵雨",
+              "windDirDay": "东北风",
+              "windScaleDay": "1-3",
+              "windSpeedDay": "4",
+              "humidity": "73",
+              "precip": "15.2",
+              "pop": null,
+              "uvIndex": "3"
+            },
+            "request_day_index": 2
+          }
+        ],
+        "forecast": [
+          {
+            "date": "2026-09-04",
+            "day_index": 1,
+            "snapshot_day_index": 29,
+            "state": "high_temperature",
+            "weather": "雷阵雨",
+            "day_weather": "雷阵雨",
+            "night_weather": "雷阵雨",
+            "temperature_min_c": 26,
+            "temperature_max_c": 33,
+            "precipitation_mm": 2.9,
+            "precipitation_probability": null,
+            "wind_direction_day": "东北风",
+            "wind_scale_day": 1,
+            "wind_speed_day_kmh": 13.0,
+            "humidity_percent": 74,
+            "uv_index": 6,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain",
+              "heat"
+            ],
+            "suitable_periods": [
+              "morning",
+              "evening",
+              "indoor"
+            ],
+            "avoid_periods": [
+              "midday_outdoor",
+              "long_outdoor_exposure"
+            ],
+            "evidence": {
+              "provider": "qweather",
+              "source_mode": "qweather_frozen_snapshot",
+              "city_id": "shenzhen",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "source_endpoint": "/v7/weather/30d",
+              "offline": true,
+              "real_time_api_allowed": false
+            },
+            "provider_raw_fields": {
+              "fxDate": "2026-09-04",
+              "tempMin": "26",
+              "tempMax": "33",
+              "textDay": "雷阵雨",
+              "textNight": "雷阵雨",
+              "windDirDay": "东北风",
+              "windScaleDay": "1-3",
+              "windSpeedDay": "13",
+              "humidity": "74",
+              "precip": "2.9",
+              "pop": null,
+              "uvIndex": "6"
+            },
+            "request_day_index": 1
+          },
+          {
+            "date": "2026-09-05",
+            "day_index": 2,
+            "snapshot_day_index": 30,
+            "state": "rain",
+            "weather": "雷阵雨",
+            "day_weather": "雷阵雨",
+            "night_weather": "雷阵雨",
+            "temperature_min_c": 26,
+            "temperature_max_c": 32,
+            "precipitation_mm": 15.2,
+            "precipitation_probability": null,
+            "wind_direction_day": "东北风",
+            "wind_scale_day": 1,
+            "wind_speed_day_kmh": 4.0,
+            "humidity_percent": 73,
+            "uv_index": 3,
+            "risk_level": "high",
+            "risk_tags": [
+              "rain",
+              "heavy_rain"
+            ],
+            "suitable_periods": [
+              "indoor",
+              "short_outdoor_window"
+            ],
+            "avoid_periods": [
+              "long_outdoor_exposure"
+            ],
+            "evidence": {
+              "provider": "qweather",
+              "source_mode": "qweather_frozen_snapshot",
+              "city_id": "shenzhen",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "source_endpoint": "/v7/weather/30d",
+              "offline": true,
+              "real_time_api_allowed": false
+            },
+            "provider_raw_fields": {
+              "fxDate": "2026-09-05",
+              "tempMin": "26",
+              "tempMax": "32",
+              "textDay": "雷阵雨",
+              "textNight": "雷阵雨",
+              "windDirDay": "东北风",
+              "windScaleDay": "1-3",
+              "windSpeedDay": "4",
+              "humidity": "73",
+              "precip": "15.2",
+              "pop": null,
+              "uvIndex": "3"
+            },
+            "request_day_index": 2
+          }
+        ],
+        "planning_constraints": {
+          "coverage_status": "partial",
+          "missing_dates": [
+            "2026-09-06"
+          ],
+          "dynamic_adjustment_required": true,
+          "indoor_backup_recommended": true,
+          "missing_weather_must_not_be_fabricated": true
+        },
+        "weather_adjustment_required": true,
+        "warnings": [
+          "Frozen QWeather snapshot only covers part of the requested trip; missing dates must not be fabricated.",
+          "Missing weather dates: 2026-09-06"
+        ],
+        "applied_rules": [
+          "qweather_frozen_snapshot",
+          "fixed_location_id",
+          "date_range_coverage"
+        ],
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+        "metadata": {
+          "offline": true,
+          "source_mode": "qweather_frozen_snapshot",
+          "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+          "source_file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+          "snapshot_id": "ctp_qweather_20260807_v1",
+          "snapshot_manifest_path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+          "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+          "forecast_endpoint": "/v7/weather/30d",
+          "forecast_horizon_days": 30,
+          "coverage_status": "partial",
+          "real_time_api_allowed": false,
+          "runtime_online_refresh_allowed": false
+        },
+        "date_defaulted_to_snapshot_start": false
+      },
+      "weather_adjustments": [
+        {
+          "day": 1,
+          "day_index": 1,
+          "reason": "high_temperature",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        },
+        {
+          "day": 2,
+          "day_index": 2,
+          "reason": "high_temperature",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        }
+      ],
+      "constraint_report": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "constraint_checker",
+        "status": "success",
+        "success": true,
+        "input": {
+          "request": {
+            "end_date": "2026-09-06",
+            "destination": "shenzhen",
+            "start_date": "2026-09-04",
+            "duration_days": 3,
+            "case_id": "ctp100_v2_034",
+            "user_input": "深圳9月4号到6号天气怎么样？",
+            "city": "shenzhen",
+            "budget": null
+          },
+          "constraints": {
+            "destination": "shenzhen",
+            "start_date": "2026-09-04",
+            "end_date": "2026-09-06",
+            "duration_days": 3
+          }
+        },
+        "data": {
+          "all_passed": true,
+          "applicable_count": 2,
+          "passed_count": 2,
+          "failed_count": 0,
+          "checks": [
+            {
+              "name": "trip_days",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "expected": null,
+                "actual": 0
+              }
+            },
+            {
+              "name": "budget_limit",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "limit": null,
+                "actual": null
+              }
+            },
+            {
+              "name": "weather_adjustment",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "required": true,
+                "adjustment_count": 2
+              }
+            },
+            {
+              "name": "min_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "minimum": null,
+                "actual": 0
+              }
+            },
+            {
+              "name": "max_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "maximum": null,
+                "actual": 0
+              }
+            },
+            {
+              "name": "poi_existence",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "attraction_count": 0
+              }
+            },
+            {
+              "name": "duplicate_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "attraction_count": 0
+              }
+            },
+            {
+              "name": "must_include_pois",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": []
+              }
+            },
+            {
+              "name": "forbidden_pois",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "forbidden": []
+              }
+            },
+            {
+              "name": "rain_attraction_suitability",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "rain_detected": true,
+                "attraction_count": 0
+              }
+            },
+            {
+              "name": "senior_accessibility",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "senior_request": false
+              }
+            },
+            {
+              "name": "tool_evidence",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "required": false,
+                "required_tools": [
+                  "weather_query"
+                ],
+                "missing_or_failed": []
+              }
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "deterministic_evaluator",
+          "real_time_api_allowed": false,
+          "contract": "ctp-research-tools-v1.0"
+        }
+      },
+      "hard_constraint_passed_count": 2,
+      "hard_constraint_failed_count": 0,
+      "hard_constraint_applicable_count": 2,
+      "hard_constraints_all_satisfied": true,
+      "hcsr": 1.0,
+      "execution_status": "completed",
+      "final_answer": "天气证据：QWeather冻结快照，覆盖状态 partial，天气类型 high_temperature、rain\n天气覆盖说明：请求日期 2026-09-04 至 2026-09-06；快照覆盖 2026-08-07 至 2026-09-05；缺失日期：2026-09-06。\n超出或缺失的日期不能提供逐日天气；系统不编造范围外天气。",
+      "raw_output": {
+        "task_type": "weather_query",
+        "planned_agents": [
+          "single_agent"
+        ],
+        "used_agents": [
+          "single_agent"
+        ],
+        "planned_tools": [
+          "weather_query"
+        ],
+        "called_tools": [
+          {
+            "tool_name": "weather_query",
+            "status": "completed",
+            "success": true,
+            "arguments": {
+              "city": "shenzhen",
+              "date": "2026-09-04",
+              "days": 3,
+              "scenario_type": "sunny"
+            },
+            "duration_ms": 6.998,
+            "error": null
+          }
+        ],
+        "agent_outputs": {},
+        "attractions": [],
+        "trip_days": 3,
+        "daily_itinerary": [],
+        "budget": null,
+        "weather": {
+          "city": "深圳",
+          "city_id": "shenzhen",
+          "date": "2026-09-04",
+          "start_date": "2026-09-04",
+          "end_date": "2026-09-06",
+          "provider": "qweather_snapshot",
+          "location_id": "101280601",
+          "scenario_type": "high_temperature",
+          "requested_scenario_type": "sunny",
+          "scenario_selection": "qweather_frozen_snapshot_date_range",
+          "weather_type": "high_temperature",
+          "risk_level": "high",
+          "risk_tags": [
+            "rain",
+            "heat",
+            "heavy_rain"
+          ],
+          "requested_days": 3,
+          "coverage_days": 2,
+          "coverage_status": "partial",
+          "covered_dates": [
+            "2026-09-04",
+            "2026-09-05"
+          ],
+          "missing_dates": [
+            "2026-09-06"
+          ],
+          "forecast_start_date": "2026-08-07",
+          "forecast_end_date": "2026-09-05",
+          "snapshot_forecast_start_date": "2026-08-07",
+          "snapshot_forecast_end_date": "2026-09-05",
+          "daily_weather": [
+            {
+              "date": "2026-09-04",
+              "day_index": 1,
+              "snapshot_day_index": 29,
+              "state": "high_temperature",
+              "weather": "雷阵雨",
+              "day_weather": "雷阵雨",
+              "night_weather": "雷阵雨",
+              "temperature_min_c": 26,
+              "temperature_max_c": 33,
+              "precipitation_mm": 2.9,
+              "precipitation_probability": null,
+              "wind_direction_day": "东北风",
+              "wind_scale_day": 1,
+              "wind_speed_day_kmh": 13.0,
+              "humidity_percent": 74,
+              "uv_index": 6,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain",
+                "heat"
+              ],
+              "suitable_periods": [
+                "morning",
+                "evening",
+                "indoor"
+              ],
+              "avoid_periods": [
+                "midday_outdoor",
+                "long_outdoor_exposure"
+              ],
+              "evidence": {
+                "provider": "qweather",
+                "source_mode": "qweather_frozen_snapshot",
+                "city_id": "shenzhen",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "source_endpoint": "/v7/weather/30d",
+                "offline": true,
+                "real_time_api_allowed": false
+              },
+              "provider_raw_fields": {
+                "fxDate": "2026-09-04",
+                "tempMin": "26",
+                "tempMax": "33",
+                "textDay": "雷阵雨",
+                "textNight": "雷阵雨",
+                "windDirDay": "东北风",
+                "windScaleDay": "1-3",
+                "windSpeedDay": "13",
+                "humidity": "74",
+                "precip": "2.9",
+                "pop": null,
+                "uvIndex": "6"
+              },
+              "request_day_index": 1
+            },
+            {
+              "date": "2026-09-05",
+              "day_index": 2,
+              "snapshot_day_index": 30,
+              "state": "rain",
+              "weather": "雷阵雨",
+              "day_weather": "雷阵雨",
+              "night_weather": "雷阵雨",
+              "temperature_min_c": 26,
+              "temperature_max_c": 32,
+              "precipitation_mm": 15.2,
+              "precipitation_probability": null,
+              "wind_direction_day": "东北风",
+              "wind_scale_day": 1,
+              "wind_speed_day_kmh": 4.0,
+              "humidity_percent": 73,
+              "uv_index": 3,
+              "risk_level": "high",
+              "risk_tags": [
+                "rain",
+                "heavy_rain"
+              ],
+              "suitable_periods": [
+                "indoor",
+                "short_outdoor_window"
+              ],
+              "avoid_periods": [
+                "long_outdoor_exposure"
+              ],
+              "evidence": {
+                "provider": "qweather",
+                "source_mode": "qweather_frozen_snapshot",
+                "city_id": "shenzhen",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "source_endpoint": "/v7/weather/30d",
+                "offline": true,
+                "real_time_api_allowed": false
+              },
+              "provider_raw_fields": {
+                "fxDate": "2026-09-05",
+                "tempMin": "26",
+                "tempMax": "32",
+                "textDay": "雷阵雨",
+                "textNight": "雷阵雨",
+                "windDirDay": "东北风",
+                "windScaleDay": "1-3",
+                "windSpeedDay": "4",
+                "humidity": "73",
+                "precip": "15.2",
+                "pop": null,
+                "uvIndex": "3"
+              },
+              "request_day_index": 2
+            }
+          ],
+          "daily_forecasts": [
+            {
+              "date": "2026-09-04",
+              "day_index": 1,
+              "snapshot_day_index": 29,
+              "state": "high_temperature",
+              "weather": "雷阵雨",
+              "day_weather": "雷阵雨",
+              "night_weather": "雷阵雨",
+              "temperature_min_c": 26,
+              "temperature_max_c": 33,
+              "precipitation_mm": 2.9,
+              "precipitation_probability": null,
+              "wind_direction_day": "东北风",
+              "wind_scale_day": 1,
+              "wind_speed_day_kmh": 13.0,
+              "humidity_percent": 74,
+              "uv_index": 6,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain",
+                "heat"
+              ],
+              "suitable_periods": [
+                "morning",
+                "evening",
+                "indoor"
+              ],
+              "avoid_periods": [
+                "midday_outdoor",
+                "long_outdoor_exposure"
+              ],
+              "evidence": {
+                "provider": "qweather",
+                "source_mode": "qweather_frozen_snapshot",
+                "city_id": "shenzhen",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "source_endpoint": "/v7/weather/30d",
+                "offline": true,
+                "real_time_api_allowed": false
+              },
+              "provider_raw_fields": {
+                "fxDate": "2026-09-04",
+                "tempMin": "26",
+                "tempMax": "33",
+                "textDay": "雷阵雨",
+                "textNight": "雷阵雨",
+                "windDirDay": "东北风",
+                "windScaleDay": "1-3",
+                "windSpeedDay": "13",
+                "humidity": "74",
+                "precip": "2.9",
+                "pop": null,
+                "uvIndex": "6"
+              },
+              "request_day_index": 1
+            },
+            {
+              "date": "2026-09-05",
+              "day_index": 2,
+              "snapshot_day_index": 30,
+              "state": "rain",
+              "weather": "雷阵雨",
+              "day_weather": "雷阵雨",
+              "night_weather": "雷阵雨",
+              "temperature_min_c": 26,
+              "temperature_max_c": 32,
+              "precipitation_mm": 15.2,
+              "precipitation_probability": null,
+              "wind_direction_day": "东北风",
+              "wind_scale_day": 1,
+              "wind_speed_day_kmh": 4.0,
+              "humidity_percent": 73,
+              "uv_index": 3,
+              "risk_level": "high",
+              "risk_tags": [
+                "rain",
+                "heavy_rain"
+              ],
+              "suitable_periods": [
+                "indoor",
+                "short_outdoor_window"
+              ],
+              "avoid_periods": [
+                "long_outdoor_exposure"
+              ],
+              "evidence": {
+                "provider": "qweather",
+                "source_mode": "qweather_frozen_snapshot",
+                "city_id": "shenzhen",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "source_endpoint": "/v7/weather/30d",
+                "offline": true,
+                "real_time_api_allowed": false
+              },
+              "provider_raw_fields": {
+                "fxDate": "2026-09-05",
+                "tempMin": "26",
+                "tempMax": "32",
+                "textDay": "雷阵雨",
+                "textNight": "雷阵雨",
+                "windDirDay": "东北风",
+                "windScaleDay": "1-3",
+                "windSpeedDay": "4",
+                "humidity": "73",
+                "precip": "15.2",
+                "pop": null,
+                "uvIndex": "3"
+              },
+              "request_day_index": 2
+            }
+          ],
+          "forecast": [
+            {
+              "date": "2026-09-04",
+              "day_index": 1,
+              "snapshot_day_index": 29,
+              "state": "high_temperature",
+              "weather": "雷阵雨",
+              "day_weather": "雷阵雨",
+              "night_weather": "雷阵雨",
+              "temperature_min_c": 26,
+              "temperature_max_c": 33,
+              "precipitation_mm": 2.9,
+              "precipitation_probability": null,
+              "wind_direction_day": "东北风",
+              "wind_scale_day": 1,
+              "wind_speed_day_kmh": 13.0,
+              "humidity_percent": 74,
+              "uv_index": 6,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain",
+                "heat"
+              ],
+              "suitable_periods": [
+                "morning",
+                "evening",
+                "indoor"
+              ],
+              "avoid_periods": [
+                "midday_outdoor",
+                "long_outdoor_exposure"
+              ],
+              "evidence": {
+                "provider": "qweather",
+                "source_mode": "qweather_frozen_snapshot",
+                "city_id": "shenzhen",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "source_endpoint": "/v7/weather/30d",
+                "offline": true,
+                "real_time_api_allowed": false
+              },
+              "provider_raw_fields": {
+                "fxDate": "2026-09-04",
+                "tempMin": "26",
+                "tempMax": "33",
+                "textDay": "雷阵雨",
+                "textNight": "雷阵雨",
+                "windDirDay": "东北风",
+                "windScaleDay": "1-3",
+                "windSpeedDay": "13",
+                "humidity": "74",
+                "precip": "2.9",
+                "pop": null,
+                "uvIndex": "6"
+              },
+              "request_day_index": 1
+            },
+            {
+              "date": "2026-09-05",
+              "day_index": 2,
+              "snapshot_day_index": 30,
+              "state": "rain",
+              "weather": "雷阵雨",
+              "day_weather": "雷阵雨",
+              "night_weather": "雷阵雨",
+              "temperature_min_c": 26,
+              "temperature_max_c": 32,
+              "precipitation_mm": 15.2,
+              "precipitation_probability": null,
+              "wind_direction_day": "东北风",
+              "wind_scale_day": 1,
+              "wind_speed_day_kmh": 4.0,
+              "humidity_percent": 73,
+              "uv_index": 3,
+              "risk_level": "high",
+              "risk_tags": [
+                "rain",
+                "heavy_rain"
+              ],
+              "suitable_periods": [
+                "indoor",
+                "short_outdoor_window"
+              ],
+              "avoid_periods": [
+                "long_outdoor_exposure"
+              ],
+              "evidence": {
+                "provider": "qweather",
+                "source_mode": "qweather_frozen_snapshot",
+                "city_id": "shenzhen",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "source_endpoint": "/v7/weather/30d",
+                "offline": true,
+                "real_time_api_allowed": false
+              },
+              "provider_raw_fields": {
+                "fxDate": "2026-09-05",
+                "tempMin": "26",
+                "tempMax": "32",
+                "textDay": "雷阵雨",
+                "textNight": "雷阵雨",
+                "windDirDay": "东北风",
+                "windScaleDay": "1-3",
+                "windSpeedDay": "4",
+                "humidity": "73",
+                "precip": "15.2",
+                "pop": null,
+                "uvIndex": "3"
+              },
+              "request_day_index": 2
+            }
+          ],
+          "planning_constraints": {
+            "coverage_status": "partial",
+            "missing_dates": [
+              "2026-09-06"
+            ],
+            "dynamic_adjustment_required": true,
+            "indoor_backup_recommended": true,
+            "missing_weather_must_not_be_fabricated": true
+          },
+          "weather_adjustment_required": true,
+          "warnings": [
+            "Frozen QWeather snapshot only covers part of the requested trip; missing dates must not be fabricated.",
+            "Missing weather dates: 2026-09-06"
+          ],
+          "applied_rules": [
+            "qweather_frozen_snapshot",
+            "fixed_location_id",
+            "date_range_coverage"
+          ],
+          "snapshot_id": "ctp_qweather_20260807_v1",
+          "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+          "metadata": {
+            "offline": true,
+            "source_mode": "qweather_frozen_snapshot",
+            "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+            "source_file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+            "snapshot_id": "ctp_qweather_20260807_v1",
+            "snapshot_manifest_path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+            "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+            "forecast_endpoint": "/v7/weather/30d",
+            "forecast_horizon_days": 30,
+            "coverage_status": "partial",
+            "real_time_api_allowed": false,
+            "runtime_online_refresh_allowed": false
+          },
+          "date_defaulted_to_snapshot_start": false
+        },
+        "weather_adjustments": [
+          {
+            "day": 1,
+            "day_index": 1,
+            "reason": "high_temperature",
+            "action": "减少长时间户外活动，优先安排室内或低风险景点",
+            "candidate_indoor_pois": []
+          },
+          {
+            "day": 2,
+            "day_index": 2,
+            "reason": "high_temperature",
+            "action": "减少长时间户外活动，优先安排室内或低风险景点",
+            "candidate_indoor_pois": []
+          }
+        ],
+        "execution_status": "completed",
+        "final_answer": "天气证据：QWeather冻结快照，覆盖状态 partial，天气类型 high_temperature、rain\n天气覆盖说明：请求日期 2026-09-04 至 2026-09-06；快照覆盖 2026-08-07 至 2026-09-05；缺失日期：2026-09-06。\n超出或缺失的日期不能提供逐日天气；系统不编造范围外天气。",
+        "tool_results": {
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_contract_version": "ctp-research-tools-v1.0",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "shenzhen",
+              "date": "2026-09-04",
+              "days": 3,
+              "scenario_type": "sunny",
+              "date_defaulted_to_snapshot_start": false
+            },
+            "data": {
+              "city": "深圳",
+              "city_id": "shenzhen",
+              "date": "2026-09-04",
+              "start_date": "2026-09-04",
+              "end_date": "2026-09-06",
+              "provider": "qweather_snapshot",
+              "location_id": "101280601",
+              "scenario_type": "high_temperature",
+              "requested_scenario_type": "sunny",
+              "scenario_selection": "qweather_frozen_snapshot_date_range",
+              "weather_type": "high_temperature",
+              "risk_level": "high",
+              "risk_tags": [
+                "rain",
+                "heat",
+                "heavy_rain"
+              ],
+              "requested_days": 3,
+              "coverage_days": 2,
+              "coverage_status": "partial",
+              "covered_dates": [
+                "2026-09-04",
+                "2026-09-05"
+              ],
+              "missing_dates": [
+                "2026-09-06"
+              ],
+              "forecast_start_date": "2026-08-07",
+              "forecast_end_date": "2026-09-05",
+              "snapshot_forecast_start_date": "2026-08-07",
+              "snapshot_forecast_end_date": "2026-09-05",
+              "daily_weather": [
+                {
+                  "date": "2026-09-04",
+                  "day_index": 1,
+                  "snapshot_day_index": 29,
+                  "state": "high_temperature",
+                  "weather": "雷阵雨",
+                  "day_weather": "雷阵雨",
+                  "night_weather": "雷阵雨",
+                  "temperature_min_c": 26,
+                  "temperature_max_c": 33,
+                  "precipitation_mm": 2.9,
+                  "precipitation_probability": null,
+                  "wind_direction_day": "东北风",
+                  "wind_scale_day": 1,
+                  "wind_speed_day_kmh": 13.0,
+                  "humidity_percent": 74,
+                  "uv_index": 6,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain",
+                    "heat"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "evening",
+                    "indoor"
+                  ],
+                  "avoid_periods": [
+                    "midday_outdoor",
+                    "long_outdoor_exposure"
+                  ],
+                  "evidence": {
+                    "provider": "qweather",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "city_id": "shenzhen",
+                    "snapshot_id": "ctp_qweather_20260807_v1",
+                    "source_endpoint": "/v7/weather/30d",
+                    "offline": true,
+                    "real_time_api_allowed": false
+                  },
+                  "provider_raw_fields": {
+                    "fxDate": "2026-09-04",
+                    "tempMin": "26",
+                    "tempMax": "33",
+                    "textDay": "雷阵雨",
+                    "textNight": "雷阵雨",
+                    "windDirDay": "东北风",
+                    "windScaleDay": "1-3",
+                    "windSpeedDay": "13",
+                    "humidity": "74",
+                    "precip": "2.9",
+                    "pop": null,
+                    "uvIndex": "6"
+                  },
+                  "request_day_index": 1
+                },
+                {
+                  "date": "2026-09-05",
+                  "day_index": 2,
+                  "snapshot_day_index": 30,
+                  "state": "rain",
+                  "weather": "雷阵雨",
+                  "day_weather": "雷阵雨",
+                  "night_weather": "雷阵雨",
+                  "temperature_min_c": 26,
+                  "temperature_max_c": 32,
+                  "precipitation_mm": 15.2,
+                  "precipitation_probability": null,
+                  "wind_direction_day": "东北风",
+                  "wind_scale_day": 1,
+                  "wind_speed_day_kmh": 4.0,
+                  "humidity_percent": 73,
+                  "uv_index": 3,
+                  "risk_level": "high",
+                  "risk_tags": [
+                    "rain",
+                    "heavy_rain"
+                  ],
+                  "suitable_periods": [
+                    "indoor",
+                    "short_outdoor_window"
+                  ],
+                  "avoid_periods": [
+                    "long_outdoor_exposure"
+                  ],
+                  "evidence": {
+                    "provider": "qweather",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "city_id": "shenzhen",
+                    "snapshot_id": "ctp_qweather_20260807_v1",
+                    "source_endpoint": "/v7/weather/30d",
+                    "offline": true,
+                    "real_time_api_allowed": false
+                  },
+                  "provider_raw_fields": {
+                    "fxDate": "2026-09-05",
+                    "tempMin": "26",
+                    "tempMax": "32",
+                    "textDay": "雷阵雨",
+                    "textNight": "雷阵雨",
+                    "windDirDay": "东北风",
+                    "windScaleDay": "1-3",
+                    "windSpeedDay": "4",
+                    "humidity": "73",
+                    "precip": "15.2",
+                    "pop": null,
+                    "uvIndex": "3"
+                  },
+                  "request_day_index": 2
+                }
+              ],
+              "daily_forecasts": [
+                {
+                  "date": "2026-09-04",
+                  "day_index": 1,
+                  "snapshot_day_index": 29,
+                  "state": "high_temperature",
+                  "weather": "雷阵雨",
+                  "day_weather": "雷阵雨",
+                  "night_weather": "雷阵雨",
+                  "temperature_min_c": 26,
+                  "temperature_max_c": 33,
+                  "precipitation_mm": 2.9,
+                  "precipitation_probability": null,
+                  "wind_direction_day": "东北风",
+                  "wind_scale_day": 1,
+                  "wind_speed_day_kmh": 13.0,
+                  "humidity_percent": 74,
+                  "uv_index": 6,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain",
+                    "heat"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "evening",
+                    "indoor"
+                  ],
+                  "avoid_periods": [
+                    "midday_outdoor",
+                    "long_outdoor_exposure"
+                  ],
+                  "evidence": {
+                    "provider": "qweather",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "city_id": "shenzhen",
+                    "snapshot_id": "ctp_qweather_20260807_v1",
+                    "source_endpoint": "/v7/weather/30d",
+                    "offline": true,
+                    "real_time_api_allowed": false
+                  },
+                  "provider_raw_fields": {
+                    "fxDate": "2026-09-04",
+                    "tempMin": "26",
+                    "tempMax": "33",
+                    "textDay": "雷阵雨",
+                    "textNight": "雷阵雨",
+                    "windDirDay": "东北风",
+                    "windScaleDay": "1-3",
+                    "windSpeedDay": "13",
+                    "humidity": "74",
+                    "precip": "2.9",
+                    "pop": null,
+                    "uvIndex": "6"
+                  },
+                  "request_day_index": 1
+                },
+                {
+                  "date": "2026-09-05",
+                  "day_index": 2,
+                  "snapshot_day_index": 30,
+                  "state": "rain",
+                  "weather": "雷阵雨",
+                  "day_weather": "雷阵雨",
+                  "night_weather": "雷阵雨",
+                  "temperature_min_c": 26,
+                  "temperature_max_c": 32,
+                  "precipitation_mm": 15.2,
+                  "precipitation_probability": null,
+                  "wind_direction_day": "东北风",
+                  "wind_scale_day": 1,
+                  "wind_speed_day_kmh": 4.0,
+                  "humidity_percent": 73,
+                  "uv_index": 3,
+                  "risk_level": "high",
+                  "risk_tags": [
+                    "rain",
+                    "heavy_rain"
+                  ],
+                  "suitable_periods": [
+                    "indoor",
+                    "short_outdoor_window"
+                  ],
+                  "avoid_periods": [
+                    "long_outdoor_exposure"
+                  ],
+                  "evidence": {
+                    "provider": "qweather",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "city_id": "shenzhen",
+                    "snapshot_id": "ctp_qweather_20260807_v1",
+                    "source_endpoint": "/v7/weather/30d",
+                    "offline": true,
+                    "real_time_api_allowed": false
+                  },
+                  "provider_raw_fields": {
+                    "fxDate": "2026-09-05",
+                    "tempMin": "26",
+                    "tempMax": "32",
+                    "textDay": "雷阵雨",
+                    "textNight": "雷阵雨",
+                    "windDirDay": "东北风",
+                    "windScaleDay": "1-3",
+                    "windSpeedDay": "4",
+                    "humidity": "73",
+                    "precip": "15.2",
+                    "pop": null,
+                    "uvIndex": "3"
+                  },
+                  "request_day_index": 2
+                }
+              ],
+              "forecast": [
+                {
+                  "date": "2026-09-04",
+                  "day_index": 1,
+                  "snapshot_day_index": 29,
+                  "state": "high_temperature",
+                  "weather": "雷阵雨",
+                  "day_weather": "雷阵雨",
+                  "night_weather": "雷阵雨",
+                  "temperature_min_c": 26,
+                  "temperature_max_c": 33,
+                  "precipitation_mm": 2.9,
+                  "precipitation_probability": null,
+                  "wind_direction_day": "东北风",
+                  "wind_scale_day": 1,
+                  "wind_speed_day_kmh": 13.0,
+                  "humidity_percent": 74,
+                  "uv_index": 6,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain",
+                    "heat"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "evening",
+                    "indoor"
+                  ],
+                  "avoid_periods": [
+                    "midday_outdoor",
+                    "long_outdoor_exposure"
+                  ],
+                  "evidence": {
+                    "provider": "qweather",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "city_id": "shenzhen",
+                    "snapshot_id": "ctp_qweather_20260807_v1",
+                    "source_endpoint": "/v7/weather/30d",
+                    "offline": true,
+                    "real_time_api_allowed": false
+                  },
+                  "provider_raw_fields": {
+                    "fxDate": "2026-09-04",
+                    "tempMin": "26",
+                    "tempMax": "33",
+                    "textDay": "雷阵雨",
+                    "textNight": "雷阵雨",
+                    "windDirDay": "东北风",
+                    "windScaleDay": "1-3",
+                    "windSpeedDay": "13",
+                    "humidity": "74",
+                    "precip": "2.9",
+                    "pop": null,
+                    "uvIndex": "6"
+                  },
+                  "request_day_index": 1
+                },
+                {
+                  "date": "2026-09-05",
+                  "day_index": 2,
+                  "snapshot_day_index": 30,
+                  "state": "rain",
+                  "weather": "雷阵雨",
+                  "day_weather": "雷阵雨",
+                  "night_weather": "雷阵雨",
+                  "temperature_min_c": 26,
+                  "temperature_max_c": 32,
+                  "precipitation_mm": 15.2,
+                  "precipitation_probability": null,
+                  "wind_direction_day": "东北风",
+                  "wind_scale_day": 1,
+                  "wind_speed_day_kmh": 4.0,
+                  "humidity_percent": 73,
+                  "uv_index": 3,
+                  "risk_level": "high",
+                  "risk_tags": [
+                    "rain",
+                    "heavy_rain"
+                  ],
+                  "suitable_periods": [
+                    "indoor",
+                    "short_outdoor_window"
+                  ],
+                  "avoid_periods": [
+                    "long_outdoor_exposure"
+                  ],
+                  "evidence": {
+                    "provider": "qweather",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "city_id": "shenzhen",
+                    "snapshot_id": "ctp_qweather_20260807_v1",
+                    "source_endpoint": "/v7/weather/30d",
+                    "offline": true,
+                    "real_time_api_allowed": false
+                  },
+                  "provider_raw_fields": {
+                    "fxDate": "2026-09-05",
+                    "tempMin": "26",
+                    "tempMax": "32",
+                    "textDay": "雷阵雨",
+                    "textNight": "雷阵雨",
+                    "windDirDay": "东北风",
+                    "windScaleDay": "1-3",
+                    "windSpeedDay": "4",
+                    "humidity": "73",
+                    "precip": "15.2",
+                    "pop": null,
+                    "uvIndex": "3"
+                  },
+                  "request_day_index": 2
+                }
+              ],
+              "planning_constraints": {
+                "coverage_status": "partial",
+                "missing_dates": [
+                  "2026-09-06"
+                ],
+                "dynamic_adjustment_required": true,
+                "indoor_backup_recommended": true,
+                "missing_weather_must_not_be_fabricated": true
+              },
+              "weather_adjustment_required": true,
+              "warnings": [
+                "Frozen QWeather snapshot only covers part of the requested trip; missing dates must not be fabricated.",
+                "Missing weather dates: 2026-09-06"
+              ],
+              "applied_rules": [
+                "qweather_frozen_snapshot",
+                "fixed_location_id",
+                "date_range_coverage"
+              ],
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+              "metadata": {
+                "offline": true,
+                "source_mode": "qweather_frozen_snapshot",
+                "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+                "source_file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "snapshot_manifest_path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+                "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+                "forecast_endpoint": "/v7/weather/30d",
+                "forecast_horizon_days": 30,
+                "coverage_status": "partial",
+                "real_time_api_allowed": false,
+                "runtime_online_refresh_allowed": false
+              },
+              "date_defaulted_to_snapshot_start": false
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "qweather_frozen_snapshot",
+              "real_time_api_allowed": false,
+              "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+              "source_file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+              "record_count": 2,
+              "canonical_city_id": "shenzhen",
+              "coverage_status": "partial",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+              "weather_date_mapping_rule": "city_id + requested date range selects rows from frozen QWeather snapshot",
+              "date_defaulted_to_snapshot_start": false
+            }
+          }
+        },
+        "metadata": {
+          "research_method": "single_agent",
+          "output_contract": "ctp-experiment-output-v1",
+          "generation_tool_contract": "ctp-research-tools-v1.0",
+          "method_input_schema_version": "ctp-method-input-v1",
+          "goal_state_slots": {
+            "destination": "shenzhen",
+            "start_date": "2026-09-04",
+            "end_date": "2026-09-06",
+            "duration_days": 3
+          },
+          "result_agents": [],
+          "agent_output_schema_version": "ctp-research-agent-output-v1",
+          "agent_decision_schema_version": "ctp-research-agent-decision-v1",
+          "agent_prompt_version": "ctp-research-agent-prompts-v2",
+          "agent_outputs": {},
+          "agent_decision_audit": {},
+          "single_agent_final_answer_mode": "deterministic_after_tool_evidence"
+        }
+      },
+      "metadata": {
+        "research_method": "single_agent",
+        "output_contract": "ctp-experiment-output-v1",
+        "generation_tool_contract": "ctp-research-tools-v1.0",
+        "method_input_schema_version": "ctp-method-input-v1",
+        "goal_state_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-09-04",
+          "end_date": "2026-09-06",
+          "duration_days": 3
+        },
+        "result_agents": [],
+        "agent_output_schema_version": "ctp-research-agent-output-v1",
+        "agent_decision_schema_version": "ctp-research-agent-decision-v1",
+        "agent_prompt_version": "ctp-research-agent-prompts-v2",
+        "agent_outputs": {},
+        "agent_decision_audit": {},
+        "single_agent_final_answer_mode": "deterministic_after_tool_evidence",
+        "run_audit_schema_version": "ctp-run-audit-v1"
+      }
+    },
+    "constraint_report": {
+      "schema_version": "research_tool_result_v1",
+      "tool_contract_version": "ctp-research-tools-v1.0",
+      "tool_name": "constraint_checker",
+      "status": "success",
+      "success": true,
+      "input": {
+        "request": {
+          "end_date": "2026-09-06",
+          "destination": "shenzhen",
+          "start_date": "2026-09-04",
+          "duration_days": 3,
+          "case_id": "ctp100_v2_034",
+          "user_input": "深圳9月4号到6号天气怎么样？",
+          "city": "shenzhen",
+          "budget": null
+        },
+        "constraints": {
+          "destination": "shenzhen",
+          "start_date": "2026-09-04",
+          "end_date": "2026-09-06",
+          "duration_days": 3
+        }
+      },
+      "data": {
+        "all_passed": true,
+        "applicable_count": 2,
+        "passed_count": 2,
+        "failed_count": 0,
+        "checks": [
+          {
+            "name": "trip_days",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "expected": null,
+              "actual": 0
+            }
+          },
+          {
+            "name": "budget_limit",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "limit": null,
+              "actual": null
+            }
+          },
+          {
+            "name": "weather_adjustment",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "required": true,
+              "adjustment_count": 2
+            }
+          },
+          {
+            "name": "min_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "minimum": null,
+              "actual": 0
+            }
+          },
+          {
+            "name": "max_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "maximum": null,
+              "actual": 0
+            }
+          },
+          {
+            "name": "poi_existence",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "attraction_count": 0
+            }
+          },
+          {
+            "name": "duplicate_attractions",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "attraction_count": 0
+            }
+          },
+          {
+            "name": "must_include_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "required": []
+            }
+          },
+          {
+            "name": "forbidden_pois",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "forbidden": []
+            }
+          },
+          {
+            "name": "rain_attraction_suitability",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "rain_detected": true,
+              "attraction_count": 0
+            }
+          },
+          {
+            "name": "senior_accessibility",
+            "status": "NA",
+            "passed": null,
+            "details": {
+              "senior_request": false
+            }
+          },
+          {
+            "name": "tool_evidence",
+            "status": "passed",
+            "passed": true,
+            "details": {
+              "required": false,
+              "required_tools": [
+                "weather_query"
+              ],
+              "missing_or_failed": []
+            }
+          }
+        ]
+      },
+      "error": null,
+      "metadata": {
+        "offline": true,
+        "source_mode": "deterministic_evaluator",
+        "real_time_api_allowed": false,
+        "contract": "ctp-research-tools-v1.0"
+      }
+    },
+    "hard_constraint_applicable_count": 2,
+    "hard_constraint_passed_count": 2,
+    "hard_constraint_failed_count": 0,
+    "hard_constraints_all_satisfied": true,
+    "hcsr": 1.0,
+    "raw_output": {
+      "schema_version": "ctp-experiment-output-v1",
+      "case_id": "ctp100_v2_034",
+      "method": "single_agent",
+      "task_type": "weather_query",
+      "planned_agents": [
+        "single_agent"
+      ],
+      "used_agents": [
+        "single_agent"
+      ],
+      "planned_tools": [
+        "weather_query"
+      ],
+      "called_tools": [
+        {
+          "tool_name": "weather_query",
+          "status": "completed",
+          "success": true,
+          "arguments": {
+            "city": "shenzhen",
+            "date": "2026-09-04",
+            "days": 3,
+            "scenario_type": "sunny"
+          },
+          "duration_ms": 6.998,
+          "error": null
+        }
+      ],
+      "agent_outputs": {},
+      "attractions": [],
+      "trip_days": 3,
+      "daily_itinerary": [],
+      "budget": null,
+      "weather": {
+        "city": "深圳",
+        "city_id": "shenzhen",
+        "date": "2026-09-04",
+        "start_date": "2026-09-04",
+        "end_date": "2026-09-06",
+        "provider": "qweather_snapshot",
+        "location_id": "101280601",
+        "scenario_type": "high_temperature",
+        "requested_scenario_type": "sunny",
+        "scenario_selection": "qweather_frozen_snapshot_date_range",
+        "weather_type": "high_temperature",
+        "risk_level": "high",
+        "risk_tags": [
+          "rain",
+          "heat",
+          "heavy_rain"
+        ],
+        "requested_days": 3,
+        "coverage_days": 2,
+        "coverage_status": "partial",
+        "covered_dates": [
+          "2026-09-04",
+          "2026-09-05"
+        ],
+        "missing_dates": [
+          "2026-09-06"
+        ],
+        "forecast_start_date": "2026-08-07",
+        "forecast_end_date": "2026-09-05",
+        "snapshot_forecast_start_date": "2026-08-07",
+        "snapshot_forecast_end_date": "2026-09-05",
+        "daily_weather": [
+          {
+            "date": "2026-09-04",
+            "day_index": 1,
+            "snapshot_day_index": 29,
+            "state": "high_temperature",
+            "weather": "雷阵雨",
+            "day_weather": "雷阵雨",
+            "night_weather": "雷阵雨",
+            "temperature_min_c": 26,
+            "temperature_max_c": 33,
+            "precipitation_mm": 2.9,
+            "precipitation_probability": null,
+            "wind_direction_day": "东北风",
+            "wind_scale_day": 1,
+            "wind_speed_day_kmh": 13.0,
+            "humidity_percent": 74,
+            "uv_index": 6,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain",
+              "heat"
+            ],
+            "suitable_periods": [
+              "morning",
+              "evening",
+              "indoor"
+            ],
+            "avoid_periods": [
+              "midday_outdoor",
+              "long_outdoor_exposure"
+            ],
+            "evidence": {
+              "provider": "qweather",
+              "source_mode": "qweather_frozen_snapshot",
+              "city_id": "shenzhen",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "source_endpoint": "/v7/weather/30d",
+              "offline": true,
+              "real_time_api_allowed": false
+            },
+            "provider_raw_fields": {
+              "fxDate": "2026-09-04",
+              "tempMin": "26",
+              "tempMax": "33",
+              "textDay": "雷阵雨",
+              "textNight": "雷阵雨",
+              "windDirDay": "东北风",
+              "windScaleDay": "1-3",
+              "windSpeedDay": "13",
+              "humidity": "74",
+              "precip": "2.9",
+              "pop": null,
+              "uvIndex": "6"
+            },
+            "request_day_index": 1
+          },
+          {
+            "date": "2026-09-05",
+            "day_index": 2,
+            "snapshot_day_index": 30,
+            "state": "rain",
+            "weather": "雷阵雨",
+            "day_weather": "雷阵雨",
+            "night_weather": "雷阵雨",
+            "temperature_min_c": 26,
+            "temperature_max_c": 32,
+            "precipitation_mm": 15.2,
+            "precipitation_probability": null,
+            "wind_direction_day": "东北风",
+            "wind_scale_day": 1,
+            "wind_speed_day_kmh": 4.0,
+            "humidity_percent": 73,
+            "uv_index": 3,
+            "risk_level": "high",
+            "risk_tags": [
+              "rain",
+              "heavy_rain"
+            ],
+            "suitable_periods": [
+              "indoor",
+              "short_outdoor_window"
+            ],
+            "avoid_periods": [
+              "long_outdoor_exposure"
+            ],
+            "evidence": {
+              "provider": "qweather",
+              "source_mode": "qweather_frozen_snapshot",
+              "city_id": "shenzhen",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "source_endpoint": "/v7/weather/30d",
+              "offline": true,
+              "real_time_api_allowed": false
+            },
+            "provider_raw_fields": {
+              "fxDate": "2026-09-05",
+              "tempMin": "26",
+              "tempMax": "32",
+              "textDay": "雷阵雨",
+              "textNight": "雷阵雨",
+              "windDirDay": "东北风",
+              "windScaleDay": "1-3",
+              "windSpeedDay": "4",
+              "humidity": "73",
+              "precip": "15.2",
+              "pop": null,
+              "uvIndex": "3"
+            },
+            "request_day_index": 2
+          }
+        ],
+        "daily_forecasts": [
+          {
+            "date": "2026-09-04",
+            "day_index": 1,
+            "snapshot_day_index": 29,
+            "state": "high_temperature",
+            "weather": "雷阵雨",
+            "day_weather": "雷阵雨",
+            "night_weather": "雷阵雨",
+            "temperature_min_c": 26,
+            "temperature_max_c": 33,
+            "precipitation_mm": 2.9,
+            "precipitation_probability": null,
+            "wind_direction_day": "东北风",
+            "wind_scale_day": 1,
+            "wind_speed_day_kmh": 13.0,
+            "humidity_percent": 74,
+            "uv_index": 6,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain",
+              "heat"
+            ],
+            "suitable_periods": [
+              "morning",
+              "evening",
+              "indoor"
+            ],
+            "avoid_periods": [
+              "midday_outdoor",
+              "long_outdoor_exposure"
+            ],
+            "evidence": {
+              "provider": "qweather",
+              "source_mode": "qweather_frozen_snapshot",
+              "city_id": "shenzhen",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "source_endpoint": "/v7/weather/30d",
+              "offline": true,
+              "real_time_api_allowed": false
+            },
+            "provider_raw_fields": {
+              "fxDate": "2026-09-04",
+              "tempMin": "26",
+              "tempMax": "33",
+              "textDay": "雷阵雨",
+              "textNight": "雷阵雨",
+              "windDirDay": "东北风",
+              "windScaleDay": "1-3",
+              "windSpeedDay": "13",
+              "humidity": "74",
+              "precip": "2.9",
+              "pop": null,
+              "uvIndex": "6"
+            },
+            "request_day_index": 1
+          },
+          {
+            "date": "2026-09-05",
+            "day_index": 2,
+            "snapshot_day_index": 30,
+            "state": "rain",
+            "weather": "雷阵雨",
+            "day_weather": "雷阵雨",
+            "night_weather": "雷阵雨",
+            "temperature_min_c": 26,
+            "temperature_max_c": 32,
+            "precipitation_mm": 15.2,
+            "precipitation_probability": null,
+            "wind_direction_day": "东北风",
+            "wind_scale_day": 1,
+            "wind_speed_day_kmh": 4.0,
+            "humidity_percent": 73,
+            "uv_index": 3,
+            "risk_level": "high",
+            "risk_tags": [
+              "rain",
+              "heavy_rain"
+            ],
+            "suitable_periods": [
+              "indoor",
+              "short_outdoor_window"
+            ],
+            "avoid_periods": [
+              "long_outdoor_exposure"
+            ],
+            "evidence": {
+              "provider": "qweather",
+              "source_mode": "qweather_frozen_snapshot",
+              "city_id": "shenzhen",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "source_endpoint": "/v7/weather/30d",
+              "offline": true,
+              "real_time_api_allowed": false
+            },
+            "provider_raw_fields": {
+              "fxDate": "2026-09-05",
+              "tempMin": "26",
+              "tempMax": "32",
+              "textDay": "雷阵雨",
+              "textNight": "雷阵雨",
+              "windDirDay": "东北风",
+              "windScaleDay": "1-3",
+              "windSpeedDay": "4",
+              "humidity": "73",
+              "precip": "15.2",
+              "pop": null,
+              "uvIndex": "3"
+            },
+            "request_day_index": 2
+          }
+        ],
+        "forecast": [
+          {
+            "date": "2026-09-04",
+            "day_index": 1,
+            "snapshot_day_index": 29,
+            "state": "high_temperature",
+            "weather": "雷阵雨",
+            "day_weather": "雷阵雨",
+            "night_weather": "雷阵雨",
+            "temperature_min_c": 26,
+            "temperature_max_c": 33,
+            "precipitation_mm": 2.9,
+            "precipitation_probability": null,
+            "wind_direction_day": "东北风",
+            "wind_scale_day": 1,
+            "wind_speed_day_kmh": 13.0,
+            "humidity_percent": 74,
+            "uv_index": 6,
+            "risk_level": "medium",
+            "risk_tags": [
+              "rain",
+              "heat"
+            ],
+            "suitable_periods": [
+              "morning",
+              "evening",
+              "indoor"
+            ],
+            "avoid_periods": [
+              "midday_outdoor",
+              "long_outdoor_exposure"
+            ],
+            "evidence": {
+              "provider": "qweather",
+              "source_mode": "qweather_frozen_snapshot",
+              "city_id": "shenzhen",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "source_endpoint": "/v7/weather/30d",
+              "offline": true,
+              "real_time_api_allowed": false
+            },
+            "provider_raw_fields": {
+              "fxDate": "2026-09-04",
+              "tempMin": "26",
+              "tempMax": "33",
+              "textDay": "雷阵雨",
+              "textNight": "雷阵雨",
+              "windDirDay": "东北风",
+              "windScaleDay": "1-3",
+              "windSpeedDay": "13",
+              "humidity": "74",
+              "precip": "2.9",
+              "pop": null,
+              "uvIndex": "6"
+            },
+            "request_day_index": 1
+          },
+          {
+            "date": "2026-09-05",
+            "day_index": 2,
+            "snapshot_day_index": 30,
+            "state": "rain",
+            "weather": "雷阵雨",
+            "day_weather": "雷阵雨",
+            "night_weather": "雷阵雨",
+            "temperature_min_c": 26,
+            "temperature_max_c": 32,
+            "precipitation_mm": 15.2,
+            "precipitation_probability": null,
+            "wind_direction_day": "东北风",
+            "wind_scale_day": 1,
+            "wind_speed_day_kmh": 4.0,
+            "humidity_percent": 73,
+            "uv_index": 3,
+            "risk_level": "high",
+            "risk_tags": [
+              "rain",
+              "heavy_rain"
+            ],
+            "suitable_periods": [
+              "indoor",
+              "short_outdoor_window"
+            ],
+            "avoid_periods": [
+              "long_outdoor_exposure"
+            ],
+            "evidence": {
+              "provider": "qweather",
+              "source_mode": "qweather_frozen_snapshot",
+              "city_id": "shenzhen",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "source_endpoint": "/v7/weather/30d",
+              "offline": true,
+              "real_time_api_allowed": false
+            },
+            "provider_raw_fields": {
+              "fxDate": "2026-09-05",
+              "tempMin": "26",
+              "tempMax": "32",
+              "textDay": "雷阵雨",
+              "textNight": "雷阵雨",
+              "windDirDay": "东北风",
+              "windScaleDay": "1-3",
+              "windSpeedDay": "4",
+              "humidity": "73",
+              "precip": "15.2",
+              "pop": null,
+              "uvIndex": "3"
+            },
+            "request_day_index": 2
+          }
+        ],
+        "planning_constraints": {
+          "coverage_status": "partial",
+          "missing_dates": [
+            "2026-09-06"
+          ],
+          "dynamic_adjustment_required": true,
+          "indoor_backup_recommended": true,
+          "missing_weather_must_not_be_fabricated": true
+        },
+        "weather_adjustment_required": true,
+        "warnings": [
+          "Frozen QWeather snapshot only covers part of the requested trip; missing dates must not be fabricated.",
+          "Missing weather dates: 2026-09-06"
+        ],
+        "applied_rules": [
+          "qweather_frozen_snapshot",
+          "fixed_location_id",
+          "date_range_coverage"
+        ],
+        "snapshot_id": "ctp_qweather_20260807_v1",
+        "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+        "metadata": {
+          "offline": true,
+          "source_mode": "qweather_frozen_snapshot",
+          "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+          "source_file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+          "snapshot_id": "ctp_qweather_20260807_v1",
+          "snapshot_manifest_path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+          "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+          "forecast_endpoint": "/v7/weather/30d",
+          "forecast_horizon_days": 30,
+          "coverage_status": "partial",
+          "real_time_api_allowed": false,
+          "runtime_online_refresh_allowed": false
+        },
+        "date_defaulted_to_snapshot_start": false
+      },
+      "weather_adjustments": [
+        {
+          "day": 1,
+          "day_index": 1,
+          "reason": "high_temperature",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        },
+        {
+          "day": 2,
+          "day_index": 2,
+          "reason": "high_temperature",
+          "action": "减少长时间户外活动，优先安排室内或低风险景点",
+          "candidate_indoor_pois": []
+        }
+      ],
+      "execution_status": "completed",
+      "final_answer": "天气证据：QWeather冻结快照，覆盖状态 partial，天气类型 high_temperature、rain\n天气覆盖说明：请求日期 2026-09-04 至 2026-09-06；快照覆盖 2026-08-07 至 2026-09-05；缺失日期：2026-09-06。\n超出或缺失的日期不能提供逐日天气；系统不编造范围外天气。",
+      "raw_output": {
+        "task_type": "weather_query",
+        "planned_agents": [
+          "single_agent"
+        ],
+        "used_agents": [
+          "single_agent"
+        ],
+        "planned_tools": [
+          "weather_query"
+        ],
+        "called_tools": [
+          {
+            "tool_name": "weather_query",
+            "status": "completed",
+            "success": true,
+            "arguments": {
+              "city": "shenzhen",
+              "date": "2026-09-04",
+              "days": 3,
+              "scenario_type": "sunny"
+            },
+            "duration_ms": 6.998,
+            "error": null
+          }
+        ],
+        "agent_outputs": {},
+        "attractions": [],
+        "trip_days": 3,
+        "daily_itinerary": [],
+        "budget": null,
+        "weather": {
+          "city": "深圳",
+          "city_id": "shenzhen",
+          "date": "2026-09-04",
+          "start_date": "2026-09-04",
+          "end_date": "2026-09-06",
+          "provider": "qweather_snapshot",
+          "location_id": "101280601",
+          "scenario_type": "high_temperature",
+          "requested_scenario_type": "sunny",
+          "scenario_selection": "qweather_frozen_snapshot_date_range",
+          "weather_type": "high_temperature",
+          "risk_level": "high",
+          "risk_tags": [
+            "rain",
+            "heat",
+            "heavy_rain"
+          ],
+          "requested_days": 3,
+          "coverage_days": 2,
+          "coverage_status": "partial",
+          "covered_dates": [
+            "2026-09-04",
+            "2026-09-05"
+          ],
+          "missing_dates": [
+            "2026-09-06"
+          ],
+          "forecast_start_date": "2026-08-07",
+          "forecast_end_date": "2026-09-05",
+          "snapshot_forecast_start_date": "2026-08-07",
+          "snapshot_forecast_end_date": "2026-09-05",
+          "daily_weather": [
+            {
+              "date": "2026-09-04",
+              "day_index": 1,
+              "snapshot_day_index": 29,
+              "state": "high_temperature",
+              "weather": "雷阵雨",
+              "day_weather": "雷阵雨",
+              "night_weather": "雷阵雨",
+              "temperature_min_c": 26,
+              "temperature_max_c": 33,
+              "precipitation_mm": 2.9,
+              "precipitation_probability": null,
+              "wind_direction_day": "东北风",
+              "wind_scale_day": 1,
+              "wind_speed_day_kmh": 13.0,
+              "humidity_percent": 74,
+              "uv_index": 6,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain",
+                "heat"
+              ],
+              "suitable_periods": [
+                "morning",
+                "evening",
+                "indoor"
+              ],
+              "avoid_periods": [
+                "midday_outdoor",
+                "long_outdoor_exposure"
+              ],
+              "evidence": {
+                "provider": "qweather",
+                "source_mode": "qweather_frozen_snapshot",
+                "city_id": "shenzhen",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "source_endpoint": "/v7/weather/30d",
+                "offline": true,
+                "real_time_api_allowed": false
+              },
+              "provider_raw_fields": {
+                "fxDate": "2026-09-04",
+                "tempMin": "26",
+                "tempMax": "33",
+                "textDay": "雷阵雨",
+                "textNight": "雷阵雨",
+                "windDirDay": "东北风",
+                "windScaleDay": "1-3",
+                "windSpeedDay": "13",
+                "humidity": "74",
+                "precip": "2.9",
+                "pop": null,
+                "uvIndex": "6"
+              },
+              "request_day_index": 1
+            },
+            {
+              "date": "2026-09-05",
+              "day_index": 2,
+              "snapshot_day_index": 30,
+              "state": "rain",
+              "weather": "雷阵雨",
+              "day_weather": "雷阵雨",
+              "night_weather": "雷阵雨",
+              "temperature_min_c": 26,
+              "temperature_max_c": 32,
+              "precipitation_mm": 15.2,
+              "precipitation_probability": null,
+              "wind_direction_day": "东北风",
+              "wind_scale_day": 1,
+              "wind_speed_day_kmh": 4.0,
+              "humidity_percent": 73,
+              "uv_index": 3,
+              "risk_level": "high",
+              "risk_tags": [
+                "rain",
+                "heavy_rain"
+              ],
+              "suitable_periods": [
+                "indoor",
+                "short_outdoor_window"
+              ],
+              "avoid_periods": [
+                "long_outdoor_exposure"
+              ],
+              "evidence": {
+                "provider": "qweather",
+                "source_mode": "qweather_frozen_snapshot",
+                "city_id": "shenzhen",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "source_endpoint": "/v7/weather/30d",
+                "offline": true,
+                "real_time_api_allowed": false
+              },
+              "provider_raw_fields": {
+                "fxDate": "2026-09-05",
+                "tempMin": "26",
+                "tempMax": "32",
+                "textDay": "雷阵雨",
+                "textNight": "雷阵雨",
+                "windDirDay": "东北风",
+                "windScaleDay": "1-3",
+                "windSpeedDay": "4",
+                "humidity": "73",
+                "precip": "15.2",
+                "pop": null,
+                "uvIndex": "3"
+              },
+              "request_day_index": 2
+            }
+          ],
+          "daily_forecasts": [
+            {
+              "date": "2026-09-04",
+              "day_index": 1,
+              "snapshot_day_index": 29,
+              "state": "high_temperature",
+              "weather": "雷阵雨",
+              "day_weather": "雷阵雨",
+              "night_weather": "雷阵雨",
+              "temperature_min_c": 26,
+              "temperature_max_c": 33,
+              "precipitation_mm": 2.9,
+              "precipitation_probability": null,
+              "wind_direction_day": "东北风",
+              "wind_scale_day": 1,
+              "wind_speed_day_kmh": 13.0,
+              "humidity_percent": 74,
+              "uv_index": 6,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain",
+                "heat"
+              ],
+              "suitable_periods": [
+                "morning",
+                "evening",
+                "indoor"
+              ],
+              "avoid_periods": [
+                "midday_outdoor",
+                "long_outdoor_exposure"
+              ],
+              "evidence": {
+                "provider": "qweather",
+                "source_mode": "qweather_frozen_snapshot",
+                "city_id": "shenzhen",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "source_endpoint": "/v7/weather/30d",
+                "offline": true,
+                "real_time_api_allowed": false
+              },
+              "provider_raw_fields": {
+                "fxDate": "2026-09-04",
+                "tempMin": "26",
+                "tempMax": "33",
+                "textDay": "雷阵雨",
+                "textNight": "雷阵雨",
+                "windDirDay": "东北风",
+                "windScaleDay": "1-3",
+                "windSpeedDay": "13",
+                "humidity": "74",
+                "precip": "2.9",
+                "pop": null,
+                "uvIndex": "6"
+              },
+              "request_day_index": 1
+            },
+            {
+              "date": "2026-09-05",
+              "day_index": 2,
+              "snapshot_day_index": 30,
+              "state": "rain",
+              "weather": "雷阵雨",
+              "day_weather": "雷阵雨",
+              "night_weather": "雷阵雨",
+              "temperature_min_c": 26,
+              "temperature_max_c": 32,
+              "precipitation_mm": 15.2,
+              "precipitation_probability": null,
+              "wind_direction_day": "东北风",
+              "wind_scale_day": 1,
+              "wind_speed_day_kmh": 4.0,
+              "humidity_percent": 73,
+              "uv_index": 3,
+              "risk_level": "high",
+              "risk_tags": [
+                "rain",
+                "heavy_rain"
+              ],
+              "suitable_periods": [
+                "indoor",
+                "short_outdoor_window"
+              ],
+              "avoid_periods": [
+                "long_outdoor_exposure"
+              ],
+              "evidence": {
+                "provider": "qweather",
+                "source_mode": "qweather_frozen_snapshot",
+                "city_id": "shenzhen",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "source_endpoint": "/v7/weather/30d",
+                "offline": true,
+                "real_time_api_allowed": false
+              },
+              "provider_raw_fields": {
+                "fxDate": "2026-09-05",
+                "tempMin": "26",
+                "tempMax": "32",
+                "textDay": "雷阵雨",
+                "textNight": "雷阵雨",
+                "windDirDay": "东北风",
+                "windScaleDay": "1-3",
+                "windSpeedDay": "4",
+                "humidity": "73",
+                "precip": "15.2",
+                "pop": null,
+                "uvIndex": "3"
+              },
+              "request_day_index": 2
+            }
+          ],
+          "forecast": [
+            {
+              "date": "2026-09-04",
+              "day_index": 1,
+              "snapshot_day_index": 29,
+              "state": "high_temperature",
+              "weather": "雷阵雨",
+              "day_weather": "雷阵雨",
+              "night_weather": "雷阵雨",
+              "temperature_min_c": 26,
+              "temperature_max_c": 33,
+              "precipitation_mm": 2.9,
+              "precipitation_probability": null,
+              "wind_direction_day": "东北风",
+              "wind_scale_day": 1,
+              "wind_speed_day_kmh": 13.0,
+              "humidity_percent": 74,
+              "uv_index": 6,
+              "risk_level": "medium",
+              "risk_tags": [
+                "rain",
+                "heat"
+              ],
+              "suitable_periods": [
+                "morning",
+                "evening",
+                "indoor"
+              ],
+              "avoid_periods": [
+                "midday_outdoor",
+                "long_outdoor_exposure"
+              ],
+              "evidence": {
+                "provider": "qweather",
+                "source_mode": "qweather_frozen_snapshot",
+                "city_id": "shenzhen",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "source_endpoint": "/v7/weather/30d",
+                "offline": true,
+                "real_time_api_allowed": false
+              },
+              "provider_raw_fields": {
+                "fxDate": "2026-09-04",
+                "tempMin": "26",
+                "tempMax": "33",
+                "textDay": "雷阵雨",
+                "textNight": "雷阵雨",
+                "windDirDay": "东北风",
+                "windScaleDay": "1-3",
+                "windSpeedDay": "13",
+                "humidity": "74",
+                "precip": "2.9",
+                "pop": null,
+                "uvIndex": "6"
+              },
+              "request_day_index": 1
+            },
+            {
+              "date": "2026-09-05",
+              "day_index": 2,
+              "snapshot_day_index": 30,
+              "state": "rain",
+              "weather": "雷阵雨",
+              "day_weather": "雷阵雨",
+              "night_weather": "雷阵雨",
+              "temperature_min_c": 26,
+              "temperature_max_c": 32,
+              "precipitation_mm": 15.2,
+              "precipitation_probability": null,
+              "wind_direction_day": "东北风",
+              "wind_scale_day": 1,
+              "wind_speed_day_kmh": 4.0,
+              "humidity_percent": 73,
+              "uv_index": 3,
+              "risk_level": "high",
+              "risk_tags": [
+                "rain",
+                "heavy_rain"
+              ],
+              "suitable_periods": [
+                "indoor",
+                "short_outdoor_window"
+              ],
+              "avoid_periods": [
+                "long_outdoor_exposure"
+              ],
+              "evidence": {
+                "provider": "qweather",
+                "source_mode": "qweather_frozen_snapshot",
+                "city_id": "shenzhen",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "source_endpoint": "/v7/weather/30d",
+                "offline": true,
+                "real_time_api_allowed": false
+              },
+              "provider_raw_fields": {
+                "fxDate": "2026-09-05",
+                "tempMin": "26",
+                "tempMax": "32",
+                "textDay": "雷阵雨",
+                "textNight": "雷阵雨",
+                "windDirDay": "东北风",
+                "windScaleDay": "1-3",
+                "windSpeedDay": "4",
+                "humidity": "73",
+                "precip": "15.2",
+                "pop": null,
+                "uvIndex": "3"
+              },
+              "request_day_index": 2
+            }
+          ],
+          "planning_constraints": {
+            "coverage_status": "partial",
+            "missing_dates": [
+              "2026-09-06"
+            ],
+            "dynamic_adjustment_required": true,
+            "indoor_backup_recommended": true,
+            "missing_weather_must_not_be_fabricated": true
+          },
+          "weather_adjustment_required": true,
+          "warnings": [
+            "Frozen QWeather snapshot only covers part of the requested trip; missing dates must not be fabricated.",
+            "Missing weather dates: 2026-09-06"
+          ],
+          "applied_rules": [
+            "qweather_frozen_snapshot",
+            "fixed_location_id",
+            "date_range_coverage"
+          ],
+          "snapshot_id": "ctp_qweather_20260807_v1",
+          "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+          "metadata": {
+            "offline": true,
+            "source_mode": "qweather_frozen_snapshot",
+            "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+            "source_file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+            "snapshot_id": "ctp_qweather_20260807_v1",
+            "snapshot_manifest_path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+            "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+            "forecast_endpoint": "/v7/weather/30d",
+            "forecast_horizon_days": 30,
+            "coverage_status": "partial",
+            "real_time_api_allowed": false,
+            "runtime_online_refresh_allowed": false
+          },
+          "date_defaulted_to_snapshot_start": false
+        },
+        "weather_adjustments": [
+          {
+            "day": 1,
+            "day_index": 1,
+            "reason": "high_temperature",
+            "action": "减少长时间户外活动，优先安排室内或低风险景点",
+            "candidate_indoor_pois": []
+          },
+          {
+            "day": 2,
+            "day_index": 2,
+            "reason": "high_temperature",
+            "action": "减少长时间户外活动，优先安排室内或低风险景点",
+            "candidate_indoor_pois": []
+          }
+        ],
+        "execution_status": "completed",
+        "final_answer": "天气证据：QWeather冻结快照，覆盖状态 partial，天气类型 high_temperature、rain\n天气覆盖说明：请求日期 2026-09-04 至 2026-09-06；快照覆盖 2026-08-07 至 2026-09-05；缺失日期：2026-09-06。\n超出或缺失的日期不能提供逐日天气；系统不编造范围外天气。",
+        "tool_results": {
+          "weather_query": {
+            "schema_version": "research_tool_result_v1",
+            "tool_contract_version": "ctp-research-tools-v1.0",
+            "tool_name": "weather_query",
+            "status": "success",
+            "success": true,
+            "input": {
+              "city": "shenzhen",
+              "date": "2026-09-04",
+              "days": 3,
+              "scenario_type": "sunny",
+              "date_defaulted_to_snapshot_start": false
+            },
+            "data": {
+              "city": "深圳",
+              "city_id": "shenzhen",
+              "date": "2026-09-04",
+              "start_date": "2026-09-04",
+              "end_date": "2026-09-06",
+              "provider": "qweather_snapshot",
+              "location_id": "101280601",
+              "scenario_type": "high_temperature",
+              "requested_scenario_type": "sunny",
+              "scenario_selection": "qweather_frozen_snapshot_date_range",
+              "weather_type": "high_temperature",
+              "risk_level": "high",
+              "risk_tags": [
+                "rain",
+                "heat",
+                "heavy_rain"
+              ],
+              "requested_days": 3,
+              "coverage_days": 2,
+              "coverage_status": "partial",
+              "covered_dates": [
+                "2026-09-04",
+                "2026-09-05"
+              ],
+              "missing_dates": [
+                "2026-09-06"
+              ],
+              "forecast_start_date": "2026-08-07",
+              "forecast_end_date": "2026-09-05",
+              "snapshot_forecast_start_date": "2026-08-07",
+              "snapshot_forecast_end_date": "2026-09-05",
+              "daily_weather": [
+                {
+                  "date": "2026-09-04",
+                  "day_index": 1,
+                  "snapshot_day_index": 29,
+                  "state": "high_temperature",
+                  "weather": "雷阵雨",
+                  "day_weather": "雷阵雨",
+                  "night_weather": "雷阵雨",
+                  "temperature_min_c": 26,
+                  "temperature_max_c": 33,
+                  "precipitation_mm": 2.9,
+                  "precipitation_probability": null,
+                  "wind_direction_day": "东北风",
+                  "wind_scale_day": 1,
+                  "wind_speed_day_kmh": 13.0,
+                  "humidity_percent": 74,
+                  "uv_index": 6,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain",
+                    "heat"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "evening",
+                    "indoor"
+                  ],
+                  "avoid_periods": [
+                    "midday_outdoor",
+                    "long_outdoor_exposure"
+                  ],
+                  "evidence": {
+                    "provider": "qweather",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "city_id": "shenzhen",
+                    "snapshot_id": "ctp_qweather_20260807_v1",
+                    "source_endpoint": "/v7/weather/30d",
+                    "offline": true,
+                    "real_time_api_allowed": false
+                  },
+                  "provider_raw_fields": {
+                    "fxDate": "2026-09-04",
+                    "tempMin": "26",
+                    "tempMax": "33",
+                    "textDay": "雷阵雨",
+                    "textNight": "雷阵雨",
+                    "windDirDay": "东北风",
+                    "windScaleDay": "1-3",
+                    "windSpeedDay": "13",
+                    "humidity": "74",
+                    "precip": "2.9",
+                    "pop": null,
+                    "uvIndex": "6"
+                  },
+                  "request_day_index": 1
+                },
+                {
+                  "date": "2026-09-05",
+                  "day_index": 2,
+                  "snapshot_day_index": 30,
+                  "state": "rain",
+                  "weather": "雷阵雨",
+                  "day_weather": "雷阵雨",
+                  "night_weather": "雷阵雨",
+                  "temperature_min_c": 26,
+                  "temperature_max_c": 32,
+                  "precipitation_mm": 15.2,
+                  "precipitation_probability": null,
+                  "wind_direction_day": "东北风",
+                  "wind_scale_day": 1,
+                  "wind_speed_day_kmh": 4.0,
+                  "humidity_percent": 73,
+                  "uv_index": 3,
+                  "risk_level": "high",
+                  "risk_tags": [
+                    "rain",
+                    "heavy_rain"
+                  ],
+                  "suitable_periods": [
+                    "indoor",
+                    "short_outdoor_window"
+                  ],
+                  "avoid_periods": [
+                    "long_outdoor_exposure"
+                  ],
+                  "evidence": {
+                    "provider": "qweather",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "city_id": "shenzhen",
+                    "snapshot_id": "ctp_qweather_20260807_v1",
+                    "source_endpoint": "/v7/weather/30d",
+                    "offline": true,
+                    "real_time_api_allowed": false
+                  },
+                  "provider_raw_fields": {
+                    "fxDate": "2026-09-05",
+                    "tempMin": "26",
+                    "tempMax": "32",
+                    "textDay": "雷阵雨",
+                    "textNight": "雷阵雨",
+                    "windDirDay": "东北风",
+                    "windScaleDay": "1-3",
+                    "windSpeedDay": "4",
+                    "humidity": "73",
+                    "precip": "15.2",
+                    "pop": null,
+                    "uvIndex": "3"
+                  },
+                  "request_day_index": 2
+                }
+              ],
+              "daily_forecasts": [
+                {
+                  "date": "2026-09-04",
+                  "day_index": 1,
+                  "snapshot_day_index": 29,
+                  "state": "high_temperature",
+                  "weather": "雷阵雨",
+                  "day_weather": "雷阵雨",
+                  "night_weather": "雷阵雨",
+                  "temperature_min_c": 26,
+                  "temperature_max_c": 33,
+                  "precipitation_mm": 2.9,
+                  "precipitation_probability": null,
+                  "wind_direction_day": "东北风",
+                  "wind_scale_day": 1,
+                  "wind_speed_day_kmh": 13.0,
+                  "humidity_percent": 74,
+                  "uv_index": 6,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain",
+                    "heat"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "evening",
+                    "indoor"
+                  ],
+                  "avoid_periods": [
+                    "midday_outdoor",
+                    "long_outdoor_exposure"
+                  ],
+                  "evidence": {
+                    "provider": "qweather",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "city_id": "shenzhen",
+                    "snapshot_id": "ctp_qweather_20260807_v1",
+                    "source_endpoint": "/v7/weather/30d",
+                    "offline": true,
+                    "real_time_api_allowed": false
+                  },
+                  "provider_raw_fields": {
+                    "fxDate": "2026-09-04",
+                    "tempMin": "26",
+                    "tempMax": "33",
+                    "textDay": "雷阵雨",
+                    "textNight": "雷阵雨",
+                    "windDirDay": "东北风",
+                    "windScaleDay": "1-3",
+                    "windSpeedDay": "13",
+                    "humidity": "74",
+                    "precip": "2.9",
+                    "pop": null,
+                    "uvIndex": "6"
+                  },
+                  "request_day_index": 1
+                },
+                {
+                  "date": "2026-09-05",
+                  "day_index": 2,
+                  "snapshot_day_index": 30,
+                  "state": "rain",
+                  "weather": "雷阵雨",
+                  "day_weather": "雷阵雨",
+                  "night_weather": "雷阵雨",
+                  "temperature_min_c": 26,
+                  "temperature_max_c": 32,
+                  "precipitation_mm": 15.2,
+                  "precipitation_probability": null,
+                  "wind_direction_day": "东北风",
+                  "wind_scale_day": 1,
+                  "wind_speed_day_kmh": 4.0,
+                  "humidity_percent": 73,
+                  "uv_index": 3,
+                  "risk_level": "high",
+                  "risk_tags": [
+                    "rain",
+                    "heavy_rain"
+                  ],
+                  "suitable_periods": [
+                    "indoor",
+                    "short_outdoor_window"
+                  ],
+                  "avoid_periods": [
+                    "long_outdoor_exposure"
+                  ],
+                  "evidence": {
+                    "provider": "qweather",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "city_id": "shenzhen",
+                    "snapshot_id": "ctp_qweather_20260807_v1",
+                    "source_endpoint": "/v7/weather/30d",
+                    "offline": true,
+                    "real_time_api_allowed": false
+                  },
+                  "provider_raw_fields": {
+                    "fxDate": "2026-09-05",
+                    "tempMin": "26",
+                    "tempMax": "32",
+                    "textDay": "雷阵雨",
+                    "textNight": "雷阵雨",
+                    "windDirDay": "东北风",
+                    "windScaleDay": "1-3",
+                    "windSpeedDay": "4",
+                    "humidity": "73",
+                    "precip": "15.2",
+                    "pop": null,
+                    "uvIndex": "3"
+                  },
+                  "request_day_index": 2
+                }
+              ],
+              "forecast": [
+                {
+                  "date": "2026-09-04",
+                  "day_index": 1,
+                  "snapshot_day_index": 29,
+                  "state": "high_temperature",
+                  "weather": "雷阵雨",
+                  "day_weather": "雷阵雨",
+                  "night_weather": "雷阵雨",
+                  "temperature_min_c": 26,
+                  "temperature_max_c": 33,
+                  "precipitation_mm": 2.9,
+                  "precipitation_probability": null,
+                  "wind_direction_day": "东北风",
+                  "wind_scale_day": 1,
+                  "wind_speed_day_kmh": 13.0,
+                  "humidity_percent": 74,
+                  "uv_index": 6,
+                  "risk_level": "medium",
+                  "risk_tags": [
+                    "rain",
+                    "heat"
+                  ],
+                  "suitable_periods": [
+                    "morning",
+                    "evening",
+                    "indoor"
+                  ],
+                  "avoid_periods": [
+                    "midday_outdoor",
+                    "long_outdoor_exposure"
+                  ],
+                  "evidence": {
+                    "provider": "qweather",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "city_id": "shenzhen",
+                    "snapshot_id": "ctp_qweather_20260807_v1",
+                    "source_endpoint": "/v7/weather/30d",
+                    "offline": true,
+                    "real_time_api_allowed": false
+                  },
+                  "provider_raw_fields": {
+                    "fxDate": "2026-09-04",
+                    "tempMin": "26",
+                    "tempMax": "33",
+                    "textDay": "雷阵雨",
+                    "textNight": "雷阵雨",
+                    "windDirDay": "东北风",
+                    "windScaleDay": "1-3",
+                    "windSpeedDay": "13",
+                    "humidity": "74",
+                    "precip": "2.9",
+                    "pop": null,
+                    "uvIndex": "6"
+                  },
+                  "request_day_index": 1
+                },
+                {
+                  "date": "2026-09-05",
+                  "day_index": 2,
+                  "snapshot_day_index": 30,
+                  "state": "rain",
+                  "weather": "雷阵雨",
+                  "day_weather": "雷阵雨",
+                  "night_weather": "雷阵雨",
+                  "temperature_min_c": 26,
+                  "temperature_max_c": 32,
+                  "precipitation_mm": 15.2,
+                  "precipitation_probability": null,
+                  "wind_direction_day": "东北风",
+                  "wind_scale_day": 1,
+                  "wind_speed_day_kmh": 4.0,
+                  "humidity_percent": 73,
+                  "uv_index": 3,
+                  "risk_level": "high",
+                  "risk_tags": [
+                    "rain",
+                    "heavy_rain"
+                  ],
+                  "suitable_periods": [
+                    "indoor",
+                    "short_outdoor_window"
+                  ],
+                  "avoid_periods": [
+                    "long_outdoor_exposure"
+                  ],
+                  "evidence": {
+                    "provider": "qweather",
+                    "source_mode": "qweather_frozen_snapshot",
+                    "city_id": "shenzhen",
+                    "snapshot_id": "ctp_qweather_20260807_v1",
+                    "source_endpoint": "/v7/weather/30d",
+                    "offline": true,
+                    "real_time_api_allowed": false
+                  },
+                  "provider_raw_fields": {
+                    "fxDate": "2026-09-05",
+                    "tempMin": "26",
+                    "tempMax": "32",
+                    "textDay": "雷阵雨",
+                    "textNight": "雷阵雨",
+                    "windDirDay": "东北风",
+                    "windScaleDay": "1-3",
+                    "windSpeedDay": "4",
+                    "humidity": "73",
+                    "precip": "15.2",
+                    "pop": null,
+                    "uvIndex": "3"
+                  },
+                  "request_day_index": 2
+                }
+              ],
+              "planning_constraints": {
+                "coverage_status": "partial",
+                "missing_dates": [
+                  "2026-09-06"
+                ],
+                "dynamic_adjustment_required": true,
+                "indoor_backup_recommended": true,
+                "missing_weather_must_not_be_fabricated": true
+              },
+              "weather_adjustment_required": true,
+              "warnings": [
+                "Frozen QWeather snapshot only covers part of the requested trip; missing dates must not be fabricated.",
+                "Missing weather dates: 2026-09-06"
+              ],
+              "applied_rules": [
+                "qweather_frozen_snapshot",
+                "fixed_location_id",
+                "date_range_coverage"
+              ],
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+              "metadata": {
+                "offline": true,
+                "source_mode": "qweather_frozen_snapshot",
+                "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+                "source_file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+                "snapshot_id": "ctp_qweather_20260807_v1",
+                "snapshot_manifest_path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+                "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+                "forecast_endpoint": "/v7/weather/30d",
+                "forecast_horizon_days": 30,
+                "coverage_status": "partial",
+                "real_time_api_allowed": false,
+                "runtime_online_refresh_allowed": false
+              },
+              "date_defaulted_to_snapshot_start": false
+            },
+            "error": null,
+            "metadata": {
+              "offline": true,
+              "source_mode": "qweather_frozen_snapshot",
+              "real_time_api_allowed": false,
+              "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+              "source_file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+              "record_count": 2,
+              "canonical_city_id": "shenzhen",
+              "coverage_status": "partial",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+              "weather_date_mapping_rule": "city_id + requested date range selects rows from frozen QWeather snapshot",
+              "date_defaulted_to_snapshot_start": false
+            }
+          }
+        },
+        "metadata": {
+          "research_method": "single_agent",
+          "output_contract": "ctp-experiment-output-v1",
+          "generation_tool_contract": "ctp-research-tools-v1.0",
+          "method_input_schema_version": "ctp-method-input-v1",
+          "goal_state_slots": {
+            "destination": "shenzhen",
+            "start_date": "2026-09-04",
+            "end_date": "2026-09-06",
+            "duration_days": 3
+          },
+          "result_agents": [],
+          "agent_output_schema_version": "ctp-research-agent-output-v1",
+          "agent_decision_schema_version": "ctp-research-agent-decision-v1",
+          "agent_prompt_version": "ctp-research-agent-prompts-v2",
+          "agent_outputs": {},
+          "agent_decision_audit": {},
+          "single_agent_final_answer_mode": "deterministic_after_tool_evidence"
+        }
+      },
+      "tool_results": {
+        "weather_query": {
+          "schema_version": "research_tool_result_v1",
+          "tool_contract_version": "ctp-research-tools-v1.0",
+          "tool_name": "weather_query",
+          "status": "success",
+          "success": true,
+          "input": {
+            "city": "shenzhen",
+            "date": "2026-09-04",
+            "days": 3,
+            "scenario_type": "sunny",
+            "date_defaulted_to_snapshot_start": false
+          },
+          "data": {
+            "city": "深圳",
+            "city_id": "shenzhen",
+            "date": "2026-09-04",
+            "start_date": "2026-09-04",
+            "end_date": "2026-09-06",
+            "provider": "qweather_snapshot",
+            "location_id": "101280601",
+            "scenario_type": "high_temperature",
+            "requested_scenario_type": "sunny",
+            "scenario_selection": "qweather_frozen_snapshot_date_range",
+            "weather_type": "high_temperature",
+            "risk_level": "high",
+            "risk_tags": [
+              "rain",
+              "heat",
+              "heavy_rain"
+            ],
+            "requested_days": 3,
+            "coverage_days": 2,
+            "coverage_status": "partial",
+            "covered_dates": [
+              "2026-09-04",
+              "2026-09-05"
+            ],
+            "missing_dates": [
+              "2026-09-06"
+            ],
+            "forecast_start_date": "2026-08-07",
+            "forecast_end_date": "2026-09-05",
+            "snapshot_forecast_start_date": "2026-08-07",
+            "snapshot_forecast_end_date": "2026-09-05",
+            "daily_weather": [
+              {
+                "date": "2026-09-04",
+                "day_index": 1,
+                "snapshot_day_index": 29,
+                "state": "high_temperature",
+                "weather": "雷阵雨",
+                "day_weather": "雷阵雨",
+                "night_weather": "雷阵雨",
+                "temperature_min_c": 26,
+                "temperature_max_c": 33,
+                "precipitation_mm": 2.9,
+                "precipitation_probability": null,
+                "wind_direction_day": "东北风",
+                "wind_scale_day": 1,
+                "wind_speed_day_kmh": 13.0,
+                "humidity_percent": 74,
+                "uv_index": 6,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain",
+                  "heat"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "evening",
+                  "indoor"
+                ],
+                "avoid_periods": [
+                  "midday_outdoor",
+                  "long_outdoor_exposure"
+                ],
+                "evidence": {
+                  "provider": "qweather",
+                  "source_mode": "qweather_frozen_snapshot",
+                  "city_id": "shenzhen",
+                  "snapshot_id": "ctp_qweather_20260807_v1",
+                  "source_endpoint": "/v7/weather/30d",
+                  "offline": true,
+                  "real_time_api_allowed": false
+                },
+                "provider_raw_fields": {
+                  "fxDate": "2026-09-04",
+                  "tempMin": "26",
+                  "tempMax": "33",
+                  "textDay": "雷阵雨",
+                  "textNight": "雷阵雨",
+                  "windDirDay": "东北风",
+                  "windScaleDay": "1-3",
+                  "windSpeedDay": "13",
+                  "humidity": "74",
+                  "precip": "2.9",
+                  "pop": null,
+                  "uvIndex": "6"
+                },
+                "request_day_index": 1
+              },
+              {
+                "date": "2026-09-05",
+                "day_index": 2,
+                "snapshot_day_index": 30,
+                "state": "rain",
+                "weather": "雷阵雨",
+                "day_weather": "雷阵雨",
+                "night_weather": "雷阵雨",
+                "temperature_min_c": 26,
+                "temperature_max_c": 32,
+                "precipitation_mm": 15.2,
+                "precipitation_probability": null,
+                "wind_direction_day": "东北风",
+                "wind_scale_day": 1,
+                "wind_speed_day_kmh": 4.0,
+                "humidity_percent": 73,
+                "uv_index": 3,
+                "risk_level": "high",
+                "risk_tags": [
+                  "rain",
+                  "heavy_rain"
+                ],
+                "suitable_periods": [
+                  "indoor",
+                  "short_outdoor_window"
+                ],
+                "avoid_periods": [
+                  "long_outdoor_exposure"
+                ],
+                "evidence": {
+                  "provider": "qweather",
+                  "source_mode": "qweather_frozen_snapshot",
+                  "city_id": "shenzhen",
+                  "snapshot_id": "ctp_qweather_20260807_v1",
+                  "source_endpoint": "/v7/weather/30d",
+                  "offline": true,
+                  "real_time_api_allowed": false
+                },
+                "provider_raw_fields": {
+                  "fxDate": "2026-09-05",
+                  "tempMin": "26",
+                  "tempMax": "32",
+                  "textDay": "雷阵雨",
+                  "textNight": "雷阵雨",
+                  "windDirDay": "东北风",
+                  "windScaleDay": "1-3",
+                  "windSpeedDay": "4",
+                  "humidity": "73",
+                  "precip": "15.2",
+                  "pop": null,
+                  "uvIndex": "3"
+                },
+                "request_day_index": 2
+              }
+            ],
+            "daily_forecasts": [
+              {
+                "date": "2026-09-04",
+                "day_index": 1,
+                "snapshot_day_index": 29,
+                "state": "high_temperature",
+                "weather": "雷阵雨",
+                "day_weather": "雷阵雨",
+                "night_weather": "雷阵雨",
+                "temperature_min_c": 26,
+                "temperature_max_c": 33,
+                "precipitation_mm": 2.9,
+                "precipitation_probability": null,
+                "wind_direction_day": "东北风",
+                "wind_scale_day": 1,
+                "wind_speed_day_kmh": 13.0,
+                "humidity_percent": 74,
+                "uv_index": 6,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain",
+                  "heat"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "evening",
+                  "indoor"
+                ],
+                "avoid_periods": [
+                  "midday_outdoor",
+                  "long_outdoor_exposure"
+                ],
+                "evidence": {
+                  "provider": "qweather",
+                  "source_mode": "qweather_frozen_snapshot",
+                  "city_id": "shenzhen",
+                  "snapshot_id": "ctp_qweather_20260807_v1",
+                  "source_endpoint": "/v7/weather/30d",
+                  "offline": true,
+                  "real_time_api_allowed": false
+                },
+                "provider_raw_fields": {
+                  "fxDate": "2026-09-04",
+                  "tempMin": "26",
+                  "tempMax": "33",
+                  "textDay": "雷阵雨",
+                  "textNight": "雷阵雨",
+                  "windDirDay": "东北风",
+                  "windScaleDay": "1-3",
+                  "windSpeedDay": "13",
+                  "humidity": "74",
+                  "precip": "2.9",
+                  "pop": null,
+                  "uvIndex": "6"
+                },
+                "request_day_index": 1
+              },
+              {
+                "date": "2026-09-05",
+                "day_index": 2,
+                "snapshot_day_index": 30,
+                "state": "rain",
+                "weather": "雷阵雨",
+                "day_weather": "雷阵雨",
+                "night_weather": "雷阵雨",
+                "temperature_min_c": 26,
+                "temperature_max_c": 32,
+                "precipitation_mm": 15.2,
+                "precipitation_probability": null,
+                "wind_direction_day": "东北风",
+                "wind_scale_day": 1,
+                "wind_speed_day_kmh": 4.0,
+                "humidity_percent": 73,
+                "uv_index": 3,
+                "risk_level": "high",
+                "risk_tags": [
+                  "rain",
+                  "heavy_rain"
+                ],
+                "suitable_periods": [
+                  "indoor",
+                  "short_outdoor_window"
+                ],
+                "avoid_periods": [
+                  "long_outdoor_exposure"
+                ],
+                "evidence": {
+                  "provider": "qweather",
+                  "source_mode": "qweather_frozen_snapshot",
+                  "city_id": "shenzhen",
+                  "snapshot_id": "ctp_qweather_20260807_v1",
+                  "source_endpoint": "/v7/weather/30d",
+                  "offline": true,
+                  "real_time_api_allowed": false
+                },
+                "provider_raw_fields": {
+                  "fxDate": "2026-09-05",
+                  "tempMin": "26",
+                  "tempMax": "32",
+                  "textDay": "雷阵雨",
+                  "textNight": "雷阵雨",
+                  "windDirDay": "东北风",
+                  "windScaleDay": "1-3",
+                  "windSpeedDay": "4",
+                  "humidity": "73",
+                  "precip": "15.2",
+                  "pop": null,
+                  "uvIndex": "3"
+                },
+                "request_day_index": 2
+              }
+            ],
+            "forecast": [
+              {
+                "date": "2026-09-04",
+                "day_index": 1,
+                "snapshot_day_index": 29,
+                "state": "high_temperature",
+                "weather": "雷阵雨",
+                "day_weather": "雷阵雨",
+                "night_weather": "雷阵雨",
+                "temperature_min_c": 26,
+                "temperature_max_c": 33,
+                "precipitation_mm": 2.9,
+                "precipitation_probability": null,
+                "wind_direction_day": "东北风",
+                "wind_scale_day": 1,
+                "wind_speed_day_kmh": 13.0,
+                "humidity_percent": 74,
+                "uv_index": 6,
+                "risk_level": "medium",
+                "risk_tags": [
+                  "rain",
+                  "heat"
+                ],
+                "suitable_periods": [
+                  "morning",
+                  "evening",
+                  "indoor"
+                ],
+                "avoid_periods": [
+                  "midday_outdoor",
+                  "long_outdoor_exposure"
+                ],
+                "evidence": {
+                  "provider": "qweather",
+                  "source_mode": "qweather_frozen_snapshot",
+                  "city_id": "shenzhen",
+                  "snapshot_id": "ctp_qweather_20260807_v1",
+                  "source_endpoint": "/v7/weather/30d",
+                  "offline": true,
+                  "real_time_api_allowed": false
+                },
+                "provider_raw_fields": {
+                  "fxDate": "2026-09-04",
+                  "tempMin": "26",
+                  "tempMax": "33",
+                  "textDay": "雷阵雨",
+                  "textNight": "雷阵雨",
+                  "windDirDay": "东北风",
+                  "windScaleDay": "1-3",
+                  "windSpeedDay": "13",
+                  "humidity": "74",
+                  "precip": "2.9",
+                  "pop": null,
+                  "uvIndex": "6"
+                },
+                "request_day_index": 1
+              },
+              {
+                "date": "2026-09-05",
+                "day_index": 2,
+                "snapshot_day_index": 30,
+                "state": "rain",
+                "weather": "雷阵雨",
+                "day_weather": "雷阵雨",
+                "night_weather": "雷阵雨",
+                "temperature_min_c": 26,
+                "temperature_max_c": 32,
+                "precipitation_mm": 15.2,
+                "precipitation_probability": null,
+                "wind_direction_day": "东北风",
+                "wind_scale_day": 1,
+                "wind_speed_day_kmh": 4.0,
+                "humidity_percent": 73,
+                "uv_index": 3,
+                "risk_level": "high",
+                "risk_tags": [
+                  "rain",
+                  "heavy_rain"
+                ],
+                "suitable_periods": [
+                  "indoor",
+                  "short_outdoor_window"
+                ],
+                "avoid_periods": [
+                  "long_outdoor_exposure"
+                ],
+                "evidence": {
+                  "provider": "qweather",
+                  "source_mode": "qweather_frozen_snapshot",
+                  "city_id": "shenzhen",
+                  "snapshot_id": "ctp_qweather_20260807_v1",
+                  "source_endpoint": "/v7/weather/30d",
+                  "offline": true,
+                  "real_time_api_allowed": false
+                },
+                "provider_raw_fields": {
+                  "fxDate": "2026-09-05",
+                  "tempMin": "26",
+                  "tempMax": "32",
+                  "textDay": "雷阵雨",
+                  "textNight": "雷阵雨",
+                  "windDirDay": "东北风",
+                  "windScaleDay": "1-3",
+                  "windSpeedDay": "4",
+                  "humidity": "73",
+                  "precip": "15.2",
+                  "pop": null,
+                  "uvIndex": "3"
+                },
+                "request_day_index": 2
+              }
+            ],
+            "planning_constraints": {
+              "coverage_status": "partial",
+              "missing_dates": [
+                "2026-09-06"
+              ],
+              "dynamic_adjustment_required": true,
+              "indoor_backup_recommended": true,
+              "missing_weather_must_not_be_fabricated": true
+            },
+            "weather_adjustment_required": true,
+            "warnings": [
+              "Frozen QWeather snapshot only covers part of the requested trip; missing dates must not be fabricated.",
+              "Missing weather dates: 2026-09-06"
+            ],
+            "applied_rules": [
+              "qweather_frozen_snapshot",
+              "fixed_location_id",
+              "date_range_coverage"
+            ],
+            "snapshot_id": "ctp_qweather_20260807_v1",
+            "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+            "metadata": {
+              "offline": true,
+              "source_mode": "qweather_frozen_snapshot",
+              "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+              "source_file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+              "snapshot_id": "ctp_qweather_20260807_v1",
+              "snapshot_manifest_path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
+              "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+              "forecast_endpoint": "/v7/weather/30d",
+              "forecast_horizon_days": 30,
+              "coverage_status": "partial",
+              "real_time_api_allowed": false,
+              "runtime_online_refresh_allowed": false
+            },
+            "date_defaulted_to_snapshot_start": false
+          },
+          "error": null,
+          "metadata": {
+            "offline": true,
+            "source_mode": "qweather_frozen_snapshot",
+            "real_time_api_allowed": false,
+            "dataset_version": "CTP-QWEATHER-SNAPSHOT-v1",
+            "source_file_id": "ctp_qweather_shenzhen_ctp_qweather_20260807_v1_normalized",
+            "record_count": 2,
+            "canonical_city_id": "shenzhen",
+            "coverage_status": "partial",
+            "snapshot_id": "ctp_qweather_20260807_v1",
+            "snapshot_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+            "weather_date_mapping_rule": "city_id + requested date range selects rows from frozen QWeather snapshot",
+            "date_defaulted_to_snapshot_start": false
+          }
+        }
+      },
+      "metadata": {
+        "research_method": "single_agent",
+        "output_contract": "ctp-experiment-output-v1",
+        "generation_tool_contract": "ctp-research-tools-v1.0",
+        "method_input_schema_version": "ctp-method-input-v1",
+        "goal_state_slots": {
+          "destination": "shenzhen",
+          "start_date": "2026-09-04",
+          "end_date": "2026-09-06",
+          "duration_days": 3
+        },
+        "result_agents": [],
+        "agent_output_schema_version": "ctp-research-agent-output-v1",
+        "agent_decision_schema_version": "ctp-research-agent-decision-v1",
+        "agent_prompt_version": "ctp-research-agent-prompts-v2",
+        "agent_outputs": {},
+        "agent_decision_audit": {},
+        "single_agent_final_answer_mode": "deterministic_after_tool_evidence"
+      }
+    },
+    "latency": 4097.44,
+    "latency_ms": 4097.44,
+    "ttft_ms": null,
+    "trace": {
+      "schema_version": "1.8",
+      "created_at": "2026-08-21T04:45:43.810236+00:00",
+      "request_id": "ctp100_v2_034_single_agent_f5698759",
+      "session_id": "exp-ctp100_v2_034-single_agent-run-task_e_four_method_real_api_final3_20260821T123500Z-r0",
+      "case_id": "ctp100_v2_034",
+      "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+      "experiment_case_id": "ctp100_v2_034",
+      "experiment_group": null,
+      "repeat_index": 0,
+      "system_variant": "single_agent",
+      "method": "single_agent",
+      "evaluation_mode": "end_to_end",
+      "model_config_name": "task-e-four-method-real-api",
+      "input_hash": "cb3189a3ff03016336af15b8a6139b4ea9557a1d399dc9e1ff442bbd11f8193d",
+      "user_message_hash": "cb3189a3ff03016336af15b8a6139b4ea9557a1d399dc9e1ff442bbd11f8193d",
+      "user_message": null,
+      "result_hash": "e3cefc1d1869dacc315cd22b61a0ad3026b4436d1090dedafb1c8c43454bdf63",
+      "offline_data": {
+        "schema_version": "fixed_data_manifest_v2",
+        "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+        "city_ids": [
+          "beijing",
+          "hangzhou",
+          "xian",
+          "shenzhen",
+          "guilin"
+        ],
+        "snapshot_dirs": [
+          "pois",
+          "weather",
+          "restaurants",
+          "accommodation",
+          "transport"
+        ],
+        "file_count": 25,
+        "expected_file_count": 25,
+        "combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+        "expected_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+        "missing_files": [],
+        "files": [
+          {
+            "kind": "accommodation",
+            "city_id": "beijing",
+            "path": "data/accommodation/beijing.json",
+            "sha256": "2b50fd5c0001f6c2c8d23a1197e7aca0b42c361775e329a44cb6fc44fcf525ff",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "guilin",
+            "path": "data/accommodation/guilin.json",
+            "sha256": "1c9423ded3c30d2781c9cfe28e42699bb94110956150105c92e54a553400954d",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "hangzhou",
+            "path": "data/accommodation/hangzhou.json",
+            "sha256": "4246b431b3c63bab787692549ff13d40e8cdfd05e3f25ec1763425d3e5447c0f",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "shenzhen",
+            "path": "data/accommodation/shenzhen.json",
+            "sha256": "b8f9fad3895bcea7bea795311e0360b62bbe14e33afa6f448472f1f96fd6c0d9",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "accommodation",
+            "city_id": "xian",
+            "path": "data/accommodation/xian.json",
+            "sha256": "127ab00c1e2c5435b5bda9db2b07c94f891e6d1b2d5e85abaa4e4fb79e76f5f7",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "beijing",
+            "path": "data/pois/beijing.json",
+            "sha256": "da06efbb03a94facbc71501dd7c6ec38cf56a25a9255ff091f01cc0d311b63a8",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "guilin",
+            "path": "data/pois/guilin.json",
+            "sha256": "d6eb9436760bbea33d24fd3637ac67d3096e08efa542683d7a089e70ca71194e",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "hangzhou",
+            "path": "data/pois/hangzhou.json",
+            "sha256": "5062fa9214f1a4cd99db8347526e99005da3cead1d85a55e9b4922d73fa9aa6e",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "shenzhen",
+            "path": "data/pois/shenzhen.json",
+            "sha256": "7fc9fec9f14f58ef6095e8fe725273d23e955d813b6d2447aa1a151fbe57e26e",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "pois",
+            "city_id": "xian",
+            "path": "data/pois/xian.json",
+            "sha256": "b5564a26e8ac8e0629fc58b24ae6d10092a4524a46d0c764eefc2273bd0f051e",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "beijing",
+            "path": "data/restaurants/beijing.json",
+            "sha256": "9014ba5a573a54932a3c71c1c3db6f446ab2affc201e5293f1d26aed5a9834c8",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "guilin",
+            "path": "data/restaurants/guilin.json",
+            "sha256": "a34b14352672174ce3dbabbcbb6a8a675728faa0c1fa47243c27b5cb2f818d30",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "hangzhou",
+            "path": "data/restaurants/hangzhou.json",
+            "sha256": "6d294302e53b6c1f540f15741bdf5d8fd431a1ad518d461f0890b7d3f64b4425",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "shenzhen",
+            "path": "data/restaurants/shenzhen.json",
+            "sha256": "370a5947d3d3b6fbce3b7eb920262396cf6ae9aa797859a8c73abab049497d62",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "restaurants",
+            "city_id": "xian",
+            "path": "data/restaurants/xian.json",
+            "sha256": "fe64fd4fadfb5a6e6d437e3fcab3d7c1d6aec09d631f41ed3c92b3572f7dbf10",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "beijing",
+            "path": "data/transport/beijing.json",
+            "sha256": "0cd9687c5b5457140113355b84da19e1dde7610dcb59d4360b9a70f18e8f74d2",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "guilin",
+            "path": "data/transport/guilin.json",
+            "sha256": "dce6bbaa6311123321c9d56d8267eed4decd9b3e1e35141ff0b24fb757b7cca9",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "hangzhou",
+            "path": "data/transport/hangzhou.json",
+            "sha256": "7ce095fd0a66ee943443cca69993599231c83abe4b71cfed4109e9fb26546891",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "shenzhen",
+            "path": "data/transport/shenzhen.json",
+            "sha256": "b18ee3d6c7b31edb79bf01749fac9b5ad1160f5de1d03a3dcd8335b0de80d8a8",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "transport",
+            "city_id": "xian",
+            "path": "data/transport/xian.json",
+            "sha256": "c72faec4caa70466e36b28a428c3f1e8f21a684f79f55a8c4c09a0c378e685a9",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "beijing",
+            "path": "data/weather/beijing.json",
+            "sha256": "a6b32944050cc2a638d09a67be8d7747ca2b0153527f856d85b4813651c91d0a",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "guilin",
+            "path": "data/weather/guilin.json",
+            "sha256": "450d86b2f7121f970e7c48e5a38ad113c8e4289c0356f448221ce1d63d412f94",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "hangzhou",
+            "path": "data/weather/hangzhou.json",
+            "sha256": "e4ea7c0b10b350cd4c7ba739746e0634d0aa86d77378d858104c0f789f6f64fd",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "shenzhen",
+            "path": "data/weather/shenzhen.json",
+            "sha256": "533e74a25a72fdc58a0f31746f10dd405611b3ab007f18d0319566deaec5e281",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          },
+          {
+            "kind": "weather",
+            "city_id": "xian",
+            "path": "data/weather/xian.json",
+            "sha256": "7d9e244e1bd64d129cb75b641a09adc8521d9ce082b4a28de7bbb2aadb92cef4",
+            "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+          }
+        ]
+      },
+      "status": "completed",
+      "mode": "planning",
+      "intent": "general_chat",
+      "route": "GENERAL_CHAT",
+      "extracted_info": {},
+      "constraints": [],
+      "missing_fields": [],
+      "planned_agents": [
+        "single_agent"
+      ],
+      "executed_agents": [
+        "single_agent"
+      ],
+      "planned_tools": [
+        "weather_query"
+      ],
+      "executed_tools": [
+        "weather_query"
+      ],
+      "selected_agents": [
+        "single_agent"
+      ],
+      "selected_tools": [
+        "weather_query"
+      ],
+      "goal": {
+        "intent": "general_chat",
+        "route": "GENERAL_CHAT",
+        "slots": {},
+        "constraints": [],
+        "planned_agents": [
+          "single_agent"
+        ],
+        "selected_agents": [
+          "single_agent"
+        ]
+      },
+      "stage_timings": {},
+      "agent_timings": {},
+      "agent_runs": [
+        {
+          "agent_run_id": "ef330126bec94ac9ac79116c85ad5e77",
+          "agent_name": "single_agent",
+          "started_at": "2026-08-21T04:45:43.943242+00:00",
+          "completed_at": "2026-08-21T04:45:47.822318+00:00",
+          "duration_ms": 3878.84,
+          "status": "completed",
+          "tokens": null,
+          "tool_count": 1,
+          "error": null
+        }
+      ],
+      "llm_calls": [
+        {
+          "call_id": "2c2fa49096e246c58823bcd197bb86e6",
+          "id": "2c2fa49096e246c58823bcd197bb86e6",
+          "agent_name": "single_agent",
+          "component": "single_agent",
+          "provider": "vectorengine_openai_compatible",
+          "model": "gpt-5-mini",
+          "streaming": false,
+          "duration_ms": 3867.3,
+          "ttft_ms": null,
+          "tokens": {
+            "prompt_tokens": 1588,
+            "completion_tokens": 38,
+            "total_tokens": 1626
+          },
+          "usage": {
+            "prompt_tokens": 1588,
+            "completion_tokens": 38,
+            "total_tokens": 1626
+          },
+          "cached_source_usage": null,
+          "chunk_count": null,
+          "mock_used": false,
+          "fallback_used": false,
+          "cache_hit": false,
+          "mock": false,
+          "fallback": false,
+          "success": true,
+          "error": null,
+          "message_count": 2,
+          "message_chars": 2887,
+          "tool_count": 3,
+          "prompt_version": "ctp-structured-llm-output-prompts-v2",
+          "prompt_hash": "f4ebf951567cf04cf1c92fb1ded5e6003a269f4f4a160b4655658e766c9bea9e",
+          "request_options": {
+            "schema_version": "ctp-llm-runtime-options-v1",
+            "model": "gpt-5-mini",
+            "base_url": "https://api.vectorengine.ai/v1",
+            "temperature": 0.0,
+            "max_tokens": 4096,
+            "completion_limit_parameter": "max_completion_tokens",
+            "timeout_seconds": 120,
+            "reasoning_effort": "minimal",
+            "tool_count": 3,
+            "tool_choice": "auto",
+            "streaming": false,
+            "sdk_max_retries": 0
+          },
+          "retry": {
+            "schema_version": "ctp-llm-retry-audit-v1",
+            "max_attempts": 3,
+            "attempt_count": 1,
+            "retry_count": 0,
+            "error_count": 0,
+            "succeeded": true,
+            "attempts": [
+              {
+                "attempt_index": 1,
+                "success": true,
+                "duration_ms": 3867.04,
+                "finish_reason": "tool_calls",
+                "output_chars": 0,
+                "usage": {
+                  "prompt_tokens": 1588,
+                  "completion_tokens": 38,
+                  "total_tokens": 1626,
+                  "completion_tokens_details": "[REDACTED]",
+                  "prompt_tokens_details": "[REDACTED]"
+                }
+              }
+            ]
+          },
+          "cost_schema_version": "ctp-llm-costing-v1",
+          "cost_currency": "USD",
+          "estimated_cost": 0.000473,
+          "standardized_estimated_cost": 0.000473,
+          "estimated_cost_cny": null,
+          "standardized_estimated_cost_cny": null,
+          "actual_cost": null,
+          "actual_cost_status": "not_reported_by_provider",
+          "input_token_unit_price": 0.00025,
+          "output_token_unit_price": 0.002,
+          "price_unit": "per_1k_tokens",
+          "price_snapshot_date": "2026-08-01",
+          "price_source_url": "https://api.vectorengine.ai/pricing",
+          "pricing_mode": "frozen_default_token_estimate",
+          "price_snapshot": {
+            "schema_version": "ctp-llm-costing-v1",
+            "provider": "vectorengine_openai_compatible",
+            "model": "gpt-5-mini",
+            "price_snapshot_date": "2026-08-01",
+            "price_source_url": "https://api.vectorengine.ai/pricing",
+            "currency": "USD",
+            "price_unit": "per_1k_tokens",
+            "input_token_unit_price": 0.00025,
+            "output_token_unit_price": 0.002,
+            "pricing_mode": "frozen_default_token_estimate"
+          },
+          "temperature": 0.0,
+          "max_tokens": 4096,
+          "timeout_seconds": 120,
+          "reasoning_effort": "minimal",
+          "retry_max_attempts": 3,
+          "retry_attempt_count": 1,
+          "retry_count": 0,
+          "retry_error_count": 0,
+          "output_chars": 0
+        }
+      ],
+      "tool_calls": [
+        {
+          "call_id": "call_8EGEvfddVwWxSi5f0unDoaid",
+          "name": "weather_query",
+          "tool_name": "weather_query",
+          "agent_name": "single_agent",
+          "agent": "single_agent",
+          "component": "single_agent",
+          "params": {
+            "city": "shenzhen",
+            "date": "2026-09-04",
+            "days": 3,
+            "scenario_type": "sunny"
+          },
+          "duration": 7.0,
+          "duration_ms": 7.0,
+          "status": "completed",
+          "success": true,
+          "error": null,
+          "cache_hit": null,
+          "fallback_used": null
+        }
+      ],
+      "api_calls": [],
+      "adaptive_scheduler": null,
+      "scheduler": null,
+      "total_duration_ms": 4090.33,
+      "first_body_token_ms": null,
+      "first_token_ms": null,
+      "error": null,
+      "llm_call_count": 1,
+      "tool_call_count": 1,
+      "successful_tool_call_count": 1,
+      "failed_tool_call_count": 0,
+      "tool_call_success_rate": 1.0,
+      "planned_tool_count": 1,
+      "executed_tool_count": 1,
+      "selected_tool_count": 1,
+      "api_call_count": 0,
+      "agent_call_count": 1,
+      "failed_agent_count": 0,
+      "cache_hit_count": 0,
+      "fallback_count": 0,
+      "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\task_e_four_method_real_api\\task_e_four_method_real_api_final3_20260821T123500Z\\traces\\20260821T044547902316Z_ctp100_v2_034_single_agent_f5698759_90b78fe1.jsonl"
+    },
+    "trace_file": "D:\\Code\\Tourism_Agent\\experiments\\results\\task_e_four_method_real_api\\task_e_four_method_real_api_final3_20260821T123500Z\\traces\\20260821T044547902316Z_ctp100_v2_034_single_agent_f5698759_90b78fe1.jsonl",
+    "evaluation": {
+      "schema_version": "ctp-independent-evaluation-v1",
+      "catalog_id": "day8_formal_independent_evaluator_rules",
+      "case_id": "ctp100_v2_034",
+      "task_type": "weather_query",
+      "output_task_type": "weather_query",
+      "rules": [
+        {
+          "id": "G_SCHEMA_VALID",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "schema_version": "ctp-experiment-output-v1",
+            "expected": "ctp-experiment-output-v1"
+          }
+        },
+        {
+          "id": "G_EXECUTION_STATUS_VALID",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "execution_status": "completed",
+            "trace_status": "completed",
+            "failed_evidence": false,
+            "issues": []
+          }
+        },
+        {
+          "id": "G_FINAL_ANSWER_CONSISTENT",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "issues": [],
+            "missing_pois": [],
+            "unselected_pois_mentioned": [],
+            "budget_total": null,
+            "weather_terms": [
+              "high_temperature",
+              "hot",
+              "高温",
+              "雷阵雨",
+              "rain",
+              "雨"
+            ],
+            "missing_clarification_fields": []
+          }
+        },
+        {
+          "id": "G_TASK_TYPE_MATCH",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "expected": "weather_query",
+            "actual": "weather_query"
+          }
+        },
+        {
+          "id": "H_TRIP_DAYS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_ATTRACTION_COUNT_BOUNDS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_DAILY_LOAD_LIMIT",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_LIMIT",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_POI_GROUNDED",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_NO_DUPLICATE_POIS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_MUST_INCLUDE_POIS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_FORBIDDEN_POIS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_RAIN_SUITABILITY",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_SENIOR_ACCESSIBILITY",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_WEATHER_ADJUSTMENT_REQUIRED",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_WEATHER_EVIDENCE",
+          "usage": "hcsr",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "issues": [],
+            "tool_evidence": {
+              "required_tools": [
+                "weather_query"
+              ],
+              "missing_or_failed": []
+            },
+            "mismatch_issues": [],
+            "snapshot_issues": [],
+            "expected_issues": [],
+            "fabrication_issues": [],
+            "expected_coverage_status": "partial",
+            "actual_coverage_status": "partial",
+            "expected_missing_dates": [
+              "2026-09-06"
+            ],
+            "actual_missing_dates": [
+              "2026-09-06"
+            ]
+          }
+        },
+        {
+          "id": "H_NO_DATE_WEATHER_REMINDER",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_EVIDENCE",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_POLICY_VERSION",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_ACCOMMODATION_NIGHTS",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_CONTINGENCY_LOCAL_ONLY",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_TOTAL_FORMULA",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_ITINERARY_CONSISTENCY",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_UPGRADE_POLICY",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_BUDGET_INDEPENDENT_RECALCULATION",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_INTERCITY_SCOPE",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_INTERCITY_COST",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_INTERCITY_EVIDENCE",
+          "usage": "hcsr",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "H_TOOL_EVIDENCE",
+          "usage": "hcsr",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "required_tools": [
+              "weather_query"
+            ],
+            "missing_or_failed": []
+          }
+        },
+        {
+          "id": "T_CLARIFICATION_MISSING_FIELDS",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_CLARIFICATION_NO_PREMATURE_PLAN",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_GENERAL_CHAT_NO_BUSINESS_EXECUTION",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_GENERAL_CHAT_NO_TRIP_ARTIFACT",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_ATTRACTION_SINGLE_SCOPE",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_WEATHER_SINGLE_SCOPE",
+          "usage": "stsr_gate",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "artifact_present": true,
+            "unrelated_tools": [],
+            "unrelated_agents": []
+          }
+        },
+        {
+          "id": "T_BUDGET_SINGLE_SCOPE",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_PARTIAL_CHANGED_SLOTS_APPLIED",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_PARTIAL_PRESERVED_SLOTS_KEPT",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_PARTIAL_REUSE_VALIDITY",
+          "usage": "agent_tool_metric",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_WEATHER_AFFECTED_CONTENT_ADJUSTED",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "T_WEATHER_UNAFFECTED_CONTENT_PRESERVED",
+          "usage": "stsr_gate",
+          "status": "na",
+          "passed": null,
+          "failure_code": null,
+          "details": {
+            "reason": "task_not_applicable"
+          }
+        },
+        {
+          "id": "S_AGENT_SET_MATCH",
+          "usage": "agent_tool_metric",
+          "status": "failed",
+          "passed": false,
+          "failure_code": "agent_set_mismatch",
+          "details": {
+            "accepted": [
+              [
+                "weather"
+              ]
+            ],
+            "actual": [
+              "single_agent"
+            ]
+          }
+        },
+        {
+          "id": "S_TOOL_SET_MATCH",
+          "usage": "agent_tool_metric",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "accepted": [
+              [
+                "weather_query"
+              ]
+            ],
+            "actual": [
+              "weather_query"
+            ]
+          }
+        },
+        {
+          "id": "S_PLANNED_ACTUAL_AGENT_CONSISTENCY",
+          "usage": "agent_tool_metric",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "planned": [
+              "single_agent"
+            ],
+            "actual": [
+              "single_agent"
+            ]
+          }
+        },
+        {
+          "id": "S_PLANNED_ACTUAL_TOOL_CONSISTENCY",
+          "usage": "agent_tool_metric",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "planned": [
+              "weather_query"
+            ],
+            "actual": [
+              "weather_query"
+            ]
+          }
+        },
+        {
+          "id": "S_FORBIDDEN_GENERATION_TOOLS",
+          "usage": "agent_tool_metric",
+          "status": "passed",
+          "passed": true,
+          "failure_code": null,
+          "details": {
+            "used": []
+          }
+        }
+      ],
+      "metrics": {
+        "stsr": true,
+        "stsr_gate_applicable_count": 5,
+        "stsr_gate_passed_count": 5,
+        "stsr_gate_failed_count": 0,
+        "evaluation_hcsr": 1.0,
+        "evaluation_hcsr_applicable_count": 2,
+        "evaluation_hcsr_passed_count": 2,
+        "evaluation_hcsr_failed_count": 0,
+        "itcsr": null,
+        "itcsr_applicable_count": 0,
+        "itcsr_passed_count": 0,
+        "itcsr_failed_count": 0,
+        "bpcr": null,
+        "bpcr_applicable_count": 0,
+        "bpcr_passed_count": 0,
+        "bpcr_failed_count": 0,
+        "evaluation_failed_rule_ids": [
+          "S_AGENT_SET_MATCH"
+        ],
+        "evaluation_failed_rule_count": 1,
+        "agent_selection_precision": 0.0,
+        "agent_selection_recall": 0.0,
+        "agent_selection_f1": 0.0,
+        "agent_set_exact_match": false,
+        "necessary_agent_coverage": 0.0,
+        "extra_agent_count": 1,
+        "missing_agent_count": 1,
+        "duplicate_agent_count": 0,
+        "planned_actual_agent_consistency": 1.0,
+        "agent_execution_success_rate": 1.0,
+        "tool_selection_precision": 1.0,
+        "tool_selection_recall": 1.0,
+        "tool_selection_f1": 1.0,
+        "tool_set_exact_match": true,
+        "necessary_tool_coverage": 1.0,
+        "extra_tool_count": 0,
+        "missing_tool_count": 0,
+        "duplicate_tool_count": 0,
+        "forbidden_tool_call_count": 0,
+        "planned_actual_tool_consistency": 1.0,
+        "tool_call_success_rate": 1.0,
+        "tool_failure_count": 0,
+        "tool_failure_types": [],
+        "total_tokens": 1626.0,
+        "estimated_cost": 0.0005,
+        "standardized_estimated_cost": 0.0005,
+        "actual_cost": null,
+        "cost_per_success": 0.0005
+      },
+      "guards": [
+        "method_blind",
+        "no_llm_or_live_api",
+        "no_output_repair",
+        "structured_fields_only",
+        "append_only_evidence"
+      ]
+    },
+    "run_audit": {
+      "schema_version": "ctp-run-audit-v1",
+      "method": "single_agent",
+      "planned_agents": [
+        "single_agent"
+      ],
+      "used_agents": [
+        "single_agent"
+      ],
+      "executed_agents": [
+        "single_agent"
+      ],
+      "planned_tools": [
+        "weather_query"
+      ],
+      "called_tools": [
+        "weather_query"
+      ],
+      "executed_tools": [
+        "weather_query"
+      ],
+      "cost": {
+        "estimated_cost": 0.0005,
+        "standardized_estimated_cost": 0.0005,
+        "actual_cost": null,
+        "actual_cost_available": false,
+        "actual_cost_statuses": [
+          "not_reported_by_provider"
+        ],
+        "price_snapshots": [
+          {
+            "schema_version": "ctp-llm-costing-v1",
+            "provider": "vectorengine_openai_compatible",
+            "model": "gpt-5-mini",
+            "price_snapshot_date": "2026-08-01",
+            "price_source_url": "https://api.vectorengine.ai/pricing",
+            "currency": "USD",
+            "price_unit": "per_1k_tokens",
+            "input_token_unit_price": 0.00025,
+            "output_token_unit_price": 0.002,
+            "pricing_mode": "frozen_default_token_estimate"
+          }
+        ]
+      },
+      "metrics": {
+        "planned_agent_count": 1,
+        "used_agent_count": 1,
+        "executed_agent_count": 1,
+        "agent_call_count": 1,
+        "successful_agent_call_count": 1,
+        "failed_agent_call_count": 0,
+        "duplicate_agent_call_count": 0,
+        "planned_executed_agent_coverage": 1.0,
+        "planned_actual_agent_consistency": 1.0,
+        "agent_execution_success_rate": 1.0,
+        "planned_tool_count": 1,
+        "called_tool_count": 1,
+        "executed_tool_count": 1,
+        "successful_tool_call_count": 1,
+        "failed_tool_call_count": 0,
+        "duplicate_tool_call_count": 0,
+        "planned_executed_tool_coverage": 1.0,
+        "planned_actual_tool_consistency": 1.0,
+        "tool_call_success_rate": 1.0,
+        "llm_call_count": 1,
+        "llm_retry_attempt_count": 1.0,
+        "llm_retry_count": 0.0,
+        "llm_retry_error_count": 0.0,
+        "api_call_count": 0,
+        "prompt_tokens": 1588.0,
+        "completion_tokens": 38.0,
+        "total_tokens": 1626.0,
+        "estimated_cost": 0.0005,
+        "standardized_estimated_cost": 0.0005,
+        "latency_ms": 4097.44,
+        "trace_total_duration_ms": 4090.33,
+        "llm_total_duration_ms": 3867.3,
+        "agent_total_duration_ms": 3878.84,
+        "tool_total_duration_ms": 7.0
+      }
+    },
+    "audit": {
+      "schema_version": "ctp-run-audit-v1",
+      "method": "single_agent",
+      "planned_agents": [
+        "single_agent"
+      ],
+      "used_agents": [
+        "single_agent"
+      ],
+      "executed_agents": [
+        "single_agent"
+      ],
+      "planned_tools": [
+        "weather_query"
+      ],
+      "called_tools": [
+        "weather_query"
+      ],
+      "executed_tools": [
+        "weather_query"
+      ],
+      "cost": {
+        "estimated_cost": 0.0005,
+        "standardized_estimated_cost": 0.0005,
+        "actual_cost": null,
+        "actual_cost_available": false,
+        "actual_cost_statuses": [
+          "not_reported_by_provider"
+        ],
+        "price_snapshots": [
+          {
+            "schema_version": "ctp-llm-costing-v1",
+            "provider": "vectorengine_openai_compatible",
+            "model": "gpt-5-mini",
+            "price_snapshot_date": "2026-08-01",
+            "price_source_url": "https://api.vectorengine.ai/pricing",
+            "currency": "USD",
+            "price_unit": "per_1k_tokens",
+            "input_token_unit_price": 0.00025,
+            "output_token_unit_price": 0.002,
+            "pricing_mode": "frozen_default_token_estimate"
+          }
+        ]
+      },
+      "metrics": {
+        "planned_agent_count": 1,
+        "used_agent_count": 1,
+        "executed_agent_count": 1,
+        "agent_call_count": 1,
+        "successful_agent_call_count": 1,
+        "failed_agent_call_count": 0,
+        "duplicate_agent_call_count": 0,
+        "planned_executed_agent_coverage": 1.0,
+        "planned_actual_agent_consistency": 1.0,
+        "agent_execution_success_rate": 1.0,
+        "planned_tool_count": 1,
+        "called_tool_count": 1,
+        "executed_tool_count": 1,
+        "successful_tool_call_count": 1,
+        "failed_tool_call_count": 0,
+        "duplicate_tool_call_count": 0,
+        "planned_executed_tool_coverage": 1.0,
+        "planned_actual_tool_consistency": 1.0,
+        "tool_call_success_rate": 1.0,
+        "llm_call_count": 1,
+        "llm_retry_attempt_count": 1.0,
+        "llm_retry_count": 0.0,
+        "llm_retry_error_count": 0.0,
+        "api_call_count": 0,
+        "prompt_tokens": 1588.0,
+        "completion_tokens": 38.0,
+        "total_tokens": 1626.0,
+        "estimated_cost": 0.0005,
+        "standardized_estimated_cost": 0.0005,
+        "latency_ms": 4097.44,
+        "trace_total_duration_ms": 4090.33,
+        "llm_total_duration_ms": 3867.3,
+        "agent_total_duration_ms": 3878.84,
+        "tool_total_duration_ms": 7.0
+      }
+    },
+    "status": "completed",
+    "metrics": {
+      "expected_tools": [],
+      "selected_tools": [
+        "weather_query"
+      ],
+      "expected_tool_count": 0,
+      "correct_tool_count": null,
+      "tool_selection_accuracy": null,
+      "intent_correct": null,
+      "route_correct": null,
+      "agents_correct": null,
+      "constraint_report": {
+        "schema_version": "research_tool_result_v1",
+        "tool_contract_version": "ctp-research-tools-v1.0",
+        "tool_name": "constraint_checker",
+        "status": "success",
+        "success": true,
+        "input": {
+          "request": {
+            "end_date": "2026-09-06",
+            "destination": "shenzhen",
+            "start_date": "2026-09-04",
+            "duration_days": 3,
+            "case_id": "ctp100_v2_034",
+            "user_input": "深圳9月4号到6号天气怎么样？",
+            "city": "shenzhen",
+            "budget": null
+          },
+          "constraints": {
+            "destination": "shenzhen",
+            "start_date": "2026-09-04",
+            "end_date": "2026-09-06",
+            "duration_days": 3
+          }
+        },
+        "data": {
+          "all_passed": true,
+          "applicable_count": 2,
+          "passed_count": 2,
+          "failed_count": 0,
+          "checks": [
+            {
+              "name": "trip_days",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "expected": null,
+                "actual": 0
+              }
+            },
+            {
+              "name": "budget_limit",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "limit": null,
+                "actual": null
+              }
+            },
+            {
+              "name": "weather_adjustment",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "required": true,
+                "adjustment_count": 2
+              }
+            },
+            {
+              "name": "min_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "minimum": null,
+                "actual": 0
+              }
+            },
+            {
+              "name": "max_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "maximum": null,
+                "actual": 0
+              }
+            },
+            {
+              "name": "poi_existence",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "attraction_count": 0
+              }
+            },
+            {
+              "name": "duplicate_attractions",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "attraction_count": 0
+              }
+            },
+            {
+              "name": "must_include_pois",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "required": []
+              }
+            },
+            {
+              "name": "forbidden_pois",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "forbidden": []
+              }
+            },
+            {
+              "name": "rain_attraction_suitability",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "rain_detected": true,
+                "attraction_count": 0
+              }
+            },
+            {
+              "name": "senior_accessibility",
+              "status": "NA",
+              "passed": null,
+              "details": {
+                "senior_request": false
+              }
+            },
+            {
+              "name": "tool_evidence",
+              "status": "passed",
+              "passed": true,
+              "details": {
+                "required": false,
+                "required_tools": [
+                  "weather_query"
+                ],
+                "missing_or_failed": []
+              }
+            }
+          ]
+        },
+        "error": null,
+        "metadata": {
+          "offline": true,
+          "source_mode": "deterministic_evaluator",
+          "real_time_api_allowed": false,
+          "contract": "ctp-research-tools-v1.0"
+        }
+      },
+      "hard_constraint_applicable_count": 2,
+      "hard_constraint_passed_count": 2,
+      "hard_constraint_failed_count": 0,
+      "hard_constraints_all_satisfied": true,
+      "hcsr": 1.0,
+      "stsr": true,
+      "stsr_gate_applicable_count": 5,
+      "stsr_gate_passed_count": 5,
+      "stsr_gate_failed_count": 0,
+      "evaluation_hcsr": 1.0,
+      "evaluation_hcsr_applicable_count": 2,
+      "evaluation_hcsr_passed_count": 2,
+      "evaluation_hcsr_failed_count": 0,
+      "itcsr": null,
+      "itcsr_applicable_count": 0,
+      "itcsr_passed_count": 0,
+      "itcsr_failed_count": 0,
+      "bpcr": null,
+      "bpcr_applicable_count": 0,
+      "bpcr_passed_count": 0,
+      "bpcr_failed_count": 0,
+      "evaluation_failed_rule_ids": [
+        "S_AGENT_SET_MATCH"
+      ],
+      "evaluation_failed_rule_count": 1,
+      "agent_selection_precision": 0.0,
+      "agent_selection_recall": 0.0,
+      "agent_selection_f1": 0.0,
+      "agent_set_exact_match": false,
+      "necessary_agent_coverage": 0.0,
+      "extra_agent_count": 1,
+      "missing_agent_count": 1,
+      "duplicate_agent_count": 0,
+      "planned_actual_agent_consistency": 1.0,
+      "agent_execution_success_rate": 1.0,
+      "tool_selection_precision": 1.0,
+      "tool_selection_recall": 1.0,
+      "tool_selection_f1": 1.0,
+      "tool_set_exact_match": true,
+      "necessary_tool_coverage": 1.0,
+      "extra_tool_count": 0,
+      "missing_tool_count": 0,
+      "duplicate_tool_count": 0,
+      "forbidden_tool_call_count": 0,
+      "planned_actual_tool_consistency": 1.0,
+      "tool_call_success_rate": 1.0,
+      "tool_failure_count": 0,
+      "tool_failure_types": [],
+      "total_tokens": 1626.0,
+      "estimated_cost": 0.0005,
+      "standardized_estimated_cost": 0.0005,
+      "actual_cost": null,
+      "cost_per_success": 0.0005,
+      "planned_agent_count": 1,
+      "used_agent_count": 1,
+      "executed_agent_count": 1,
+      "agent_call_count": 1,
+      "successful_agent_call_count": 1,
+      "failed_agent_call_count": 0,
+      "duplicate_agent_call_count": 0,
+      "planned_executed_agent_coverage": 1.0,
+      "planned_tool_count": 1,
+      "called_tool_count": 1,
+      "executed_tool_count": 1,
+      "successful_tool_call_count": 1,
+      "failed_tool_call_count": 0,
+      "duplicate_tool_call_count": 0,
+      "planned_executed_tool_coverage": 1.0,
+      "llm_call_count": 1,
+      "llm_retry_attempt_count": 1.0,
+      "llm_retry_count": 0.0,
+      "llm_retry_error_count": 0.0,
+      "api_call_count": 0,
+      "prompt_tokens": 1588.0,
+      "completion_tokens": 38.0,
+      "latency_ms": 4097.44,
+      "trace_total_duration_ms": 4090.33,
+      "llm_total_duration_ms": 3867.3,
+      "agent_total_duration_ms": 3878.84,
+      "tool_total_duration_ms": 7.0
+    },
+    "error": null
+  }
+}

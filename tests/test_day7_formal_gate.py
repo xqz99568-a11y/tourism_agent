@@ -32,18 +32,27 @@ def test_formal_experiment_gate_passes_complete_formal_evidence(tmp_path: Path) 
     assert gate["checks"]["bpcr_field_present"] is True
     assert gate["checks"]["commit_matches_preflight"] is True
     assert gate["checks"]["artifact_integrity_matches_preflight"] is True
+    assert gate["checks"]["preflight_expected_result_count_matches_structure"] is True
+    assert gate["checks"]["method_result_grid_complete"] is True
+    assert gate["checks"]["metric_values_calculable"] is True
     assert gate["checks"]["artifact_hashes_recorded"] is True
+    assert gate["raw_count_summary"]["structure_expected_result_count"] == 4
+    assert gate["method_result_grid_summary"]["observed_group_count"] == 1
+    assert gate["metric_calculability_summary"]["result_issue_count"] == 0
     assert gate["artifact_index"]["trace_file_count"] == 4
     assert len(gate["artifact_index"]["trace_combined_sha256"]) == 64
 
     report = Path(payload["markdown"]).read_text(encoding="utf-8")
     assert "Formal experiment final gate" in report
+    assert "Raw result completeness" in report
+    assert "Metric calculability" in report
     assert "Artifact hashes" in report
 
     manifest = json.loads((run_dir / "experiment_manifest.json").read_text(encoding="utf-8"))
     assert manifest["formal_experiment_gate"]["status"] == "passed"
     assert manifest["formal_experiment_gate"]["experiment_integrity_passed"] is True
     assert manifest["formal_experiment_gate"]["hypothesis_supported"] is True
+    assert manifest["formal_experiment_gate"]["method_result_grid_summary"]["passed"] is True
     assert manifest["results"]["formal_experiment_gate"] == payload["json"]
     assert manifest["results"]["formal_experiment_report"] == payload["markdown"]
 
@@ -60,6 +69,90 @@ def test_formal_experiment_gate_blocks_small_mock_run(tmp_path: Path) -> None:
     assert "paper_claims_allowed_by_analysis" in failed
     assert "no_mock_llm" in failed
     assert payload["paper_claims_allowed"] is False
+
+
+def test_formal_experiment_gate_blocks_method_grid_duplicates_even_when_count_matches(
+    tmp_path: Path,
+) -> None:
+    run_dir = _write_formal_run_dir(tmp_path / "duplicate-grid-run", independent_cases=1)
+    results_path = run_dir / "benchmark_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results[1]["method"] = "llm_direct"
+    results_path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    payload = write_formal_experiment_gate(run_dir, min_cases=1)
+
+    assert payload["gate_status"] == "failed"
+    failed = set(payload["gate"]["failed_checks"])
+    assert "method_result_grid_complete" in failed
+    grid = payload["gate"]["method_result_grid_summary"]
+    assert grid["missing_method_group_count"] == 1
+    assert grid["duplicate_method_result_count"] == 1
+    assert grid["observed_group_count"] == 1
+
+
+def test_formal_experiment_gate_blocks_uncalculable_core_metrics(
+    tmp_path: Path,
+) -> None:
+    run_dir = _write_formal_run_dir(tmp_path / "bad-metrics-run", independent_cases=1)
+    results_path = run_dir / "benchmark_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results[0]["metrics"]["evaluation_hcsr"] = None
+    results_path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    payload = write_formal_experiment_gate(run_dir, min_cases=1)
+
+    assert payload["gate_status"] == "failed"
+    failed = set(payload["gate"]["failed_checks"])
+    assert "metric_values_calculable" in failed
+    metrics = payload["gate"]["metric_calculability_summary"]
+    assert metrics["result_issue_count"] >= 1
+    assert metrics["sample_result_issues"][0]["metric"] == "evaluation_hcsr"
+
+
+def test_formal_experiment_gate_blocks_missing_decision_normalization_diagnostics(
+    tmp_path: Path,
+) -> None:
+    run_dir = _write_formal_run_dir(tmp_path / "missing-decision-diagnostics", independent_cases=1)
+    summary_path = run_dir / "evaluation_summary.json"
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    summary.pop("decision_normalization")
+    for row in summary["methods"].values():
+        row.pop("decision_normalization", None)
+    summary_path.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    payload = write_formal_experiment_gate(run_dir, min_cases=1)
+
+    assert payload["gate_status"] == "failed"
+    failed = set(payload["gate"]["failed_checks"])
+    assert "decision_normalization_diagnostics_calculable" in failed
+    metrics = payload["gate"]["metric_calculability_summary"]
+    assert metrics["decision_normalization_issue_count"] >= 1
+    assert metrics["sample_decision_normalization_issues"][0]["section"] == "decision_normalization"
+
+
+def test_formal_experiment_gate_requires_520_raw_results_for_ctp100_protocol(
+    tmp_path: Path,
+) -> None:
+    run_dir = _write_formal_run_dir(
+        tmp_path / "ctp100-count-run",
+        independent_cases=100,
+        preflight_case_count=100,
+        preflight_turn_count=130,
+        preflight_expected_raw_run_count=4,
+    )
+
+    payload = write_formal_experiment_gate(run_dir, min_cases=100)
+
+    assert payload["gate_status"] == "failed"
+    failed = set(payload["gate"]["failed_checks"])
+    assert "formal_ctp100_raw_result_count_is_520" in failed
+    assert "preflight_expected_result_count_matches_structure" in failed
+    raw_count = payload["gate"]["raw_count_summary"]
+    assert raw_count["requires_ctp100_520_result_count"] is True
+    assert raw_count["formal_ctp100_expected_raw_result_count"] == 520
+    assert raw_count["structure_expected_result_count"] == 520
+    assert raw_count["actual_result_count"] == 4
 
 
 def test_finalize_formal_experiment_cli_writes_gate(
@@ -96,6 +189,9 @@ def _write_formal_run_dir(
     *,
     independent_cases: int,
     mock: bool = False,
+    preflight_case_count: int | None = None,
+    preflight_turn_count: int | None = None,
+    preflight_expected_raw_run_count: int | None = None,
 ) -> Path:
     run_dir.mkdir(parents=True)
     methods = [
@@ -125,15 +221,29 @@ def _write_formal_run_dir(
     )
     (run_dir / "paper_tables.md").write_text("# Paper Result Tables\n", encoding="utf-8")
     artifact_integrity = build_formal_artifact_integrity_report()
+    benchmark_case_count = preflight_case_count or independent_cases
+    benchmark_turn_count = preflight_turn_count or 1
+    expected_raw_run_count = (
+        preflight_expected_raw_run_count
+        if preflight_expected_raw_run_count is not None
+        else benchmark_turn_count * len(methods)
+    )
     (run_dir / "formal_preflight_report.json").write_text(
         json.dumps(
             {
                 "schema_version": "ctp-formal-preflight-v1",
                 "status": "passed",
+                "benchmark": {
+                    "case_count": benchmark_case_count,
+                    "total_turn_count": benchmark_turn_count,
+                },
                 "artifact_integrity": artifact_integrity,
                 "run": {
                     "run_id": "unit-formal-run",
-                    "expected_raw_run_count": 4,
+                    "methods": methods,
+                    "method_count": len(methods),
+                    "repeats": 1,
+                    "expected_raw_run_count": expected_raw_run_count,
                 },
             },
             ensure_ascii=False,
@@ -150,6 +260,10 @@ def _write_formal_run_dir(
                 "git_commit": artifact_integrity["git"]["commit"],
                 "git": artifact_integrity["git"],
                 "formal_artifact_integrity": artifact_integrity,
+                "benchmark_structure": {
+                    "case_count": benchmark_case_count,
+                    "total_turn_count": benchmark_turn_count,
+                },
                 "methods": methods,
                 "repeats": 1,
                 "runtime_config": {
@@ -190,6 +304,7 @@ def _result(
         "stsr": True,
         "evaluation_hcsr": 1.0,
         "bpcr": 1.0,
+        "bpcr_applicable_count": 1,
         "agent_selection_f1": 1.0,
         "tool_selection_f1": 1.0,
         "agent_set_exact_match": True,
@@ -198,6 +313,7 @@ def _result(
         "agent_call_count": 1,
         "called_tool_count": 1,
         "total_tokens": tokens,
+        "standardized_estimated_cost": round(tokens / 5000, 4),
         "evaluation_failed_rule_ids": [],
     }
     return {
@@ -260,11 +376,12 @@ def _summary(*, independent_cases: int) -> dict:
         "unique_case_count": independent_cases,
         "independent_case_count": independent_cases,
         "methods": {
-            "llm_direct": _method_summary(tokens=100, llm_calls=1),
-            "single_agent": _method_summary(tokens=100, llm_calls=1),
-            "fixed_multi_agent": _method_summary(tokens=100, llm_calls=1),
-            "adaptive_multi_agent": _method_summary(tokens=50, llm_calls=1),
+            "llm_direct": _method_summary(tokens=100, llm_calls=1, decisions=0),
+            "single_agent": _method_summary(tokens=100, llm_calls=1, decisions=0),
+            "fixed_multi_agent": _method_summary(tokens=100, llm_calls=1, decisions=2),
+            "adaptive_multi_agent": _method_summary(tokens=50, llm_calls=1, decisions=1),
         },
+        "decision_normalization": _decision_normalization_summary(),
         "paired_statistics": {
             "comparison": "adaptive_multi_agent_vs_fixed_multi_agent",
             "pair_count": 1,
@@ -285,7 +402,8 @@ def _summary(*, independent_cases: int) -> dict:
     }
 
 
-def _method_summary(*, tokens: int, llm_calls: int) -> dict:
+def _method_summary(*, tokens: int, llm_calls: int, decisions: int) -> dict:
+    decision_summary = _decision_normalization_method_summary(decisions=decisions)
     return {
         "case_count": 1,
         "raw_run_count": 1,
@@ -303,6 +421,49 @@ def _method_summary(*, tokens: int, llm_calls: int) -> dict:
         "latency_ms_mean": 100,
         "top_failed_rules": [],
         "top_tool_failure_types": [],
+        "decision_normalization": decision_summary,
+        "agent_decision_total": decision_summary["agent_decision_total"],
+        "raw_decision_success_count": decision_summary["raw_decision_success_count"],
+        "raw_decision_success_rate": decision_summary["raw_decision_success_rate"],
+        "normalizer_recovery_count": decision_summary["normalizer_recovery_count"],
+        "normalizer_recovery_rate": decision_summary["normalizer_recovery_rate"],
+        "pipeline_completion_rate": decision_summary["pipeline_completion_rate"],
+    }
+
+
+def _decision_normalization_summary() -> dict:
+    by_method = {
+        "llm_direct": _decision_normalization_method_summary(decisions=0),
+        "single_agent": _decision_normalization_method_summary(decisions=0),
+        "fixed_multi_agent": _decision_normalization_method_summary(decisions=2),
+        "adaptive_multi_agent": _decision_normalization_method_summary(decisions=1),
+    }
+    return {
+        "schema_version": "ctp-decision-normalization-diagnostics-v1",
+        "result_count": 4,
+        "pipeline_completion_count": 4,
+        "pipeline_completion_rate": 1.0,
+        "agent_decision_total": 3,
+        "raw_decision_success_count": 3,
+        "raw_decision_success_rate": 1.0,
+        "normalizer_recovery_count": 0,
+        "normalizer_recovery_rate": 0.0,
+        "missing_agent_decision_audit_result_count": 0,
+        "by_method": by_method,
+    }
+
+
+def _decision_normalization_method_summary(*, decisions: int) -> dict:
+    return {
+        "result_count": 1,
+        "pipeline_completion_count": 1,
+        "pipeline_completion_rate": 1.0,
+        "agent_decision_total": decisions,
+        "raw_decision_success_count": decisions,
+        "raw_decision_success_rate": 1.0 if decisions else None,
+        "normalizer_recovery_count": 0,
+        "normalizer_recovery_rate": 0.0 if decisions else None,
+        "missing_agent_decision_audit_result_count": 0,
     }
 
 

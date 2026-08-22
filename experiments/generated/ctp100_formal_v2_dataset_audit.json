@@ -1,10 +1,10 @@
 {
   "schema_version": "ctp100-formal-v2-dataset-audit-v1",
-  "generated_at": "2026-08-19T07:06:00.358336+00:00",
+  "generated_at": "2026-08-20T17:07:30.581913+00:00",
   "dataset_path": "experiments\\ctp100_formal_v2.json",
   "dataset_id": "ctp100_formal_v2",
-  "dataset_version": "2026-08-18-day8-formal-v2-weather-gold-fix",
-  "dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
+  "dataset_version": "2026-08-21-formal-v3-runtime-control-freeze",
+  "dataset_sha256": "c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e",
   "case_count": 100,
   "turn_count": 130,
   "quality_report_status": "passed",
@@ -121,8 +121,8 @@
       "premium"
     ],
     "manual_review_excludes_comfort_premium": true,
-    "expected_source_dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
-    "source_dataset_sha256": "b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d",
+    "expected_source_dataset_sha256": "c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e",
+    "source_dataset_sha256": "c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e",
     "source_dataset_sha256_matches": true,
     "source_slot_repair_count": 0,
     "source_slot_repair_units": []

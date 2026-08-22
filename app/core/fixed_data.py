@@ -889,13 +889,20 @@ class FixedTourismData:
         num_travelers: int,
     ) -> Dict[str, Any]:
         origin_text = str(origin or "").strip()
+        origin_missing = not bool(origin_text)
+        disclaimer = (
+            "未提供出发地，当前预算只计算目的地当地费用，"
+            "不包含出发地与目的地之间的往返城际交通。"
+            if origin_missing
+            else None
+        )
         return {
             "provider": "manual_12306_snapshot",
             "offline": True,
             "status": "not_requested_local_only",
             "route_supported": False,
             "intercity_transport_included": False,
-            "mandatory_budget_disclaimer": False,
+            "mandatory_budget_disclaimer": origin_missing,
             "budget_scope": "destination_local_only",
             "requested_origin": origin_text,
             "requested_destination": destination,
@@ -908,7 +915,7 @@ class FixedTourismData:
             "real_time_api_allowed": False,
             "runtime_online_refresh_allowed": False,
             "real_time_price_claim_allowed": False,
-            "disclaimer": None,
+            "disclaimer": disclaimer,
             "recommended_user_action": None,
             "calculation_rule": (
                 "intercity transport intentionally excluded because the requested "

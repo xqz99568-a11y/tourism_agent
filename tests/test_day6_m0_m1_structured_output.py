@@ -122,6 +122,41 @@ def test_day6_m0_invalid_json_is_method_failure(tmp_path: Path) -> None:
     assert result["output"]["metadata"]["structured_llm_output"]["parse_status"] == "failed"
 
 
+def test_structured_llm_prompt_requires_weather_adjustment_objects(tmp_path: Path) -> None:
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces")
+    case = {
+        "case_id": "prompt-weather-adjustment-contract",
+        "user_input": "Plan a two day Hangzhou trip.",
+    }
+
+    system_prompt = runner._structured_llm_system_prompt("llm_direct")
+    user_prompt = runner._structured_llm_user_prompt(
+        case=case,
+        method="llm_direct",
+        task_prompt="Plan a two day Hangzhou trip.",
+        planned_agents=[],
+        planned_tools=[],
+        tool_results={},
+    )
+    payload = json.loads(user_prompt)
+
+    assert "never return arrays of strings" in system_prompt
+    assert "budget and weather must be JSON objects or null" in system_prompt
+    assert "trip_days must be an integer or null" in system_prompt
+    assert "compact and shallow" in system_prompt
+    assert "limit attractions to at most five items" in system_prompt
+    assert payload["field_type_contract"]["trip_days"].startswith("integer|null")
+    assert payload["field_type_contract"]["budget"].startswith("object|null")
+    assert payload["field_type_contract"]["weather"].startswith("object|null")
+    assert "avoid nested steps arrays" in payload["field_type_contract"]["daily_itinerary"]
+    assert payload["field_type_contract"]["final_answer"].startswith("string")
+    assert payload["field_type_contract"]["weather_adjustments"].startswith("array<object>")
+    assert isinstance(payload["field_type_contract"]["weather_adjustment_object_example"], dict)
+    assert payload["output_template"]["budget"] is None
+    assert payload["output_template"]["weather"] is None
+    assert payload["output_template"]["weather_adjustments"] == []
+
+
 def test_day6_m1_preserves_real_tool_results_for_evaluation(tmp_path: Path) -> None:
     class FakeLLM:
         def __init__(self):

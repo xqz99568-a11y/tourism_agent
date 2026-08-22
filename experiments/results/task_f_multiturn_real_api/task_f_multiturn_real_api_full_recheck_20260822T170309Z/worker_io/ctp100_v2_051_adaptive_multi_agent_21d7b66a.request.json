@@ -1,0 +1,80 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_051",
+    "scenario_id": "ctp100_v2_051",
+    "title": "多轮修改｜北京｜修改预算",
+    "check": "只重新计算预算；复用景点和行程；始终不查询天气。",
+    "turn_id": "t1",
+    "user_input": "北京玩3天，两个人，日期没定，总预算上限5000元，先帮我安排一版。",
+    "task_type": "trip_planning",
+    "current_slots": {
+      "destination": "beijing",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000
+    },
+    "slots": {
+      "destination": "beijing",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000
+    },
+    "expected": {
+      "task_type": "trip_planning",
+      "required_tools": [
+        "poi_search",
+        "budget_calculator"
+      ],
+      "accepted_agent_sets": [
+        [
+          "attraction",
+          "itinerary",
+          "budget"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "poi_search",
+          "budget_calculator"
+        ]
+      ],
+      "forbidden_tools": [
+        "weather_query"
+      ],
+      "hard_constraints": {
+        "destination": "beijing",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_limit": 5000,
+        "min_attractions": 4,
+        "max_pois_per_day": 2
+      },
+      "destination": "beijing",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 5000,
+      "origin": null,
+      "intercity_transport_included": false,
+      "budget_scope": "destination_local_only",
+      "mandatory_budget_disclaimer": true,
+      "weather_required": false,
+      "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+      "no_date_weather_reminder_required": true
+    },
+    "turn_index": 0,
+    "scenario_turn_count": 2,
+    "target_turn": false,
+    "dialogue_history": []
+  },
+  "method": "adaptive_multi_agent",
+  "request_id": "ctp100_v2_051_adaptive_multi_agent_21d7b66a",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_f_multiturn_real_api/task_f_multiturn_real_api_full_recheck_20260822T170309Z",
+  "run_id": "task_f_multiturn_real_api_full_recheck_20260822T170309Z",
+  "repeat_index": 0,
+  "system_variant": "adaptive_multi_agent",
+  "model_config_name": "task-f-multiturn-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260718,
+  "enable_research_agent_decision_normalizer": true
+}

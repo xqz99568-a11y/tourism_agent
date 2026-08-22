@@ -35,16 +35,22 @@ from app.core.fixed_data import (
     validate_fixed_data_snapshot,
 )
 from app.core.formal_artifact_integrity import (
+    DEFAULT_FORMAL_INTEGRITY_PATHS,
     ROOT,
     build_formal_artifact_integrity_report,
 )
 from app.core.llm.client import LLM_REASONING_EFFORT_ENV, SUPPORTED_REASONING_EFFORTS
 from app.core.qweather_snapshot import validate_qweather_snapshot
 from app.core.intercity_transport_snapshot import validate_intercity_transport_snapshot
+from app.core.pre_formal_validation_registry import (
+    DEFAULT_PRE_FORMAL_VALIDATION_REGISTRY_PATH,
+    validate_pre_formal_validation_registry,
+)
 from app.core.experiment_runner import (
     BENCHMARK_CHECKPOINT_JSON_NAME,
     BENCHMARK_RESULTS_JSON_NAME,
     BENCHMARK_RESUME_STATE_NAME,
+    EXPERIMENT_RESULT_HARD_TIMEOUT_ENV,
     EXPERIMENT_RESUME_SCHEMA_VERSION,
 )
 
@@ -66,18 +72,8 @@ FORMAL_RESULT_FILES = (
 )
 DEFAULT_DAY8_DELIVERY_PACK_PATH = ROOT / "experiments" / "generated" / "day8_delivery_pack.json"
 _DAY8_ARTIFACT_HASH_KEYS = {
-    "benchmark_manifest": "benchmark_manifest",
-    "formal_dataset": "formal_dataset",
-    "budget_gold": "budget_gold_json",
-    "qweather_manifest": "qweather_manifest",
-    "qweather_validation": "qweather_validation_report",
-    "intercity_manifest": "intercity_manifest",
-    "intercity_fare_table": "intercity_fare_table",
-    "budget_policy_doc": "budget_policy_doc",
-    "academic_experiment_design": "academic_experiment_design_json",
-    "sealed_validation_dataset": "sealed_validation_dataset",
-    "evaluation_rule_catalog": "evaluation_rule_catalog",
-    "independent_evaluator_code": "independent_evaluator_code",
+    key: key
+    for key in DEFAULT_FORMAL_INTEGRITY_PATHS
 }
 
 
@@ -189,6 +185,10 @@ def build_formal_preflight_report(
         required=formal_release_required,
         require_clean_git=require_clean_git,
     )
+    pre_formal_validation_report = _pre_formal_validation_report(
+        errors=errors,
+        required=formal_release_required,
+    )
     day8_delivery_pack_report = _day8_delivery_pack_report(
         DEFAULT_DAY8_DELIVERY_PACK_PATH,
         artifact_integrity_report=artifact_integrity_report,
@@ -253,6 +253,7 @@ def build_formal_preflight_report(
         "budget_gold": budget_gold_report,
         "academic_experiment_design": academic_design_report,
         "artifact_integrity": artifact_integrity_report,
+        "pre_formal_validation": pre_formal_validation_report,
         "day8_delivery_pack": day8_delivery_pack_report,
         "environment": environment_report,
         "resume": resume_report,
@@ -261,6 +262,7 @@ def build_formal_preflight_report(
             "formal_release_required": formal_release_required,
             "require_day8_delivery_pack": require_day8_delivery,
             "require_clean_git": require_clean_git,
+            "pre_formal_validation_required": formal_release_required,
             "gold_visible_to_generation": False,
             "previous_state_policy": (
                 "formal multi-turn state must be produced by the same method's prior turn"
@@ -460,6 +462,12 @@ def _resume_preflight_report(
             contract,
             ("model_config", "timeout_seconds"),
             environment_report.get("LLM_TIMEOUT"),
+            local_errors,
+        )
+        _compare_resume_contract_value(
+            contract,
+            ("model_config", "result_hard_timeout_seconds"),
+            environment_report.get(EXPERIMENT_RESULT_HARD_TIMEOUT_ENV),
             local_errors,
         )
         _compare_resume_contract_value(
@@ -1007,6 +1015,25 @@ def _validate_artifact_integrity(
         errors.append("git working tree must be clean before formal runs")
 
 
+def _pre_formal_validation_report(
+    *,
+    errors: list[str],
+    required: bool,
+) -> dict[str, Any]:
+    report = validate_pre_formal_validation_registry(
+        DEFAULT_PRE_FORMAL_VALIDATION_REGISTRY_PATH,
+        required=required,
+    )
+    if required and report.get("status") != "passed":
+        validation_errors = report.get("errors") if isinstance(report.get("errors"), list) else []
+        details = "; ".join(str(item) for item in validation_errors[:8])
+        errors.append(
+            "Task D/E/F pre-formal validation gates must pass before formal runs"
+            + (f": {details}" if details else "")
+        )
+    return report
+
+
 def _day8_delivery_pack_report(
     path: Path,
     *,
@@ -1105,6 +1132,10 @@ def _environment_report(
         "LLM_TEMPERATURE": _env_float("LLM_TEMPERATURE", settings.llm.temperature),
         "LLM_MAX_TOKENS": _env_int("LLM_MAX_TOKENS", settings.llm.max_tokens),
         "LLM_TIMEOUT": _env_int("LLM_TIMEOUT", settings.llm.timeout),
+        EXPERIMENT_RESULT_HARD_TIMEOUT_ENV: _env_float(
+            EXPERIMENT_RESULT_HARD_TIMEOUT_ENV,
+            0.0,
+        ),
         "LLM_RETRY_MAX_ATTEMPTS": _env_int(
             "LLM_RETRY_MAX_ATTEMPTS",
             settings.llm.retry_max_attempts,
@@ -1139,6 +1170,14 @@ def _environment_report(
             )
         if env["LLM_TIMEOUT"] is None or int(env["LLM_TIMEOUT"]) < 1:
             errors.append("LLM_TIMEOUT must be a positive integer for formal runs")
+        if (
+            env[EXPERIMENT_RESULT_HARD_TIMEOUT_ENV] is None
+            or float(env[EXPERIMENT_RESULT_HARD_TIMEOUT_ENV]) <= 0
+        ):
+            errors.append(
+                f"{EXPERIMENT_RESULT_HARD_TIMEOUT_ENV} must be a positive number "
+                "for formal runs"
+            )
         if env["LLM_RETRY_MAX_ATTEMPTS"] is None:
             errors.append("LLM_RETRY_MAX_ATTEMPTS must be numeric for formal runs")
         elif int(env["LLM_RETRY_MAX_ATTEMPTS"]) != FORMAL_RETRY_MAX_ATTEMPTS:

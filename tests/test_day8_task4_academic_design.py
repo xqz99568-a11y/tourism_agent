@@ -8,9 +8,15 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.core.academic_experiment_design import (  # noqa: E402
+    ACADEMIC_EXPERIMENT_DESIGN_VERSION,
+    EXPECTED_FORMAL_PROVIDER_ACCOUNTING,
+    EXPECTED_FORMAL_RESULT_HARD_TIMEOUT_MODE,
+    EXPECTED_DECISION_NORMALIZATION_DIAGNOSTIC_METRICS,
+    EXPECTED_PRE_FORMAL_VALIDATION_TASKS,
     EXPECTED_SEALED_CASE_COUNT,
     EXPECTED_SEALED_TURN_COUNT,
     MAIN_BENCHMARK_ROLE,
+    MAIN_DATASET_VERSION,
     SEALED_VALIDATION_METHODS,
     SEALED_VALIDATION_ROLE,
     build_academic_experiment_design_report,
@@ -24,7 +30,9 @@ def test_day8_task4_academic_design_freeze_is_valid() -> None:
     assert report["status"] == "passed", report["errors"]
     assert report["warnings"] == []
     assert all(report["checks"].values())
+    assert report["design"]["design_version"] == ACADEMIC_EXPERIMENT_DESIGN_VERSION
     assert report["main_benchmark"]["dataset_role"] == MAIN_BENCHMARK_ROLE
+    assert report["main_benchmark"]["dataset_version"] == MAIN_DATASET_VERSION
     assert report["main_benchmark"]["case_count"] == 100
     assert report["main_benchmark"]["turn_count"] == 130
     assert report["sealed_validation"]["dataset_role"] == SEALED_VALIDATION_ROLE
@@ -35,6 +43,37 @@ def test_day8_task4_academic_design_freeze_is_valid() -> None:
     assert report["sealed_quality"]["duplicate_visible_input_groups"] == []
     assert report["sealed_quality"]["cross_split_duplicate_visible_input_groups"] == []
     assert report["sealed_quality"]["near_duplicate_visible_input_pairs"] == []
+    assert (
+        report["runtime_controls"]["result_hard_timeout_mode"]
+        == EXPECTED_FORMAL_RESULT_HARD_TIMEOUT_MODE
+    )
+    assert report["runtime_controls"]["result_hard_timeout_seconds"] >= 900
+    assert (
+        report["runtime_controls"]["provider_accounting"]
+        == EXPECTED_FORMAL_PROVIDER_ACCOUNTING
+    )
+    assert report["runtime_controls"]["real_api_smoke_required"] is True
+    assert report["pre_formal_validation"]["ctp20_four_method_joint_run_required"] is True
+    assert report["pre_formal_validation"]["task_d_m0_real_api_required"] is True
+    assert report["pre_formal_validation"]["task_e_four_method_real_api_required"] is True
+    assert report["pre_formal_validation"]["task_f_multiturn_real_api_required"] is True
+    assert tuple(report["pre_formal_validation"]["required_tasks"]) == (
+        EXPECTED_PRE_FORMAL_VALIDATION_TASKS
+    )
+    assert (
+        report["pre_formal_validation"]["registry_file"]
+        == "experiments/generated/pre_formal_validation_registry_v1.json"
+    )
+    assert tuple(report["pre_formal_validation"]["methods"]) == (
+        "llm_direct",
+        "single_agent",
+        "fixed_multi_agent",
+        "adaptive_multi_agent",
+    )
+    diagnostics = report["diagnostic_metrics"]["decision_normalization"]
+    assert tuple(diagnostics["metrics"]) == EXPECTED_DECISION_NORMALIZATION_DIAGNOSTIC_METRICS
+    assert diagnostics["paper_usage"] == "diagnostic_not_primary_effect_metric"
+    assert set(diagnostics["formulas"]) == set(EXPECTED_DECISION_NORMALIZATION_DIAGNOSTIC_METRICS)
 
 
 def test_ctp100_is_controlled_main_benchmark_not_unseen_test_set() -> None:

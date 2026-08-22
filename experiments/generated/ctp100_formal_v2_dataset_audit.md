@@ -3,8 +3,8 @@
 > 本文件审计正式题库、正式预算金标与经济型人工审核账本的一致性，不运行正式100题。
 
 - status: `passed`
-- dataset_version: `2026-08-18-day8-formal-v2-weather-gold-fix`
-- dataset_sha256: `b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d`
+- dataset_version: `2026-08-21-formal-v3-runtime-control-freeze`
+- dataset_sha256: `c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e`
 - case_count: `100`
 - turn_count: `130`
 - quality_report_status: `passed`
@@ -30,8 +30,8 @@
 ## Budget gold audit
 
 - path: `experiments\generated\ctp100_budget_gold_v2.json`
-- source_dataset_sha256: `b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d`
-- expected_source_dataset_sha256: `b20f55fbb8695905a7f4424b1ce6a4ec0a91b75e4412828b24f1852d435f664d`
+- source_dataset_sha256: `c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e`
+- expected_source_dataset_sha256: `c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e`
 - source_dataset_sha256_matches: `True`
 - manual_review_scope: `['economy', 'intercity_transport', 'budget_policy_v2']`
 - manual_review_scope_matches: `True`

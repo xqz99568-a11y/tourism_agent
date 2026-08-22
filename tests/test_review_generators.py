@@ -24,6 +24,7 @@ from app.core.budget_manual_review import (
     ECONOMY_BUDGET_FORMAL_MAIN_TIERS,
     validate_economy_budget_manual_review,
 )
+from app.core.academic_experiment_design import MAIN_DATASET_VERSION
 from app.core.fixed_data import canonical_json_sha256
 
 
@@ -107,6 +108,7 @@ def test_budget_gold_review_passes_after_formal_dataset_slot_fixes(tmp_path: Pat
     local_only = next(record for record in written["records"] if record["unit_id"] == "ctp100_v2_049")
     assert local_only["budget_policy_v2"]["requested_budget_scope"] == "destination_local_only"
     assert local_only["budget_policy_v2"]["sufficiency_status"] == "sufficient"
+    assert local_only["budget_policy_v2"]["mandatory_budget_disclaimer"] is True
     assert md_path.exists()
     assert csv_path.exists()
     md_text = md_path.read_text(encoding="utf-8")
@@ -148,7 +150,7 @@ def test_ctp100_formal_v2_audit_records_dataset_hash_and_no_repairs(tmp_path: Pa
     )
 
     assert audit["status"] == "passed", audit["issue_counts"]
-    assert audit["dataset_version"] == "2026-08-18-day8-formal-v2-weather-gold-fix"
+    assert audit["dataset_version"] == MAIN_DATASET_VERSION
     assert (
         audit["budget_gold_audit"]["source_dataset_sha256"]
         == audit["dataset_sha256"]

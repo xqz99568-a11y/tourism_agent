@@ -23,13 +23,26 @@ ACADEMIC_EXPERIMENT_DESIGN_SCHEMA_VERSION = "ctp-academic-experiment-design-v1"
 ACADEMIC_EXPERIMENT_DESIGN_REPORT_SCHEMA_VERSION = (
     "ctp-academic-experiment-design-report-v1"
 )
-ACADEMIC_EXPERIMENT_DESIGN_VERSION = "CTP-GMAS-ACADEMIC-DESIGN-v1"
+ACADEMIC_EXPERIMENT_DESIGN_VERSION = "CTP-GMAS-ACADEMIC-DESIGN-v2"
 
 MAIN_BENCHMARK_ROLE = "post_development_frozen_controlled_main_benchmark"
 SEALED_VALIDATION_ROLE = "sealed_validation_after_main_design_freeze"
 MAIN_DATASET_ID = "ctp100_formal_v2"
+MAIN_DATASET_VERSION = "2026-08-21-formal-v3-runtime-control-freeze"
 SEALED_DATASET_ID = "ctp30_sealed_validation_v1"
 SEALED_VALIDATION_METHODS = ("fixed_multi_agent", "adaptive_multi_agent")
+EXPECTED_FORMAL_RESULT_HARD_TIMEOUT_MODE = "subprocess_per_result"
+EXPECTED_FORMAL_PROVIDER_ACCOUNTING = "base_url_derived_openai_compatible_provider"
+EXPECTED_DECISION_NORMALIZATION_DIAGNOSTIC_METRICS = (
+    "raw_decision_success_rate",
+    "normalizer_recovery_rate",
+    "pipeline_completion_rate",
+)
+EXPECTED_PRE_FORMAL_VALIDATION_TASKS = (
+    "task_d_m0_real_api",
+    "task_e_four_method_real_api",
+    "task_f_multiturn_real_api",
+)
 EXPECTED_MAIN_CASE_COUNT = 100
 EXPECTED_MAIN_TURN_COUNT = 130
 EXPECTED_SEALED_CASE_COUNT = 30
@@ -149,6 +162,7 @@ def build_academic_experiment_design_report(
             "dataset_path": _display_path(main_file),
             "dataset_sha256": canonical_json_sha256(main_doc) if main_doc else None,
             "dataset_id": main_doc.get("dataset_id"),
+            "dataset_version": main_doc.get("dataset_version"),
             "dataset_role": main_doc.get("dataset_role"),
             "case_count": len(main_cases),
             "turn_count": _turn_count(main_cases),
@@ -166,6 +180,9 @@ def build_academic_experiment_design_report(
         },
         "main_quality": _compact_quality(main_quality),
         "sealed_quality": _compact_quality(sealed_quality),
+        "runtime_controls": _dict(design.get("runtime_controls")),
+        "pre_formal_validation": _dict(design.get("pre_formal_validation")),
+        "diagnostic_metrics": _dict(design.get("diagnostic_metrics")),
     }
 
 
@@ -190,8 +207,11 @@ def render_academic_experiment_design_report(report: Mapping[str, Any]) -> str:
     design = _dict(report.get("design"))
     main = _dict(report.get("main_benchmark"))
     sealed = _dict(report.get("sealed_validation"))
+    pre_formal_validation = _dict(report.get("pre_formal_validation"))
+    diagnostics = _dict(report.get("diagnostic_metrics"))
+    decision_normalization = _dict(diagnostics.get("decision_normalization"))
     lines = [
-        "# Academic Experiment Design Validation v1",
+        "# Academic Experiment Design Validation v2",
         "",
         f"- status: `{report.get('status')}`",
         f"- errors: `{report.get('errors') or []}`",
@@ -207,6 +227,7 @@ def render_academic_experiment_design_report(report: Mapping[str, Any]) -> str:
         "## Main benchmark",
         "",
         f"- dataset_id: `{main.get('dataset_id')}`",
+        f"- dataset_version: `{main.get('dataset_version')}`",
         f"- dataset_role: `{main.get('dataset_role')}`",
         f"- case_count / turn_count: `{main.get('case_count')}` / `{main.get('turn_count')}`",
         f"- quality_status: `{main.get('quality_status')}`",
@@ -218,6 +239,18 @@ def render_academic_experiment_design_report(report: Mapping[str, Any]) -> str:
         f"- case_count / turn_count: `{sealed.get('case_count')}` / `{sealed.get('turn_count')}`",
         f"- methods: `{sealed.get('methods')}`",
         f"- quality_status: `{sealed.get('quality_status')}`",
+        "",
+        "## Pre-formal validation",
+        "",
+        f"- registry_file: `{pre_formal_validation.get('registry_file')}`",
+        f"- required_tasks: `{pre_formal_validation.get('required_tasks')}`",
+        f"- warning_policy: `{pre_formal_validation.get('warning_policy')}`",
+        "",
+        "## Diagnostic metrics",
+        "",
+        f"- decision_normalization_metrics: `{decision_normalization.get('metrics')}`",
+        f"- decision_normalization_formulas: `{decision_normalization.get('formulas')}`",
+        f"- paper_usage: `{decision_normalization.get('paper_usage')}`",
         "",
         "## Checks",
         "",
@@ -252,6 +285,12 @@ def _checks(
     sealed_design = _dict(design.get("sealed_validation"))
     statistical_plan = _dict(design.get("statistical_plan"))
     claim_boundaries = _dict(design.get("claim_boundaries"))
+    runtime_controls = _dict(design.get("runtime_controls"))
+    pre_formal_validation = _dict(design.get("pre_formal_validation"))
+    diagnostic_metrics = _dict(design.get("diagnostic_metrics"))
+    decision_normalization = _dict(diagnostic_metrics.get("decision_normalization"))
+    decision_metric_names = tuple(_as_text_list(decision_normalization.get("metrics")))
+    decision_formulas = _dict(decision_normalization.get("formulas"))
 
     return {
         "design_json_exists": design_file.exists(),
@@ -264,6 +303,10 @@ def _checks(
         == "frozen_before_formal_results",
         "freeze_date_recorded": _valid_iso_date(design.get("freeze_date")),
         "main_dataset_id_matches": main_doc.get("dataset_id") == MAIN_DATASET_ID,
+        "main_dataset_version_matches": main_doc.get("dataset_version")
+        == MAIN_DATASET_VERSION,
+        "benchmark_dataset_version_matches_main": benchmark_doc.get("dataset_version")
+        == main_doc.get("dataset_version"),
         "main_dataset_role_controlled": main_doc.get("dataset_role") == MAIN_BENCHMARK_ROLE,
         "main_dataset_not_claimed_unseen": _dict(main_doc.get("claim_policy")).get(
             "claim_allowed_as_unseen"
@@ -307,6 +350,57 @@ def _checks(
             "sealed_validation_no_tuning_after_run"
         )
         is True,
+        "formal_hard_timeout_control_recorded": runtime_controls.get(
+            "result_hard_timeout_mode"
+        )
+        == EXPECTED_FORMAL_RESULT_HARD_TIMEOUT_MODE
+        and (_float_or_none(runtime_controls.get("result_hard_timeout_seconds")) or 0.0)
+        >= 900.0,
+        "formal_provider_accounting_control_recorded": runtime_controls.get(
+            "provider_accounting"
+        )
+        == EXPECTED_FORMAL_PROVIDER_ACCOUNTING,
+        "pre_formal_real_api_smoke_required": runtime_controls.get(
+            "real_api_smoke_required"
+        )
+        is True,
+        "pre_formal_ctp20_joint_run_required": pre_formal_validation.get(
+            "ctp20_four_method_joint_run_required"
+        )
+        is True,
+        "pre_formal_ctp20_joint_run_methods_are_four_method": tuple(
+            _as_text_list(pre_formal_validation.get("methods"))
+        )
+        == EXPERIMENT_METHODS,
+        "pre_formal_task_d_required": pre_formal_validation.get(
+            "task_d_m0_real_api_required"
+        )
+        is True,
+        "pre_formal_task_e_required": pre_formal_validation.get(
+            "task_e_four_method_real_api_required"
+        )
+        is True,
+        "pre_formal_task_f_required": pre_formal_validation.get(
+            "task_f_multiturn_real_api_required"
+        )
+        is True,
+        "pre_formal_registry_declares_all_tasks": tuple(
+            _as_text_list(pre_formal_validation.get("required_tasks"))
+        )
+        == EXPECTED_PRE_FORMAL_VALIDATION_TASKS
+        and bool(pre_formal_validation.get("registry_file")),
+        "decision_normalization_diagnostic_metrics_declared": all(
+            metric in decision_metric_names
+            for metric in EXPECTED_DECISION_NORMALIZATION_DIAGNOSTIC_METRICS
+        ),
+        "decision_normalization_formulas_declared": all(
+            bool(decision_formulas.get(metric))
+            for metric in EXPECTED_DECISION_NORMALIZATION_DIAGNOSTIC_METRICS
+        ),
+        "decision_normalization_marked_as_diagnostic": decision_normalization.get(
+            "paper_usage"
+        )
+        == "diagnostic_not_primary_effect_metric",
     }
 
 
@@ -402,6 +496,13 @@ def _valid_iso_date(value: Any) -> bool:
     except ValueError:
         return False
     return True
+
+
+def _float_or_none(value: Any) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def _display_path(path: Path) -> str:

@@ -24,6 +24,9 @@ from app.core.qweather_snapshot import QWeatherSnapshotError, query_qweather_sna
 
 EVALUATION_SCHEMA_VERSION = "ctp-independent-evaluation-v1"
 EVALUATION_SUMMARY_SCHEMA_VERSION = "ctp-evaluation-summary-v1"
+DECISION_NORMALIZATION_DIAGNOSTIC_SCHEMA_VERSION = (
+    "ctp-decision-normalization-diagnostics-v1"
+)
 DEFAULT_RULE_CATALOG_PATH = (
     Path(__file__).resolve().parents[2] / "experiments" / "evaluation_rule_catalog.json"
 )
@@ -225,6 +228,12 @@ _METHOD_SUMMARY_METRICS = (
     "api_total_duration_ms",
     "stage_total_duration_ms",
 )
+_DECISION_NORMALIZATION_METHODS = {
+    "llm_direct",
+    "single_agent",
+    "fixed_multi_agent",
+    "adaptive_multi_agent",
+}
 _METHOD_LABELS = {
     "llm_direct": "M0 Direct LLM",
     "single_agent": "M1 Single Agent",
@@ -251,6 +260,7 @@ def summarize_evaluation_results(results: List[Dict[str, Any]]) -> Dict[str, Any
         method: _aggregate_repeated_cases(rows)
         for method, rows in quality_by_method.items()
     }
+    decision_normalization = _decision_normalization_summary(results)
     quality_units = {_evaluation_unit_id(result) for result in quality_results}
     scenario_ids = {
         str(result.get("scenario_id") or result.get("case_id") or "")
@@ -280,9 +290,17 @@ def summarize_evaluation_results(results: List[Dict[str, Any]]) -> Dict[str, Any
         },
         "scenario_costs": _scenario_cost_summary(raw_by_method),
         "methods": {
-            method: _method_summary(rows)
+            method: _method_summary(
+                rows,
+                decision_normalization=_nested(
+                    decision_normalization,
+                    "by_method",
+                    method,
+                ),
+            )
             for method, rows in sorted(by_method.items())
         },
+        "decision_normalization": decision_normalization,
         "paired_m3_vs_m2": _paired_summary(
             by_method.get("adaptive_multi_agent", []),
             by_method.get("fixed_multi_agent", []),
@@ -373,6 +391,25 @@ def render_paper_tables(summary: Dict[str, Any]) -> str:
         )
     lines.extend([
         "",
+        "## Decision normalizer diagnostics",
+        "",
+        "| Method | Results | Agent decisions | Raw decision success | Normalizer recovery | Pipeline completion | Missing audit rows |",
+        "|---|---:|---:|---:|---:|---:|---:|",
+    ])
+    decision_methods = _nested(summary, "decision_normalization", "by_method")
+    decision_methods = decision_methods if isinstance(decision_methods, dict) else {}
+    for method in _method_order({**methods, **decision_methods}):
+        row = decision_methods.get(method) or _nested(methods.get(method) or {}, "decision_normalization") or {}
+        lines.append(
+            f"| {_method_label(method)} | {_fmt(row.get('result_count'))} "
+            f"| {_fmt(row.get('agent_decision_total'))} "
+            f"| {_fmt(row.get('raw_decision_success_rate'))} "
+            f"| {_fmt(row.get('normalizer_recovery_rate'))} "
+            f"| {_fmt(row.get('pipeline_completion_rate'))} "
+            f"| {_fmt(row.get('missing_agent_decision_audit_result_count'))} |"
+        )
+    lines.extend([
+        "",
         "## Paired M3 vs M2 statistics",
         "",
         "| Metric | Pairs | M3 mean | M2 mean | Delta mean | Delta median | Delta IQR | 95% CI | Test | p-value |",
@@ -418,12 +455,17 @@ def evaluate_case(
     }
 
 
-def _method_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
+def _method_summary(
+    rows: List[Dict[str, Any]],
+    *,
+    decision_normalization: Any = None,
+) -> Dict[str, Any]:
     failed_rules: Counter[str] = Counter()
     tool_failures: Counter[str] = Counter()
     for row in rows:
         failed_rules.update(_list((row.get("metrics") or {}).get("evaluation_failed_rule_ids")))
         tool_failures.update(_list((row.get("metrics") or {}).get("tool_failure_types")))
+    decision_summary = _compact_decision_normalization_summary(decision_normalization)
     summary = {
         "case_count": len(rows),
         "raw_run_count": sum(_first_int(row.get("repeat_count")) or 1 for row in rows),
@@ -446,6 +488,13 @@ def _method_summary(rows: List[Dict[str, Any]]) -> Dict[str, Any]:
             {"failure_type": failure_type, "count": count}
             for failure_type, count in tool_failures.most_common(10)
         ],
+        "decision_normalization": decision_summary,
+        "agent_decision_total": decision_summary.get("agent_decision_total"),
+        "raw_decision_success_count": decision_summary.get("raw_decision_success_count"),
+        "raw_decision_success_rate": decision_summary.get("raw_decision_success_rate"),
+        "normalizer_recovery_count": decision_summary.get("normalizer_recovery_count"),
+        "normalizer_recovery_rate": decision_summary.get("normalizer_recovery_rate"),
+        "pipeline_completion_rate": decision_summary.get("pipeline_completion_rate"),
     }
     summary.update({
         f"{metric}_mean": _mean_metric(rows, metric)
@@ -465,6 +514,210 @@ def _paired_summary(m3_rows: List[Dict[str, Any]], m2_rows: List[Dict[str, Any]]
         "agent_call_count_delta_mean": _mean_num(_num((m3.get("trace") or {}).get("agent_call_count")) - _num((m2.get("trace") or {}).get("agent_call_count")) for m3, m2 in pairs),
         "tool_call_count_delta_mean": _mean_num(_num((m3.get("trace") or {}).get("tool_call_count")) - _num((m2.get("trace") or {}).get("tool_call_count")) for m3, m2 in pairs),
     }
+
+
+def _decision_normalization_summary(results: Iterable[Dict[str, Any]]) -> Dict[str, Any]:
+    rows = list(results)
+    totals = _empty_decision_normalization_counts()
+    by_method: Dict[str, Dict[str, Any]] = {}
+    by_agent: Dict[str, Dict[str, Any]] = {}
+    recovery_reason_counts: Counter[str] = Counter()
+    recovered_result_labels: List[Dict[str, Any]] = []
+
+    for row in rows:
+        method = str(row.get("method") or _nested(row, "output", "method") or "unknown")
+        method_counts = by_method.setdefault(method, _empty_decision_normalization_counts())
+        row_counts, agent_counts, recovered_labels, reason_counts = (
+            _decision_normalization_result_counts(row)
+        )
+        _merge_decision_counts(totals, row_counts)
+        _merge_decision_counts(method_counts, row_counts)
+        recovery_reason_counts.update(reason_counts)
+        recovered_result_labels.extend(recovered_labels)
+        for agent, counts in agent_counts.items():
+            _merge_decision_counts(
+                by_agent.setdefault(agent, _empty_decision_normalization_counts()),
+                counts,
+            )
+
+    return {
+        "schema_version": DECISION_NORMALIZATION_DIAGNOSTIC_SCHEMA_VERSION,
+        "scope": {
+            "unit": "agent_decision",
+            "agent_decision_filter": "non_reused_agent_decisions_only",
+            "pipeline_completion_unit": "case_method_turn_result",
+            "methods": sorted(_DECISION_NORMALIZATION_METHODS),
+            "paper_usage": "diagnostic_metric_not_primary_effect_metric",
+        },
+        "formulas": {
+            "raw_decision_success_rate": (
+                "raw_decision_success_count / agent_decision_total"
+            ),
+            "normalizer_recovery_rate": (
+                "normalizer_recovery_count / agent_decision_total"
+            ),
+            "pipeline_completion_rate": "pipeline_completion_count / result_count",
+        },
+        **_finalize_decision_counts(totals),
+        "by_method": {
+            method: _finalize_decision_counts(counts)
+            for method, counts in sorted(by_method.items())
+        },
+        "by_agent": {
+            agent: _finalize_decision_counts(counts)
+            for agent, counts in sorted(by_agent.items())
+        },
+        "recovery_reason_counts": dict(sorted(recovery_reason_counts.items())),
+        "recovered_result_labels": recovered_result_labels,
+    }
+
+
+def _decision_normalization_result_metrics(row: Dict[str, Any]) -> Dict[str, Any]:
+    counts, _agent_counts, _labels, _reason_counts = _decision_normalization_result_counts(row)
+    finalized = _finalize_decision_counts(counts)
+    return {
+        "agent_decision_total": finalized["agent_decision_total"],
+        "raw_decision_success_count": finalized["raw_decision_success_count"],
+        "raw_decision_success_rate": finalized["raw_decision_success_rate"],
+        "normalizer_recovery_count": finalized["normalizer_recovery_count"],
+        "normalizer_recovery_rate": finalized["normalizer_recovery_rate"],
+        "pipeline_completion_rate": finalized["pipeline_completion_rate"],
+        "missing_agent_decision_audit_result_count": finalized[
+            "missing_agent_decision_audit_result_count"
+        ],
+    }
+
+
+def _decision_normalization_result_counts(
+    row: Dict[str, Any],
+) -> tuple[
+    Dict[str, Any],
+    Dict[str, Dict[str, Any]],
+    List[Dict[str, Any]],
+    Counter[str],
+]:
+    counts = _empty_decision_normalization_counts()
+    counts["result_count"] = 1
+    counts["pipeline_completion_count"] = 1 if _result_completed(row) else 0
+    method = str(row.get("method") or _nested(row, "output", "method") or "unknown")
+    audit = _agent_decision_audit(row)
+    if not isinstance(audit, dict):
+        if _method_requires_agent_decision_audit(method):
+            counts["missing_agent_decision_audit_result_count"] = 1
+        return counts, {}, [], Counter()
+
+    by_agent: Dict[str, Dict[str, Any]] = {}
+    reason_counts: Counter[str] = Counter()
+    recovered_labels: List[Dict[str, Any]] = []
+    for agent_name, item in sorted(audit.items()):
+        if not isinstance(item, dict) or _bool(item.get("reused")):
+            continue
+        agent = str(agent_name)
+        agent_counts = by_agent.setdefault(agent, _empty_decision_normalization_counts())
+        counts["agent_decision_total"] += 1
+        agent_counts["agent_decision_total"] += 1
+        source = str(item.get("decision_source") or "")
+        is_recovered = (
+            _bool(item.get("decision_fallback_used"))
+            or source == "deterministic_evidence_normalizer"
+        )
+        llm_error_count = _first_int(item.get("llm_decision_error_count")) or 0
+        if is_recovered:
+            counts["normalizer_recovery_count"] += 1
+            agent_counts["normalizer_recovery_count"] += 1
+            reason = source or "unknown"
+            reason_counts.update([reason])
+            recovered_labels.append(
+                {
+                    "case_id": row.get("case_id") or row.get("scenario_id"),
+                    "turn_id": row.get("turn_id"),
+                    "method": method,
+                    "agent": agent,
+                    "decision_source": source,
+                }
+            )
+        elif llm_error_count == 0:
+            counts["raw_decision_success_count"] += 1
+            agent_counts["raw_decision_success_count"] += 1
+    return counts, by_agent, recovered_labels, reason_counts
+
+
+def _agent_decision_audit(row: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    output = row.get("output") if isinstance(row.get("output"), dict) else row
+    audit = _nested(output, "metadata", "agent_decision_audit")
+    return audit if isinstance(audit, dict) else None
+
+
+def _method_requires_agent_decision_audit(method: str) -> bool:
+    return method in {"fixed_multi_agent", "adaptive_multi_agent"}
+
+
+def _result_completed(row: Dict[str, Any]) -> bool:
+    output = row.get("output") if isinstance(row.get("output"), dict) else row
+    status = str(row.get("status") or output.get("execution_status") or "").lower()
+    return status in {"completed", "success", "passed"}
+
+
+def _empty_decision_normalization_counts() -> Dict[str, Any]:
+    return {
+        "result_count": 0,
+        "pipeline_completion_count": 0,
+        "agent_decision_total": 0,
+        "raw_decision_success_count": 0,
+        "normalizer_recovery_count": 0,
+        "missing_agent_decision_audit_result_count": 0,
+    }
+
+
+def _merge_decision_counts(target: Dict[str, Any], source: Dict[str, Any]) -> None:
+    for key in _empty_decision_normalization_counts():
+        target[key] = int(target.get(key) or 0) + int(source.get(key) or 0)
+
+
+def _finalize_decision_counts(counts: Dict[str, Any]) -> Dict[str, Any]:
+    total = int(counts.get("agent_decision_total") or 0)
+    result_count = int(counts.get("result_count") or 0)
+    raw_success = int(counts.get("raw_decision_success_count") or 0)
+    recovered = int(counts.get("normalizer_recovery_count") or 0)
+    completion = int(counts.get("pipeline_completion_count") or 0)
+    finalized = {
+        "result_count": result_count,
+        "pipeline_completion_count": completion,
+        "pipeline_completion_rate": _rate(completion, result_count),
+        "agent_decision_total": total,
+        "raw_decision_success_count": raw_success,
+        "raw_decision_success_rate": _rate(raw_success, total),
+        "normalizer_recovery_count": recovered,
+        "normalizer_recovery_rate": _rate(recovered, total),
+        "missing_agent_decision_audit_result_count": int(
+            counts.get("missing_agent_decision_audit_result_count") or 0
+        ),
+    }
+    finalized["raw_llm_decision_success_count"] = finalized[
+        "raw_decision_success_count"
+    ]
+    finalized["raw_llm_decision_success_rate"] = finalized[
+        "raw_decision_success_rate"
+    ]
+    finalized["decision_normalizer_recovery_count"] = finalized[
+        "normalizer_recovery_count"
+    ]
+    finalized["decision_normalizer_recovery_rate"] = finalized[
+        "normalizer_recovery_rate"
+    ]
+    return finalized
+
+
+def _compact_decision_normalization_summary(value: Any) -> Dict[str, Any]:
+    if isinstance(value, dict):
+        return _finalize_decision_counts(value)
+    return _finalize_decision_counts(_empty_decision_normalization_counts())
+
+
+def _rate(numerator: int | float, denominator: int | float) -> Optional[float]:
+    if not denominator:
+        return None
+    return _round4(float(numerator) / float(denominator))
 
 
 def _paired_statistics(m3_rows: List[Dict[str, Any]], m2_rows: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -555,7 +808,11 @@ def _check(
         return ("passed" if (minimum is None or count >= minimum) and (maximum is None or count <= maximum) else "failed"), {"minimum": minimum, "maximum": maximum, "actual": count}
     if rule_id == "H_DAILY_LOAD_LIMIT":
         limit = _first_int(gold.get("max_pois_per_day"))
-        counts = [len(_refs_from_items(day.get("attractions") or day.get("pois") or day.get("activities") or [])) for day in output.get("daily_itinerary") or [] if isinstance(day, dict)]
+        counts = [
+            len(_refs_from_day(day))
+            for day in output.get("daily_itinerary") or []
+            if isinstance(day, dict)
+        ]
         if limit is None:
             return "na", {"limit": limit, "daily_counts": counts}
         return "passed" if bool(counts) and max(counts) <= limit else "failed", {"limit": limit, "daily_counts": counts}
@@ -713,6 +970,14 @@ def _metrics(rules: List[Dict[str, Any]], gold: Dict[str, Any], output: Dict[str
     standardized_estimated_cost = _trace_standardized_cost(trace)
     actual_cost = _trace_actual_cost(trace)
     tool_failure_types = _tool_failure_types(output, trace)
+    decision_metrics = _decision_normalization_result_metrics(
+        {
+            "output": output,
+            "trace": trace,
+            "status": output.get("execution_status"),
+            "method": output.get("method"),
+        }
+    )
     return {
         "stsr": stsr,
         "stsr_gate_applicable_count": len(gates),
@@ -760,6 +1025,7 @@ def _metrics(rules: List[Dict[str, Any]], gold: Dict[str, Any], output: Dict[str
         "standardized_estimated_cost": standardized_estimated_cost,
         "actual_cost": actual_cost,
         "cost_per_success": estimated_cost if stsr and estimated_cost is not None else None,
+        **decision_metrics,
     }
 
 
@@ -851,7 +1117,7 @@ def _merge_formal_budget_gold(case: Dict[str, Any], gold: Dict[str, Any]) -> Dic
             "destination",
         ):
             if key in budget_policy:
-                merged.setdefault(key, budget_policy.get(key))
+                merged[key] = budget_policy.get(key)
     expected_scope = record.get("expected_scope_from_dataset")
     if isinstance(expected_scope, dict):
         for key, value in expected_scope.items():
@@ -1528,18 +1794,34 @@ def _budget_itinerary_consistency_rule(gold: Dict[str, Any], output: Dict[str, A
         return "failed", {"reason": "budget_missing"}
     audit = _nested(output, "metadata", "budget_itinerary_consistency")
     if isinstance(audit, dict) and "consistent" in audit:
+        final_refs = _ordered_norm(audit.get("final_itinerary_unique_poi_ids") or [])
+        budget_refs = _ordered_norm(audit.get("budget_selected_poi_ids") or [])
+        final_ref_set = _sorted_norm_set(
+            audit.get("final_itinerary_poi_id_set") or final_refs
+        )
+        budget_ref_set = _sorted_norm_set(
+            audit.get("budget_selected_poi_id_set") or budget_refs
+        )
+        consistent = bool(audit.get("consistent")) or (
+            bool(final_ref_set) and final_ref_set == budget_ref_set
+        )
         return (
-            "passed" if bool(audit.get("consistent")) else "failed",
+            "passed" if consistent else "failed",
             {
                 "source": "metadata_audit",
                 "audit_status": audit.get("status"),
-                "final_itinerary_unique_poi_ids": audit.get("final_itinerary_unique_poi_ids"),
-                "budget_selected_poi_ids": audit.get("budget_selected_poi_ids"),
+                "final_itinerary_unique_poi_ids": final_refs,
+                "budget_selected_poi_ids": budget_refs,
+                "final_itinerary_poi_id_set": final_ref_set,
+                "budget_selected_poi_id_set": budget_ref_set,
                 "ticket_source": audit.get("ticket_source"),
+                "issues": [] if consistent else ["itinerary_budget_poi_mismatch"],
             },
         )
     final_refs = _ordered_norm(_planned_poi_refs(output))
     budget_refs = _ordered_norm(_budget_selected_poi_ids(budget))
+    final_ref_set = _sorted_norm_set(final_refs)
+    budget_ref_set = _sorted_norm_set(budget_refs)
     ticket_source = _budget_ticket_source(budget)
     if not final_refs and ticket_source == "standard_reference_poi_combo":
         return "passed", {
@@ -1547,6 +1829,8 @@ def _budget_itinerary_consistency_rule(gold: Dict[str, Any], output: Dict[str, A
             "reason": "standard_reference_no_final_itinerary",
             "final_itinerary_unique_poi_ids": final_refs,
             "budget_selected_poi_ids": budget_refs,
+            "final_itinerary_poi_id_set": final_ref_set,
+            "budget_selected_poi_id_set": budget_ref_set,
             "ticket_source": ticket_source,
         }
     if not final_refs and _norm(output.get("task_type")) == "budget_query":
@@ -1555,15 +1839,19 @@ def _budget_itinerary_consistency_rule(gold: Dict[str, Any], output: Dict[str, A
             "reason": "budget_query_without_final_itinerary",
             "final_itinerary_unique_poi_ids": final_refs,
             "budget_selected_poi_ids": budget_refs,
+            "final_itinerary_poi_id_set": final_ref_set,
+            "budget_selected_poi_id_set": budget_ref_set,
             "ticket_source": ticket_source,
         }
-    consistent = bool(final_refs) and final_refs == budget_refs
+    consistent = bool(final_ref_set) and final_ref_set == budget_ref_set
     return (
         "passed" if consistent else "failed",
         {
             "source": "computed_from_output",
             "final_itinerary_unique_poi_ids": final_refs,
             "budget_selected_poi_ids": budget_refs,
+            "final_itinerary_poi_id_set": final_ref_set,
+            "budget_selected_poi_id_set": budget_ref_set,
             "ticket_source": ticket_source,
             "issues": [] if consistent else ["itinerary_budget_poi_mismatch"],
         },
@@ -1880,6 +2168,8 @@ def _budget_number_field(budget: Dict[str, Any], field: str) -> Optional[float]:
         return _budget_local_basic_cost(budget)
     if field == "contingency_amount":
         return _budget_contingency_amount(budget)
+    if field == "local_total_recommended":
+        return _first_float(budget.get("local_total_recommended"), budget.get("local_total"))
     if field == "intercity_transport_cost":
         return _budget_intercity_cost(budget)
     return _first_float(budget.get(field))
@@ -2029,6 +2319,10 @@ def _ordered_norm(values: Iterable[Any]) -> List[str]:
         if text and text not in result:
             result.append(text)
     return result
+
+
+def _sorted_norm_set(values: Iterable[Any]) -> List[str]:
+    return sorted(set(_ordered_norm(values)))
 
 
 def _money_close(actual: float, expected: float) -> bool:
@@ -3213,7 +3507,7 @@ def _poi_refs_all(output: Dict[str, Any]) -> List[str]:
     refs = _refs_from_items(output.get("attractions") or [])
     for day in output.get("daily_itinerary") or []:
         if isinstance(day, dict):
-            refs.extend(_refs_from_items(day.get("attractions") or day.get("pois") or day.get("activities") or []))
+            refs.extend(_refs_from_day(day))
     return refs
 
 
@@ -3221,8 +3515,19 @@ def _planned_poi_refs(output: Dict[str, Any]) -> List[str]:
     itinerary_refs: List[str] = []
     for day in output.get("daily_itinerary") or []:
         if isinstance(day, dict):
-            itinerary_refs.extend(_refs_from_items(day.get("attractions") or day.get("pois") or day.get("activities") or []))
+            itinerary_refs.extend(_refs_from_day(day))
     return itinerary_refs or _refs_from_items(output.get("attractions") or [])
+
+
+def _refs_from_day(day: Dict[str, Any]) -> List[str]:
+    refs: List[str] = []
+    for key in ("attraction_poi_ids", "poi_ids", "attraction_ids", "selected_poi_ids"):
+        for item in _list(day.get(key)):
+            text = str(item or "").strip()
+            if text:
+                refs.append(text)
+    refs.extend(_refs_from_items(day.get("attractions") or day.get("pois") or day.get("activities") or []))
+    return refs
 
 
 def _refs_from_items(items: Any) -> List[str]:

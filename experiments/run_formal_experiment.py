@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import asyncio
 import json
 import os
 import sys
@@ -14,6 +15,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from app.core.experiment_runner import ExperimentRunner
+from app.core.config import settings
 from app.core.formal_experiment_gate import write_formal_experiment_gate
 from app.core.formal_experiment_preflight import (
     DEFAULT_FORMAL_METHOD_ORDER_SEED,
@@ -25,6 +27,7 @@ from app.core.formal_experiment_preflight import (
 from app.core.paper_draft_pack import write_paper_draft_pack
 from app.core.paper_result_pack import write_paper_result_pack
 from app.core.paper_submission_pack import write_paper_submission_pack
+from experiments.run_real_api_smoke import run_real_api_smoke
 
 
 DEFAULT_BENCHMARK_PATH = ROOT / "experiments" / "benchmark.json"
@@ -64,6 +67,20 @@ def main() -> int:
             "after validating the saved resume contract."
         ),
     )
+    parser.add_argument(
+        "--skip-real-api-smoke",
+        action="store_true",
+        help=(
+            "Skip the one-call real LLM API smoke gate before the full formal run. "
+            "Preflight-only mode never calls the smoke gate."
+        ),
+    )
+    parser.add_argument(
+        "--real-api-smoke-max-tokens",
+        type=int,
+        default=512,
+        help="Max output-token budget for the pre-formal real API smoke gate.",
+    )
     args = parser.parse_args()
 
     run_id = args.run_id or f"formal_{datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')}"
@@ -89,6 +106,13 @@ def main() -> int:
 
     assert_formal_preflight_passed(report)
     run_output_dir.mkdir(parents=True, exist_ok=True)
+    pre_formal_smoke = None
+    if not args.skip_real_api_smoke:
+        pre_formal_smoke = _run_pre_formal_real_api_smoke(
+            run_output_dir=run_output_dir,
+            run_id=run_id,
+            max_tokens=args.real_api_smoke_max_tokens,
+        )
     runner = ExperimentRunner(
         trace_dir=run_output_dir / "traces",
         output_dir=run_output_dir,
@@ -138,6 +162,7 @@ def main() -> int:
         paper_draft_pack=paper_draft_pack,
         paper_submission_pack=paper_submission_pack,
         day8_delivery_pack=report.get("day8_delivery_pack"),
+        pre_formal_smoke=pre_formal_smoke,
         resume_report=report.get("resume"),
     )
     _validate_payload_files(payload)
@@ -157,13 +182,69 @@ def _apply_formal_env_defaults() -> None:
         "TRACE_SAVE_USER_MESSAGE": "false",
         "LLM_TEMPERATURE": "0",
         "LLM_MAX_TOKENS": "4096",
-        "LLM_TIMEOUT": "60",
+        "LLM_TIMEOUT": "120",
         "LLM_RETRY_MAX_ATTEMPTS": "3",
+        "EXPERIMENT_RESULT_HARD_TIMEOUT_SECONDS": "900",
         "LLM_REASONING_EFFORT": "minimal",
         "EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER": "true",
     }
     for key, value in defaults.items():
         os.environ.setdefault(key, value)
+
+
+def _run_pre_formal_real_api_smoke(
+    *,
+    run_output_dir: Path,
+    run_id: str,
+    max_tokens: int,
+) -> Dict[str, Any]:
+    api_key = os.getenv("LLM_API_KEY") or settings.llm.api_key
+    if not api_key:
+        raise RuntimeError(
+            "real API smoke gate requires LLM_API_KEY before the formal run"
+        )
+    base_url = os.getenv("LLM_BASE_URL") or settings.llm.base_url
+    model = os.getenv("LLM_MODEL") or settings.llm.model
+    temperature = float(os.getenv("LLM_TEMPERATURE") or settings.llm.temperature)
+    timeout = int(os.getenv("LLM_TIMEOUT") or settings.llm.timeout)
+    retry_max_attempts = int(
+        os.getenv("LLM_RETRY_MAX_ATTEMPTS") or settings.llm.retry_max_attempts
+    )
+    reasoning_effort = os.getenv("LLM_REASONING_EFFORT") or "minimal"
+    smoke_dir = run_output_dir / "pre_formal_real_api_smoke"
+    payload = asyncio.run(
+        run_real_api_smoke(
+            output_dir=smoke_dir,
+            run_id=f"{run_id}_pre_formal_real_api_smoke",
+            api_key=api_key,
+            base_url=base_url,
+            model=model,
+            timeout=timeout,
+            temperature=temperature,
+            max_tokens=max(1, int(max_tokens)),
+            retry_max_attempts=retry_max_attempts,
+            reasoning_effort=reasoning_effort,
+        )
+    )
+    gate = (
+        payload.get("connectivity_gate")
+        if isinstance(payload.get("connectivity_gate"), dict)
+        else {}
+    )
+    if gate.get("status") != "passed":
+        raise RuntimeError(
+            "pre-formal real API smoke gate failed; "
+            f"see {smoke_dir.as_posix()}"
+        )
+    return {
+        "status": "passed",
+        "output_dir": smoke_dir.as_posix(),
+        "manifest": payload.get("manifest"),
+        "result": payload.get("result"),
+        "report": payload.get("report"),
+        "trace": payload.get("trace"),
+        "connectivity_gate": gate,
+    }
 
 
 def _build_payload(
@@ -178,6 +259,7 @@ def _build_payload(
     paper_draft_pack: Dict[str, Any] | None = None,
     paper_submission_pack: Dict[str, Any] | None = None,
     day8_delivery_pack: Dict[str, Any] | None = None,
+    pre_formal_smoke: Dict[str, Any] | None = None,
     resume_report: Dict[str, Any] | None = None,
 ) -> Dict[str, Any]:
     payload = {
@@ -245,6 +327,20 @@ def _build_payload(
                 "day8_delivery_failed_checks": day8_delivery_pack.get("failed_checks") or [],
             }
         )
+    if pre_formal_smoke:
+        payload.update(
+            {
+                "pre_formal_real_api_smoke_status": pre_formal_smoke.get("status"),
+                "pre_formal_real_api_smoke_output_dir": pre_formal_smoke.get(
+                    "output_dir"
+                ),
+                "pre_formal_real_api_smoke_manifest": pre_formal_smoke.get(
+                    "manifest"
+                ),
+                "pre_formal_real_api_smoke_report": pre_formal_smoke.get("report"),
+                "pre_formal_real_api_smoke_trace": pre_formal_smoke.get("trace"),
+            }
+        )
     if resume_report:
         payload.update(
             {
@@ -283,6 +379,9 @@ def _validate_payload_files(payload: Dict[str, Any]) -> None:
         "paper_submission_pack_json",
         "paper_submission_checklist_md",
         "day8_delivery_pack_json",
+        "pre_formal_real_api_smoke_manifest",
+        "pre_formal_real_api_smoke_report",
+        "pre_formal_real_api_smoke_trace",
     ):
         if key not in payload:
             continue

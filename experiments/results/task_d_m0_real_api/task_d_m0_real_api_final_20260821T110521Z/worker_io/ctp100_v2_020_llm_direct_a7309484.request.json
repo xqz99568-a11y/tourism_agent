@@ -1,0 +1,97 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_020",
+    "user_input": "一个月后从广州去桂林玩3天，我们4个人，总预算上限10000元，想轻松看看山水。",
+    "task_type": "trip_planning",
+    "title": "天气规划｜桂林｜一个月后｜广州出发｜超范围",
+    "check": "查询冻结天气（超出快照范围时诚实说明不可用）；不得编造天气；计算4人的广州至桂林往返铁路费用；不得强行花完预算。",
+    "slots": {
+      "origin": "guangzhou",
+      "destination": "guilin",
+      "start_date": "2026-09-06",
+      "duration_days": 3,
+      "people_count": 4,
+      "budget_amount": 10000,
+      "preferences": [
+        "nature"
+      ],
+      "special_requirements": [
+        "low_intensity"
+      ]
+    },
+    "expected": {
+      "task_type": "trip_planning",
+      "required_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "accepted_agent_sets": [
+        [
+          "attraction",
+          "weather",
+          "itinerary",
+          "budget"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "poi_search",
+          "weather_query",
+          "budget_calculator"
+        ]
+      ],
+      "forbidden_tools": [],
+      "hard_constraints": {
+        "origin": "guangzhou",
+        "destination": "guilin",
+        "start_date": "2026-09-06",
+        "duration_days": 3,
+        "people_count": 4,
+        "budget_limit": 10000,
+        "min_attractions": 4,
+        "max_pois_per_day": 2
+      },
+      "origin": "guangzhou",
+      "destination": "guilin",
+      "start_date": "2026-09-06",
+      "duration_days": 3,
+      "people_count": 4,
+      "budget_amount": 10000,
+      "preferences": [
+        "nature"
+      ],
+      "special_requirements": [
+        "low_intensity"
+      ],
+      "intercity_transport_mode": "high_speed_or_d_train",
+      "intercity_seat_class": "second_class",
+      "intercity_transport_included": true,
+      "budget_scope": "local_plus_round_trip_intercity",
+      "intercity_route_id": "guangzhou_guilin_rail_second_class",
+      "intercity_one_way_fare_per_person_cny": 200.0,
+      "intercity_round_trip_cost_cny": 1600.0,
+      "weather_required": true,
+      "weather_date_policy": "explicit_date_use_qweather_snapshot",
+      "expected_weather_coverage_status": "out_of_range",
+      "expected_weather_covered_dates": [],
+      "expected_weather_missing_dates": [
+        "2026-09-06",
+        "2026-09-07",
+        "2026-09-08"
+      ],
+      "weather_snapshot_id": "ctp_qweather_20260807_v1"
+    }
+  },
+  "method": "llm_direct",
+  "request_id": "ctp100_v2_020_llm_direct_a7309484",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z",
+  "run_id": "task_d_m0_real_api_final_20260821T110521Z",
+  "repeat_index": 0,
+  "system_variant": "llm_direct",
+  "model_config_name": "task-d-m0-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

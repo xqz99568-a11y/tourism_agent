@@ -629,5 +629,6 @@ def _formal_env(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("EXPERIMENT_DISABLE_CACHE", "true")
     monkeypatch.setenv("TRACE_SAVE_USER_MESSAGE", "false")
     monkeypatch.setenv("LLM_TEMPERATURE", "0")
+    monkeypatch.setenv("EXPERIMENT_RESULT_HARD_TIMEOUT_SECONDS", "900")
     monkeypatch.setenv("LLM_REASONING_EFFORT", "minimal")
     monkeypatch.setenv("EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER", "true")

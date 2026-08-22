@@ -1,0 +1,238 @@
+{
+  "schema_version": "ctp-task-e-four-method-real-api-validation-v1",
+  "created_at": "2026-08-21T05:02:29.606041Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "task": "Task E - four-method 20-case real API joint validation",
+  "status": "passed",
+  "skipped_reason": null,
+  "gate": {
+    "status": "passed",
+    "checks": {
+      "not_skipped": true,
+      "expected_result_count": true,
+      "all_four_methods_present": true,
+      "method_grid_complete": true,
+      "all_results_completed": true,
+      "trace_count_matches_results": true,
+      "llm_calls_recorded": true,
+      "llm_calls_cover_all_methods": true,
+      "m0_zero_tool_calls": true,
+      "m1_m2_m3_have_agent_or_tool_evidence": true,
+      "no_mock_calls": true,
+      "no_fallback_calls": true,
+      "no_hard_timeout": true,
+      "provider_recorded": true,
+      "token_usage_recorded": true,
+      "latency_recorded": true,
+      "cost_accounting_recorded": true,
+      "no_length_finish_reason": true
+    },
+    "failed_checks": [],
+    "warnings": [
+      {
+        "code": "failed_llm_calls_recorded",
+        "count": 1,
+        "meaning": "At least one internal LLM call failed after retries, but Task E treats this as a provider-stability warning when the result grid has no failed result and no hard timeout."
+      },
+      {
+        "code": "llm_retry_errors_recorded",
+        "count": 13,
+        "meaning": "Retryable API errors or network timeouts occurred and were recorded in trace evidence."
+      }
+    ],
+    "paper_claim_policy": "This run is a pre-formal runtime validation gate only. It must not be reported as the paper's formal M0-M3 comparison result."
+  },
+  "benchmark": {
+    "path": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/task_e_four_method_real_api_20_benchmark.json",
+    "dataset_id": "task_e_four_method_real_api_20",
+    "dataset_version": "2026-08-21-task-e-four-method-real-api-v1",
+    "case_count": 20,
+    "turn_count": 20,
+    "expected_raw_result_count": 80,
+    "selected_case_ids": [
+      "ctp100_v2_001",
+      "ctp100_v2_002",
+      "ctp100_v2_014",
+      "ctp100_v2_020",
+      "ctp100_v2_021",
+      "ctp100_v2_024",
+      "ctp100_v2_030",
+      "ctp100_v2_031",
+      "ctp100_v2_034",
+      "ctp100_v2_037",
+      "ctp100_v2_041",
+      "ctp100_v2_042",
+      "ctp100_v2_048",
+      "ctp100_v2_050",
+      "ctp100_v2_084",
+      "ctp100_v2_088",
+      "ctp100_v2_091",
+      "ctp100_v2_038",
+      "ctp100_v2_080",
+      "ctp100_v2_093"
+    ],
+    "task_type_counts": {
+      "attraction_recommendation": 3,
+      "budget_query": 4,
+      "clarification": 3,
+      "general_chat": 3,
+      "trip_planning": 4,
+      "weather_query": 3
+    }
+  },
+  "runtime_config": {
+    "schema_version": "ctp-task-e-runtime-config-v1",
+    "provider": "vectorengine_openai_compatible",
+    "base_url": "https://api.vectorengine.ai/v1",
+    "model": "gpt-5-mini",
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "timeout_seconds": 120,
+    "hard_timeout_seconds": 600,
+    "retry_max_attempts": 3,
+    "reasoning_effort": "minimal",
+    "strict_mode": true,
+    "cache_disabled": true,
+    "trace_save_user_message": false,
+    "api_key_configured": true,
+    "mock_fallback_allowed": false,
+    "methods": [
+      "llm_direct",
+      "single_agent",
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ],
+    "method_order_seed": 20260821,
+    "expected_raw_result_count": 80
+  },
+  "results": {
+    "expected_result_count": 80,
+    "actual_result_count": 80,
+    "status_counts": {
+      "clarification": 9,
+      "completed": 71
+    },
+    "method_counts": {
+      "adaptive_multi_agent": 20,
+      "fixed_multi_agent": 20,
+      "llm_direct": 20,
+      "single_agent": 20
+    },
+    "methods": [
+      "adaptive_multi_agent",
+      "fixed_multi_agent",
+      "llm_direct",
+      "single_agent"
+    ],
+    "failed_results": [],
+    "hard_timeout_triggered_count": 0,
+    "elapsed_seconds": 2110.145
+  },
+  "method_grid": {
+    "expected_case_count": 20,
+    "expected_methods": [
+      "llm_direct",
+      "single_agent",
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ],
+    "expected_result_count": 80,
+    "missing_count": 0,
+    "duplicate_count": 0,
+    "missing": [],
+    "duplicates": []
+  },
+  "trace_audit": {
+    "trace_file_count": 80,
+    "llm_call_count": 90,
+    "llm_calls_by_method": {
+      "adaptive_multi_agent": 25,
+      "fixed_multi_agent": 25,
+      "llm_direct": 20,
+      "single_agent": 20
+    },
+    "tool_calls_by_method": {
+      "adaptive_multi_agent": 21,
+      "fixed_multi_agent": 21,
+      "llm_direct": 0,
+      "single_agent": 24
+    },
+    "agent_runs_by_method": {
+      "adaptive_multi_agent": 25,
+      "fixed_multi_agent": 25,
+      "llm_direct": 0,
+      "single_agent": 14
+    },
+    "provider_counts": {
+      "vectorengine_openai_compatible": 90
+    },
+    "prompt_version_counts": {
+      "ctp-research-agent-prompts-v2": 50,
+      "ctp-structured-llm-output-prompts-v2": 40
+    },
+    "mock_call_count": 0,
+    "fallback_call_count": 0,
+    "failed_llm_call_count": 1,
+    "retry_error_count": 13,
+    "length_finish_reason_attempt_count": 0,
+    "multi_agent_evidence": {
+      "single_agent": {
+        "agent_run_count": 14,
+        "tool_call_count": 24,
+        "llm_call_count": 20
+      },
+      "fixed_multi_agent": {
+        "agent_run_count": 25,
+        "tool_call_count": 21,
+        "llm_call_count": 25
+      },
+      "adaptive_multi_agent": {
+        "agent_run_count": 25,
+        "tool_call_count": 21,
+        "llm_call_count": 25
+      }
+    }
+  },
+  "warnings": [
+    {
+      "code": "failed_llm_calls_recorded",
+      "count": 1,
+      "meaning": "At least one internal LLM call failed after retries, but Task E treats this as a provider-stability warning when the result grid has no failed result and no hard timeout."
+    },
+    {
+      "code": "llm_retry_errors_recorded",
+      "count": 13,
+      "meaning": "Retryable API errors or network timeouts occurred and were recorded in trace evidence."
+    }
+  ],
+  "token_usage": {
+    "prompt_tokens": 203108.0,
+    "completion_tokens": 78356.0,
+    "total_tokens": 281464.0
+  },
+  "latency": {
+    "result_latency_ms_total": 1777296.38,
+    "result_latency_ms_mean": 22216.20475,
+    "llm_duration_ms_total": 1760794.67,
+    "llm_duration_ms_mean": 19564.38522222
+  },
+  "cost": {
+    "estimated_cost_total": 0.207489,
+    "standardized_estimated_cost_total": 0.207489,
+    "actual_cost_total": null
+  },
+  "artifacts": {
+    "benchmark": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/task_e_four_method_real_api_20_benchmark.json",
+    "benchmark_results_json": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/benchmark_results.json",
+    "benchmark_results_csv": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/benchmark_results.csv",
+    "evaluation_summary": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/evaluation_summary.json",
+    "paper_tables": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/paper_tables.md",
+    "manifest": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/experiment_manifest.json",
+    "checkpoint_json": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/benchmark_results.checkpoint.json",
+    "checkpoint_csv": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/benchmark_results.checkpoint.csv",
+    "resume_state": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/benchmark_resume_state.json",
+    "traces": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+    "report_json": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/task_e_four_method_real_api_report.json",
+    "report_md": "experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/task_e_four_method_real_api_report.md"
+  }
+}

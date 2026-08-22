@@ -1,0 +1,41 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_084",
+    "user_input": "我已经想好要旅行了，你帮我做一份完整行程吧。",
+    "task_type": "clarification",
+    "title": "澄清｜缺目的地、天数和人数",
+    "check": "追问目的地、旅行天数和人数；不得提前调用业务工具。",
+    "slots": {},
+    "expected": {
+      "task_type": "clarification",
+      "required_tools": [],
+      "accepted_agent_sets": [
+        []
+      ],
+      "accepted_tool_sets": [
+        []
+      ],
+      "forbidden_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "missing_slots": [
+        "destination",
+        "duration_days",
+        "people_count"
+      ]
+    }
+  },
+  "method": "adaptive_multi_agent",
+  "request_id": "ctp100_v2_084_adaptive_multi_agent_bc77ab23",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "adaptive_multi_agent",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

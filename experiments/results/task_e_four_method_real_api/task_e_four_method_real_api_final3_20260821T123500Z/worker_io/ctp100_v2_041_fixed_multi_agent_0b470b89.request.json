@@ -1,0 +1,61 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_041",
+    "user_input": "北京玩3天，两个人，总预算上限10000元，帮我看看大概需要多少钱，不用排路线。",
+    "task_type": "budget_query",
+    "title": "预算查询｜北京｜高预算｜无出发地",
+    "check": "先计算经济型基准；无出发地免责声明；不得自动采用豪华型。",
+    "slots": {
+      "destination": "beijing",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 10000
+    },
+    "expected": {
+      "task_type": "budget_query",
+      "required_tools": [
+        "budget_calculator"
+      ],
+      "accepted_agent_sets": [
+        [
+          "budget"
+        ]
+      ],
+      "accepted_tool_sets": [
+        [
+          "budget_calculator"
+        ]
+      ],
+      "forbidden_tools": [
+        "poi_search",
+        "weather_query"
+      ],
+      "hard_constraints": {
+        "destination": "beijing",
+        "duration_days": 3,
+        "people_count": 2,
+        "budget_limit": 10000
+      },
+      "destination": "beijing",
+      "duration_days": 3,
+      "people_count": 2,
+      "budget_amount": 10000,
+      "origin": null,
+      "intercity_transport_included": false,
+      "budget_scope": "destination_local_only",
+      "mandatory_budget_disclaimer": true,
+      "weather_required": false
+    }
+  },
+  "method": "fixed_multi_agent",
+  "request_id": "ctp100_v2_041_fixed_multi_agent_0b470b89",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "fixed_multi_agent",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}

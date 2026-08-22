@@ -294,5 +294,6 @@ def _formal_env(monkeypatch) -> None:
     monkeypatch.setenv("LLM_MAX_TOKENS", "4096")
     monkeypatch.setenv("LLM_TIMEOUT", "60")
     monkeypatch.setenv("LLM_RETRY_MAX_ATTEMPTS", "3")
+    monkeypatch.setenv("EXPERIMENT_RESULT_HARD_TIMEOUT_SECONDS", "900")
     monkeypatch.setenv("LLM_REASONING_EFFORT", "minimal")
     monkeypatch.setenv("EXPERIMENT_DETERMINISTIC_RESEARCH_FINAL_ANSWER", "true")

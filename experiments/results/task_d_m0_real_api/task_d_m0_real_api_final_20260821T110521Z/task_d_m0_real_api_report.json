@@ -1,0 +1,142 @@
+{
+  "schema_version": "ctp-task-d-m0-real-api-validation-v1",
+  "created_at": "2026-08-21T03:11:25.227229Z",
+  "run_id": "task_d_m0_real_api_final_20260821T110521Z",
+  "task": "Task D - M0 20-case real API stability validation",
+  "status": "passed",
+  "skipped_reason": null,
+  "gate": {
+    "status": "passed",
+    "checks": {
+      "not_skipped": true,
+      "expected_result_count": true,
+      "m0_only": true,
+      "all_results_completed": true,
+      "trace_count_sufficient": true,
+      "llm_calls_recorded": true,
+      "no_mock_calls": true,
+      "no_fallback_calls": true,
+      "no_failed_llm_calls": true,
+      "no_hard_timeout": true,
+      "provider_recorded": true,
+      "token_usage_recorded": true,
+      "latency_recorded": true,
+      "cost_accounting_recorded": true,
+      "no_length_finish_reason": true
+    },
+    "failed_checks": [],
+    "paper_claim_policy": "This run is an API/runtime validation gate only. It must not be reported as the paper's formal M0-M3 comparison result."
+  },
+  "benchmark": {
+    "path": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/task_d_m0_real_api_20_benchmark.json",
+    "dataset_id": "task_d_m0_real_api_20",
+    "dataset_version": "2026-08-21-task-d-m0-real-api-v1",
+    "case_count": 20,
+    "turn_count": 20,
+    "selected_case_ids": [
+      "ctp100_v2_001",
+      "ctp100_v2_002",
+      "ctp100_v2_014",
+      "ctp100_v2_020",
+      "ctp100_v2_021",
+      "ctp100_v2_024",
+      "ctp100_v2_030",
+      "ctp100_v2_031",
+      "ctp100_v2_034",
+      "ctp100_v2_037",
+      "ctp100_v2_041",
+      "ctp100_v2_042",
+      "ctp100_v2_048",
+      "ctp100_v2_050",
+      "ctp100_v2_084",
+      "ctp100_v2_088",
+      "ctp100_v2_091",
+      "ctp100_v2_038",
+      "ctp100_v2_080",
+      "ctp100_v2_093"
+    ],
+    "task_type_counts": {
+      "attraction_recommendation": 3,
+      "budget_query": 4,
+      "clarification": 3,
+      "general_chat": 3,
+      "trip_planning": 4,
+      "weather_query": 3
+    }
+  },
+  "runtime_config": {
+    "schema_version": "ctp-task-d-runtime-config-v1",
+    "provider": "vectorengine_openai_compatible",
+    "base_url": "https://api.vectorengine.ai/v1",
+    "model": "gpt-5-mini",
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "timeout_seconds": 120,
+    "hard_timeout_seconds": 300,
+    "retry_max_attempts": 3,
+    "reasoning_effort": "minimal",
+    "strict_mode": true,
+    "cache_disabled": true,
+    "trace_save_user_message": false,
+    "api_key_configured": true,
+    "mock_fallback_allowed": false,
+    "method": "llm_direct"
+  },
+  "results": {
+    "expected_result_count": 20,
+    "actual_result_count": 20,
+    "status_counts": {
+      "completed": 20
+    },
+    "methods": [
+      "llm_direct"
+    ],
+    "failed_results": [],
+    "hard_timeout_triggered_count": 0,
+    "elapsed_seconds": 361.719
+  },
+  "trace_audit": {
+    "trace_file_count": 20,
+    "llm_call_count": 20,
+    "provider_counts": {
+      "vectorengine_openai_compatible": 20
+    },
+    "prompt_version_counts": {
+      "ctp-structured-llm-output-prompts-v2": 20
+    },
+    "mock_call_count": 0,
+    "fallback_call_count": 0,
+    "failed_llm_call_count": 0,
+    "length_finish_reason_attempt_count": 0
+  },
+  "token_usage": {
+    "prompt_tokens": 17623.0,
+    "completion_tokens": 18270.0,
+    "total_tokens": 35893.0
+  },
+  "latency": {
+    "result_latency_ms_total": 298489.67,
+    "result_latency_ms_mean": 14924.4835,
+    "llm_duration_ms_total": 294401.13,
+    "llm_duration_ms_mean": 14720.0565
+  },
+  "cost": {
+    "estimated_cost_total": 0.04094575,
+    "standardized_estimated_cost_total": 0.04094575,
+    "actual_cost_total": null
+  },
+  "artifacts": {
+    "benchmark": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/task_d_m0_real_api_20_benchmark.json",
+    "benchmark_results_json": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/benchmark_results.json",
+    "benchmark_results_csv": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/benchmark_results.csv",
+    "evaluation_summary": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/evaluation_summary.json",
+    "paper_tables": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/paper_tables.md",
+    "manifest": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/experiment_manifest.json",
+    "checkpoint_json": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/benchmark_results.checkpoint.json",
+    "checkpoint_csv": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/benchmark_results.checkpoint.csv",
+    "resume_state": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/benchmark_resume_state.json",
+    "traces": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/traces",
+    "report_json": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/task_d_m0_real_api_report.json",
+    "report_md": "D:/Code/Tourism_Agent/experiments/results/task_d_m0_real_api/task_d_m0_real_api_final_20260821T110521Z/task_d_m0_real_api_report.md"
+  }
+}

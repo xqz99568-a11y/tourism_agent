@@ -210,8 +210,7 @@ def _slots_for_budget(unit: Dict[str, Any], gold: Dict[str, Any]) -> Dict[str, A
         "hotel_level": merged.get("hotel_level"),
         "food_level": merged.get("food_level"),
         "transport_mode": merged.get("transport_mode"),
-        "requested_budget_scope": merged.get("requested_budget_scope")
-        or _infer_requested_budget_scope(unit, merged),
+        "requested_budget_scope": _infer_requested_budget_scope(unit, merged),
     }
     return raw_slots
 
@@ -219,6 +218,17 @@ def _slots_for_budget(unit: Dict[str, Any], gold: Dict[str, Any]) -> Dict[str, A
 def _infer_requested_budget_scope(unit: Dict[str, Any], merged_slots: Dict[str, Any]) -> str:
     text = _unit_user_input(unit)
     compact = str(text or "").replace(" ", "")
+    origin = str(merged_slots.get("origin") or "").strip()
+    if not origin:
+        return "destination_local_only"
+
+    for key in ("requested_budget_scope", "budget_scope", "computed_budget_scope"):
+        explicit = str(merged_slots.get(key) or "").strip()
+        if explicit in {"destination_local_only", "local_only", "destination_only", "local"}:
+            return "destination_local_only"
+        if explicit in {"local_plus_round_trip_intercity", "full_trip", "complete_trip", "full"}:
+            return "local_plus_round_trip_intercity"
+
     local_only_markers = (
         "当地吃住行",
         "当地旅行费用",
@@ -231,9 +241,6 @@ def _infer_requested_budget_scope(unit: Dict[str, Any], merged_slots: Dict[str, 
         "不包含城际",
     )
     if any(marker in compact for marker in local_only_markers):
-        return "destination_local_only"
-    explicit = str(merged_slots.get("budget_scope") or "")
-    if explicit == "destination_local_only" and any(marker in compact for marker in ("当地", "只算", "只想知道")):
         return "destination_local_only"
     return "local_plus_round_trip_intercity"
 

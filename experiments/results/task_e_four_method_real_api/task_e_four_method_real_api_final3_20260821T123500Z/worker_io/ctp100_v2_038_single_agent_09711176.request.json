@@ -1,0 +1,41 @@
+{
+  "case": {
+    "case_id": "ctp100_v2_038",
+    "user_input": "西安十一月份通常冷不冷，需要准备什么衣服？",
+    "task_type": "general_chat",
+    "title": "长期气候问题｜西安｜十一月",
+    "check": "属于长期气候问题，不调用冻结逐日天气工具伪造十一月预报。",
+    "slots": {
+      "destination": "xian"
+    },
+    "expected": {
+      "task_type": "general_chat",
+      "required_tools": [],
+      "accepted_agent_sets": [
+        []
+      ],
+      "accepted_tool_sets": [
+        []
+      ],
+      "forbidden_tools": [
+        "poi_search",
+        "weather_query",
+        "budget_calculator"
+      ],
+      "destination": "xian",
+      "subtask_type": "weather_climate_question",
+      "climate_question_not_forecast": true
+    }
+  },
+  "method": "single_agent",
+  "request_id": "ctp100_v2_038_single_agent_09711176",
+  "trace_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z/traces",
+  "output_dir": "D:/Code/Tourism_Agent/experiments/results/task_e_four_method_real_api/task_e_four_method_real_api_final3_20260821T123500Z",
+  "run_id": "task_e_four_method_real_api_final3_20260821T123500Z",
+  "repeat_index": 0,
+  "system_variant": "single_agent",
+  "model_config_name": "task-e-four-method-real-api",
+  "repeats": 1,
+  "method_order_seed": 20260821,
+  "enable_research_agent_decision_normalizer": true
+}
