@@ -1,6 +1,6 @@
 {
   "schema_version": "ctp-pre-formal-validation-registry-v1",
-  "created_at": "2026-08-22T03:18:57.803724+00:00",
+  "created_at": "2026-08-22T04:08:57.230603+00:00",
   "hash_strategy": "sha256_file_bytes_v1",
   "purpose": "Bind Task D/E/F real-API validation reports to the formal experiment preflight and delivery package.",
   "warning_policy": {
