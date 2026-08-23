@@ -360,6 +360,24 @@ def test_independent_evaluator_scores_one_case_against_frozen_rules() -> None:
     assert report["metrics"]["tool_selection_f1"] == 1.0
 
 
+def test_independent_evaluator_records_zero_cost_for_explicit_zero_call_trace() -> None:
+    report = evaluate_case(
+        case=_case(),
+        output=_output(),
+        trace={
+            "llm_call_count": 0,
+            "api_call_count": 0,
+            "total_tokens": 0,
+            "llm_calls": [],
+            "api_calls": [],
+        },
+    )
+
+    assert report["metrics"]["estimated_cost"] == 0.0
+    assert report["metrics"]["standardized_estimated_cost"] == 0.0
+    assert report["metrics"]["actual_cost"] is None
+
+
 def test_evaluator_counts_daily_attraction_poi_ids_for_bounds_and_daily_load() -> None:
     case = deepcopy(_case())
     case["expected"]["min_attractions"] = 4

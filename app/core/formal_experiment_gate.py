@@ -778,9 +778,27 @@ def _result_metric_calculability_issues(results: List[Dict[str, Any]]) -> List[D
             "method": result.get("method"),
             "repeat_index": result.get("repeat_index"),
         }
-        for metric in ("stsr", "evaluation_hcsr"):
-            if not _is_rate(metrics.get(metric)):
-                issues.append({**identity, "metric": metric, "value": metrics.get(metric)})
+        if not _is_rate(metrics.get("stsr")):
+            issues.append({**identity, "metric": "stsr", "value": metrics.get("stsr")})
+        hcsr_applicable = _int(metrics.get("evaluation_hcsr_applicable_count"), default=None)
+        if hcsr_applicable is None:
+            if not _is_rate(metrics.get("evaluation_hcsr")):
+                issues.append(
+                    {
+                        **identity,
+                        "metric": "evaluation_hcsr",
+                        "value": metrics.get("evaluation_hcsr"),
+                    }
+                )
+        elif hcsr_applicable > 0 and not _is_rate(metrics.get("evaluation_hcsr")):
+            issues.append(
+                {
+                    **identity,
+                    "metric": "evaluation_hcsr",
+                    "value": metrics.get("evaluation_hcsr"),
+                    "evaluation_hcsr_applicable_count": hcsr_applicable,
+                }
+            )
         bpcr_applicable = _int(metrics.get("bpcr_applicable_count"), default=None)
         if bpcr_applicable is None:
             if not _is_rate(metrics.get("bpcr")):
@@ -806,10 +824,14 @@ def _result_metric_calculability_issues(results: List[Dict[str, Any]]) -> List[D
                 issues.append({**identity, "metric": metric, "value": metrics.get(metric)})
         if not _is_number(result.get("latency_ms")):
             issues.append({**identity, "metric": "latency_ms", "value": result.get("latency_ms")})
-        if not _is_number(
+        standardized_cost = (
             metrics.get("standardized_estimated_cost")
             if metrics.get("standardized_estimated_cost") is not None
             else _nested(result, "run_audit", "metrics", "standardized_estimated_cost")
+        )
+        if not _is_number(standardized_cost) and not _is_zero_call_zero_token_result(
+            result,
+            metrics,
         ):
             issues.append(
                 {
@@ -819,6 +841,34 @@ def _result_metric_calculability_issues(results: List[Dict[str, Any]]) -> List[D
                 }
             )
     return issues
+
+
+def _is_zero_call_zero_token_result(
+    result: Dict[str, Any],
+    metrics: Dict[str, Any],
+) -> bool:
+    """Return true when a no-op row has no billable model/API work.
+
+    Some formal rows are intentionally answered by deterministic routing
+    without an LLM/API call, for example simple general-chat or clarification
+    turns.  For those rows, a missing standardized cost means zero work rather
+    than an uncalculated metric.
+    """
+    llm_calls = _number(metrics.get("llm_call_count"))
+    api_calls = _number(metrics.get("api_call_count"))
+    tokens = _number(metrics.get("total_tokens"))
+    trace = _dict(result.get("trace"))
+    trace_llm_calls = _number(trace.get("llm_call_count"))
+    trace_api_calls = _number(trace.get("api_call_count"))
+    trace_tokens = _number(trace.get("total_tokens"))
+    return (
+        (llm_calls in (None, 0.0))
+        and (api_calls in (None, 0.0))
+        and (tokens in (None, 0.0))
+        and (trace_llm_calls in (None, 0.0))
+        and (trace_api_calls in (None, 0.0))
+        and (trace_tokens in (None, 0.0))
+    )
 
 
 def _summary_metric_calculability_issues(

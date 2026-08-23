@@ -3652,7 +3652,11 @@ def _trace_cost(trace: Dict[str, Any]) -> Optional[float]:
                 )
                 if value is not None:
                     values.append(value)
-    return None if not values else _round4(sum(values))
+    if values:
+        return _round4(sum(values))
+    if _trace_has_explicit_zero_billable_calls(trace):
+        return 0.0
+    return None
 
 
 def _trace_standardized_cost(trace: Dict[str, Any]) -> Optional[float]:
@@ -3668,7 +3672,11 @@ def _trace_standardized_cost(trace: Dict[str, Any]) -> Optional[float]:
                 )
                 if value is not None:
                     values.append(value)
-    return None if not values else _round4(sum(values))
+    if values:
+        return _round4(sum(values))
+    if _trace_has_explicit_zero_billable_calls(trace):
+        return 0.0
+    return None
 
 
 def _trace_actual_cost(trace: Dict[str, Any]) -> Optional[float]:
@@ -3684,6 +3692,27 @@ def _trace_actual_cost(trace: Dict[str, Any]) -> Optional[float]:
                 if value is not None:
                     values.append(value)
     return None if not saw_actual_field or not values else _round4(sum(values))
+
+
+def _trace_has_explicit_zero_billable_calls(trace: Dict[str, Any]) -> bool:
+    """Return true when trace explicitly records no LLM/API billable calls."""
+    saw_call_field = False
+    for call_type in ("llm_calls", "api_calls"):
+        if call_type in trace:
+            saw_call_field = True
+        calls = trace.get(call_type)
+        if isinstance(calls, list) and any(isinstance(call, dict) for call in calls):
+            return False
+    if not saw_call_field:
+        return False
+    llm_count = _number(trace.get("llm_call_count"))
+    api_count = _number(trace.get("api_call_count"))
+    total_tokens = _number(trace.get("total_tokens"))
+    return (
+        (llm_count in (None, 0.0))
+        and (api_count in (None, 0.0))
+        and (total_tokens in (None, 0.0))
+    )
 
 
 def _has_failed_tool_evidence(output: Dict[str, Any]) -> bool:

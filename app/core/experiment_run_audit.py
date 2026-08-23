@@ -311,6 +311,12 @@ def _cost_totals(trace: Dict[str, Any]) -> Dict[str, Optional[float]]:
             actual = _first_float(call.get("actual_cost"), call.get("actual_cost_cny"))
             if actual is not None:
                 actual_values.append(actual)
+    if not estimated_values and not standardized_values and _trace_has_explicit_zero_billable_calls(trace):
+        return {
+            "estimated_cost": 0.0,
+            "standardized_estimated_cost": 0.0,
+            "actual_cost": None,
+        }
     return {
         "estimated_cost": _round4(sum(estimated_values)) if estimated_values else None,
         "standardized_estimated_cost": (
@@ -318,6 +324,26 @@ def _cost_totals(trace: Dict[str, Any]) -> Dict[str, Optional[float]]:
         ),
         "actual_cost": _round4(sum(actual_values)) if saw_actual_field and actual_values else None,
     }
+
+
+def _trace_has_explicit_zero_billable_calls(trace: Dict[str, Any]) -> bool:
+    saw_call_field = False
+    for call_type in ("llm_calls", "api_calls"):
+        if call_type in trace:
+            saw_call_field = True
+        calls = trace.get(call_type)
+        if isinstance(calls, list) and any(isinstance(call, dict) for call in calls):
+            return False
+    if not saw_call_field:
+        return False
+    llm_count = _first_float(trace.get("llm_call_count"))
+    api_count = _first_float(trace.get("api_call_count"))
+    total_tokens = _first_float(trace.get("total_tokens"))
+    return (
+        (llm_count in (None, 0.0))
+        and (api_count in (None, 0.0))
+        and (total_tokens in (None, 0.0))
+    )
 
 
 def _cost_audit(trace: Dict[str, Any]) -> Dict[str, Any]:

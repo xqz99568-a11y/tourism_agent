@@ -1,6 +1,6 @@
 {
   "schema_version": "ctp-pre-formal-validation-registry-v1",
-  "created_at": "2026-08-22T04:08:57.230603+00:00",
+  "created_at": "2026-08-23T12:05:24.834109+00:00",
   "hash_strategy": "sha256_file_bytes_v1",
   "purpose": "Bind Task D/E/F real-API validation reports to the formal experiment preflight and delivery package.",
   "warning_policy": {
@@ -108,15 +108,15 @@
       "key": "experiment_run_audit_code",
       "path": "app/core/experiment_run_audit.py",
       "exists": true,
-      "size_bytes": 17372,
-      "sha256": "50991fc2159e1e4f5fc6f295cf2438b2a6d7cf659ca3eb0fc912aeeec796b7fb"
+      "size_bytes": 18334,
+      "sha256": "f46cca65beefdc21089d10548263c2722aa8a44da925d85ab13d6291bdcaafdd"
     },
     {
       "key": "experiment_runner_code",
       "path": "app/core/experiment_runner.py",
       "exists": true,
-      "size_bytes": 394844,
-      "sha256": "05de9b331fde11d957b31007d056f847eda251877210a5c284a505197949e30c"
+      "size_bytes": 398235,
+      "sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f"
     },
     {
       "key": "experiment_schema_code",
@@ -143,8 +143,8 @@
       "key": "formal_gate_code",
       "path": "app/core/formal_experiment_gate.py",
       "exists": true,
-      "size_bytes": 54234,
-      "sha256": "68c3b82b1dcd8b10f122521b38c1351b17201cf43d4c97ab83d8ba1a6d955dab"
+      "size_bytes": 56207,
+      "sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c"
     },
     {
       "key": "formal_preflight_code",
@@ -164,8 +164,8 @@
       "key": "independent_evaluator_code",
       "path": "app/core/independent_evaluator.py",
       "exists": true,
-      "size_bytes": 171682,
-      "sha256": "138943475089372f59b53a4e031d7294991c40a0a93c14861bd44b29f6b4c262"
+      "size_bytes": 172622,
+      "sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b"
     },
     {
       "key": "intercity_transport_snapshot_code",

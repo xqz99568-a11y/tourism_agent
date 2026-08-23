@@ -1,7 +1,7 @@
 {
   "schema_version": "ctp-day8-delivery-pack-v1",
-  "created_at": "2026-08-22T04:09:43.212917+00:00",
-  "run_id": "day8_delivery_formal_experiment_20260822",
+  "created_at": "2026-08-23T12:06:58.328431+00:00",
+  "run_id": "day8_delivery_formal_experiment_20260823_bugfix",
   "readiness": {
     "status": "day8_delivery_ready",
     "ready_for_formal_experiment": true,
@@ -445,7 +445,7 @@
         "path": "experiments/generated/pre_formal_validation_registry_v1.json",
         "exists": true,
         "size_bytes": 17894,
-        "sha256": "0feacc9c56f723cbdfce6d005e5b4252b89f9b9decabbdb1a3f603e6bdbe2566"
+        "sha256": "2ecf7c50fc4a94fecc3dd9335a2e33994a0bac53aca8b1cf0492dc4da1ea221e"
       },
       "qweather_manifest": {
         "path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
@@ -492,14 +492,14 @@
       "independent_evaluator_code": {
         "path": "app/core/independent_evaluator.py",
         "exists": true,
-        "size_bytes": 171682,
-        "sha256": "138943475089372f59b53a4e031d7294991c40a0a93c14861bd44b29f6b4c262"
+        "size_bytes": 172622,
+        "sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b"
       },
       "experiment_runner_code": {
         "path": "app/core/experiment_runner.py",
         "exists": true,
-        "size_bytes": 394844,
-        "sha256": "05de9b331fde11d957b31007d056f847eda251877210a5c284a505197949e30c"
+        "size_bytes": 398235,
+        "sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f"
       },
       "method_contract_code": {
         "path": "app/core/experiment_method_contract.py",
@@ -516,8 +516,8 @@
       "formal_gate_code": {
         "path": "app/core/formal_experiment_gate.py",
         "exists": true,
-        "size_bytes": 54234,
-        "sha256": "68c3b82b1dcd8b10f122521b38c1351b17201cf43d4c97ab83d8ba1a6d955dab"
+        "size_bytes": 56207,
+        "sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c"
       },
       "academic_experiment_design_code": {
         "path": "app/core/academic_experiment_design.py",
@@ -582,8 +582,8 @@
       "experiment_run_audit_code": {
         "path": "app/core/experiment_run_audit.py",
         "exists": true,
-        "size_bytes": 17372,
-        "sha256": "50991fc2159e1e4f5fc6f295cf2438b2a6d7cf659ca3eb0fc912aeeec796b7fb"
+        "size_bytes": 18334,
+        "sha256": "f46cca65beefdc21089d10548263c2722aa8a44da925d85ab13d6291bdcaafdd"
       },
       "experiment_schema_code": {
         "path": "app/schemas/experiment.py",
@@ -754,21 +754,32 @@
         "sha256": "8152c0a8541f29cfa6a9a27f0eefb2f2eef631ed240334d2f7cb800f3e8a7e83"
       }
     },
-    "combined_sha256": "100d12c12e8547b87aca4a69fb36769440c9eef4b9e31d917a4c0d8a23e6e093",
+    "combined_sha256": "4f0c48f64bd4cf82abbde058875344d3f46ca3ccc9abab2a0298e7f8cc16e749",
     "all_required_artifacts_exist": true,
     "missing_artifacts": [],
     "git": {
       "checked": true,
-      "commit": "50d5b45d1dd04c191aad40fdf4eee8ec6a3a4764",
-      "worktree_clean": true,
-      "status_short": []
+      "commit": "205d502fb6983a4b4a71bd8ce9a49fd04d186079",
+      "worktree_clean": false,
+      "status_short": [
+        "M app/core/experiment_run_audit.py",
+        " M app/core/experiment_runner.py",
+        " M app/core/formal_experiment_gate.py",
+        " M app/core/independent_evaluator.py",
+        " M experiments/generated/day8_delivery_pack.json",
+        " M experiments/generated/day8_delivery_report.md",
+        " M experiments/generated/pre_formal_validation_registry_v1.json",
+        " M tests/test_day6_m0_m1_structured_output.py",
+        " M tests/test_day7_formal_gate.py",
+        " M tests/test_independent_evaluator.py"
+      ]
     }
   },
   "pre_formal_validation": {
     "schema_version": "ctp-pre-formal-validation-registry-v1",
     "required": true,
     "path": "experiments/generated/pre_formal_validation_registry_v1.json",
-    "registry_sha256": "0feacc9c56f723cbdfce6d005e5b4252b89f9b9decabbdb1a3f603e6bdbe2566",
+    "registry_sha256": "2ecf7c50fc4a94fecc3dd9335a2e33994a0bac53aca8b1cf0492dc4da1ea221e",
     "status": "passed",
     "errors": [],
     "warnings": [
@@ -907,18 +918,18 @@
           "key": "experiment_run_audit_code",
           "path": "app/core/experiment_run_audit.py",
           "exists": true,
-          "size_bytes": 17372,
-          "sha256": "50991fc2159e1e4f5fc6f295cf2438b2a6d7cf659ca3eb0fc912aeeec796b7fb",
-          "registered_sha256": "50991fc2159e1e4f5fc6f295cf2438b2a6d7cf659ca3eb0fc912aeeec796b7fb",
+          "size_bytes": 18334,
+          "sha256": "f46cca65beefdc21089d10548263c2722aa8a44da925d85ab13d6291bdcaafdd",
+          "registered_sha256": "f46cca65beefdc21089d10548263c2722aa8a44da925d85ab13d6291bdcaafdd",
           "matches": true
         },
         {
           "key": "experiment_runner_code",
           "path": "app/core/experiment_runner.py",
           "exists": true,
-          "size_bytes": 394844,
-          "sha256": "05de9b331fde11d957b31007d056f847eda251877210a5c284a505197949e30c",
-          "registered_sha256": "05de9b331fde11d957b31007d056f847eda251877210a5c284a505197949e30c",
+          "size_bytes": 398235,
+          "sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f",
+          "registered_sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f",
           "matches": true
         },
         {
@@ -952,9 +963,9 @@
           "key": "formal_gate_code",
           "path": "app/core/formal_experiment_gate.py",
           "exists": true,
-          "size_bytes": 54234,
-          "sha256": "68c3b82b1dcd8b10f122521b38c1351b17201cf43d4c97ab83d8ba1a6d955dab",
-          "registered_sha256": "68c3b82b1dcd8b10f122521b38c1351b17201cf43d4c97ab83d8ba1a6d955dab",
+          "size_bytes": 56207,
+          "sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c",
+          "registered_sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c",
           "matches": true
         },
         {
@@ -979,9 +990,9 @@
           "key": "independent_evaluator_code",
           "path": "app/core/independent_evaluator.py",
           "exists": true,
-          "size_bytes": 171682,
-          "sha256": "138943475089372f59b53a4e031d7294991c40a0a93c14861bd44b29f6b4c262",
-          "registered_sha256": "138943475089372f59b53a4e031d7294991c40a0a93c14861bd44b29f6b4c262",
+          "size_bytes": 172622,
+          "sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b",
+          "registered_sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b",
           "matches": true
         },
         {
@@ -1325,8 +1336,8 @@
       "statistical_unit": "case_id"
     },
     "run": {
-      "run_id": "day8_delivery_formal_experiment_20260822_preflight_probe",
-      "output_dir": "D:/Code/Tourism_Agent/experiments/results/formal_runs/day8_delivery_formal_experiment_20260822_preflight_probe",
+      "run_id": "day8_delivery_formal_experiment_20260823_bugfix_preflight_probe",
+      "output_dir": "D:/Code/Tourism_Agent/experiments/results/formal_runs/day8_delivery_formal_experiment_20260823_bugfix_preflight_probe",
       "methods": [
         "llm_direct",
         "single_agent",
@@ -1679,7 +1690,7 @@
           "path": "experiments/generated/pre_formal_validation_registry_v1.json",
           "exists": true,
           "size_bytes": 17894,
-          "sha256": "0feacc9c56f723cbdfce6d005e5b4252b89f9b9decabbdb1a3f603e6bdbe2566"
+          "sha256": "2ecf7c50fc4a94fecc3dd9335a2e33994a0bac53aca8b1cf0492dc4da1ea221e"
         },
         "qweather_manifest": {
           "path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
@@ -1726,14 +1737,14 @@
         "independent_evaluator_code": {
           "path": "app/core/independent_evaluator.py",
           "exists": true,
-          "size_bytes": 171682,
-          "sha256": "138943475089372f59b53a4e031d7294991c40a0a93c14861bd44b29f6b4c262"
+          "size_bytes": 172622,
+          "sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b"
         },
         "experiment_runner_code": {
           "path": "app/core/experiment_runner.py",
           "exists": true,
-          "size_bytes": 394844,
-          "sha256": "05de9b331fde11d957b31007d056f847eda251877210a5c284a505197949e30c"
+          "size_bytes": 398235,
+          "sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f"
         },
         "method_contract_code": {
           "path": "app/core/experiment_method_contract.py",
@@ -1750,8 +1761,8 @@
         "formal_gate_code": {
           "path": "app/core/formal_experiment_gate.py",
           "exists": true,
-          "size_bytes": 54234,
-          "sha256": "68c3b82b1dcd8b10f122521b38c1351b17201cf43d4c97ab83d8ba1a6d955dab"
+          "size_bytes": 56207,
+          "sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c"
         },
         "academic_experiment_design_code": {
           "path": "app/core/academic_experiment_design.py",
@@ -1816,8 +1827,8 @@
         "experiment_run_audit_code": {
           "path": "app/core/experiment_run_audit.py",
           "exists": true,
-          "size_bytes": 17372,
-          "sha256": "50991fc2159e1e4f5fc6f295cf2438b2a6d7cf659ca3eb0fc912aeeec796b7fb"
+          "size_bytes": 18334,
+          "sha256": "f46cca65beefdc21089d10548263c2722aa8a44da925d85ab13d6291bdcaafdd"
         },
         "experiment_schema_code": {
           "path": "app/schemas/experiment.py",
@@ -1988,21 +1999,32 @@
           "sha256": "8152c0a8541f29cfa6a9a27f0eefb2f2eef631ed240334d2f7cb800f3e8a7e83"
         }
       },
-      "combined_sha256": "100d12c12e8547b87aca4a69fb36769440c9eef4b9e31d917a4c0d8a23e6e093",
+      "combined_sha256": "4f0c48f64bd4cf82abbde058875344d3f46ca3ccc9abab2a0298e7f8cc16e749",
       "all_required_artifacts_exist": true,
       "missing_artifacts": [],
       "git": {
         "checked": true,
-        "commit": "50d5b45d1dd04c191aad40fdf4eee8ec6a3a4764",
-        "worktree_clean": true,
-        "status_short": []
+        "commit": "205d502fb6983a4b4a71bd8ce9a49fd04d186079",
+        "worktree_clean": false,
+        "status_short": [
+          "M app/core/experiment_run_audit.py",
+          " M app/core/experiment_runner.py",
+          " M app/core/formal_experiment_gate.py",
+          " M app/core/independent_evaluator.py",
+          " M experiments/generated/day8_delivery_pack.json",
+          " M experiments/generated/day8_delivery_report.md",
+          " M experiments/generated/pre_formal_validation_registry_v1.json",
+          " M tests/test_day6_m0_m1_structured_output.py",
+          " M tests/test_day7_formal_gate.py",
+          " M tests/test_independent_evaluator.py"
+        ]
       }
     },
     "pre_formal_validation": {
       "schema_version": "ctp-pre-formal-validation-registry-v1",
       "required": true,
       "path": "experiments/generated/pre_formal_validation_registry_v1.json",
-      "registry_sha256": "0feacc9c56f723cbdfce6d005e5b4252b89f9b9decabbdb1a3f603e6bdbe2566",
+      "registry_sha256": "2ecf7c50fc4a94fecc3dd9335a2e33994a0bac53aca8b1cf0492dc4da1ea221e",
       "status": "passed",
       "errors": [],
       "warnings": [
@@ -2141,18 +2163,18 @@
             "key": "experiment_run_audit_code",
             "path": "app/core/experiment_run_audit.py",
             "exists": true,
-            "size_bytes": 17372,
-            "sha256": "50991fc2159e1e4f5fc6f295cf2438b2a6d7cf659ca3eb0fc912aeeec796b7fb",
-            "registered_sha256": "50991fc2159e1e4f5fc6f295cf2438b2a6d7cf659ca3eb0fc912aeeec796b7fb",
+            "size_bytes": 18334,
+            "sha256": "f46cca65beefdc21089d10548263c2722aa8a44da925d85ab13d6291bdcaafdd",
+            "registered_sha256": "f46cca65beefdc21089d10548263c2722aa8a44da925d85ab13d6291bdcaafdd",
             "matches": true
           },
           {
             "key": "experiment_runner_code",
             "path": "app/core/experiment_runner.py",
             "exists": true,
-            "size_bytes": 394844,
-            "sha256": "05de9b331fde11d957b31007d056f847eda251877210a5c284a505197949e30c",
-            "registered_sha256": "05de9b331fde11d957b31007d056f847eda251877210a5c284a505197949e30c",
+            "size_bytes": 398235,
+            "sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f",
+            "registered_sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f",
             "matches": true
           },
           {
@@ -2186,9 +2208,9 @@
             "key": "formal_gate_code",
             "path": "app/core/formal_experiment_gate.py",
             "exists": true,
-            "size_bytes": 54234,
-            "sha256": "68c3b82b1dcd8b10f122521b38c1351b17201cf43d4c97ab83d8ba1a6d955dab",
-            "registered_sha256": "68c3b82b1dcd8b10f122521b38c1351b17201cf43d4c97ab83d8ba1a6d955dab",
+            "size_bytes": 56207,
+            "sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c",
+            "registered_sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c",
             "matches": true
           },
           {
@@ -2213,9 +2235,9 @@
             "key": "independent_evaluator_code",
             "path": "app/core/independent_evaluator.py",
             "exists": true,
-            "size_bytes": 171682,
-            "sha256": "138943475089372f59b53a4e031d7294991c40a0a93c14861bd44b29f6b4c262",
-            "registered_sha256": "138943475089372f59b53a4e031d7294991c40a0a93c14861bd44b29f6b4c262",
+            "size_bytes": 172622,
+            "sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b",
+            "registered_sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b",
             "matches": true
           },
           {
@@ -2629,15 +2651,15 @@
       "key": "independent_evaluator_code",
       "path": "app/core/independent_evaluator.py",
       "exists": true,
-      "size_bytes": 171682,
-      "sha256": "138943475089372f59b53a4e031d7294991c40a0a93c14861bd44b29f6b4c262"
+      "size_bytes": 172622,
+      "sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b"
     },
     {
       "key": "experiment_runner_code",
       "path": "app/core/experiment_runner.py",
       "exists": true,
-      "size_bytes": 394844,
-      "sha256": "05de9b331fde11d957b31007d056f847eda251877210a5c284a505197949e30c"
+      "size_bytes": 398235,
+      "sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f"
     },
     {
       "key": "method_contract_code",
@@ -2657,8 +2679,8 @@
       "key": "formal_gate_code",
       "path": "app/core/formal_experiment_gate.py",
       "exists": true,
-      "size_bytes": 54234,
-      "sha256": "68c3b82b1dcd8b10f122521b38c1351b17201cf43d4c97ab83d8ba1a6d955dab"
+      "size_bytes": 56207,
+      "sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c"
     },
     {
       "key": "day8_runner_acceptance_test",
@@ -2707,7 +2729,7 @@
       "path": "experiments/generated/pre_formal_validation_registry_v1.json",
       "exists": true,
       "size_bytes": 17894,
-      "sha256": "0feacc9c56f723cbdfce6d005e5b4252b89f9b9decabbdb1a3f603e6bdbe2566"
+      "sha256": "2ecf7c50fc4a94fecc3dd9335a2e33994a0bac53aca8b1cf0492dc4da1ea221e"
     },
     {
       "key": "budget_gold_json",
@@ -2874,8 +2896,8 @@
       "key": "experiment_run_audit_code",
       "path": "app/core/experiment_run_audit.py",
       "exists": true,
-      "size_bytes": 17372,
-      "sha256": "50991fc2159e1e4f5fc6f295cf2438b2a6d7cf659ca3eb0fc912aeeec796b7fb"
+      "size_bytes": 18334,
+      "sha256": "f46cca65beefdc21089d10548263c2722aa8a44da925d85ab13d6291bdcaafdd"
     },
     {
       "key": "experiment_schema_code",

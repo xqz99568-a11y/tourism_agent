@@ -122,6 +122,87 @@ def test_day6_m0_invalid_json_is_method_failure(tmp_path: Path) -> None:
     assert result["output"]["metadata"]["structured_llm_output"]["parse_status"] == "failed"
 
 
+def test_day6_m0_repairs_simple_numeric_expressions_in_structured_json(tmp_path: Path) -> None:
+    class FakeLLM:
+        async def chat(self, messages, tools=None):
+            return SimpleNamespace(
+                content=(
+                    "{"
+                    f'"schema_version": "{EXPERIMENT_OUTPUT_SCHEMA_VERSION}",'
+                    '"case_id": "day6-m0-json-arithmetic",'
+                    '"method": "llm_direct",'
+                    '"task_type": "trip_planning",'
+                    '"planned_agents": [],'
+                    '"used_agents": [],'
+                    '"planned_tools": [],'
+                    '"called_tools": [],'
+                    '"tool_results": {},'
+                    '"attractions": [{"name": "West Lake"}],'
+                    '"trip_days": 3,'
+                    '"daily_itinerary": [{"day": 1, "attractions": [{"name": "West Lake"}]}],'
+                    '"budget": {"hotel": 3 * 120, "total": 3 * 120},'
+                    '"weather": null,'
+                    '"weather_adjustments": [],'
+                    '"execution_status": "completed",'
+                    '"final_answer": "direct baseline answer",'
+                    '"metadata": {"structured_by_llm": true}'
+                    "}"
+                ),
+                tool_calls=[],
+                usage={"total_tokens": 1},
+            )
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    result = runner.run(
+        {
+            "case_id": "day6-m0-json-arithmetic",
+            "user_input": "Plan a three day Hangzhou trip.",
+        },
+        method="llm_direct",
+    )
+
+    raw = result["raw_output"]
+    assert result["status"] == "completed"
+    assert raw["budget"] == {"hotel": 360, "total": 360}
+    assert raw["metadata"]["structured_llm_output"]["parse_status"] == "passed"
+    assert raw["metadata"]["model_metadata"]["structured_json_arithmetic_repair"] == {
+        "applied": True,
+        "replacement_count": 2,
+    }
+
+
+def test_day6_m0_model_failed_status_is_quality_output_not_runtime_failure(
+    tmp_path: Path,
+) -> None:
+    class FakeLLM:
+        async def chat(self, messages, tools=None):
+            payload = json.loads(
+                _structured_llm_json(
+                    case_id="day6-m0-model-failed-status",
+                    method="llm_direct",
+                    final_answer="I produced an answer but marked myself failed.",
+                )
+            )
+            payload["execution_status"] = "failed"
+            return SimpleNamespace(
+                content=json.dumps(payload, ensure_ascii=False),
+                tool_calls=[],
+                usage={"total_tokens": 1},
+            )
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    result = runner.run(
+        {
+            "case_id": "day6-m0-model-failed-status",
+            "user_input": "Plan a two day Hangzhou trip for two people.",
+        },
+        method="llm_direct",
+    )
+
+    assert result["status"] == "completed"
+    assert result["output"]["execution_status"] == "completed"
+
+
 def test_structured_llm_prompt_requires_weather_adjustment_objects(tmp_path: Path) -> None:
     runner = ExperimentRunner(trace_dir=tmp_path / "traces")
     case = {

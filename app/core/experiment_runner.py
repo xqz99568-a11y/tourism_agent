@@ -8,9 +8,11 @@ llm_direct, single_agent, fixed_multi_agent, and adaptive_multi_agent.
 from __future__ import annotations
 
 import asyncio
+import ast
 import csv
 import hashlib
 import json
+import math
 import os
 import random
 import re
@@ -177,6 +179,11 @@ RESEARCH_TASK_TYPE_ALIASES = {
     "weather_climate_question": "general_chat",
     "destination_recommendation": "general_chat",
 }
+_JSON_ARITHMETIC_VALUE_PATTERN = re.compile(
+    r'(?P<prefix>"[A-Za-z0-9_]+"[ \t\r\n]*:[ \t\r\n]*)'
+    r'(?P<expr>[-+]?(?:\d+(?:\.\d+)?|\.\d+)(?:[ \t\r\n]*[+\-*/][ \t\r\n]*[-+]?(?:\d+(?:\.\d+)?|\.\d+))+)'  # noqa: E501
+    r'(?P<suffix>[ \t\r\n]*(?:[,}\]]))'
+)
 
 
 class ExperimentRunner:
@@ -3194,10 +3201,24 @@ class ExperimentRunner:
     ) -> tuple[Optional[Dict[str, Any]], Optional[str]]:
         if not isinstance(raw_content, str) or not raw_content.strip():
             return None, "structured LLM output is empty or not text"
+        raw_text = raw_content.strip()
         try:
-            parsed = json.loads(raw_content.strip())
+            parsed = json.loads(raw_text)
         except json.JSONDecodeError as exc:
-            return None, f"structured LLM output is not strict JSON: {exc.msg}"
+            repaired_text, repair_count = _repair_unquoted_json_arithmetic_values(raw_text)
+            if repair_count <= 0:
+                return None, f"structured LLM output is not strict JSON: {exc.msg}"
+            try:
+                parsed = json.loads(repaired_text)
+            except json.JSONDecodeError:
+                return None, f"structured LLM output is not strict JSON: {exc.msg}"
+            if isinstance(parsed, dict):
+                metadata = parsed.setdefault("metadata", {})
+                if isinstance(metadata, dict):
+                    metadata["structured_json_arithmetic_repair"] = {
+                        "applied": True,
+                        "replacement_count": repair_count,
+                    }
         if not isinstance(parsed, dict):
             return None, "structured LLM output must be a JSON object"
         return parsed, None
@@ -3329,11 +3350,10 @@ class ExperimentRunner:
         model_status = str(payload.get("execution_status") or execution_status or "completed").lower()
         if model_status not in {"completed", "failed", "clarification"}:
             model_status = "failed"
-        final_status = (
-            "failed"
-            if failure_items or str(execution_status or "").lower() == "failed" or model_status == "failed"
-            else model_status
-        )
+        runtime_status = str(execution_status or "").lower()
+        final_status = "failed" if failure_items or runtime_status == "failed" else model_status
+        if final_status == "failed" and not failure_items and runtime_status != "failed":
+            final_status = "completed"
         final_answer_text = str(payload.get("final_answer") or "")
         output_metadata = {
             "research_method": method,
@@ -9180,6 +9200,71 @@ def _environment_bool(name: str, default: bool) -> bool:
     if raw is None:
         return bool(default)
     return raw.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _repair_unquoted_json_arithmetic_values(raw_text: str) -> tuple[str, int]:
+    """Repair simple numeric expressions emitted as JSON number values.
+
+    The repair is intentionally narrow: it only handles values such as
+    ``"amount": 3 * 120`` and refuses names, strings, function calls, and any
+    non-arithmetic syntax.  This preserves the strict structured-output
+    contract while avoiding a whole-row engineering failure for a trivial
+    model formatting mistake.
+    """
+    repair_count = 0
+
+    def replace(match: re.Match[str]) -> str:
+        nonlocal repair_count
+        value = _safe_arithmetic_value(match.group("expr"))
+        if value is None:
+            return match.group(0)
+        repair_count += 1
+        return f"{match.group('prefix')}{_json_number_literal(value)}{match.group('suffix')}"
+
+    repaired = _JSON_ARITHMETIC_VALUE_PATTERN.sub(replace, raw_text)
+    return repaired, repair_count
+
+
+def _safe_arithmetic_value(expression: str) -> Optional[float]:
+    try:
+        node = ast.parse(expression, mode="eval")
+    except SyntaxError:
+        return None
+    try:
+        value = _eval_arithmetic_node(node.body)
+    except (ValueError, ZeroDivisionError, OverflowError):
+        return None
+    if not math.isfinite(value):
+        return None
+    return value
+
+
+def _eval_arithmetic_node(node: ast.AST) -> float:
+    if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+        return float(node.value)
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+        value = _eval_arithmetic_node(node.operand)
+        return value if isinstance(node.op, ast.UAdd) else -value
+    if isinstance(node, ast.BinOp) and isinstance(
+        node.op,
+        (ast.Add, ast.Sub, ast.Mult, ast.Div),
+    ):
+        left = _eval_arithmetic_node(node.left)
+        right = _eval_arithmetic_node(node.right)
+        if isinstance(node.op, ast.Add):
+            return left + right
+        if isinstance(node.op, ast.Sub):
+            return left - right
+        if isinstance(node.op, ast.Mult):
+            return left * right
+        return left / right
+    raise ValueError("unsupported arithmetic expression")
+
+
+def _json_number_literal(value: float) -> str:
+    if value.is_integer():
+        return str(int(value))
+    return format(round(value, 4), "g")
 
 
 def _environment_text(name: str) -> Optional[str]:

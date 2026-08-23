@@ -110,6 +110,54 @@ def test_formal_experiment_gate_blocks_uncalculable_core_metrics(
     assert metrics["sample_result_issues"][0]["metric"] == "evaluation_hcsr"
 
 
+def test_formal_experiment_gate_allows_hcsr_na_when_no_hcsr_rule_applies(
+    tmp_path: Path,
+) -> None:
+    run_dir = _write_formal_run_dir(tmp_path / "hcsr-na-run", independent_cases=1)
+    results_path = run_dir / "benchmark_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    results[0]["metrics"]["evaluation_hcsr"] = None
+    results[0]["metrics"]["evaluation_hcsr_applicable_count"] = 0
+    results[0]["run_audit"]["metrics"]["evaluation_hcsr"] = None
+    results[0]["run_audit"]["metrics"]["evaluation_hcsr_applicable_count"] = 0
+    results_path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    payload = write_formal_experiment_gate(run_dir, min_cases=1)
+
+    assert payload["gate_status"] == "passed"
+    assert payload["gate"]["checks"]["metric_values_calculable"] is True
+    assert payload["gate"]["metric_calculability_summary"]["result_issue_count"] == 0
+
+
+def test_formal_experiment_gate_allows_missing_standardized_cost_for_zero_call_row(
+    tmp_path: Path,
+) -> None:
+    run_dir = _write_formal_run_dir(tmp_path / "zero-call-cost-run", independent_cases=1)
+    results_path = run_dir / "benchmark_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    metrics = results[0]["metrics"]
+    metrics["llm_call_count"] = 0
+    metrics["api_call_count"] = 0
+    metrics["total_tokens"] = 0
+    metrics["standardized_estimated_cost"] = None
+    audit_metrics = results[0]["run_audit"]["metrics"]
+    audit_metrics["standardized_estimated_cost"] = None
+    results[0]["trace"] = {
+        "llm_call_count": 0,
+        "api_call_count": 0,
+        "total_tokens": 0,
+        "llm_calls": [],
+        "api_calls": [],
+    }
+    results_path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    payload = write_formal_experiment_gate(run_dir, min_cases=1)
+
+    assert payload["gate_status"] == "passed"
+    assert payload["gate"]["checks"]["metric_values_calculable"] is True
+    assert payload["gate"]["metric_calculability_summary"]["result_issue_count"] == 0
+
+
 def test_formal_experiment_gate_blocks_missing_decision_normalization_diagnostics(
     tmp_path: Path,
 ) -> None:
