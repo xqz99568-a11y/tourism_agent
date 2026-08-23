@@ -203,6 +203,39 @@ def test_day6_m0_model_failed_status_is_quality_output_not_runtime_failure(
     assert result["output"]["execution_status"] == "completed"
 
 
+def test_day6_m0_normalizes_planning_task_type_alias(tmp_path: Path) -> None:
+    class FakeLLM:
+        async def chat(self, messages, tools=None):
+            payload = json.loads(
+                _structured_llm_json(
+                    case_id="day6-m0-planning-alias",
+                    method="llm_direct",
+                    final_answer="direct planning answer",
+                )
+            )
+            payload["task_type"] = "planning"
+            return SimpleNamespace(
+                content=json.dumps(payload, ensure_ascii=False),
+                tool_calls=[],
+                usage={"total_tokens": 1},
+            )
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    result = runner.run(
+        {
+            "case_id": "day6-m0-planning-alias",
+            "user_input": "Plan a two day Hangzhou trip for two people.",
+        },
+        method="llm_direct",
+    )
+
+    structured = result["output"]["metadata"]["structured_llm_output"]
+    assert result["status"] == "completed"
+    assert result["output"]["task_type"] == "trip_planning"
+    assert structured["validation_status"] == "passed"
+    assert structured["validation_errors"] == []
+
+
 def test_structured_llm_prompt_requires_weather_adjustment_objects(tmp_path: Path) -> None:
     runner = ExperimentRunner(trace_dir=tmp_path / "traces")
     case = {

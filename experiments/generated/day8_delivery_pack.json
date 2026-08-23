@@ -1,7 +1,7 @@
 {
   "schema_version": "ctp-day8-delivery-pack-v1",
-  "created_at": "2026-08-23T12:29:23.098927+00:00",
-  "run_id": "day8_delivery_20260823T122923Z",
+  "created_at": "2026-08-23T17:23:17.359551+00:00",
+  "run_id": "day8_delivery_formal_experiment_20260824_planning_alias_fix",
   "readiness": {
     "status": "day8_delivery_ready",
     "ready_for_formal_experiment": true,
@@ -445,7 +445,7 @@
         "path": "experiments/generated/pre_formal_validation_registry_v1.json",
         "exists": true,
         "size_bytes": 17894,
-        "sha256": "c9d62a182522a690d6bf699eb30610a1d0af5a3e712879cecbc603f128b1aea0"
+        "sha256": "133244b3b7562a72ff0d19a8f75430f60ab9266667373827e1911423c283ad59"
       },
       "qweather_manifest": {
         "path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
@@ -498,8 +498,8 @@
       "experiment_runner_code": {
         "path": "app/core/experiment_runner.py",
         "exists": true,
-        "size_bytes": 398235,
-        "sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f"
+        "size_bytes": 398268,
+        "sha256": "2502a5e1b55509ee61071cde6dd3110e221684b3510eb0380358f79cc4e8c5af"
       },
       "method_contract_code": {
         "path": "app/core/experiment_method_contract.py",
@@ -754,21 +754,26 @@
         "sha256": "8152c0a8541f29cfa6a9a27f0eefb2f2eef631ed240334d2f7cb800f3e8a7e83"
       }
     },
-    "combined_sha256": "74adea45857494ea540492cc0854163d63dd416a013823970149ab1ea3812aa8",
+    "combined_sha256": "b0e591404d9b3f30ffec6a0799f50b22ad3a39b01fe769e94ac2ee990712d5f6",
     "all_required_artifacts_exist": true,
     "missing_artifacts": [],
     "git": {
       "checked": true,
-      "commit": "a4e0f82539cf17c4e7abbd1d3739c884f7901152",
-      "worktree_clean": true,
-      "status_short": []
+      "commit": "770f908e9d5c41f36b06e74c4f783f4349424999",
+      "worktree_clean": false,
+      "status_short": [
+        "M app/core/experiment_runner.py",
+        " M experiments/generated/pre_formal_validation_registry_v1.json",
+        " M tests/test_day6_m0_m1_structured_output.py",
+        " M tests/test_day8_dev_experiment_cases.py"
+      ]
     }
   },
   "pre_formal_validation": {
     "schema_version": "ctp-pre-formal-validation-registry-v1",
     "required": true,
     "path": "experiments/generated/pre_formal_validation_registry_v1.json",
-    "registry_sha256": "c9d62a182522a690d6bf699eb30610a1d0af5a3e712879cecbc603f128b1aea0",
+    "registry_sha256": "133244b3b7562a72ff0d19a8f75430f60ab9266667373827e1911423c283ad59",
     "status": "passed",
     "errors": [],
     "warnings": [
@@ -916,9 +921,9 @@
           "key": "experiment_runner_code",
           "path": "app/core/experiment_runner.py",
           "exists": true,
-          "size_bytes": 398235,
-          "sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f",
-          "registered_sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f",
+          "size_bytes": 398268,
+          "sha256": "2502a5e1b55509ee61071cde6dd3110e221684b3510eb0380358f79cc4e8c5af",
+          "registered_sha256": "2502a5e1b55509ee61071cde6dd3110e221684b3510eb0380358f79cc4e8c5af",
           "matches": true
         },
         {
@@ -1325,8 +1330,8 @@
       "statistical_unit": "case_id"
     },
     "run": {
-      "run_id": "day8_delivery_20260823T122923Z_preflight_probe",
-      "output_dir": "D:/Code/Tourism_Agent/experiments/results/formal_runs/day8_delivery_20260823T122923Z_preflight_probe",
+      "run_id": "day8_delivery_formal_experiment_20260824_planning_alias_fix_preflight_probe",
+      "output_dir": "D:/Code/Tourism_Agent/experiments/results/formal_runs/day8_delivery_formal_experiment_20260824_planning_alias_fix_preflight_probe",
       "methods": [
         "llm_direct",
         "single_agent",
@@ -1679,7 +1684,7 @@
           "path": "experiments/generated/pre_formal_validation_registry_v1.json",
           "exists": true,
           "size_bytes": 17894,
-          "sha256": "c9d62a182522a690d6bf699eb30610a1d0af5a3e712879cecbc603f128b1aea0"
+          "sha256": "133244b3b7562a72ff0d19a8f75430f60ab9266667373827e1911423c283ad59"
         },
         "qweather_manifest": {
           "path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
@@ -1732,8 +1737,8 @@
         "experiment_runner_code": {
           "path": "app/core/experiment_runner.py",
           "exists": true,
-          "size_bytes": 398235,
-          "sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f"
+          "size_bytes": 398268,
+          "sha256": "2502a5e1b55509ee61071cde6dd3110e221684b3510eb0380358f79cc4e8c5af"
         },
         "method_contract_code": {
           "path": "app/core/experiment_method_contract.py",
@@ -1988,21 +1993,26 @@
           "sha256": "8152c0a8541f29cfa6a9a27f0eefb2f2eef631ed240334d2f7cb800f3e8a7e83"
         }
       },
-      "combined_sha256": "74adea45857494ea540492cc0854163d63dd416a013823970149ab1ea3812aa8",
+      "combined_sha256": "b0e591404d9b3f30ffec6a0799f50b22ad3a39b01fe769e94ac2ee990712d5f6",
       "all_required_artifacts_exist": true,
       "missing_artifacts": [],
       "git": {
         "checked": true,
-        "commit": "a4e0f82539cf17c4e7abbd1d3739c884f7901152",
-        "worktree_clean": true,
-        "status_short": []
+        "commit": "770f908e9d5c41f36b06e74c4f783f4349424999",
+        "worktree_clean": false,
+        "status_short": [
+          "M app/core/experiment_runner.py",
+          " M experiments/generated/pre_formal_validation_registry_v1.json",
+          " M tests/test_day6_m0_m1_structured_output.py",
+          " M tests/test_day8_dev_experiment_cases.py"
+        ]
       }
     },
     "pre_formal_validation": {
       "schema_version": "ctp-pre-formal-validation-registry-v1",
       "required": true,
       "path": "experiments/generated/pre_formal_validation_registry_v1.json",
-      "registry_sha256": "c9d62a182522a690d6bf699eb30610a1d0af5a3e712879cecbc603f128b1aea0",
+      "registry_sha256": "133244b3b7562a72ff0d19a8f75430f60ab9266667373827e1911423c283ad59",
       "status": "passed",
       "errors": [],
       "warnings": [
@@ -2150,9 +2160,9 @@
             "key": "experiment_runner_code",
             "path": "app/core/experiment_runner.py",
             "exists": true,
-            "size_bytes": 398235,
-            "sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f",
-            "registered_sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f",
+            "size_bytes": 398268,
+            "sha256": "2502a5e1b55509ee61071cde6dd3110e221684b3510eb0380358f79cc4e8c5af",
+            "registered_sha256": "2502a5e1b55509ee61071cde6dd3110e221684b3510eb0380358f79cc4e8c5af",
             "matches": true
           },
           {
@@ -2636,8 +2646,8 @@
       "key": "experiment_runner_code",
       "path": "app/core/experiment_runner.py",
       "exists": true,
-      "size_bytes": 398235,
-      "sha256": "f8892ed89cd484d0c970d948f6b0d0e620aa5b923a0229ddbe64a2f4108fee7f"
+      "size_bytes": 398268,
+      "sha256": "2502a5e1b55509ee61071cde6dd3110e221684b3510eb0380358f79cc4e8c5af"
     },
     {
       "key": "method_contract_code",
@@ -2707,7 +2717,7 @@
       "path": "experiments/generated/pre_formal_validation_registry_v1.json",
       "exists": true,
       "size_bytes": 17894,
-      "sha256": "c9d62a182522a690d6bf699eb30610a1d0af5a3e712879cecbc603f128b1aea0"
+      "sha256": "133244b3b7562a72ff0d19a8f75430f60ab9266667373827e1911423c283ad59"
     },
     {
       "key": "budget_gold_json",

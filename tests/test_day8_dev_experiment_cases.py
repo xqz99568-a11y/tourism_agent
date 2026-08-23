@@ -63,6 +63,7 @@ def test_day8_dev_experiment_cases_preserve_source_task_type_and_add_canonical_e
 
 
 def test_day8_no_tool_task_aliases_match_experiment_labels() -> None:
+    assert RESEARCH_TASK_TYPE_ALIASES["planning"] == "trip_planning"
     assert RESEARCH_TASK_TYPE_ALIASES["destination_recommendation"] == "general_chat"
     assert RESEARCH_TASK_TYPE_ALIASES["weather_climate_question"] == "general_chat"
 

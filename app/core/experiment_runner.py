@@ -173,6 +173,7 @@ FROZEN_RESEARCH_TASK_TYPES = {
 }
 RESEARCH_TASK_TYPE_ALIASES = {
     "budget_control": "budget_query",
+    "planning": "trip_planning",
     "trip_plan": "trip_planning",
     "weather_aware_trip_plan": "trip_planning",
     "weather_forecast_query": "weather_query",
