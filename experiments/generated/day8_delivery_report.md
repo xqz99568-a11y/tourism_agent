@@ -61,9 +61,9 @@
 
 - integrity_schema: `ctp-formal-artifact-integrity-v1`
 - combined_sha256: `b0e591404d9b3f30ffec6a0799f50b22ad3a39b01fe769e94ac2ee990712d5f6`
-- git_commit: `770f908e9d5c41f36b06e74c4f783f4349424999`
-- git_worktree_clean: `False`
-- git_status_count: `4`
+- git_commit: `c3923346955526fdef2254be007b2316cb279cad`
+- git_worktree_clean: `True`
+- git_status_count: `0`
 
 ## Formal preflight
 
