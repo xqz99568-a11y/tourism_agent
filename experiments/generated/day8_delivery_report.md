@@ -60,10 +60,10 @@
 ## 正式实验指纹
 
 - integrity_schema: `ctp-formal-artifact-integrity-v1`
-- combined_sha256: `4f0c48f64bd4cf82abbde058875344d3f46ca3ccc9abab2a0298e7f8cc16e749`
-- git_commit: `205d502fb6983a4b4a71bd8ce9a49fd04d186079`
-- git_worktree_clean: `False`
-- git_status_count: `10`
+- combined_sha256: `74adea45857494ea540492cc0854163d63dd416a013823970149ab1ea3812aa8`
+- git_commit: `a4e0f82539cf17c4e7abbd1d3739c884f7901152`
+- git_worktree_clean: `True`
+- git_status_count: `0`
 
 ## Formal preflight
 
@@ -132,7 +132,7 @@
 
 - registry_status: `passed`
 - registry_path: `experiments/generated/pre_formal_validation_registry_v1.json`
-- registry_sha256: `2ecf7c50fc4a94fecc3dd9335a2e33994a0bac53aca8b1cf0492dc4da1ea221e`
+- registry_sha256: `c9d62a182522a690d6bf699eb30610a1d0af5a3e712879cecbc603f128b1aea0`
 - transparent_warning_policy: `accepted_but_reported`
 - transparent_warning_count: `3`
 
@@ -166,7 +166,7 @@
 | sealed_validation_dataset | `True` | `0ea84989537c0428219d9ccb8e0991077afbfd3fd420f4666a9c01a64ea7c527` | `experiments/ctp30_sealed_validation_v1.json` |
 | academic_design_validation_json | `True` | `752a540894fca275d22c151e63fb90474ad826548a3d279c4b7c1c89bb511044` | `experiments/generated/academic_experiment_design_validation_v1.json` |
 | academic_design_validation_md | `True` | `3796b6154095750f8ee35c07e0a1703204028028a122aa8968c39632cf639a14` | `experiments/generated/academic_experiment_design_validation_v1.md` |
-| pre_formal_validation_registry | `True` | `2ecf7c50fc4a94fecc3dd9335a2e33994a0bac53aca8b1cf0492dc4da1ea221e` | `experiments/generated/pre_formal_validation_registry_v1.json` |
+| pre_formal_validation_registry | `True` | `c9d62a182522a690d6bf699eb30610a1d0af5a3e712879cecbc603f128b1aea0` | `experiments/generated/pre_formal_validation_registry_v1.json` |
 | budget_gold_json | `True` | `a755d70f2606d1461cb384bce9da54d90de2192d71c4e0fd00827c849aa21ac5` | `experiments/generated/ctp100_budget_gold_v2.json` |
 | economy_budget_manual_review_json | `True` | `8ea717633318d38f858a99d3735b68673d926b4b815fb4ba3643f43ab0964a17` | `experiments/generated/economy_budget_manual_review_v1.json` |
 | economy_budget_manual_review_md | `True` | `0a1ffc0ed84870728aa47ab923b86f343736dbbdd04714008f5c39705a90fc63` | `experiments/generated/economy_budget_manual_review_v1.md` |
