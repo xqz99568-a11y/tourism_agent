@@ -862,6 +862,19 @@ def test_budget_independent_recalculation_accepts_local_total_alias() -> None:
     assert rules["H_BUDGET_INDEPENDENT_RECALCULATION"]["status"] == "passed"
 
 
+def test_budget_independent_recalculation_accepts_ticket_source_alias_when_pois_match() -> None:
+    output = _formal_budget_output()
+    output["budget"]["ticket_breakdown"]["summary"]["source"] = "standard_reference_poi_combo"
+    output["budget"]["breakdown"]["tickets"]["source"] = "standard_reference_poi_combo"
+    _sync_formal_budget_tool_result(output)
+
+    report = evaluate_case(case=_formal_case(), output=output)
+    rule = {item["id"]: item for item in report["rules"]}["H_BUDGET_INDEPENDENT_RECALCULATION"]
+
+    assert rule["status"] == "passed"
+    assert "wrong_ticket_source" not in rule["details"]["issues"]
+
+
 def test_budget_gold_overrides_stale_dataset_disclaimer_for_no_origin_local_budget() -> None:
     output = _formal_budget_output("ctp100_v2_049")
 

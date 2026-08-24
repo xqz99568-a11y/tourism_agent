@@ -1,4 +1,5 @@
 import csv
+import hashlib
 import json
 import sys
 from pathlib import Path
@@ -40,7 +41,15 @@ def test_formal_experiment_gate_passes_complete_formal_evidence(tmp_path: Path) 
     assert gate["method_result_grid_summary"]["observed_group_count"] == 1
     assert gate["metric_calculability_summary"]["result_issue_count"] == 0
     assert gate["artifact_index"]["trace_file_count"] == 4
+    assert gate["artifact_index"]["referenced_trace_file_count"] == 4
+    assert gate["artifact_index"]["unreferenced_trace_file_count"] == 0
     assert len(gate["artifact_index"]["trace_combined_sha256"]) == 64
+    manifest_artifact = next(
+        item for item in gate["artifact_index"]["files"] if item["key"] == "manifest"
+    )
+    assert manifest_artifact["sha256"] == hashlib.sha256(
+        (run_dir / "experiment_manifest.json").read_bytes()
+    ).hexdigest()
 
     report = Path(payload["markdown"]).read_text(encoding="utf-8")
     assert "Formal experiment final gate" in report
@@ -53,6 +62,7 @@ def test_formal_experiment_gate_passes_complete_formal_evidence(tmp_path: Path) 
     assert manifest["formal_experiment_gate"]["experiment_integrity_passed"] is True
     assert manifest["formal_experiment_gate"]["hypothesis_supported"] is True
     assert manifest["formal_experiment_gate"]["method_result_grid_summary"]["passed"] is True
+    assert manifest["formal_experiment_gate"]["artifact_index"] == "see formal_experiment_gate.json"
     assert manifest["results"]["formal_experiment_gate"] == payload["json"]
     assert manifest["results"]["formal_experiment_report"] == payload["markdown"]
 
@@ -69,6 +79,21 @@ def test_formal_experiment_gate_blocks_small_mock_run(tmp_path: Path) -> None:
     assert "paper_claims_allowed_by_analysis" in failed
     assert "no_mock_llm" in failed
     assert payload["paper_claims_allowed"] is False
+
+
+def test_formal_experiment_gate_marks_unreferenced_trace_files(tmp_path: Path) -> None:
+    run_dir = _write_formal_run_dir(tmp_path / "formal-run", independent_cases=1)
+    orphan = run_dir / "traces" / "interrupted_attempt.jsonl"
+    orphan.write_text(json.dumps({"status": "cancelled"}, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    payload = write_formal_experiment_gate(run_dir, min_cases=1)
+    artifact_index = payload["gate"]["artifact_index"]
+
+    assert payload["gate_status"] == "passed"
+    assert artifact_index["trace_file_count"] == 5
+    assert artifact_index["referenced_trace_file_count"] == 4
+    assert artifact_index["unreferenced_trace_file_count"] == 1
+    assert orphan.as_posix() in artifact_index["unreferenced_trace_files"]
 
 
 def test_formal_experiment_gate_blocks_method_grid_duplicates_even_when_count_matches(

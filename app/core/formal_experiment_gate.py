@@ -73,6 +73,23 @@ def write_formal_experiment_gate(
         required_methods=required_methods,
         allow_mock_llm=allow_mock_llm,
     )
+    gate_path = root / FORMAL_EXPERIMENT_GATE_NAME
+    report_path = root / FORMAL_EXPERIMENT_REPORT_NAME
+    preliminary_gate = build_formal_experiment_gate(
+        root,
+        paper_analysis=paper_payload["analysis"],
+        min_cases=min_cases,
+        required_methods=required_methods,
+        allow_mock_llm=allow_mock_llm,
+    )
+    preliminary_gate["artifact_paths"]["formal_gate"] = gate_path.as_posix()
+    preliminary_gate["artifact_paths"]["formal_report"] = report_path.as_posix()
+    _attach_gate_to_manifest(
+        root,
+        gate=preliminary_gate,
+        gate_path=gate_path,
+        report_path=report_path,
+    )
     gate = build_formal_experiment_gate(
         root,
         paper_analysis=paper_payload["analysis"],
@@ -80,18 +97,10 @@ def write_formal_experiment_gate(
         required_methods=required_methods,
         allow_mock_llm=allow_mock_llm,
     )
-    gate_path = root / FORMAL_EXPERIMENT_GATE_NAME
-    report_path = root / FORMAL_EXPERIMENT_REPORT_NAME
     gate["artifact_paths"]["formal_gate"] = gate_path.as_posix()
     gate["artifact_paths"]["formal_report"] = report_path.as_posix()
     gate_path.write_text(json.dumps(gate, ensure_ascii=False, indent=2), encoding="utf-8")
     report_path.write_text(render_formal_experiment_report(gate), encoding="utf-8")
-    _attach_gate_to_manifest(
-        root,
-        gate=gate,
-        gate_path=gate_path,
-        report_path=report_path,
-    )
     return {
         "status": "completed",
         "gate": gate,
@@ -157,7 +166,7 @@ def build_formal_experiment_gate(
         summary.get("unique_case_count"),
         default=0,
     )
-    artifact_index = _artifact_index(root)
+    artifact_index = _artifact_index(root, results=results)
     checks = {
         "run_dir_exists": root.exists(),
         "required_artifacts_saved": all(
@@ -406,6 +415,8 @@ def render_formal_experiment_report(gate: Dict[str, Any]) -> str:
             f"- api_failure_timeout_count: `{_nested(gate, 'api_failure_summary', 'failure_or_timeout_count')}`",
             f"- total_tokens: `{trace.get('total_tokens')}`",
             f"- standardized_estimated_cost: `{trace.get('standardized_estimated_cost')}`",
+            f"- referenced_trace_file_count: `{_nested(gate, 'artifact_index', 'referenced_trace_file_count')}`",
+            f"- unreferenced_trace_file_count: `{_nested(gate, 'artifact_index', 'unreferenced_trace_file_count')}`",
             "",
             "## Artifact hashes",
             "",
@@ -428,7 +439,11 @@ def _load_artifacts(root: Path) -> Dict[str, Any]:
     }
 
 
-def _artifact_index(root: Path) -> Dict[str, Any]:
+def _artifact_index(
+    root: Path,
+    *,
+    results: Optional[List[Dict[str, Any]]] = None,
+) -> Dict[str, Any]:
     files = []
     for key, filename in _CORE_ARTIFACTS.items():
         path = root / filename
@@ -445,14 +460,39 @@ def _artifact_index(root: Path) -> Dict[str, Any]:
     trace_dir = root / "traces"
     trace_files = sorted(trace_dir.glob("*.jsonl")) if trace_dir.exists() else []
     trace_hashes = [_file_sha256(path) for path in trace_files]
+    referenced_trace_paths = _referenced_trace_paths(root, results or [])
+    unreferenced_trace_files = [
+        path
+        for path in trace_files
+        if _canonical_path_key(path) not in referenced_trace_paths
+    ]
     return {
         "schema_version": "ctp-formal-artifact-index-v1",
         "hash_strategy": "sha256_file_bytes_v1",
         "files": files,
         "trace_dir": trace_dir.as_posix(),
         "trace_file_count": len(trace_files),
+        "referenced_trace_file_count": len(referenced_trace_paths),
+        "unreferenced_trace_file_count": len(unreferenced_trace_files),
+        "unreferenced_trace_files": [path.as_posix() for path in unreferenced_trace_files],
         "trace_combined_sha256": _combined_hash(trace_hashes),
     }
+
+
+def _referenced_trace_paths(root: Path, results: List[Dict[str, Any]]) -> set[str]:
+    paths: set[str] = set()
+    for result in results:
+        path = _resolve_trace_path(root, result.get("trace_file"))
+        if path and path.exists():
+            paths.add(_canonical_path_key(path))
+    return paths
+
+
+def _canonical_path_key(path: Path) -> str:
+    try:
+        return path.resolve().as_posix()
+    except OSError:
+        return path.as_posix()
 
 
 def _attach_gate_to_manifest(
@@ -486,7 +526,7 @@ def _attach_gate_to_manifest(
         "raw_count_summary": gate.get("raw_count_summary"),
         "method_result_grid_summary": gate.get("method_result_grid_summary"),
         "metric_calculability_summary": gate.get("metric_calculability_summary"),
-        "artifact_index": gate.get("artifact_index"),
+        "artifact_index": "see formal_experiment_gate.json",
     }
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 

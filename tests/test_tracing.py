@@ -4,7 +4,9 @@ import sys
 from pathlib import Path
 from types import SimpleNamespace
 
+import httpx
 import pytest
+from openai import APIConnectionError
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
@@ -759,6 +761,45 @@ def test_openrouter_client_preserves_zero_temperature_and_records_retry_metadata
         True,
         True,
     ]
+
+
+def test_openrouter_client_retries_api_connection_error() -> None:
+    request = httpx.Request("POST", "https://api.vectorengine.ai/v1/chat/completions")
+    completions = _FakeOpenAICompletions(
+        failures=[
+            APIConnectionError(request=request),
+            APIConnectionError(request=request),
+        ]
+    )
+    client = OpenRouterClient(
+        api_key="test-key-not-persisted",
+        base_url="https://api.vectorengine.ai/v1",
+        model="gpt-test",
+        timeout=7,
+        retry_max_attempts=3,
+        retry_wait_min_seconds=0,
+    )
+    client.client = _fake_openai_client(completions)
+
+    response = asyncio.run(
+        client.chat(
+            [LLMMessage(role="user", content="hello")],
+            temperature=0,
+            max_tokens=123,
+        )
+    )
+
+    assert len(completions.requests) == 3
+    assert response.content == "ok"
+    retry = response.metadata["retry"]
+    assert retry["attempt_count"] == 3
+    assert retry["retry_count"] == 2
+    assert retry["error_count"] == 2
+    assert [attempt["retry_reason"] for attempt in retry["attempts"][:2]] == [
+        "network_connection",
+        "network_connection",
+    ]
+    assert [attempt["retryable"] for attempt in retry["attempts"][:2]] == [True, True]
 
 
 def test_openrouter_client_retries_empty_token_capped_response_and_records_usage() -> None:

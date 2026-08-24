@@ -1897,7 +1897,10 @@ class ExperimentRunner:
                 "sha256": dataset_sha256,
                 "hash_strategy": CANONICAL_JSON_SHA256_STRATEGY,
             },
-            "benchmark_structure": _benchmark_structure_summary(document),
+            "benchmark_structure": _benchmark_structure_summary(
+                document,
+                benchmark_path=benchmark_file,
+            ),
             "git_commit": commit,
             "working_tree_clean": working_tree_clean,
             "git_status_short": git_status_short,
@@ -8896,8 +8899,12 @@ def _as_list(value: Any) -> List[str]:
     return [str(value)]
 
 
-def _benchmark_structure_summary(document: Any) -> Dict[str, Any]:
-    cases = _benchmark_cases_for_summary(document)
+def _benchmark_structure_summary(
+    document: Any,
+    *,
+    benchmark_path: Optional[str | Path] = None,
+) -> Dict[str, Any]:
+    cases = _benchmark_cases_for_summary(document, benchmark_path=benchmark_path)
     scenario_count = sum(
         1 for case in cases if isinstance(case.get("turns"), list) and case.get("turns")
     )
@@ -8913,11 +8920,40 @@ def _benchmark_structure_summary(document: Any) -> Dict[str, Any]:
     }
 
 
-def _benchmark_cases_for_summary(document: Any) -> List[Dict[str, Any]]:
+def _benchmark_cases_for_summary(
+    document: Any,
+    *,
+    benchmark_path: Optional[str | Path] = None,
+) -> List[Dict[str, Any]]:
     if isinstance(document, list):
         return [item for item in document if isinstance(item, dict)]
     if isinstance(document, dict) and isinstance(document.get("cases"), list):
         return [item for item in document["cases"] if isinstance(item, dict)]
+    if (
+        isinstance(document, dict)
+        and isinstance(document.get("case_files"), list)
+        and benchmark_path is not None
+    ):
+        base = Path(benchmark_path).parent
+        cases: List[Dict[str, Any]] = []
+        for file_name in document["case_files"]:
+            case_path = base / str(file_name)
+            try:
+                loaded = json.loads(case_path.read_text(encoding="utf-8"))
+            except (OSError, ValueError, TypeError, json.JSONDecodeError):
+                continue
+            cases.extend(_benchmark_cases_from_loaded_summary_file(loaded))
+        return cases
+    return []
+
+
+def _benchmark_cases_from_loaded_summary_file(value: Any) -> List[Dict[str, Any]]:
+    if isinstance(value, list):
+        return [item for item in value if isinstance(item, dict)]
+    if isinstance(value, dict) and isinstance(value.get("cases"), list):
+        return [item for item in value["cases"] if isinstance(item, dict)]
+    if isinstance(value, dict):
+        return [value]
     return []
 
 

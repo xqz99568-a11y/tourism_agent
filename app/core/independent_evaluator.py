@@ -2119,12 +2119,13 @@ def _compare_recalculated_budget(
     expected_ticket_refs = _ordered_norm(_budget_selected_poi_ids(expected))
     if actual_ticket_refs != expected_ticket_refs:
         issues.append("wrong_ticket_selected_poi_ids")
-    _compare_budget_value(
-        issues,
-        "wrong_ticket_source",
-        _budget_ticket_source(actual),
-        _budget_ticket_source(expected),
-    )
+    if not _budget_ticket_sources_equivalent(
+        actual_source=_budget_ticket_source(actual),
+        expected_source=_budget_ticket_source(expected),
+        actual_ticket_refs=actual_ticket_refs,
+        expected_ticket_refs=expected_ticket_refs,
+    ):
+        issues.append("wrong_ticket_source")
 
     actual_intercity = actual.get("intercity_transport") if isinstance(actual.get("intercity_transport"), dict) else {}
     expected_intercity = expected.get("intercity_transport") if isinstance(expected.get("intercity_transport"), dict) else {}
@@ -2310,6 +2311,24 @@ def _budget_ticket_source(budget: Dict[str, Any]) -> Optional[str]:
     tickets = _budget_breakdown_section(budget, "tickets")
     source = summary.get("source") or tickets.get("source")
     return str(source) if source is not None else None
+
+
+def _budget_ticket_sources_equivalent(
+    *,
+    actual_source: Optional[str],
+    expected_source: Optional[str],
+    actual_ticket_refs: List[str],
+    expected_ticket_refs: List[str],
+) -> bool:
+    if actual_source == expected_source:
+        return True
+    if actual_ticket_refs != expected_ticket_refs:
+        return False
+    source_aliases = {
+        "final_itinerary_pois",
+        "standard_reference_poi_combo",
+    }
+    return {actual_source, expected_source} <= source_aliases
 
 
 def _ordered_norm(values: Iterable[Any]) -> List[str]:

@@ -23,7 +23,7 @@ from typing import (
 )
 
 import httpx
-from openai import APIStatusError, APITimeoutError, AsyncOpenAI
+from openai import APIConnectionError, APIStatusError, APITimeoutError, AsyncOpenAI
 from openai.types.chat import ChatCompletion, ChatCompletionMessageParam
 from openai.types.chat.chat_completion import Choice
 from app.core.config import settings
@@ -205,6 +205,8 @@ def _retryable_llm_error_reason(exc: BaseException) -> Optional[str]:
         return "http_5xx"
     if isinstance(exc, (APITimeoutError, httpx.TimeoutException, TimeoutError, asyncio.TimeoutError)):
         return "network_timeout"
+    if isinstance(exc, (APIConnectionError, httpx.TransportError, ConnectionError)):
+        return "network_connection"
     if isinstance(exc, APIStatusError):
         return None
     return None

@@ -1173,6 +1173,47 @@ def test_runner_loads_case_file_that_contains_dataset_document(tmp_path: Path) -
     assert [case["case_id"] for case in cases] == ["doc_case_001", "doc_case_002"]
 
 
+def test_experiment_manifest_expands_case_files_for_benchmark_structure(tmp_path: Path) -> None:
+    cases_path = tmp_path / "cases_doc.json"
+    cases_path.write_text(
+        json.dumps(
+            {
+                "cases": [
+                    {"case_id": "single_001", "user_input": "你好"},
+                    {
+                        "case_id": "scenario_001",
+                        "user_input": "杭州三日游",
+                        "turns": [
+                            {"turn_id": "t1", "user_input": "杭州三日游"},
+                            {"turn_id": "t2", "user_input": "改成后天出发"},
+                        ],
+                    },
+                ]
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    benchmark_path = tmp_path / "benchmark.json"
+    benchmark_path.write_text(
+        json.dumps({"case_files": [cases_path.name]}, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", output_dir=tmp_path)
+    manifest = runner.write_experiment_manifest(
+        benchmark_path=benchmark_path,
+        output_path=tmp_path / "experiment_manifest.json",
+        methods=ExperimentRunner.METHODS,
+        repeats=1,
+    )
+
+    assert manifest["benchmark_structure"]["case_count"] == 2
+    assert manifest["benchmark_structure"]["single_turn_case_count"] == 1
+    assert manifest["benchmark_structure"]["scenario_case_count"] == 1
+    assert manifest["benchmark_structure"]["total_turn_count"] == 3
+
+
 def test_offline_acceptance_runs_two_cases_four_methods_and_two_repeats(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
