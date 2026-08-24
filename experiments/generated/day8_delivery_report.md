@@ -60,10 +60,10 @@
 ## 正式实验指纹
 
 - integrity_schema: `ctp-formal-artifact-integrity-v1`
-- combined_sha256: `b0e591404d9b3f30ffec6a0799f50b22ad3a39b01fe769e94ac2ee990712d5f6`
-- git_commit: `c3923346955526fdef2254be007b2316cb279cad`
-- git_worktree_clean: `True`
-- git_status_count: `0`
+- combined_sha256: `d51ff772141464668532ce9744d85947e49eb8a548c298919e2de0bf9e316158`
+- git_commit: `a84705e1aea1f881fd9cc63627a36eda79d8c035`
+- git_worktree_clean: `False`
+- git_status_count: `3`
 
 ## Formal preflight
 
@@ -132,7 +132,7 @@
 
 - registry_status: `passed`
 - registry_path: `experiments/generated/pre_formal_validation_registry_v1.json`
-- registry_sha256: `133244b3b7562a72ff0d19a8f75430f60ab9266667373827e1911423c283ad59`
+- registry_sha256: `7f08ff9104cd7298eb06f8ad860c59f3199d577d164a50dbb30c916ff32eabe5`
 - transparent_warning_policy: `accepted_but_reported`
 - transparent_warning_count: `3`
 
@@ -156,7 +156,7 @@
 | budget_policy_doc | `True` | `258857325f625577d1a12a7fe8ac03d075fa94ce026118aa6a7e151f4d3a4cb6` | `docs/Budget_Policy_v2.md` |
 | evaluation_rule_catalog | `True` | `608ba339b446d8d662768d9b62575e48b6df2ccbc97ffb3338d3b16537502d76` | `experiments/evaluation_rule_catalog.json` |
 | independent_evaluator_code | `True` | `23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b` | `app/core/independent_evaluator.py` |
-| experiment_runner_code | `True` | `2502a5e1b55509ee61071cde6dd3110e221684b3510eb0380358f79cc4e8c5af` | `app/core/experiment_runner.py` |
+| experiment_runner_code | `True` | `9bd3635b70fb88c490291d86f5e7f11500e31e55fdd663b82af606dcadfb3d79` | `app/core/experiment_runner.py` |
 | method_contract_code | `True` | `19d7df01ecbb1c97a204c2eecd507a9b9defda2a70640a980a3229c90b9519eb` | `app/core/experiment_method_contract.py` |
 | formal_preflight_code | `True` | `84a7faa6cebf880dc5f4070c1e0bca49a833e76964d7fe13179de627f7a22134` | `app/core/formal_experiment_preflight.py` |
 | formal_gate_code | `True` | `637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c` | `app/core/formal_experiment_gate.py` |
@@ -166,7 +166,7 @@
 | sealed_validation_dataset | `True` | `0ea84989537c0428219d9ccb8e0991077afbfd3fd420f4666a9c01a64ea7c527` | `experiments/ctp30_sealed_validation_v1.json` |
 | academic_design_validation_json | `True` | `752a540894fca275d22c151e63fb90474ad826548a3d279c4b7c1c89bb511044` | `experiments/generated/academic_experiment_design_validation_v1.json` |
 | academic_design_validation_md | `True` | `3796b6154095750f8ee35c07e0a1703204028028a122aa8968c39632cf639a14` | `experiments/generated/academic_experiment_design_validation_v1.md` |
-| pre_formal_validation_registry | `True` | `133244b3b7562a72ff0d19a8f75430f60ab9266667373827e1911423c283ad59` | `experiments/generated/pre_formal_validation_registry_v1.json` |
+| pre_formal_validation_registry | `True` | `7f08ff9104cd7298eb06f8ad860c59f3199d577d164a50dbb30c916ff32eabe5` | `experiments/generated/pre_formal_validation_registry_v1.json` |
 | budget_gold_json | `True` | `a755d70f2606d1461cb384bce9da54d90de2192d71c4e0fd00827c849aa21ac5` | `experiments/generated/ctp100_budget_gold_v2.json` |
 | economy_budget_manual_review_json | `True` | `8ea717633318d38f858a99d3735b68673d926b4b815fb4ba3643f43ab0964a17` | `experiments/generated/economy_budget_manual_review_v1.json` |
 | economy_budget_manual_review_md | `True` | `0a1ffc0ed84870728aa47ab923b86f343736dbbdd04714008f5c39705a90fc63` | `experiments/generated/economy_budget_manual_review_v1.md` |

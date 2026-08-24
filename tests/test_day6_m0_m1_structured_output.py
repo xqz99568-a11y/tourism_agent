@@ -236,6 +236,46 @@ def test_day6_m0_normalizes_planning_task_type_alias(tmp_path: Path) -> None:
     assert structured["validation_errors"] == []
 
 
+def test_day6_m0_normalizes_stopped_by_user_status_alias(tmp_path: Path) -> None:
+    class FakeLLM:
+        async def chat(self, messages, tools=None):
+            payload = json.loads(
+                _structured_llm_json(
+                    case_id="day6-m0-stopped-by-user-alias",
+                    method="llm_direct",
+                    final_answer="已收到，已停止继续制定行程。",
+                    trip_days=None,
+                    attractions=[],
+                    daily_itinerary=[],
+                    budget=None,
+                    weather=None,
+                )
+            )
+            payload["task_type"] = "general_chat"
+            payload["execution_status"] = "stopped_by_user"
+            return SimpleNamespace(
+                content=json.dumps(payload, ensure_ascii=False),
+                tool_calls=[],
+                usage={"total_tokens": 1},
+            )
+
+    runner = ExperimentRunner(trace_dir=tmp_path / "traces", llm_factory=FakeLLM)
+    result = runner.run(
+        {
+            "case_id": "day6-m0-stopped-by-user-alias",
+            "user_input": "先停一下，不用继续做行程了。",
+        },
+        method="llm_direct",
+    )
+
+    structured = result["output"]["metadata"]["structured_llm_output"]
+    assert result["status"] == "completed"
+    assert result["output"]["task_type"] == "general_chat"
+    assert result["output"]["execution_status"] == "completed"
+    assert structured["validation_status"] == "passed"
+    assert structured["validation_errors"] == []
+
+
 def test_structured_llm_prompt_requires_weather_adjustment_objects(tmp_path: Path) -> None:
     runner = ExperimentRunner(trace_dir=tmp_path / "traces")
     case = {

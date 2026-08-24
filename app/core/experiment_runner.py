@@ -180,6 +180,18 @@ RESEARCH_TASK_TYPE_ALIASES = {
     "weather_climate_question": "general_chat",
     "destination_recommendation": "general_chat",
 }
+FROZEN_STRUCTURED_LLM_EXECUTION_STATUSES = {
+    "completed",
+    "failed",
+    "clarification",
+}
+STRUCTURED_LLM_EXECUTION_STATUS_ALIASES = {
+    "stopped_by_user": "completed",
+    "stop_by_user": "completed",
+    "user_stopped": "completed",
+    "cancelled_by_user": "completed",
+    "canceled_by_user": "completed",
+}
 _JSON_ARITHMETIC_VALUE_PATTERN = re.compile(
     r'(?P<prefix>"[A-Za-z0-9_]+"[ \t\r\n]*:[ \t\r\n]*)'
     r'(?P<expr>[-+]?(?:\d+(?:\.\d+)?|\.\d+)(?:[ \t\r\n]*[+\-*/][ \t\r\n]*[-+]?(?:\d+(?:\.\d+)?|\.\d+))+)'  # noqa: E501
@@ -3273,15 +3285,22 @@ class ExperimentRunner:
             errors.append("budget must be an object or null")
         if "weather" in payload and not self._is_optional_mapping(payload.get("weather")):
             errors.append("weather must be an object or null")
-        if "execution_status" in payload and str(payload.get("execution_status") or "").lower() not in {
-            "completed",
-            "failed",
-            "clarification",
-        }:
+        if (
+            "execution_status" in payload
+            and self._normalized_structured_llm_execution_status(
+                payload.get("execution_status")
+            )
+            not in FROZEN_STRUCTURED_LLM_EXECUTION_STATUSES
+        ):
             errors.append("execution_status must be completed, failed, or clarification")
         if "final_answer" in payload and not isinstance(payload.get("final_answer"), str):
             errors.append("final_answer must be a string")
         return errors
+
+    @staticmethod
+    def _normalized_structured_llm_execution_status(value: Any) -> str:
+        normalized = str(value or "").strip().casefold()
+        return STRUCTURED_LLM_EXECUTION_STATUS_ALIASES.get(normalized, normalized)
 
     @staticmethod
     def _is_dict_list_or_empty(value: Any) -> bool:
@@ -3348,8 +3367,10 @@ class ExperimentRunner:
             method=method,
         )
         failure_items = [item for item in [json_error, *validation_errors] if item]
-        model_status = str(payload.get("execution_status") or execution_status or "completed").lower()
-        if model_status not in {"completed", "failed", "clarification"}:
+        model_status = self._normalized_structured_llm_execution_status(
+            payload.get("execution_status") or execution_status or "completed"
+        )
+        if model_status not in FROZEN_STRUCTURED_LLM_EXECUTION_STATUSES:
             model_status = "failed"
         runtime_status = str(execution_status or "").lower()
         final_status = "failed" if failure_items or runtime_status == "failed" else model_status
