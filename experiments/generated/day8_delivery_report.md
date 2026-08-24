@@ -60,8 +60,8 @@
 ## 正式实验指纹
 
 - integrity_schema: `ctp-formal-artifact-integrity-v1`
-- combined_sha256: `d51ff772141464668532ce9744d85947e49eb8a548c298919e2de0bf9e316158`
-- git_commit: `3f049c9603625b6ef167ca0ba3ed4ba5ee8e8621`
+- combined_sha256: `2999727503591b43a7a3bb61117a89ca43f34b3fed338d2cddc9819cc2a2b465`
+- git_commit: `782dbdbfc9e81f10c7cecfc554ec33f2d8bf496b`
 - git_worktree_clean: `True`
 - git_status_count: `0`
 
@@ -132,7 +132,7 @@
 
 - registry_status: `passed`
 - registry_path: `experiments/generated/pre_formal_validation_registry_v1.json`
-- registry_sha256: `7f08ff9104cd7298eb06f8ad860c59f3199d577d164a50dbb30c916ff32eabe5`
+- registry_sha256: `5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1`
 - transparent_warning_policy: `accepted_but_reported`
 - transparent_warning_count: `3`
 
@@ -155,18 +155,18 @@
 | intercity_evidence_ledger | `True` | `4addfcda2ec645e170d17875c0e0a3e86bdc2f1b977d2f9719a80b1adad3fb8e` | `data/intercity_transport/evidence/rail_second_class_evidence_v1.json` |
 | budget_policy_doc | `True` | `258857325f625577d1a12a7fe8ac03d075fa94ce026118aa6a7e151f4d3a4cb6` | `docs/Budget_Policy_v2.md` |
 | evaluation_rule_catalog | `True` | `608ba339b446d8d662768d9b62575e48b6df2ccbc97ffb3338d3b16537502d76` | `experiments/evaluation_rule_catalog.json` |
-| independent_evaluator_code | `True` | `23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b` | `app/core/independent_evaluator.py` |
-| experiment_runner_code | `True` | `9bd3635b70fb88c490291d86f5e7f11500e31e55fdd663b82af606dcadfb3d79` | `app/core/experiment_runner.py` |
+| independent_evaluator_code | `True` | `e6325b014d49afd9b09ec561efc1b293ae330632865e3b01e9ab515695fd722e` | `app/core/independent_evaluator.py` |
+| experiment_runner_code | `True` | `eec519542cc3b31baa47120cac79689635eda0acdf331cf3b105a27c0f163fbf` | `app/core/experiment_runner.py` |
 | method_contract_code | `True` | `19d7df01ecbb1c97a204c2eecd507a9b9defda2a70640a980a3229c90b9519eb` | `app/core/experiment_method_contract.py` |
 | formal_preflight_code | `True` | `84a7faa6cebf880dc5f4070c1e0bca49a833e76964d7fe13179de627f7a22134` | `app/core/formal_experiment_preflight.py` |
-| formal_gate_code | `True` | `637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c` | `app/core/formal_experiment_gate.py` |
+| formal_gate_code | `True` | `6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe` | `app/core/formal_experiment_gate.py` |
 | day8_runner_acceptance_test | `True` | `c9ca543e84c03a9a27456bdf26696ce2853a80c9b314ed83c2f8d115eeddf39c` | `tests/test_day8_task1_runner_acceptance.py` |
 | academic_experiment_design_json | `True` | `a67cd57d2648388c753da623dd5bdb3ae2640aab69b9279d5ff40813f89f63fb` | `experiments/academic_experiment_design_v1.json` |
 | academic_experiment_design_md | `True` | `73cf2ad180d0a62f79732ce793000b984b0d3e097054826d2b8b748d1fa6cd78` | `docs/Academic_Experiment_Design_v1.md` |
 | sealed_validation_dataset | `True` | `0ea84989537c0428219d9ccb8e0991077afbfd3fd420f4666a9c01a64ea7c527` | `experiments/ctp30_sealed_validation_v1.json` |
 | academic_design_validation_json | `True` | `752a540894fca275d22c151e63fb90474ad826548a3d279c4b7c1c89bb511044` | `experiments/generated/academic_experiment_design_validation_v1.json` |
 | academic_design_validation_md | `True` | `3796b6154095750f8ee35c07e0a1703204028028a122aa8968c39632cf639a14` | `experiments/generated/academic_experiment_design_validation_v1.md` |
-| pre_formal_validation_registry | `True` | `7f08ff9104cd7298eb06f8ad860c59f3199d577d164a50dbb30c916ff32eabe5` | `experiments/generated/pre_formal_validation_registry_v1.json` |
+| pre_formal_validation_registry | `True` | `5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1` | `experiments/generated/pre_formal_validation_registry_v1.json` |
 | budget_gold_json | `True` | `a755d70f2606d1461cb384bce9da54d90de2192d71c4e0fd00827c849aa21ac5` | `experiments/generated/ctp100_budget_gold_v2.json` |
 | economy_budget_manual_review_json | `True` | `8ea717633318d38f858a99d3735b68673d926b4b815fb4ba3643f43ab0964a17` | `experiments/generated/economy_budget_manual_review_v1.json` |
 | economy_budget_manual_review_md | `True` | `0a1ffc0ed84870728aa47ab923b86f343736dbbdd04714008f5c39705a90fc63` | `experiments/generated/economy_budget_manual_review_v1.md` |
@@ -196,7 +196,7 @@
 | formal_artifact_integrity_code | `True` | `71ab6d9095a747d356978b6ef52a4f90f4f7350100bd4082e6d4d3dc0e322638` | `app/core/formal_artifact_integrity.py` |
 | goal_state_scheduler_code | `True` | `972e8b8d679686f0392fdcf05cb4b1f2f2cc613f4397e450969988fd439ba5cc` | `app/core/goal_state_scheduler.py` |
 | intercity_transport_snapshot_code | `True` | `6ae926249750156bb1ac5667d554f67e9a08d836c3d757772dabeb9dfd56c23a` | `app/core/intercity_transport_snapshot.py` |
-| llm_client_code | `True` | `aab2e977487fdc1bb5fdb0404d9661c401807a7a72d752b7a1c63383ebe915cc` | `app/core/llm/client.py` |
+| llm_client_code | `True` | `d6c60def96c626ed6d1882ca7fc365c0dcfd71ff3a223833e1522cb67607a131` | `app/core/llm/client.py` |
 | llm_costing_code | `True` | `226c0fcdd070dff6897e587914827a82166cc6c78eb28695955965a7a19a3677` | `app/core/llm_costing.py` |
 | llm_manager_code | `True` | `f4a6be5f0b1bb15bcc9aa3743557b0fd188190d3bcd60e7575f31e0e99f39877` | `app/core/llm/manager.py` |
 | no_date_weather_policy_code | `True` | `31da4064c24d10bbdaaad985c3a31475bc289a7a5b4ef49e14a667cbe700dfb4` | `app/core/no_date_weather_policy.py` |

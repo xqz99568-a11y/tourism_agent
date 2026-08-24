@@ -1,7 +1,7 @@
 {
   "schema_version": "ctp-day8-delivery-pack-v1",
-  "created_at": "2026-08-24T09:04:21.874875+00:00",
-  "run_id": "day8_delivery_20260824T090421Z",
+  "created_at": "2026-08-24T15:39:19.647456+00:00",
+  "run_id": "day8_delivery_20260824T153919Z",
   "readiness": {
     "status": "day8_delivery_ready",
     "ready_for_formal_experiment": true,
@@ -445,7 +445,7 @@
         "path": "experiments/generated/pre_formal_validation_registry_v1.json",
         "exists": true,
         "size_bytes": 17894,
-        "sha256": "7f08ff9104cd7298eb06f8ad860c59f3199d577d164a50dbb30c916ff32eabe5"
+        "sha256": "5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1"
       },
       "qweather_manifest": {
         "path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
@@ -492,14 +492,14 @@
       "independent_evaluator_code": {
         "path": "app/core/independent_evaluator.py",
         "exists": true,
-        "size_bytes": 172622,
-        "sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b"
+        "size_bytes": 173265,
+        "sha256": "e6325b014d49afd9b09ec561efc1b293ae330632865e3b01e9ab515695fd722e"
       },
       "experiment_runner_code": {
         "path": "app/core/experiment_runner.py",
         "exists": true,
-        "size_bytes": 398926,
-        "sha256": "9bd3635b70fb88c490291d86f5e7f11500e31e55fdd663b82af606dcadfb3d79"
+        "size_bytes": 400164,
+        "sha256": "eec519542cc3b31baa47120cac79689635eda0acdf331cf3b105a27c0f163fbf"
       },
       "method_contract_code": {
         "path": "app/core/experiment_method_contract.py",
@@ -516,8 +516,8 @@
       "formal_gate_code": {
         "path": "app/core/formal_experiment_gate.py",
         "exists": true,
-        "size_bytes": 56207,
-        "sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c"
+        "size_bytes": 57792,
+        "sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe"
       },
       "academic_experiment_design_code": {
         "path": "app/core/academic_experiment_design.py",
@@ -618,8 +618,8 @@
       "llm_client_code": {
         "path": "app/core/llm/client.py",
         "exists": true,
-        "size_bytes": 58029,
-        "sha256": "aab2e977487fdc1bb5fdb0404d9661c401807a7a72d752b7a1c63383ebe915cc"
+        "size_bytes": 58161,
+        "sha256": "d6c60def96c626ed6d1882ca7fc365c0dcfd71ff3a223833e1522cb67607a131"
       },
       "llm_costing_code": {
         "path": "app/core/llm_costing.py",
@@ -754,12 +754,12 @@
         "sha256": "8152c0a8541f29cfa6a9a27f0eefb2f2eef631ed240334d2f7cb800f3e8a7e83"
       }
     },
-    "combined_sha256": "d51ff772141464668532ce9744d85947e49eb8a548c298919e2de0bf9e316158",
+    "combined_sha256": "2999727503591b43a7a3bb61117a89ca43f34b3fed338d2cddc9819cc2a2b465",
     "all_required_artifacts_exist": true,
     "missing_artifacts": [],
     "git": {
       "checked": true,
-      "commit": "3f049c9603625b6ef167ca0ba3ed4ba5ee8e8621",
+      "commit": "782dbdbfc9e81f10c7cecfc554ec33f2d8bf496b",
       "worktree_clean": true,
       "status_short": []
     }
@@ -768,7 +768,7 @@
     "schema_version": "ctp-pre-formal-validation-registry-v1",
     "required": true,
     "path": "experiments/generated/pre_formal_validation_registry_v1.json",
-    "registry_sha256": "7f08ff9104cd7298eb06f8ad860c59f3199d577d164a50dbb30c916ff32eabe5",
+    "registry_sha256": "5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1",
     "status": "passed",
     "errors": [],
     "warnings": [
@@ -916,9 +916,9 @@
           "key": "experiment_runner_code",
           "path": "app/core/experiment_runner.py",
           "exists": true,
-          "size_bytes": 398926,
-          "sha256": "9bd3635b70fb88c490291d86f5e7f11500e31e55fdd663b82af606dcadfb3d79",
-          "registered_sha256": "9bd3635b70fb88c490291d86f5e7f11500e31e55fdd663b82af606dcadfb3d79",
+          "size_bytes": 400164,
+          "sha256": "eec519542cc3b31baa47120cac79689635eda0acdf331cf3b105a27c0f163fbf",
+          "registered_sha256": "eec519542cc3b31baa47120cac79689635eda0acdf331cf3b105a27c0f163fbf",
           "matches": true
         },
         {
@@ -952,9 +952,9 @@
           "key": "formal_gate_code",
           "path": "app/core/formal_experiment_gate.py",
           "exists": true,
-          "size_bytes": 56207,
-          "sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c",
-          "registered_sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c",
+          "size_bytes": 57792,
+          "sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe",
+          "registered_sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe",
           "matches": true
         },
         {
@@ -979,9 +979,9 @@
           "key": "independent_evaluator_code",
           "path": "app/core/independent_evaluator.py",
           "exists": true,
-          "size_bytes": 172622,
-          "sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b",
-          "registered_sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b",
+          "size_bytes": 173265,
+          "sha256": "e6325b014d49afd9b09ec561efc1b293ae330632865e3b01e9ab515695fd722e",
+          "registered_sha256": "e6325b014d49afd9b09ec561efc1b293ae330632865e3b01e9ab515695fd722e",
           "matches": true
         },
         {
@@ -997,9 +997,9 @@
           "key": "llm_client_code",
           "path": "app/core/llm/client.py",
           "exists": true,
-          "size_bytes": 58029,
-          "sha256": "aab2e977487fdc1bb5fdb0404d9661c401807a7a72d752b7a1c63383ebe915cc",
-          "registered_sha256": "aab2e977487fdc1bb5fdb0404d9661c401807a7a72d752b7a1c63383ebe915cc",
+          "size_bytes": 58161,
+          "sha256": "d6c60def96c626ed6d1882ca7fc365c0dcfd71ff3a223833e1522cb67607a131",
+          "registered_sha256": "d6c60def96c626ed6d1882ca7fc365c0dcfd71ff3a223833e1522cb67607a131",
           "matches": true
         },
         {
@@ -1325,8 +1325,8 @@
       "statistical_unit": "case_id"
     },
     "run": {
-      "run_id": "day8_delivery_20260824T090421Z_preflight_probe",
-      "output_dir": "D:/Code/Tourism_Agent/experiments/results/formal_runs/day8_delivery_20260824T090421Z_preflight_probe",
+      "run_id": "day8_delivery_20260824T153919Z_preflight_probe",
+      "output_dir": "D:/Code/Tourism_Agent/experiments/results/formal_runs/day8_delivery_20260824T153919Z_preflight_probe",
       "methods": [
         "llm_direct",
         "single_agent",
@@ -1679,7 +1679,7 @@
           "path": "experiments/generated/pre_formal_validation_registry_v1.json",
           "exists": true,
           "size_bytes": 17894,
-          "sha256": "7f08ff9104cd7298eb06f8ad860c59f3199d577d164a50dbb30c916ff32eabe5"
+          "sha256": "5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1"
         },
         "qweather_manifest": {
           "path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
@@ -1726,14 +1726,14 @@
         "independent_evaluator_code": {
           "path": "app/core/independent_evaluator.py",
           "exists": true,
-          "size_bytes": 172622,
-          "sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b"
+          "size_bytes": 173265,
+          "sha256": "e6325b014d49afd9b09ec561efc1b293ae330632865e3b01e9ab515695fd722e"
         },
         "experiment_runner_code": {
           "path": "app/core/experiment_runner.py",
           "exists": true,
-          "size_bytes": 398926,
-          "sha256": "9bd3635b70fb88c490291d86f5e7f11500e31e55fdd663b82af606dcadfb3d79"
+          "size_bytes": 400164,
+          "sha256": "eec519542cc3b31baa47120cac79689635eda0acdf331cf3b105a27c0f163fbf"
         },
         "method_contract_code": {
           "path": "app/core/experiment_method_contract.py",
@@ -1750,8 +1750,8 @@
         "formal_gate_code": {
           "path": "app/core/formal_experiment_gate.py",
           "exists": true,
-          "size_bytes": 56207,
-          "sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c"
+          "size_bytes": 57792,
+          "sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe"
         },
         "academic_experiment_design_code": {
           "path": "app/core/academic_experiment_design.py",
@@ -1852,8 +1852,8 @@
         "llm_client_code": {
           "path": "app/core/llm/client.py",
           "exists": true,
-          "size_bytes": 58029,
-          "sha256": "aab2e977487fdc1bb5fdb0404d9661c401807a7a72d752b7a1c63383ebe915cc"
+          "size_bytes": 58161,
+          "sha256": "d6c60def96c626ed6d1882ca7fc365c0dcfd71ff3a223833e1522cb67607a131"
         },
         "llm_costing_code": {
           "path": "app/core/llm_costing.py",
@@ -1988,12 +1988,12 @@
           "sha256": "8152c0a8541f29cfa6a9a27f0eefb2f2eef631ed240334d2f7cb800f3e8a7e83"
         }
       },
-      "combined_sha256": "d51ff772141464668532ce9744d85947e49eb8a548c298919e2de0bf9e316158",
+      "combined_sha256": "2999727503591b43a7a3bb61117a89ca43f34b3fed338d2cddc9819cc2a2b465",
       "all_required_artifacts_exist": true,
       "missing_artifacts": [],
       "git": {
         "checked": true,
-        "commit": "3f049c9603625b6ef167ca0ba3ed4ba5ee8e8621",
+        "commit": "782dbdbfc9e81f10c7cecfc554ec33f2d8bf496b",
         "worktree_clean": true,
         "status_short": []
       }
@@ -2002,7 +2002,7 @@
       "schema_version": "ctp-pre-formal-validation-registry-v1",
       "required": true,
       "path": "experiments/generated/pre_formal_validation_registry_v1.json",
-      "registry_sha256": "7f08ff9104cd7298eb06f8ad860c59f3199d577d164a50dbb30c916ff32eabe5",
+      "registry_sha256": "5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1",
       "status": "passed",
       "errors": [],
       "warnings": [
@@ -2150,9 +2150,9 @@
             "key": "experiment_runner_code",
             "path": "app/core/experiment_runner.py",
             "exists": true,
-            "size_bytes": 398926,
-            "sha256": "9bd3635b70fb88c490291d86f5e7f11500e31e55fdd663b82af606dcadfb3d79",
-            "registered_sha256": "9bd3635b70fb88c490291d86f5e7f11500e31e55fdd663b82af606dcadfb3d79",
+            "size_bytes": 400164,
+            "sha256": "eec519542cc3b31baa47120cac79689635eda0acdf331cf3b105a27c0f163fbf",
+            "registered_sha256": "eec519542cc3b31baa47120cac79689635eda0acdf331cf3b105a27c0f163fbf",
             "matches": true
           },
           {
@@ -2186,9 +2186,9 @@
             "key": "formal_gate_code",
             "path": "app/core/formal_experiment_gate.py",
             "exists": true,
-            "size_bytes": 56207,
-            "sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c",
-            "registered_sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c",
+            "size_bytes": 57792,
+            "sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe",
+            "registered_sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe",
             "matches": true
           },
           {
@@ -2213,9 +2213,9 @@
             "key": "independent_evaluator_code",
             "path": "app/core/independent_evaluator.py",
             "exists": true,
-            "size_bytes": 172622,
-            "sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b",
-            "registered_sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b",
+            "size_bytes": 173265,
+            "sha256": "e6325b014d49afd9b09ec561efc1b293ae330632865e3b01e9ab515695fd722e",
+            "registered_sha256": "e6325b014d49afd9b09ec561efc1b293ae330632865e3b01e9ab515695fd722e",
             "matches": true
           },
           {
@@ -2231,9 +2231,9 @@
             "key": "llm_client_code",
             "path": "app/core/llm/client.py",
             "exists": true,
-            "size_bytes": 58029,
-            "sha256": "aab2e977487fdc1bb5fdb0404d9661c401807a7a72d752b7a1c63383ebe915cc",
-            "registered_sha256": "aab2e977487fdc1bb5fdb0404d9661c401807a7a72d752b7a1c63383ebe915cc",
+            "size_bytes": 58161,
+            "sha256": "d6c60def96c626ed6d1882ca7fc365c0dcfd71ff3a223833e1522cb67607a131",
+            "registered_sha256": "d6c60def96c626ed6d1882ca7fc365c0dcfd71ff3a223833e1522cb67607a131",
             "matches": true
           },
           {
@@ -2629,15 +2629,15 @@
       "key": "independent_evaluator_code",
       "path": "app/core/independent_evaluator.py",
       "exists": true,
-      "size_bytes": 172622,
-      "sha256": "23b805d5d4cdc6a81de4e416c113f7c54730500bd3e043c8351ecf6f1307626b"
+      "size_bytes": 173265,
+      "sha256": "e6325b014d49afd9b09ec561efc1b293ae330632865e3b01e9ab515695fd722e"
     },
     {
       "key": "experiment_runner_code",
       "path": "app/core/experiment_runner.py",
       "exists": true,
-      "size_bytes": 398926,
-      "sha256": "9bd3635b70fb88c490291d86f5e7f11500e31e55fdd663b82af606dcadfb3d79"
+      "size_bytes": 400164,
+      "sha256": "eec519542cc3b31baa47120cac79689635eda0acdf331cf3b105a27c0f163fbf"
     },
     {
       "key": "method_contract_code",
@@ -2657,8 +2657,8 @@
       "key": "formal_gate_code",
       "path": "app/core/formal_experiment_gate.py",
       "exists": true,
-      "size_bytes": 56207,
-      "sha256": "637c07667f1315bf5af8ea6c3aec31ecca6e337580bb97f538aa3203d3d4589c"
+      "size_bytes": 57792,
+      "sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe"
     },
     {
       "key": "day8_runner_acceptance_test",
@@ -2707,7 +2707,7 @@
       "path": "experiments/generated/pre_formal_validation_registry_v1.json",
       "exists": true,
       "size_bytes": 17894,
-      "sha256": "7f08ff9104cd7298eb06f8ad860c59f3199d577d164a50dbb30c916ff32eabe5"
+      "sha256": "5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1"
     },
     {
       "key": "budget_gold_json",
@@ -2916,8 +2916,8 @@
       "key": "llm_client_code",
       "path": "app/core/llm/client.py",
       "exists": true,
-      "size_bytes": 58029,
-      "sha256": "aab2e977487fdc1bb5fdb0404d9661c401807a7a72d752b7a1c63383ebe915cc"
+      "size_bytes": 58161,
+      "sha256": "d6c60def96c626ed6d1882ca7fc365c0dcfd71ff3a223833e1522cb67607a131"
     },
     {
       "key": "llm_costing_code",
