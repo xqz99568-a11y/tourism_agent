@@ -1,7 +1,7 @@
 {
   "schema_version": "ctp-day8-delivery-pack-v1",
-  "created_at": "2026-08-24T08:53:19.349707+00:00",
-  "run_id": "day8_delivery_20260824T085319Z",
+  "created_at": "2026-08-24T09:04:21.874875+00:00",
+  "run_id": "day8_delivery_20260824T090421Z",
   "readiness": {
     "status": "day8_delivery_ready",
     "ready_for_formal_experiment": true,
@@ -759,13 +759,9 @@
     "missing_artifacts": [],
     "git": {
       "checked": true,
-      "commit": "a84705e1aea1f881fd9cc63627a36eda79d8c035",
-      "worktree_clean": false,
-      "status_short": [
-        "M app/core/experiment_runner.py",
-        " M experiments/generated/pre_formal_validation_registry_v1.json",
-        " M tests/test_day6_m0_m1_structured_output.py"
-      ]
+      "commit": "3f049c9603625b6ef167ca0ba3ed4ba5ee8e8621",
+      "worktree_clean": true,
+      "status_short": []
     }
   },
   "pre_formal_validation": {
@@ -1329,8 +1325,8 @@
       "statistical_unit": "case_id"
     },
     "run": {
-      "run_id": "day8_delivery_20260824T085319Z_preflight_probe",
-      "output_dir": "D:/Code/Tourism_Agent/experiments/results/formal_runs/day8_delivery_20260824T085319Z_preflight_probe",
+      "run_id": "day8_delivery_20260824T090421Z_preflight_probe",
+      "output_dir": "D:/Code/Tourism_Agent/experiments/results/formal_runs/day8_delivery_20260824T090421Z_preflight_probe",
       "methods": [
         "llm_direct",
         "single_agent",
@@ -1997,13 +1993,9 @@
       "missing_artifacts": [],
       "git": {
         "checked": true,
-        "commit": "a84705e1aea1f881fd9cc63627a36eda79d8c035",
-        "worktree_clean": false,
-        "status_short": [
-          "M app/core/experiment_runner.py",
-          " M experiments/generated/pre_formal_validation_registry_v1.json",
-          " M tests/test_day6_m0_m1_structured_output.py"
-        ]
+        "commit": "3f049c9603625b6ef167ca0ba3ed4ba5ee8e8621",
+        "worktree_clean": true,
+        "status_short": []
       }
     },
     "pre_formal_validation": {
