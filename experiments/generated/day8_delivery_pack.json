@@ -1,7 +1,7 @@
 {
   "schema_version": "ctp-day8-delivery-pack-v1",
-  "created_at": "2026-08-24T15:39:19.647456+00:00",
-  "run_id": "day8_delivery_20260824T153919Z",
+  "created_at": "2026-08-25T09:14:54.423995+00:00",
+  "run_id": "day8_delivery_20260825T091454Z",
   "readiness": {
     "status": "day8_delivery_ready",
     "ready_for_formal_experiment": true,
@@ -305,7 +305,7 @@
     },
     "design": {
       "path": "experiments/academic_experiment_design_v1.json",
-      "sha256": "a67cd57d2648388c753da623dd5bdb3ae2640aab69b9279d5ff40813f89f63fb",
+      "sha256": "de8555998881dfd461d4c41b1973a4e2be0295eafcc578350bfbaae539bf3dfd",
       "doc_path": "docs/Academic_Experiment_Design_v1.md",
       "doc_sha256": "73cf2ad180d0a62f79732ce793000b984b0d3e097054826d2b8b748d1fa6cd78",
       "schema_version": "ctp-academic-experiment-design-v1",
@@ -420,8 +420,8 @@
       "academic_experiment_design": {
         "path": "experiments/academic_experiment_design_v1.json",
         "exists": true,
-        "size_bytes": 7045,
-        "sha256": "a67cd57d2648388c753da623dd5bdb3ae2640aab69b9279d5ff40813f89f63fb"
+        "size_bytes": 8145,
+        "sha256": "de8555998881dfd461d4c41b1973a4e2be0295eafcc578350bfbaae539bf3dfd"
       },
       "experiment_protocol": {
         "path": "Phase0_实验协议.md",
@@ -445,7 +445,7 @@
         "path": "experiments/generated/pre_formal_validation_registry_v1.json",
         "exists": true,
         "size_bytes": 17894,
-        "sha256": "5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1"
+        "sha256": "1b0a9b475715f5757f36c741742fa2b727d6987cd0491a5fda3322a9571045ed"
       },
       "qweather_manifest": {
         "path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
@@ -516,8 +516,8 @@
       "formal_gate_code": {
         "path": "app/core/formal_experiment_gate.py",
         "exists": true,
-        "size_bytes": 57792,
-        "sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe"
+        "size_bytes": 78167,
+        "sha256": "3d9f4a4284a83118ded831908931a974e3c517241bfa4930a1f6365ca704666d"
       },
       "academic_experiment_design_code": {
         "path": "app/core/academic_experiment_design.py",
@@ -684,8 +684,8 @@
       "paper_result_pack_code": {
         "path": "app/core/paper_result_pack.py",
         "exists": true,
-        "size_bytes": 25350,
-        "sha256": "6c2a636e59f6d207f2d7926f4b54aeb8d1d231e19a345ddacc308b2199b8d1a6"
+        "size_bytes": 26645,
+        "sha256": "66a0e26811b5a2db6b0cf9df9ae798f3b7b50f8e72308e0e325217db004dda4b"
       },
       "paper_submission_pack_code": {
         "path": "app/core/paper_submission_pack.py",
@@ -696,8 +696,8 @@
       "run_formal_experiment_script": {
         "path": "experiments/run_formal_experiment.py",
         "exists": true,
-        "size_bytes": 14898,
-        "sha256": "ad481accb9fc43f56c7eb9252c7e309dd3680efe97241c60727fc14252a112cf"
+        "size_bytes": 15481,
+        "sha256": "a2ebee2fdb3bc591bbf168fd9b47f90249184a7675993abb48907796a771ba6a"
       },
       "run_real_api_smoke_script": {
         "path": "experiments/run_real_api_smoke.py",
@@ -754,12 +754,12 @@
         "sha256": "8152c0a8541f29cfa6a9a27f0eefb2f2eef631ed240334d2f7cb800f3e8a7e83"
       }
     },
-    "combined_sha256": "2999727503591b43a7a3bb61117a89ca43f34b3fed338d2cddc9819cc2a2b465",
+    "combined_sha256": "8c1c2abd1fc66a4bcccc0445f699efffd8b4ad52325ec84930bc9e54b4ec93c5",
     "all_required_artifacts_exist": true,
     "missing_artifacts": [],
     "git": {
       "checked": true,
-      "commit": "782dbdbfc9e81f10c7cecfc554ec33f2d8bf496b",
+      "commit": "188c3f291939c014fdd154a6c49e97cde2afb024",
       "worktree_clean": true,
       "status_short": []
     }
@@ -768,7 +768,7 @@
     "schema_version": "ctp-pre-formal-validation-registry-v1",
     "required": true,
     "path": "experiments/generated/pre_formal_validation_registry_v1.json",
-    "registry_sha256": "5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1",
+    "registry_sha256": "1b0a9b475715f5757f36c741742fa2b727d6987cd0491a5fda3322a9571045ed",
     "status": "passed",
     "errors": [],
     "warnings": [
@@ -952,9 +952,9 @@
           "key": "formal_gate_code",
           "path": "app/core/formal_experiment_gate.py",
           "exists": true,
-          "size_bytes": 57792,
-          "sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe",
-          "registered_sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe",
+          "size_bytes": 78167,
+          "sha256": "3d9f4a4284a83118ded831908931a974e3c517241bfa4930a1f6365ca704666d",
+          "registered_sha256": "3d9f4a4284a83118ded831908931a974e3c517241bfa4930a1f6365ca704666d",
           "matches": true
         },
         {
@@ -1042,9 +1042,9 @@
           "key": "paper_result_pack_code",
           "path": "app/core/paper_result_pack.py",
           "exists": true,
-          "size_bytes": 25350,
-          "sha256": "6c2a636e59f6d207f2d7926f4b54aeb8d1d231e19a345ddacc308b2199b8d1a6",
-          "registered_sha256": "6c2a636e59f6d207f2d7926f4b54aeb8d1d231e19a345ddacc308b2199b8d1a6",
+          "size_bytes": 26645,
+          "sha256": "66a0e26811b5a2db6b0cf9df9ae798f3b7b50f8e72308e0e325217db004dda4b",
+          "registered_sha256": "66a0e26811b5a2db6b0cf9df9ae798f3b7b50f8e72308e0e325217db004dda4b",
           "matches": true
         },
         {
@@ -1087,9 +1087,9 @@
           "key": "run_formal_experiment_script",
           "path": "experiments/run_formal_experiment.py",
           "exists": true,
-          "size_bytes": 14898,
-          "sha256": "ad481accb9fc43f56c7eb9252c7e309dd3680efe97241c60727fc14252a112cf",
-          "registered_sha256": "ad481accb9fc43f56c7eb9252c7e309dd3680efe97241c60727fc14252a112cf",
+          "size_bytes": 15481,
+          "sha256": "a2ebee2fdb3bc591bbf168fd9b47f90249184a7675993abb48907796a771ba6a",
+          "registered_sha256": "a2ebee2fdb3bc591bbf168fd9b47f90249184a7675993abb48907796a771ba6a",
           "matches": true
         },
         {
@@ -1325,8 +1325,8 @@
       "statistical_unit": "case_id"
     },
     "run": {
-      "run_id": "day8_delivery_20260824T153919Z_preflight_probe",
-      "output_dir": "D:/Code/Tourism_Agent/experiments/results/formal_runs/day8_delivery_20260824T153919Z_preflight_probe",
+      "run_id": "day8_delivery_20260825T091454Z_preflight_probe",
+      "output_dir": "D:/Code/Tourism_Agent/experiments/results/formal_runs/day8_delivery_20260825T091454Z_preflight_probe",
       "methods": [
         "llm_direct",
         "single_agent",
@@ -1478,7 +1478,7 @@
       },
       "design": {
         "path": "experiments/academic_experiment_design_v1.json",
-        "sha256": "a67cd57d2648388c753da623dd5bdb3ae2640aab69b9279d5ff40813f89f63fb",
+        "sha256": "de8555998881dfd461d4c41b1973a4e2be0295eafcc578350bfbaae539bf3dfd",
         "doc_path": "docs/Academic_Experiment_Design_v1.md",
         "doc_sha256": "73cf2ad180d0a62f79732ce793000b984b0d3e097054826d2b8b748d1fa6cd78",
         "schema_version": "ctp-academic-experiment-design-v1",
@@ -1578,7 +1578,9 @@
         "provider_accounting": "base_url_derived_openai_compatible_provider",
         "provider_accounting_policy": "LLM trace, manifest, smoke report, and price snapshot must derive provider from LLM_BASE_URL. VectorEngine must be recorded as vectorengine_openai_compatible.",
         "cost_accounting": "Use provider-reported cost only when available; otherwise use frozen standardized token-cost estimates and mark actual_cost_status explicitly.",
-        "failure_retention_policy": "Timeouts, API failures, parse failures, and invalid structured outputs are retained as experimental evidence and must not be selectively deleted."
+        "failure_retention_policy": "Method failures, terminal API infrastructure failures, timeouts, parse failures, and invalid structured outputs are retained as experimental evidence and must not be selectively deleted.",
+        "failure_classification_policy": "Formal results classify failures as method_failure, api_infrastructure_failure, or integrity_failure. Integrity failures block paper claims; method and API failures remain in the main denominator with zero task success when applicable.",
+        "api_retry_policy": "429, 5xx, connection errors, and request timeouts use at most three attempts. Terminal API infrastructure failures must include retry evidence and cannot be selectively rerun."
       },
       "pre_formal_validation": {
         "version": "ctp-pre-formal-validation-v1",
@@ -1654,8 +1656,8 @@
         "academic_experiment_design": {
           "path": "experiments/academic_experiment_design_v1.json",
           "exists": true,
-          "size_bytes": 7045,
-          "sha256": "a67cd57d2648388c753da623dd5bdb3ae2640aab69b9279d5ff40813f89f63fb"
+          "size_bytes": 8145,
+          "sha256": "de8555998881dfd461d4c41b1973a4e2be0295eafcc578350bfbaae539bf3dfd"
         },
         "experiment_protocol": {
           "path": "Phase0_实验协议.md",
@@ -1679,7 +1681,7 @@
           "path": "experiments/generated/pre_formal_validation_registry_v1.json",
           "exists": true,
           "size_bytes": 17894,
-          "sha256": "5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1"
+          "sha256": "1b0a9b475715f5757f36c741742fa2b727d6987cd0491a5fda3322a9571045ed"
         },
         "qweather_manifest": {
           "path": "data/weather_snapshot/qweather_v1/snapshot_manifest.json",
@@ -1750,8 +1752,8 @@
         "formal_gate_code": {
           "path": "app/core/formal_experiment_gate.py",
           "exists": true,
-          "size_bytes": 57792,
-          "sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe"
+          "size_bytes": 78167,
+          "sha256": "3d9f4a4284a83118ded831908931a974e3c517241bfa4930a1f6365ca704666d"
         },
         "academic_experiment_design_code": {
           "path": "app/core/academic_experiment_design.py",
@@ -1918,8 +1920,8 @@
         "paper_result_pack_code": {
           "path": "app/core/paper_result_pack.py",
           "exists": true,
-          "size_bytes": 25350,
-          "sha256": "6c2a636e59f6d207f2d7926f4b54aeb8d1d231e19a345ddacc308b2199b8d1a6"
+          "size_bytes": 26645,
+          "sha256": "66a0e26811b5a2db6b0cf9df9ae798f3b7b50f8e72308e0e325217db004dda4b"
         },
         "paper_submission_pack_code": {
           "path": "app/core/paper_submission_pack.py",
@@ -1930,8 +1932,8 @@
         "run_formal_experiment_script": {
           "path": "experiments/run_formal_experiment.py",
           "exists": true,
-          "size_bytes": 14898,
-          "sha256": "ad481accb9fc43f56c7eb9252c7e309dd3680efe97241c60727fc14252a112cf"
+          "size_bytes": 15481,
+          "sha256": "a2ebee2fdb3bc591bbf168fd9b47f90249184a7675993abb48907796a771ba6a"
         },
         "run_real_api_smoke_script": {
           "path": "experiments/run_real_api_smoke.py",
@@ -1988,12 +1990,12 @@
           "sha256": "8152c0a8541f29cfa6a9a27f0eefb2f2eef631ed240334d2f7cb800f3e8a7e83"
         }
       },
-      "combined_sha256": "2999727503591b43a7a3bb61117a89ca43f34b3fed338d2cddc9819cc2a2b465",
+      "combined_sha256": "8c1c2abd1fc66a4bcccc0445f699efffd8b4ad52325ec84930bc9e54b4ec93c5",
       "all_required_artifacts_exist": true,
       "missing_artifacts": [],
       "git": {
         "checked": true,
-        "commit": "782dbdbfc9e81f10c7cecfc554ec33f2d8bf496b",
+        "commit": "188c3f291939c014fdd154a6c49e97cde2afb024",
         "worktree_clean": true,
         "status_short": []
       }
@@ -2002,7 +2004,7 @@
       "schema_version": "ctp-pre-formal-validation-registry-v1",
       "required": true,
       "path": "experiments/generated/pre_formal_validation_registry_v1.json",
-      "registry_sha256": "5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1",
+      "registry_sha256": "1b0a9b475715f5757f36c741742fa2b727d6987cd0491a5fda3322a9571045ed",
       "status": "passed",
       "errors": [],
       "warnings": [
@@ -2186,9 +2188,9 @@
             "key": "formal_gate_code",
             "path": "app/core/formal_experiment_gate.py",
             "exists": true,
-            "size_bytes": 57792,
-            "sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe",
-            "registered_sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe",
+            "size_bytes": 78167,
+            "sha256": "3d9f4a4284a83118ded831908931a974e3c517241bfa4930a1f6365ca704666d",
+            "registered_sha256": "3d9f4a4284a83118ded831908931a974e3c517241bfa4930a1f6365ca704666d",
             "matches": true
           },
           {
@@ -2276,9 +2278,9 @@
             "key": "paper_result_pack_code",
             "path": "app/core/paper_result_pack.py",
             "exists": true,
-            "size_bytes": 25350,
-            "sha256": "6c2a636e59f6d207f2d7926f4b54aeb8d1d231e19a345ddacc308b2199b8d1a6",
-            "registered_sha256": "6c2a636e59f6d207f2d7926f4b54aeb8d1d231e19a345ddacc308b2199b8d1a6",
+            "size_bytes": 26645,
+            "sha256": "66a0e26811b5a2db6b0cf9df9ae798f3b7b50f8e72308e0e325217db004dda4b",
+            "registered_sha256": "66a0e26811b5a2db6b0cf9df9ae798f3b7b50f8e72308e0e325217db004dda4b",
             "matches": true
           },
           {
@@ -2321,9 +2323,9 @@
             "key": "run_formal_experiment_script",
             "path": "experiments/run_formal_experiment.py",
             "exists": true,
-            "size_bytes": 14898,
-            "sha256": "ad481accb9fc43f56c7eb9252c7e309dd3680efe97241c60727fc14252a112cf",
-            "registered_sha256": "ad481accb9fc43f56c7eb9252c7e309dd3680efe97241c60727fc14252a112cf",
+            "size_bytes": 15481,
+            "sha256": "a2ebee2fdb3bc591bbf168fd9b47f90249184a7675993abb48907796a771ba6a",
+            "registered_sha256": "a2ebee2fdb3bc591bbf168fd9b47f90249184a7675993abb48907796a771ba6a",
             "matches": true
           },
           {
@@ -2657,8 +2659,8 @@
       "key": "formal_gate_code",
       "path": "app/core/formal_experiment_gate.py",
       "exists": true,
-      "size_bytes": 57792,
-      "sha256": "6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe"
+      "size_bytes": 78167,
+      "sha256": "3d9f4a4284a83118ded831908931a974e3c517241bfa4930a1f6365ca704666d"
     },
     {
       "key": "day8_runner_acceptance_test",
@@ -2671,8 +2673,8 @@
       "key": "academic_experiment_design_json",
       "path": "experiments/academic_experiment_design_v1.json",
       "exists": true,
-      "size_bytes": 7045,
-      "sha256": "a67cd57d2648388c753da623dd5bdb3ae2640aab69b9279d5ff40813f89f63fb"
+      "size_bytes": 8145,
+      "sha256": "de8555998881dfd461d4c41b1973a4e2be0295eafcc578350bfbaae539bf3dfd"
     },
     {
       "key": "academic_experiment_design_md",
@@ -2692,22 +2694,22 @@
       "key": "academic_design_validation_json",
       "path": "experiments/generated/academic_experiment_design_validation_v1.json",
       "exists": true,
-      "size_bytes": 8983,
-      "sha256": "752a540894fca275d22c151e63fb90474ad826548a3d279c4b7c1c89bb511044"
+      "size_bytes": 9505,
+      "sha256": "84084425d3b3dfabc7abf40a69e3f0a7b6372d02a94c14837d94c888c6ba41ce"
     },
     {
       "key": "academic_design_validation_md",
       "path": "experiments/generated/academic_experiment_design_validation_v1.md",
       "exists": true,
       "size_bytes": 3808,
-      "sha256": "3796b6154095750f8ee35c07e0a1703204028028a122aa8968c39632cf639a14"
+      "sha256": "22edc7e5a30ef25799b279e116fbcc23b7ce7273aa28ecf1c8dba7d7524f9b03"
     },
     {
       "key": "pre_formal_validation_registry",
       "path": "experiments/generated/pre_formal_validation_registry_v1.json",
       "exists": true,
       "size_bytes": 17894,
-      "sha256": "5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1"
+      "sha256": "1b0a9b475715f5757f36c741742fa2b727d6987cd0491a5fda3322a9571045ed"
     },
     {
       "key": "budget_gold_json",
@@ -2762,8 +2764,8 @@
       "key": "academic_experiment_design",
       "path": "experiments/academic_experiment_design_v1.json",
       "exists": true,
-      "size_bytes": 7045,
-      "sha256": "a67cd57d2648388c753da623dd5bdb3ae2640aab69b9279d5ff40813f89f63fb"
+      "size_bytes": 8145,
+      "sha256": "de8555998881dfd461d4c41b1973a4e2be0295eafcc578350bfbaae539bf3dfd"
     },
     {
       "key": "experiment_protocol",
@@ -2993,8 +2995,8 @@
       "key": "paper_result_pack_code",
       "path": "app/core/paper_result_pack.py",
       "exists": true,
-      "size_bytes": 25350,
-      "sha256": "6c2a636e59f6d207f2d7926f4b54aeb8d1d231e19a345ddacc308b2199b8d1a6"
+      "size_bytes": 26645,
+      "sha256": "66a0e26811b5a2db6b0cf9df9ae798f3b7b50f8e72308e0e325217db004dda4b"
     },
     {
       "key": "paper_submission_pack_code",
@@ -3007,8 +3009,8 @@
       "key": "run_formal_experiment_script",
       "path": "experiments/run_formal_experiment.py",
       "exists": true,
-      "size_bytes": 14898,
-      "sha256": "ad481accb9fc43f56c7eb9252c7e309dd3680efe97241c60727fc14252a112cf"
+      "size_bytes": 15481,
+      "sha256": "a2ebee2fdb3bc591bbf168fd9b47f90249184a7675993abb48907796a771ba6a"
     },
     {
       "key": "run_real_api_smoke_script",

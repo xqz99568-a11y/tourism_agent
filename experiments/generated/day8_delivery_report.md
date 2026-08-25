@@ -60,8 +60,8 @@
 ## 正式实验指纹
 
 - integrity_schema: `ctp-formal-artifact-integrity-v1`
-- combined_sha256: `2999727503591b43a7a3bb61117a89ca43f34b3fed338d2cddc9819cc2a2b465`
-- git_commit: `782dbdbfc9e81f10c7cecfc554ec33f2d8bf496b`
+- combined_sha256: `8c1c2abd1fc66a4bcccc0445f699efffd8b4ad52325ec84930bc9e54b4ec93c5`
+- git_commit: `188c3f291939c014fdd154a6c49e97cde2afb024`
 - git_worktree_clean: `True`
 - git_status_count: `0`
 
@@ -132,7 +132,7 @@
 
 - registry_status: `passed`
 - registry_path: `experiments/generated/pre_formal_validation_registry_v1.json`
-- registry_sha256: `5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1`
+- registry_sha256: `1b0a9b475715f5757f36c741742fa2b727d6987cd0491a5fda3322a9571045ed`
 - transparent_warning_policy: `accepted_but_reported`
 - transparent_warning_count: `3`
 
@@ -159,14 +159,14 @@
 | experiment_runner_code | `True` | `eec519542cc3b31baa47120cac79689635eda0acdf331cf3b105a27c0f163fbf` | `app/core/experiment_runner.py` |
 | method_contract_code | `True` | `19d7df01ecbb1c97a204c2eecd507a9b9defda2a70640a980a3229c90b9519eb` | `app/core/experiment_method_contract.py` |
 | formal_preflight_code | `True` | `84a7faa6cebf880dc5f4070c1e0bca49a833e76964d7fe13179de627f7a22134` | `app/core/formal_experiment_preflight.py` |
-| formal_gate_code | `True` | `6223f36b63c5bbed6a64e960c7055a5870814c0241c3eb15aba243c0f32034fe` | `app/core/formal_experiment_gate.py` |
+| formal_gate_code | `True` | `3d9f4a4284a83118ded831908931a974e3c517241bfa4930a1f6365ca704666d` | `app/core/formal_experiment_gate.py` |
 | day8_runner_acceptance_test | `True` | `c9ca543e84c03a9a27456bdf26696ce2853a80c9b314ed83c2f8d115eeddf39c` | `tests/test_day8_task1_runner_acceptance.py` |
-| academic_experiment_design_json | `True` | `a67cd57d2648388c753da623dd5bdb3ae2640aab69b9279d5ff40813f89f63fb` | `experiments/academic_experiment_design_v1.json` |
+| academic_experiment_design_json | `True` | `de8555998881dfd461d4c41b1973a4e2be0295eafcc578350bfbaae539bf3dfd` | `experiments/academic_experiment_design_v1.json` |
 | academic_experiment_design_md | `True` | `73cf2ad180d0a62f79732ce793000b984b0d3e097054826d2b8b748d1fa6cd78` | `docs/Academic_Experiment_Design_v1.md` |
 | sealed_validation_dataset | `True` | `0ea84989537c0428219d9ccb8e0991077afbfd3fd420f4666a9c01a64ea7c527` | `experiments/ctp30_sealed_validation_v1.json` |
-| academic_design_validation_json | `True` | `752a540894fca275d22c151e63fb90474ad826548a3d279c4b7c1c89bb511044` | `experiments/generated/academic_experiment_design_validation_v1.json` |
-| academic_design_validation_md | `True` | `3796b6154095750f8ee35c07e0a1703204028028a122aa8968c39632cf639a14` | `experiments/generated/academic_experiment_design_validation_v1.md` |
-| pre_formal_validation_registry | `True` | `5081196c63873a2ed76bc3626e9e73b2f6be968102545633b5a1900adbe472f1` | `experiments/generated/pre_formal_validation_registry_v1.json` |
+| academic_design_validation_json | `True` | `84084425d3b3dfabc7abf40a69e3f0a7b6372d02a94c14837d94c888c6ba41ce` | `experiments/generated/academic_experiment_design_validation_v1.json` |
+| academic_design_validation_md | `True` | `22edc7e5a30ef25799b279e116fbcc23b7ce7273aa28ecf1c8dba7d7524f9b03` | `experiments/generated/academic_experiment_design_validation_v1.md` |
+| pre_formal_validation_registry | `True` | `1b0a9b475715f5757f36c741742fa2b727d6987cd0491a5fda3322a9571045ed` | `experiments/generated/pre_formal_validation_registry_v1.json` |
 | budget_gold_json | `True` | `a755d70f2606d1461cb384bce9da54d90de2192d71c4e0fd00827c849aa21ac5` | `experiments/generated/ctp100_budget_gold_v2.json` |
 | economy_budget_manual_review_json | `True` | `8ea717633318d38f858a99d3735b68673d926b4b815fb4ba3643f43ab0964a17` | `experiments/generated/economy_budget_manual_review_v1.json` |
 | economy_budget_manual_review_md | `True` | `0a1ffc0ed84870728aa47ab923b86f343736dbbdd04714008f5c39705a90fc63` | `experiments/generated/economy_budget_manual_review_v1.md` |
@@ -174,7 +174,7 @@
 | budget_review_csv | `True` | `f7165bdf5804fe51f84f39a1809e44bc3926dd6a013532e6d38cb9c07e29344a` | `experiments/generated/ctp100_budget_gold_v2_review.csv` |
 | dataset_audit_json | `True` | `df870b0bcdf3f72d2fcac040282a876cea0d242f694c66a12e055d7d00e4b189` | `experiments/generated/ctp100_formal_v2_dataset_audit.json` |
 | dataset_audit_md | `True` | `2b18ccf8c0d182e7568f5c51543a59993181ae7169be83087b3142b65acb94a0` | `experiments/generated/ctp100_formal_v2_dataset_audit.md` |
-| academic_experiment_design | `True` | `a67cd57d2648388c753da623dd5bdb3ae2640aab69b9279d5ff40813f89f63fb` | `experiments/academic_experiment_design_v1.json` |
+| academic_experiment_design | `True` | `de8555998881dfd461d4c41b1973a4e2be0295eafcc578350bfbaae539bf3dfd` | `experiments/academic_experiment_design_v1.json` |
 | experiment_protocol | `True` | `d34cbced693560506fc2c4fa6371954b3156384ed1401be510dee475292ee2bf` | `Phase0_实验协议.md` |
 | budget_gold | `True` | `a755d70f2606d1461cb384bce9da54d90de2192d71c4e0fd00827c849aa21ac5` | `experiments/generated/ctp100_budget_gold_v2.json` |
 | qweather_validation | `True` | `4a5a150bbd3051ddf832fc9317ed8d1e9bc910ed0ca81bb52a027e299f7778b1` | `data/weather_snapshot/qweather_v1/validation_report.json` |
@@ -207,9 +207,9 @@
 | tool_executor_code | `True` | `78c5c503758dc65c8dcbd99384a0084edefc9dcaa5348349d10054d871d2a64a` | `app/core/tool_executor.py` |
 | tracing_code | `True` | `1aeb9fa903a27ef1f33edf7f956377c2c61416287e045106e213fac0a950dab3` | `app/core/tracing.py` |
 | paper_draft_pack_code | `True` | `995ed3fc1c8daaf80e9c78159f173c2de9518aa37a4866fdfdf0491aa685a44d` | `app/core/paper_draft_pack.py` |
-| paper_result_pack_code | `True` | `6c2a636e59f6d207f2d7926f4b54aeb8d1d231e19a345ddacc308b2199b8d1a6` | `app/core/paper_result_pack.py` |
+| paper_result_pack_code | `True` | `66a0e26811b5a2db6b0cf9df9ae798f3b7b50f8e72308e0e325217db004dda4b` | `app/core/paper_result_pack.py` |
 | paper_submission_pack_code | `True` | `3dcab0a62dfc9231839296910ea8d52338696a537c112acd809bf0d1b1b7a122` | `app/core/paper_submission_pack.py` |
-| run_formal_experiment_script | `True` | `ad481accb9fc43f56c7eb9252c7e309dd3680efe97241c60727fc14252a112cf` | `experiments/run_formal_experiment.py` |
+| run_formal_experiment_script | `True` | `a2ebee2fdb3bc591bbf168fd9b47f90249184a7675993abb48907796a771ba6a` | `experiments/run_formal_experiment.py` |
 | run_real_api_smoke_script | `True` | `75c40540e07f599e23e76e57a2d0d184781b5f6f28660642df828d52a72d8baf` | `experiments/run_real_api_smoke.py` |
 | build_pre_formal_validation_registry_script | `True` | `d500e842316e76776a4c8e1ecb43658eaad3e508b8d96c108731495efe967a81` | `experiments/build_pre_formal_validation_registry.py` |
 | task_d_validation_script | `True` | `a1e740925b82e7eb7d1ff53957d2138a744465e4d3307f927742d619a1946e8b` | `experiments/run_task_d_m0_real_api_validation.py` |
