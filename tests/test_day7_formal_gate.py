@@ -96,6 +96,88 @@ def test_formal_experiment_gate_marks_unreferenced_trace_files(tmp_path: Path) -
     assert orphan.as_posix() in artifact_index["unreferenced_trace_files"]
 
 
+def test_formal_experiment_gate_retains_method_failure_without_blocking_integrity(
+    tmp_path: Path,
+) -> None:
+    run_dir = _write_formal_run_dir(tmp_path / "method-failure-run", independent_cases=1)
+    results_path = run_dir / "benchmark_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    result = results[0]
+    result["status"] = "failed"
+    result["output"]["execution_status"] = "failed"
+    result["output"]["final_answer"] = "The model returned content but violated the schema."
+    result["metrics"]["stsr"] = False
+    result["metrics"]["evaluation_failed_rule_ids"] = ["G_SCHEMA_VALID"]
+    result["run_audit"]["metrics"]["stsr"] = False
+    result["run_audit"]["metrics"]["evaluation_failed_rule_ids"] = ["G_SCHEMA_VALID"]
+    results_path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    payload = write_formal_experiment_gate(run_dir, min_cases=1)
+    gate = payload["gate"]
+
+    assert payload["gate_status"] == "passed"
+    assert "no_failed_results" not in gate["checks"]
+    assert gate["checks"]["all_failures_classified"] is True
+    assert gate["checks"]["no_integrity_failures"] is True
+    assert gate["failure_classification_summary"]["method_failure_count"] == 1
+    assert gate["failure_classification_summary"]["integrity_failure_count"] == 0
+
+
+def test_formal_experiment_gate_retains_api_failure_with_retry_evidence(
+    tmp_path: Path,
+) -> None:
+    run_dir = _write_formal_run_dir(tmp_path / "api-failure-run", independent_cases=1)
+    results_path = run_dir / "benchmark_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    result = results[1]
+    result["status"] = "failed"
+    result["output"]["execution_status"] = "failed"
+    result["output"]["final_answer"] = ""
+    result["metrics"]["stsr"] = False
+    result["run_audit"]["metrics"]["stsr"] = False
+    trace_path = Path(result["trace_file"])
+    trace = json.loads(trace_path.read_text(encoding="utf-8").splitlines()[0])
+    trace["llm_calls"][0].update(_terminal_api_failure_retry())
+    trace_path.write_text(json.dumps(trace, ensure_ascii=False) + "\n", encoding="utf-8")
+    result["trace"] = trace
+    results_path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    payload = write_formal_experiment_gate(run_dir, min_cases=1)
+    gate = payload["gate"]
+
+    assert payload["gate_status"] == "passed"
+    assert gate["checks"]["all_api_failures_have_retry_evidence"] is True
+    assert gate["api_failure_summary"]["terminal_failure_count"] == 1
+    assert gate["api_failure_summary"]["terminal_without_retry_evidence_count"] == 0
+    assert gate["failure_classification_summary"]["api_infrastructure_failure_count"] == 1
+
+
+def test_formal_experiment_gate_blocks_api_failure_without_retry_evidence(
+    tmp_path: Path,
+) -> None:
+    run_dir = _write_formal_run_dir(tmp_path / "api-no-retry-run", independent_cases=1)
+    results_path = run_dir / "benchmark_results.json"
+    results = json.loads(results_path.read_text(encoding="utf-8"))
+    result = results[1]
+    result["status"] = "failed"
+    result["output"]["execution_status"] = "failed"
+    result["metrics"]["stsr"] = False
+    result["run_audit"]["metrics"]["stsr"] = False
+    trace_path = Path(result["trace_file"])
+    trace = json.loads(trace_path.read_text(encoding="utf-8").splitlines()[0])
+    trace["llm_calls"][0].update({"success": False, "status": "failed", "error": "HTTP 500"})
+    trace_path.write_text(json.dumps(trace, ensure_ascii=False) + "\n", encoding="utf-8")
+    result["trace"] = trace
+    results_path.write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    payload = write_formal_experiment_gate(run_dir, min_cases=1)
+    gate = payload["gate"]
+
+    assert payload["gate_status"] == "failed"
+    assert "all_api_failures_have_retry_evidence" in gate["failed_checks"]
+    assert gate["api_failure_summary"]["terminal_without_retry_evidence_count"] == 1
+
+
 def test_formal_experiment_gate_blocks_method_grid_duplicates_even_when_count_matches(
     tmp_path: Path,
 ) -> None:
@@ -429,6 +511,32 @@ def _trace(method: str, *, tokens: int, mock: bool) -> dict:
                 "standardized_estimated_cost": round(tokens / 5000, 4),
             }
         ],
+    }
+
+
+def _terminal_api_failure_retry() -> dict:
+    attempts = [
+        {
+            "success": False,
+            "retryable": True,
+            "retry_reason": "http_5xx",
+            "error_type": "APIStatusError",
+        }
+        for _ in range(3)
+    ]
+    return {
+        "success": False,
+        "status": "failed",
+        "error": "HTTP 500 after retries",
+        "retry": {
+            "schema_version": "ctp-llm-retry-audit-v1",
+            "max_attempts": 3,
+            "attempt_count": 3,
+            "retry_count": 2,
+            "error_count": 3,
+            "succeeded": False,
+            "attempts": attempts,
+        },
     }
 
 

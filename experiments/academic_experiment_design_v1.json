@@ -58,6 +58,8 @@
     "binary_test": "McNemar",
     "continuous_test": "Wilcoxon signed-rank",
     "secondary_multiplicity_control": "Holm-Bonferroni correction for secondary endpoints",
+    "main_analysis": "Intention-to-treat: retain all saved evaluation units. Method-format and method-quality failures are scored as zero. Terminal API infrastructure failures are retained and scored as zero when they affect a method result.",
+    "api_clean_sensitivity_analysis": "For the M3-vs-M2 primary comparison, additionally report a sensitivity analysis that excludes paired evaluation units where M2 or M3 has a terminal API infrastructure incident. Method-quality failures remain in the denominator. The clean paired sample must contain at least 95 pairs for CTP100.",
     "repeat_policy": "重复实验结果先按 case_id 聚合，不作为额外独立样本。",
     "minimum_claim_rule": "只有在 STSR/HCSR 不低于 M2 且效率指标下降时，才允许声称自适应调度在保持质量的同时降低开销。"
   },
@@ -80,7 +82,9 @@
     "provider_accounting": "base_url_derived_openai_compatible_provider",
     "provider_accounting_policy": "LLM trace, manifest, smoke report, and price snapshot must derive provider from LLM_BASE_URL. VectorEngine must be recorded as vectorengine_openai_compatible.",
     "cost_accounting": "Use provider-reported cost only when available; otherwise use frozen standardized token-cost estimates and mark actual_cost_status explicitly.",
-    "failure_retention_policy": "Timeouts, API failures, parse failures, and invalid structured outputs are retained as experimental evidence and must not be selectively deleted."
+    "failure_retention_policy": "Method failures, terminal API infrastructure failures, timeouts, parse failures, and invalid structured outputs are retained as experimental evidence and must not be selectively deleted.",
+    "failure_classification_policy": "Formal results classify failures as method_failure, api_infrastructure_failure, or integrity_failure. Integrity failures block paper claims; method and API failures remain in the main denominator with zero task success when applicable.",
+    "api_retry_policy": "429, 5xx, connection errors, and request timeouts use at most three attempts. Terminal API infrastructure failures must include retry evidence and cannot be selectively rerun."
   },
   "pre_formal_validation": {
     "version": "ctp-pre-formal-validation-v1",

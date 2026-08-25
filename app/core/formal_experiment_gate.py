@@ -9,6 +9,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import random
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
@@ -31,6 +32,9 @@ from app.core.independent_evaluator import (
 FORMAL_EXPERIMENT_GATE_SCHEMA_VERSION = "ctp-formal-experiment-gate-v1"
 FORMAL_EXPERIMENT_GATE_NAME = "formal_experiment_gate.json"
 FORMAL_EXPERIMENT_REPORT_NAME = "formal_experiment_report.md"
+FAILURE_CLASSIFICATION_SCHEMA_VERSION = "ctp-formal-failure-classification-v1"
+API_SENSITIVITY_SCHEMA_VERSION = "ctp-api-clean-sensitivity-analysis-v1"
+API_CLEAN_M3_M2_MIN_PAIR_COUNT = 95
 
 _CORE_ARTIFACTS = {
     "csv": "benchmark_results.csv",
@@ -55,6 +59,14 @@ _REQUIRED_METRIC_FIELDS = (
     "called_tool_count",
     "total_tokens",
 )
+_API_INFRASTRUCTURE_RETRY_REASONS = {
+    "http_429",
+    "http_5xx",
+    "network_connection",
+    "network_timeout",
+    "timeout",
+    "rate_limit",
+}
 
 
 def write_formal_experiment_gate(
@@ -139,6 +151,7 @@ def build_formal_experiment_gate(
     ]
     result_status_summary = _result_status_summary(results)
     api_failure_summary = _api_failure_timeout_summary(traces)
+    failure_classification_summary = _failure_classification_summary(root, results)
     methods = _dict(summary.get("methods"))
     expected_result_count = _expected_result_count(preflight, summary)
     required = _normalize_methods(required_methods or DEFAULT_REQUIRED_METHODS)
@@ -160,6 +173,11 @@ def build_formal_experiment_gate(
         results,
         summary,
         required_methods=required,
+    )
+    sensitivity_analysis = _api_clean_m3_m2_sensitivity_analysis(
+        results,
+        failure_classification_summary=failure_classification_summary,
+        min_clean_pair_count=min(API_CLEAN_M3_M2_MIN_PAIR_COUNT, effective_min_cases),
     )
     independent_case_count = _int(
         summary.get("independent_case_count"),
@@ -192,11 +210,23 @@ def build_formal_experiment_gate(
         "preflight_expected_result_count_matches_structure": raw_count_summary[
             "expected_matches_structure"
         ],
+        "all_planned_results_saved": (
+            expected_result_count is not None
+            and len(results) == expected_result_count
+            and method_grid_summary["passed"]
+            and len(csv_rows) == len(results)
+        ),
         "result_count_matches_expected": (
             expected_result_count is not None and len(results) == expected_result_count
         ),
         "formal_ctp100_raw_result_count_is_520": raw_count_summary["passed"],
         "method_result_grid_complete": method_grid_summary["passed"],
+        "no_missing_results": (
+            expected_result_count is not None
+            and len(results) == expected_result_count
+            and method_grid_summary["missing_method_group_count"] == 0
+        ),
+        "no_duplicate_results": method_grid_summary["duplicate_method_result_count"] == 0,
         "csv_row_count_matches_results": len(csv_rows) == len(results),
         "all_results_have_execution_status": result_status_summary[
             "missing_execution_status_count"
@@ -206,8 +236,22 @@ def build_formal_experiment_gate(
             "invalid_execution_status_count"
         ]
         == 0,
-        "no_failed_results": result_status_summary["failed_result_count"] == 0,
-        "api_failure_timeout_count_zero": api_failure_summary["failure_or_timeout_count"] == 0,
+        "all_failures_classified": failure_classification_summary[
+            "unclassified_failure_count"
+        ]
+        == 0,
+        "all_api_failures_have_retry_evidence": api_failure_summary[
+            "terminal_without_retry_evidence_count"
+        ]
+        == 0,
+        "all_api_failures_retained": api_failure_summary[
+            "terminal_unretained_count"
+        ]
+        == 0,
+        "no_integrity_failures": failure_classification_summary[
+            "integrity_failure_count"
+        ]
+        == 0,
         "run_audit_attached": _all_results_have_run_audit(results),
         "metric_fields_present": _all_results_have_metrics(results),
         "bpcr_field_present": _all_results_have_metric_keys(results, ("bpcr",)),
@@ -233,6 +277,10 @@ def build_formal_experiment_gate(
         "llm_call_recorded": bool(llm_calls),
         "no_mock_llm": bool(allow_mock_llm) or not _has_mock_llm(llm_calls),
         "no_llm_fallback": not _has_fallback_llm(llm_calls),
+        "no_mock_or_fallback": (
+            bool(allow_mock_llm) or not _has_mock_llm(llm_calls)
+        )
+        and not _has_fallback_llm(llm_calls),
         "formal_artifact_integrity_recorded": _nested(
             manifest,
             "formal_artifact_integrity",
@@ -261,6 +309,7 @@ def build_formal_experiment_gate(
         "user_message_not_persisted": all(not trace.get("user_message") for trace in traces),
         "method_contract_recorded": _method_contract_recorded(manifest),
         "artifact_hashes_recorded": all(item.get("sha256") for item in artifact_index["files"]),
+        "sensitivity_analysis_available": sensitivity_analysis["available"],
     }
     failed_checks = [key for key, value in checks.items() if not value]
     status = "passed" if not failed_checks else "failed"
@@ -283,7 +332,9 @@ def build_formal_experiment_gate(
         "checks": checks,
         "failed_checks": failed_checks,
         "result_status_summary": result_status_summary,
+        "failure_classification_summary": failure_classification_summary,
         "api_failure_summary": api_failure_summary,
+        "sensitivity_analysis": sensitivity_analysis,
         "raw_count_summary": raw_count_summary,
         "method_result_grid_summary": method_grid_summary,
         "metric_calculability_summary": metric_calculability_summary,
@@ -310,6 +361,9 @@ def render_formal_experiment_report(gate: Dict[str, Any]) -> str:
     trace = _dict(gate.get("trace_summary"))
     methods = _dict(gate.get("method_summary"))
     m3_vs_m2 = _dict(gate.get("m3_vs_m2"))
+    failure = _dict(gate.get("failure_classification_summary"))
+    api = _dict(gate.get("api_failure_summary"))
+    sensitivity = _dict(gate.get("sensitivity_analysis"))
     lines = [
         "# Formal experiment final gate",
         "",
@@ -353,6 +407,26 @@ def render_formal_experiment_report(gate: Dict[str, Any]) -> str:
             f"- result_issue_count: `{metrics.get('result_issue_count')}`",
             f"- summary_issue_count: `{metrics.get('summary_issue_count')}`",
             f"- paired_issue_count: `{metrics.get('paired_issue_count')}`",
+            "",
+            "## Failure classification",
+            "",
+            f"- failure_count: `{failure.get('failure_count')}`",
+            f"- method_failure_count: `{failure.get('method_failure_count')}`",
+            f"- api_infrastructure_failure_count: `{failure.get('api_infrastructure_failure_count')}`",
+            f"- api_incident_result_count: `{failure.get('api_incident_result_count')}`",
+            f"- integrity_failure_count: `{failure.get('integrity_failure_count')}`",
+            f"- unclassified_failure_count: `{failure.get('unclassified_failure_count')}`",
+            "",
+            "## API-clean sensitivity analysis",
+            "",
+            f"- available: `{sensitivity.get('available')}`",
+            f"- total_pair_count: `{sensitivity.get('total_pair_count')}`",
+            f"- clean_pair_count: `{sensitivity.get('clean_pair_count')}`",
+            f"- excluded_api_polluted_pair_count: `{sensitivity.get('excluded_api_polluted_pair_count')}`",
+            f"- minimum_clean_pair_count: `{sensitivity.get('minimum_clean_pair_count')}`",
+            f"- stsr_delta_mean: `{_nested(sensitivity, 'metrics', 'stsr', 'delta_mean')}`",
+            f"- stsr_delta_ci_95: `{_nested(sensitivity, 'metrics', 'stsr', 'delta_ci_95')}`",
+            f"- stsr_mcnemar_p_value: `{_nested(sensitivity, 'metrics', 'stsr', 'mcnemar', 'p_value')}`",
             "",
         ]
     )
@@ -412,7 +486,9 @@ def render_formal_experiment_report(gate: Dict[str, Any]) -> str:
             f"- llm_call_count: `{trace.get('llm_call_count')}`",
             f"- mock_llm_call_count: `{trace.get('mock_llm_call_count')}`",
             f"- fallback_llm_call_count: `{trace.get('fallback_llm_call_count')}`",
-            f"- api_failure_timeout_count: `{_nested(gate, 'api_failure_summary', 'failure_or_timeout_count')}`",
+            f"- api_failure_timeout_count: `{api.get('failure_or_timeout_count')}`",
+            f"- api_terminal_without_retry_evidence_count: `{api.get('terminal_without_retry_evidence_count')}`",
+            f"- api_recovered_retry_error_count: `{api.get('recovered_retry_error_count')}`",
             f"- total_tokens: `{trace.get('total_tokens')}`",
             f"- standardized_estimated_cost: `{trace.get('standardized_estimated_cost')}`",
             f"- referenced_trace_file_count: `{_nested(gate, 'artifact_index', 'referenced_trace_file_count')}`",
@@ -575,6 +651,92 @@ def _trace_summary(traces: List[Dict[str, Any]], llm_calls: List[Dict[str, Any]]
             call.get("standardized_estimated_cost") for call in llm_calls
         ),
         "actual_cost": _sum_number(call.get("actual_cost") for call in llm_calls),
+    }
+
+
+def _api_clean_m3_m2_sensitivity_analysis(
+    results: List[Dict[str, Any]],
+    *,
+    failure_classification_summary: Dict[str, Any],
+    min_clean_pair_count: int,
+) -> Dict[str, Any]:
+    classifications = {
+        _classification_key(item): item
+        for item in _as_dict_list(failure_classification_summary.get("items"))
+    }
+    m2_rows: Dict[str, Dict[str, Any]] = {}
+    m3_rows: Dict[str, Dict[str, Any]] = {}
+    for result in results:
+        if not _is_quality_evaluation_row(result):
+            continue
+        key = _evaluation_unit_id(result)
+        method = str(result.get("method") or "")
+        if method == "fixed_multi_agent":
+            m2_rows[key] = result
+        elif method == "adaptive_multi_agent":
+            m3_rows[key] = result
+    all_pair_keys = sorted(set(m2_rows) & set(m3_rows))
+    clean_pairs = []
+    excluded = []
+    for key in all_pair_keys:
+        m2 = m2_rows[key]
+        m3 = m3_rows[key]
+        m2_class = classifications.get(_result_classification_key(m2), {})
+        m3_class = classifications.get(_result_classification_key(m3), {})
+        polluted = bool(
+            _int(m2_class.get("terminal_api_failure_count"), default=0)
+            or _int(m3_class.get("terminal_api_failure_count"), default=0)
+        )
+        if polluted:
+            excluded.append(
+                {
+                    "evaluation_unit_id": key,
+                    "m2_terminal_api_failure_count": m2_class.get(
+                        "terminal_api_failure_count",
+                        0,
+                    ),
+                    "m3_terminal_api_failure_count": m3_class.get(
+                        "terminal_api_failure_count",
+                        0,
+                    ),
+                }
+            )
+        else:
+            clean_pairs.append((m3, m2))
+    stsr_pairs = [
+        (_metric01(_nested(m3, "metrics", "stsr")), _metric01(_nested(m2, "metrics", "stsr")))
+        for m3, m2 in clean_pairs
+    ]
+    stsr_pairs = [
+        (m3_value, m2_value)
+        for m3_value, m2_value in stsr_pairs
+        if m3_value is not None and m2_value is not None
+    ]
+    deltas = [m3_value - m2_value for m3_value, m2_value in stsr_pairs]
+    available = len(stsr_pairs) >= min_clean_pair_count
+    return {
+        "schema_version": API_SENSITIVITY_SCHEMA_VERSION,
+        "policy": (
+            "Exclude M2/M3 paired evaluation units with terminal API infrastructure "
+            "incidents; retain method-quality failures as zero-score outcomes."
+        ),
+        "comparison": "adaptive_multi_agent_vs_fixed_multi_agent",
+        "minimum_clean_pair_count": min_clean_pair_count,
+        "total_pair_count": len(all_pair_keys),
+        "excluded_api_polluted_pair_count": len(excluded),
+        "clean_pair_count": len(stsr_pairs),
+        "available": available,
+        "excluded_pairs": excluded[:20],
+        "metrics": {
+            "stsr": {
+                "pair_count": len(stsr_pairs),
+                "m3_rate": _mean(d[0] for d in stsr_pairs),
+                "m2_rate": _mean(d[1] for d in stsr_pairs),
+                "delta_mean": _mean(deltas),
+                "delta_ci_95": _bootstrap_ci_95(deltas),
+                "mcnemar": _mcnemar_from_pairs(stsr_pairs),
+            }
+        },
     }
 
 
@@ -1164,26 +1326,194 @@ def _result_status_summary(results: List[Dict[str, Any]]) -> Dict[str, Any]:
     }
 
 
-def _api_failure_timeout_summary(traces: List[Dict[str, Any]]) -> Dict[str, Any]:
-    failures = []
-    for trace in traces:
-        for group in ("llm_calls", "tool_calls", "api_calls"):
-            for call in _as_dict_list(trace.get(group)):
-                if _call_failed_or_timed_out(call):
-                    failures.append(
-                        {
-                            "group": group,
-                            "name": call.get("name")
-                            or call.get("tool_name")
-                            or call.get("model"),
-                            "status": call.get("status"),
-                            "error": call.get("error"),
-                        }
-                    )
+def _failure_classification_summary(root: Path, results: List[Dict[str, Any]]) -> Dict[str, Any]:
+    items = [
+        _classify_result_failure(root, result, index=index)
+        for index, result in enumerate(results)
+    ]
+    counts: Dict[str, int] = {}
+    for item in items:
+        category = str(item.get("category") or "unclassified_failure")
+        counts[category] = counts.get(category, 0) + 1
+    failure_items = [item for item in items if item.get("is_failure")]
+    unclassified = [
+        item
+        for item in failure_items
+        if item.get("category") in {"unclassified_failure", "unknown_failure"}
+    ]
+    integrity = [item for item in failure_items if item.get("category") == "integrity_failure"]
+    method = [item for item in failure_items if item.get("category") == "method_failure"]
+    api_failures = [
+        item for item in failure_items if item.get("category") == "api_infrastructure_failure"
+    ]
+    api_incidents = [
+        item for item in items if _int(item.get("terminal_api_failure_count"), default=0)
+    ]
     return {
-        "failure_or_timeout_count": len(failures),
-        "sample_failures": failures[:10],
+        "schema_version": FAILURE_CLASSIFICATION_SCHEMA_VERSION,
+        "policy": (
+            "method failures and API infrastructure failures are retained as "
+            "experimental evidence; integrity failures block formal claims"
+        ),
+        "result_count": len(results),
+        "category_counts": counts,
+        "failure_count": len(failure_items),
+        "method_failure_count": len(method),
+        "api_infrastructure_failure_count": len(api_failures),
+        "api_incident_result_count": len(api_incidents),
+        "integrity_failure_count": len(integrity),
+        "unclassified_failure_count": len(unclassified),
+        "sample_failures": failure_items[:10],
+        "sample_integrity_failures": integrity[:10],
+        "items": items,
     }
+
+
+def _classify_result_failure(root: Path, result: Dict[str, Any], *, index: int) -> Dict[str, Any]:
+    status = _result_execution_status(result)
+    valid_status = status in {"completed", "failed", "clarification"}
+    trace_path = _resolve_trace_path(root, result.get("trace_file"))
+    trace_exists = bool(trace_path and trace_path.exists()) or bool(result.get("trace"))
+    trace = result.get("trace") if isinstance(result.get("trace"), dict) else {}
+    if not trace and trace_path and trace_path.exists():
+        trace = _read_jsonl_first(trace_path)
+    api_events = _api_failure_events_from_trace(trace)
+    terminal_api_events = [event for event in api_events if event.get("terminal")]
+    hard_timeout = _result_hard_timeout_triggered(result)
+    is_failed_status = status == "failed" or result.get("status") == "failed" or bool(result.get("error"))
+    if not valid_status:
+        category = "integrity_failure"
+        reason = "missing_or_invalid_execution_status"
+    elif is_failed_status and not trace_exists:
+        category = "integrity_failure"
+        reason = "failed_result_missing_trace_evidence"
+    elif is_failed_status and (terminal_api_events or hard_timeout):
+        category = "api_infrastructure_failure"
+        reason = "terminal_api_or_timeout_failure"
+    elif is_failed_status and _has_model_or_method_evidence(result, trace):
+        category = "method_failure"
+        reason = "model_output_or_method_quality_failure"
+    elif is_failed_status:
+        category = "unclassified_failure"
+        reason = "failed_status_without_sufficient_evidence"
+    elif terminal_api_events:
+        category = "api_infrastructure_incident"
+        reason = "terminal_internal_api_failure_but_result_retained"
+    else:
+        category = "not_failure"
+        reason = "completed_or_clarification"
+    return {
+        "index": index,
+        "case_id": result.get("case_id"),
+        "scenario_id": result.get("scenario_id"),
+        "turn_id": result.get("turn_id"),
+        "method": result.get("method"),
+        "repeat_index": result.get("repeat_index"),
+        "status": status,
+        "top_level_status": result.get("status"),
+        "category": category,
+        "reason": reason,
+        "is_failure": category
+        in {
+            "method_failure",
+            "api_infrastructure_failure",
+            "integrity_failure",
+            "unclassified_failure",
+        },
+        "trace_evidence_saved": trace_exists,
+        "terminal_api_failure_count": len(terminal_api_events),
+        "api_failure_event_count": len(api_events),
+        "api_failures_have_retry_evidence": all(
+            event.get("has_retry_evidence") for event in terminal_api_events
+        ),
+        "stsr": _nested(result, "metrics", "stsr"),
+        "evaluation_failed_rule_ids": _as_list(
+            _nested(result, "metrics", "evaluation_failed_rule_ids")
+        ),
+        "error": result.get("error") or _nested(result, "output", "error"),
+    }
+
+
+def _api_failure_timeout_summary(traces: List[Dict[str, Any]]) -> Dict[str, Any]:
+    failures = [
+        event
+        for trace in traces
+        for event in _api_failure_events_from_trace(trace)
+        if event.get("terminal")
+    ]
+    recovered_retry_errors = [
+        event
+        for trace in traces
+        for event in _recovered_retry_error_events_from_trace(trace)
+    ]
+    without_retry_evidence = [
+        event for event in failures if not event.get("has_retry_evidence")
+    ]
+    unretained = [
+        event for event in failures if not event.get("trace_evidence_saved")
+    ]
+    return {
+        "schema_version": "ctp-api-failure-summary-v1",
+        "policy": (
+            "429, 5xx, connection, and timeout failures are retained and "
+            "reported; terminal failures must include retry evidence"
+        ),
+        "failure_or_timeout_count": len(failures),
+        "terminal_failure_count": len(failures),
+        "terminal_without_retry_evidence_count": len(without_retry_evidence),
+        "terminal_unretained_count": len(unretained),
+        "recovered_retry_error_count": len(recovered_retry_errors),
+        "sample_failures": failures[:10],
+        "sample_without_retry_evidence": without_retry_evidence[:10],
+        "sample_recovered_retry_errors": recovered_retry_errors[:10],
+    }
+
+
+def _api_failure_events_from_trace(trace: Dict[str, Any]) -> List[Dict[str, Any]]:
+    events: List[Dict[str, Any]] = []
+    for group in ("llm_calls", "api_calls"):
+        for index, call in enumerate(_as_dict_list(trace.get(group))):
+            if not _call_failed_or_timed_out(call):
+                continue
+            retry = call.get("retry") if isinstance(call.get("retry"), dict) else {}
+            events.append(
+                {
+                    "group": group,
+                    "index": index,
+                    "name": call.get("name") or call.get("tool_name") or call.get("model"),
+                    "status": call.get("status"),
+                    "error": call.get("error"),
+                    "terminal": True,
+                    "trace_evidence_saved": bool(trace),
+                    "retry": _retry_evidence_summary(retry),
+                    "has_retry_evidence": _has_retry_evidence(call),
+                }
+            )
+    return events
+
+
+def _recovered_retry_error_events_from_trace(trace: Dict[str, Any]) -> List[Dict[str, Any]]:
+    events: List[Dict[str, Any]] = []
+    for group in ("llm_calls", "api_calls"):
+        for index, call in enumerate(_as_dict_list(trace.get(group))):
+            retry = call.get("retry") if isinstance(call.get("retry"), dict) else {}
+            if retry.get("succeeded") is not True:
+                continue
+            error_count = _int(retry.get("error_count"), default=0) or 0
+            if error_count <= 0:
+                continue
+            events.append(
+                {
+                    "group": group,
+                    "index": index,
+                    "name": call.get("name") or call.get("tool_name") or call.get("model"),
+                    "status": call.get("status"),
+                    "terminal": False,
+                    "retry": _retry_evidence_summary(retry),
+                    "has_retry_evidence": True,
+                }
+            )
+    return events
 
 
 def _call_failed_or_timed_out(call: Dict[str, Any]) -> bool:
@@ -1196,6 +1526,190 @@ def _call_failed_or_timed_out(call: Dict[str, Any]) -> bool:
         return True
     retry = call.get("retry") if isinstance(call.get("retry"), dict) else {}
     return retry.get("succeeded") is False
+
+
+def _has_retry_evidence(call: Dict[str, Any]) -> bool:
+    retry = call.get("retry") if isinstance(call.get("retry"), dict) else {}
+    if not retry:
+        return False
+    max_attempts = _int(retry.get("max_attempts"), default=0) or 0
+    attempt_count = _int(retry.get("attempt_count"), default=0) or 0
+    retry_count = _int(retry.get("retry_count"), default=0) or 0
+    error_count = _int(retry.get("error_count"), default=0) or 0
+    attempts = _as_dict_list(retry.get("attempts"))
+    if max_attempts < 1:
+        return False
+    if attempt_count < max_attempts and len(attempts) < max_attempts:
+        return False
+    if max_attempts > 1 and retry_count < max_attempts - 1:
+        return False
+    if error_count <= 0:
+        return False
+    if not attempts:
+        return True
+    return all(
+        attempt.get("success") is False
+        and (
+            attempt.get("retryable") is True
+            or str(attempt.get("retry_reason") or "").lower()
+            in _API_INFRASTRUCTURE_RETRY_REASONS
+        )
+        for attempt in attempts[:max_attempts]
+    )
+
+
+def _retry_evidence_summary(retry: Dict[str, Any]) -> Dict[str, Any]:
+    attempts = _as_dict_list(retry.get("attempts"))
+    return {
+        "schema_version": retry.get("schema_version"),
+        "max_attempts": retry.get("max_attempts"),
+        "attempt_count": retry.get("attempt_count"),
+        "retry_count": retry.get("retry_count"),
+        "error_count": retry.get("error_count"),
+        "succeeded": retry.get("succeeded"),
+        "retry_reasons": [
+            attempt.get("retry_reason")
+            for attempt in attempts
+            if attempt.get("retry_reason") is not None
+        ],
+    }
+
+
+def _result_execution_status(result: Dict[str, Any]) -> str:
+    status = (
+        _nested(result, "output", "execution_status")
+        or result.get("execution_status")
+        or result.get("status")
+    )
+    return str(status or "").strip().lower()
+
+
+def _result_hard_timeout_triggered(result: Dict[str, Any]) -> bool:
+    return bool(
+        _nested(result, "metrics", "hard_timeout_triggered")
+        or _nested(result, "output", "metadata", "result_hard_timeout", "triggered")
+        or _nested(result, "result_hard_timeout", "triggered")
+    )
+
+
+def _has_model_or_method_evidence(result: Dict[str, Any], trace: Dict[str, Any]) -> bool:
+    output = result.get("output") if isinstance(result.get("output"), dict) else {}
+    if output.get("final_answer") or output.get("metadata") or output.get("decisions"):
+        return True
+    if result.get("raw_output"):
+        return True
+    if _as_dict_list(trace.get("llm_calls")):
+        return True
+    if _as_list(_nested(result, "metrics", "evaluation_failed_rule_ids")):
+        return True
+    return False
+
+
+def _classification_key(item: Dict[str, Any]) -> str:
+    return "::".join(
+        str(item.get(key) or "")
+        for key in ("case_id", "scenario_id", "turn_id", "method", "repeat_index")
+    )
+
+
+def _result_classification_key(result: Dict[str, Any]) -> str:
+    return "::".join(
+        str(result.get(key) or "")
+        for key in ("case_id", "scenario_id", "turn_id", "method", "repeat_index")
+    )
+
+
+def _is_quality_evaluation_row(result: Dict[str, Any]) -> bool:
+    if not _is_scenario_row(result):
+        return True
+    if "target_turn" in result:
+        return _bool(result.get("target_turn"))
+    turn_index = _int(result.get("turn_index"))
+    turn_count = _int(result.get("scenario_turn_count"))
+    if turn_index is None or turn_count is None:
+        return True
+    return turn_index == turn_count - 1
+
+
+def _is_scenario_row(result: Dict[str, Any]) -> bool:
+    return bool(result.get("scenario_id")) or _int(result.get("scenario_turn_count")) is not None
+
+
+def _evaluation_unit_id(result: Dict[str, Any]) -> str:
+    scenario_id = str(result.get("scenario_id") or "")
+    if scenario_id:
+        turn_id = str(result.get("turn_id") or result.get("turn_index") or "target")
+        return f"{scenario_id}:{turn_id}"
+    return str(result.get("case_id") or "")
+
+
+def _metric01(value: Any) -> Optional[float]:
+    if isinstance(value, bool):
+        return 1.0 if value else 0.0
+    number = _number(value)
+    if number is None:
+        return None
+    return 1.0 if number >= 1.0 else 0.0
+
+
+def _mean(values: Iterable[Any]) -> Optional[float]:
+    numbers = [_number(value) for value in values]
+    clean = [value for value in numbers if value is not None]
+    if not clean:
+        return None
+    return round(sum(clean) / len(clean), 4)
+
+
+def _bootstrap_ci_95(values: List[float], *, seed: int = 20260825, samples: int = 1000) -> Optional[List[float]]:
+    if not values:
+        return None
+    if len(values) == 1:
+        value = round(float(values[0]), 4)
+        return [value, value]
+    rng = random.Random(seed)
+    means = []
+    n = len(values)
+    for _ in range(samples):
+        sample = [values[rng.randrange(n)] for _ in range(n)]
+        means.append(sum(sample) / n)
+    means.sort()
+    lower = means[int(0.025 * (samples - 1))]
+    upper = means[int(0.975 * (samples - 1))]
+    return [round(lower, 4), round(upper, 4)]
+
+
+def _mcnemar_from_pairs(pairs: List[tuple[float, float]]) -> Dict[str, Any]:
+    b = sum(1 for m3, m2 in pairs if m3 == 1.0 and m2 == 0.0)
+    c = sum(1 for m3, m2 in pairs if m3 == 0.0 and m2 == 1.0)
+    discordant = b + c
+    if discordant == 0:
+        p_value = 1.0
+    else:
+        tail = sum(_binomial_pmf(discordant, k, 0.5) for k in range(0, min(b, c) + 1))
+        p_value = min(1.0, 2.0 * tail)
+    return {
+        "test": "McNemar exact binomial",
+        "b_m3_success_m2_failure": b,
+        "c_m3_failure_m2_success": c,
+        "discordant_pair_count": discordant,
+        "p_value": round(p_value, 6),
+    }
+
+
+def _binomial_pmf(n: int, k: int, p: float) -> float:
+    if k < 0 or k > n:
+        return 0.0
+    return _comb(n, k) * (p ** k) * ((1.0 - p) ** (n - k))
+
+
+def _comb(n: int, k: int) -> int:
+    k = min(k, n - k)
+    if k < 0:
+        return 0
+    result = 1
+    for value in range(1, k + 1):
+        result = result * (n - k + value) // value
+    return result
 
 
 def _result_trace_evidence_exists(root: Path, result: Dict[str, Any]) -> bool:

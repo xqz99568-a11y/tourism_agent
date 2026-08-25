@@ -80,7 +80,7 @@ def build_paper_result_pack(
     )
     gate = _read_json_object(root / FORMAL_EXPERIMENT_GATE_NAME)
     readiness = _pack_readiness(analysis, gate)
-    tables = _build_tables(analysis)
+    tables = _build_tables(analysis, gate)
     rq_map = _build_rq_map(readiness, tables, analysis)
     pack = {
         "schema_version": PAPER_RESULT_PACK_SCHEMA_VERSION,
@@ -246,12 +246,14 @@ def _pack_readiness(analysis: Dict[str, Any], gate: Dict[str, Any]) -> Dict[str,
     }
 
 
-def _build_tables(analysis: Dict[str, Any]) -> Dict[str, Any]:
+def _build_tables(analysis: Dict[str, Any], gate: Dict[str, Any]) -> Dict[str, Any]:
     methods = [
         row for row in analysis.get("method_comparison") or [] if isinstance(row, dict)
     ]
     m3_vs_m2 = _dict(analysis.get("m3_vs_m2"))
     failures = _dict(_dict(analysis.get("failure_analysis")).get("methods"))
+    sensitivity = _dict(gate.get("sensitivity_analysis"))
+    sensitivity_stsr = _dict(_nested(sensitivity, "metrics", "stsr"))
     return {
         "rq1_scheduler": _table(
             columns=["method", "agent_selection_f1", "tool_selection_f1"],
@@ -324,6 +326,36 @@ def _build_tables(analysis: Dict[str, Any]) -> Dict[str, Any]:
                     "top_failed_rules": _counter_text(_dict(row).get("top_failed_rules")),
                 }
                 for method, row in failures.items()
+            ],
+        ),
+        "api_clean_sensitivity": _table(
+            columns=[
+                "metric",
+                "clean_pair_count",
+                "excluded_api_polluted_pair_count",
+                "m3_rate",
+                "m2_rate",
+                "delta_mean",
+                "delta_ci_95",
+                "mcnemar_p_value",
+            ],
+            rows=[
+                {
+                    "metric": "STSR",
+                    "clean_pair_count": sensitivity.get("clean_pair_count"),
+                    "excluded_api_polluted_pair_count": sensitivity.get(
+                        "excluded_api_polluted_pair_count"
+                    ),
+                    "m3_rate": sensitivity_stsr.get("m3_rate"),
+                    "m2_rate": sensitivity_stsr.get("m2_rate"),
+                    "delta_mean": sensitivity_stsr.get("delta_mean"),
+                    "delta_ci_95": sensitivity_stsr.get("delta_ci_95"),
+                    "mcnemar_p_value": _nested(
+                        sensitivity_stsr,
+                        "mcnemar",
+                        "p_value",
+                    ),
+                }
             ],
         ),
     }

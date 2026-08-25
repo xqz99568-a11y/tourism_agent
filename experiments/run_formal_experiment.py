@@ -14,8 +14,9 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from app.core.experiment_runner import ExperimentRunner
 from app.core.config import settings
+from app.core.experiment_runner import ExperimentRunner
+from app.core.final_artifact_index import write_final_artifact_index
 from app.core.formal_experiment_gate import write_formal_experiment_gate
 from app.core.formal_experiment_preflight import (
     DEFAULT_FORMAL_METHOD_ORDER_SEED,
@@ -151,6 +152,7 @@ def main() -> int:
         run_output_dir,
         min_cases=args.expected_cases,
     )
+    final_artifact_index = write_final_artifact_index(run_output_dir)
     payload = _build_payload(
         run_id=run_id,
         run_output_dir=run_output_dir,
@@ -161,6 +163,7 @@ def main() -> int:
         paper_result_pack=paper_result_pack,
         paper_draft_pack=paper_draft_pack,
         paper_submission_pack=paper_submission_pack,
+        final_artifact_index=final_artifact_index,
         day8_delivery_pack=report.get("day8_delivery_pack"),
         pre_formal_smoke=pre_formal_smoke,
         resume_report=report.get("resume"),
@@ -170,6 +173,7 @@ def main() -> int:
     if args.strict_paper_readiness and (
         formal_gate["gate_status"] != "passed"
         or paper_submission_pack["submission_status"] != "submission_ready"
+        or final_artifact_index["index_status"] != "passed"
     ):
         return 1
     return 0
@@ -258,6 +262,7 @@ def _build_payload(
     paper_result_pack: Dict[str, Any] | None = None,
     paper_draft_pack: Dict[str, Any] | None = None,
     paper_submission_pack: Dict[str, Any] | None = None,
+    final_artifact_index: Dict[str, Any] | None = None,
     day8_delivery_pack: Dict[str, Any] | None = None,
     pre_formal_smoke: Dict[str, Any] | None = None,
     resume_report: Dict[str, Any] | None = None,
@@ -314,6 +319,13 @@ def _build_payload(
                 "paper_submission_checklist_md": paper_submission_pack["markdown"],
                 "paper_submission_status": paper_submission_pack["submission_status"],
                 "paper_submission_claims_allowed": paper_submission_pack["paper_claims_allowed"],
+            }
+        )
+    if final_artifact_index:
+        payload.update(
+            {
+                "final_artifact_index_json": final_artifact_index["json"],
+                "final_artifact_index_status": final_artifact_index["index_status"],
             }
         )
     if day8_delivery_pack:
@@ -378,6 +390,7 @@ def _validate_payload_files(payload: Dict[str, Any]) -> None:
         "paper_draft_md",
         "paper_submission_pack_json",
         "paper_submission_checklist_md",
+        "final_artifact_index_json",
         "day8_delivery_pack_json",
         "pre_formal_real_api_smoke_manifest",
         "pre_formal_real_api_smoke_report",

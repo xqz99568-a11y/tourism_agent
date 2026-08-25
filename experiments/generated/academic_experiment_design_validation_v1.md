@@ -9,7 +9,7 @@
 - design_version: `CTP-GMAS-ACADEMIC-DESIGN-v2`
 - freeze_status: `frozen_before_formal_results`
 - freeze_date: `2026-08-21`
-- design_sha256: `a67cd57d2648388c753da623dd5bdb3ae2640aab69b9279d5ff40813f89f63fb`
+- design_sha256: `de8555998881dfd461d4c41b1973a4e2be0295eafcc578350bfbaae539bf3dfd`
 
 ## Main benchmark
 
