@@ -10,7 +10,7 @@ import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Mapping, Optional
 
 
 FINAL_ARTIFACT_INDEX_SCHEMA_VERSION = "ctp-final-artifact-index-v1"
@@ -39,12 +39,19 @@ _RUN_ARTIFACTS = {
 }
 
 
-def write_final_artifact_index(run_dir: str | Path) -> Dict[str, Any]:
+def write_final_artifact_index(
+    run_dir: str | Path,
+    *,
+    artifact_files: Optional[Mapping[str, str | Path]] = None,
+    manifest_name: str = "experiment_manifest.json",
+    attach_to_manifest: bool = True,
+) -> Dict[str, Any]:
     """Write the final immutable artifact index for a completed formal run."""
     root = Path(run_dir)
     index_path = root / FINAL_ARTIFACT_INDEX_NAME
-    _attach_final_index_path_to_manifest(root, index_path)
-    index = build_final_artifact_index(root)
+    if attach_to_manifest:
+        _attach_final_index_path_to_manifest(root, index_path, manifest_name=manifest_name)
+    index = build_final_artifact_index(root, artifact_files=artifact_files)
     index_path.write_text(json.dumps(index, ensure_ascii=False, indent=2), encoding="utf-8")
     return {
         "status": "completed",
@@ -54,12 +61,20 @@ def write_final_artifact_index(run_dir: str | Path) -> Dict[str, Any]:
     }
 
 
-def build_final_artifact_index(run_dir: str | Path) -> Dict[str, Any]:
+def build_final_artifact_index(
+    run_dir: str | Path,
+    *,
+    artifact_files: Optional[Mapping[str, str | Path]] = None,
+) -> Dict[str, Any]:
     """Build the final index payload without writing it."""
     root = Path(run_dir)
     results = _read_json(root / "benchmark_results.json")
     result_count = len(results) if isinstance(results, list) else 0
-    files = [_artifact_item(key, root / filename) for key, filename in _RUN_ARTIFACTS.items()]
+    artifacts = artifact_files or _RUN_ARTIFACTS
+    files = [
+        _artifact_item(key, _resolve_artifact_path(root, filename))
+        for key, filename in artifacts.items()
+    ]
     traces = _directory_inventory(root / "traces", "*.jsonl")
     worker_requests = _directory_inventory(root / "worker_io", "*.request.json")
     worker_responses = _directory_inventory(root / "worker_io", "*.response.json")
@@ -137,8 +152,13 @@ def validate_final_artifact_index(run_dir: str | Path) -> Dict[str, Any]:
     }
 
 
-def _attach_final_index_path_to_manifest(root: Path, index_path: Path) -> None:
-    manifest_path = root / "experiment_manifest.json"
+def _attach_final_index_path_to_manifest(
+    root: Path,
+    index_path: Path,
+    *,
+    manifest_name: str,
+) -> None:
+    manifest_path = root / manifest_name
     manifest = _read_json(manifest_path)
     if not isinstance(manifest, dict):
         return
@@ -153,6 +173,11 @@ def _attach_final_index_path_to_manifest(root: Path, index_path: Path) -> None:
         "manifest_records_path_only": True,
     }
     manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def _resolve_artifact_path(root: Path, value: str | Path) -> Path:
+    path = Path(value)
+    return path if path.is_absolute() else root / path
 
 
 def _artifact_item(key: str, path: Path) -> Dict[str, Any]:
