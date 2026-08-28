@@ -13,6 +13,10 @@
     {
       "file": "ctp30_sealed_validation_v1.json",
       "reason": "sealed_validation_after_main_design_freeze; run separately with M2/M3 only"
+    },
+    {
+      "file": "ctp30_multiturn_validation_v2.json",
+      "reason": "sealed_multiturn_validation_after_ctp100_v6_and_ctp30_v1; run separately with M2/M3 only"
     }
   ],
   "comparison_files": [

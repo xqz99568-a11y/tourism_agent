@@ -1,0 +1,44 @@
+{
+  "schema_version": "ctp30-multiturn-v2-draft-audit-v1",
+  "status": "passed",
+  "dataset_path": "D:/Code/Tourism_Agent/experiments/generated/ctp30_multiturn_v2_draft.json",
+  "dataset_id": "ctp30_multiturn_validation_v2_draft",
+  "dataset_sha256": "2ff17fb502690f8d592635b33ffb369be58584b2e43e670d7fe60be91822da89",
+  "case_count": 30,
+  "turn_count": 60,
+  "scenario_case_count": 30,
+  "target_turn_id": "t2",
+  "turn_task_distribution": {
+    "attraction_recommendation": 1,
+    "budget_query": 4,
+    "clarification": 1,
+    "general_chat": 1,
+    "partial_replan": 15,
+    "trip_planning": 29,
+    "weather_adjustment": 6,
+    "weather_query": 3
+  },
+  "target_turn_task_distribution": {
+    "attraction_recommendation": 1,
+    "budget_query": 4,
+    "clarification": 1,
+    "partial_replan": 15,
+    "weather_adjustment": 6,
+    "weather_query": 3
+  },
+  "city_distribution": {
+    "beijing": 12,
+    "guilin": 11,
+    "hangzhou": 13,
+    "shenzhen": 11,
+    "xian": 11
+  },
+  "quality_status": "passed",
+  "quality_errors": [],
+  "quality_warnings": [],
+  "cross_split_duplicate_visible_input_groups": [],
+  "cross_split_near_duplicate_visible_input_pairs": [],
+  "human_review_required": true,
+  "manual_review_status": "pending",
+  "paper_disclosure": "CTP30-v2 uses single-person case design and labeling followed by automatic schema, slot, weather, budget, city-coverage, and duplicate audits."
+}

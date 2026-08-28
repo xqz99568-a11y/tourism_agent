@@ -1,0 +1,83 @@
+{
+  "schema_version": "ctp30-multiturn-v2-freeze-manifest-v1",
+  "status": "passed",
+  "errors": [],
+  "freeze_date": "2026-08-28",
+  "frozen_dataset": {
+    "path": "experiments/ctp30_multiturn_validation_v2.json",
+    "dataset_id": "ctp30_multiturn_validation_v2",
+    "dataset_version": "2026-08-28-route-b-task2-frozen",
+    "dataset_role": "sealed_multiturn_validation_after_ctp100_v6_and_ctp30_v1",
+    "split": "sealed_multiturn_validation",
+    "sha256": "d32adf32e820913ec46821e9312a77722c9d5ba03e5dbcee6b0659f719f5e6dc",
+    "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+    "case_count": 30,
+    "turn_count": 60,
+    "scenario_case_count": 30,
+    "target_turn_id": "t2",
+    "turn_task_distribution": {
+      "attraction_recommendation": 1,
+      "budget_query": 4,
+      "clarification": 1,
+      "general_chat": 1,
+      "partial_replan": 15,
+      "trip_planning": 29,
+      "weather_adjustment": 6,
+      "weather_query": 3
+    },
+    "target_turn_task_distribution": {
+      "attraction_recommendation": 1,
+      "budget_query": 4,
+      "clarification": 1,
+      "partial_replan": 15,
+      "weather_adjustment": 6,
+      "weather_query": 3
+    }
+  },
+  "source_draft": {
+    "path": "experiments/generated/ctp30_multiturn_v2_draft.json",
+    "sha256": "2ff17fb502690f8d592635b33ffb369be58584b2e43e670d7fe60be91822da89",
+    "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+    "dataset_id": "ctp30_multiturn_validation_v2_draft",
+    "dataset_version": "2026-08-28-route-b-task1-expression-revision"
+  },
+  "source_audit": {
+    "path": "experiments/generated/ctp30_multiturn_v2_auto_audit.json",
+    "sha256": "68e7aac4601b3974bece279711ea53b30f924a283b18d7ea9ff42a4b12464cdb",
+    "hash_strategy": "canonical_json_utf8_sort_keys_v1",
+    "status": "passed",
+    "quality_status": "passed",
+    "quality_error_count": 0,
+    "cross_split_duplicate_count": 0,
+    "cross_split_near_duplicate_count": 0
+  },
+  "human_review": {
+    "status": "confirmed",
+    "confirmed_by": "single_annotator_user",
+    "confirmed_on": "2026-08-28",
+    "review_artifact": "experiments/generated/ctp30_multiturn_v2_human_review.md",
+    "review_artifact_sha256_raw": "0e11ec2c941a8083b671d5762c4e097b6c6947eeda35f1f5838185c50033f38f",
+    "confirmed_artifact": "experiments/generated/ctp30_multiturn_v2_human_review_confirmed.md"
+  },
+  "quality_gate": {
+    "status": "passed",
+    "errors": [],
+    "warnings": [],
+    "cross_split_duplicate_count": 0,
+    "cross_split_near_duplicate_count": 0
+  },
+  "paper_use_policy": {
+    "allowed": true,
+    "scope": "supplementary sealed multi-turn validation after CTP100 v6",
+    "must_disclose_single_annotator": true,
+    "must_not_claim_multi_annotator_agreement": true,
+    "must_not_replace_ctp100_main_experiment": true,
+    "ctp30_v1_retained_for_limitations_analysis": true,
+    "formal_runner_update_required_next": true
+  },
+  "api_usage": {
+    "llm_calls": 0,
+    "weather_api_calls": 0,
+    "intercity_api_calls": 0
+  }
+}

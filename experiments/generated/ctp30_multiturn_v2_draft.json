@@ -1,0 +1,4626 @@
+{
+  "schema_version": "ctp-benchmark-v2",
+  "dataset_id": "ctp30_multiturn_validation_v2_draft",
+  "dataset_version": "2026-08-28-route-b-task1-expression-revision",
+  "dataset_role": "sealed_multiturn_validation_draft_for_human_review",
+  "split": "sealed_validation_candidate",
+  "language": "zh-CN",
+  "case_count": 30,
+  "turn_count": 60,
+  "reference_date": "2026-08-06",
+  "description": "Route-B draft CTP30-v2 set. Each case is a true two-turn scenario. Turn 1 creates the method-local context; turn 2 is the primary sealed multi-turn target. This draft must be manually reviewed before freeze.",
+  "weather_snapshot": {
+    "provider": "qweather",
+    "snapshot_id": "ctp_qweather_20260807_v1",
+    "forecast_start_date": "2026-08-07",
+    "forecast_end_date": "2026-09-05",
+    "forecast_horizon_days": 30,
+    "combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997"
+  },
+  "intercity_transport_snapshot": {
+    "provider": "manual_12306",
+    "snapshot_id": "ctp_intercity_rail_second_class_20260813_reviewed_v1",
+    "fare_snapshot_date": "2026-08-13",
+    "combined_sha256": "c0eb0b9048de4cd35c178a866c70cdf85038521833e62acb92469518d0bb53b8",
+    "runtime_online_refresh_allowed": false,
+    "fare_scope": "one_way_per_person",
+    "round_trip_multiplier": 2
+  },
+  "annotation_policy": {
+    "visible_language": "zh-CN",
+    "gold_visible_to_generation": false,
+    "slot_gold_consistency_required": true,
+    "changed_slot_current_utterance_required": true,
+    "preserved_slot_previous_state_required": true,
+    "fixed_offline_city_only": true,
+    "recommended_formal_task_coverage_required": true,
+    "single_annotator_with_auto_rule_audit": true,
+    "human_review_required_before_freeze": true,
+    "statistical_unit": "case_id",
+    "actual_turn_unit": "scenario turn",
+    "primary_evaluation_turn": "t2",
+    "day8_weather_policy": "Explicit relative dates are resolved against 2026-08-06 and must use the frozen QWeather snapshot. No-date trip plans must not invent weather and must remind users to check weather before departure.",
+    "intercity_budget_policy": "Supported origin-destination routes use frozen adult second-class G/C/D-train round-trip fares. Missing or unsupported origin must not guess intercity cost."
+  },
+  "claim_policy": {
+    "draft_only": true,
+    "used_for_development_tuning": false,
+    "allowed_methods_after_freeze": [
+      "fixed_multi_agent",
+      "adaptive_multi_agent"
+    ],
+    "must_not_run_before_human_confirmation": true,
+    "paper_wording_required": "论文中应说明 CTP30-v2 由单人标注并经自动规则审计；不得声称多人一致性。"
+  },
+  "quota_policy": {
+    "scenario_case_count": 30,
+    "scenario_turn_count": 60,
+    "total_turn_count": 60,
+    "first_turn_role": "context_building",
+    "target_turn_role": "primary_multi_turn_validation",
+    "target_turn_task_quotas": {
+      "attraction_recommendation": 1,
+      "budget_query": 4,
+      "clarification": 1,
+      "partial_replan": 15,
+      "weather_adjustment": 6,
+      "weather_query": 3
+    }
+  },
+  "cases": [
+    {
+      "case_id": "ctp30_mt_v2_001",
+      "scenario_id": "ctp30_mt_v2_001",
+      "title": "预算变化｜杭州｜仅重算预算",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我和朋友想去杭州玩3天，日期还没定，两个人总预算最多5500元，想轻松一点，先帮我安排一版。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5500,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5500,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5500,
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "hangzhou",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5500,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "预算上限调整为4200元，目的地、行程天数和出行人数均保持不变，只需要重新判断费用是否够用。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "budget_amount": 4200
+          },
+          "slots": {
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4200
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4200,
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "hangzhou",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 4200,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "budget_amount"
+            ],
+            "preserved_slots": [
+              "destination",
+              "duration_days",
+              "people_count"
+            ],
+            "partial_replan_policy": "budget_only",
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_002",
+      "scenario_id": "ctp30_mt_v2_002",
+      "title": "预算变化｜北京｜含城际交通",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我从上海出发去北京玩2天，一个人，日期还没定，总预算最多6500元，想多看看历史文化景点。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "origin": "shanghai",
+            "destination": "beijing",
+            "duration_days": 2,
+            "people_count": 1,
+            "budget_amount": 6500,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "slots": {
+            "origin": "shanghai",
+            "destination": "beijing",
+            "duration_days": 2,
+            "people_count": 1,
+            "budget_amount": 6500,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "origin": "shanghai",
+            "destination": "beijing",
+            "duration_days": 2,
+            "people_count": 1,
+            "budget_amount": 6500,
+            "preferences": [
+              "history_culture"
+            ],
+            "intercity_transport_mode": "high_speed_or_d_train",
+            "intercity_seat_class": "second_class",
+            "intercity_transport_included": true,
+            "budget_scope": "local_plus_round_trip_intercity",
+            "intercity_route_id": "shanghai_beijing_rail_second_class",
+            "intercity_one_way_fare_per_person_cny": 661.0,
+            "intercity_round_trip_cost_cny": 1322.0,
+            "hard_constraints": {
+              "origin": "shanghai",
+              "destination": "beijing",
+              "duration_days": 2,
+              "people_count": 1,
+              "budget_limit": 6500,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "总预算调整为5000元，出发地、目的地、行程天数和出行人数均保持不变，只重新计算预算。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "budget_amount": 5000
+          },
+          "slots": {
+            "origin": "shanghai",
+            "destination": "beijing",
+            "duration_days": 2,
+            "people_count": 1,
+            "budget_amount": 5000,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "origin": "shanghai",
+            "destination": "beijing",
+            "duration_days": 2,
+            "people_count": 1,
+            "budget_amount": 5000,
+            "preferences": [
+              "history_culture"
+            ],
+            "intercity_transport_mode": "high_speed_or_d_train",
+            "intercity_seat_class": "second_class",
+            "intercity_transport_included": true,
+            "budget_scope": "local_plus_round_trip_intercity",
+            "intercity_route_id": "shanghai_beijing_rail_second_class",
+            "intercity_one_way_fare_per_person_cny": 661.0,
+            "intercity_round_trip_cost_cny": 1322.0,
+            "hard_constraints": {
+              "origin": "shanghai",
+              "destination": "beijing",
+              "duration_days": 2,
+              "people_count": 1,
+              "budget_limit": 5000,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "budget_amount"
+            ],
+            "preserved_slots": [
+              "origin",
+              "destination",
+              "duration_days",
+              "people_count"
+            ],
+            "partial_replan_policy": "budget_only",
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_003",
+      "scenario_id": "ctp30_mt_v2_003",
+      "title": "预算变化｜深圳｜保留天气证据",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "明天从广州去深圳玩2天，亲子两个人出行，总预算最多6200元，帮我安排得轻松一点。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "origin": "guangzhou",
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "origin": "guangzhou",
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [],
+            "origin": "guangzhou",
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_mode": "high_speed_or_d_train",
+            "intercity_seat_class": "second_class",
+            "intercity_transport_included": true,
+            "budget_scope": "local_plus_round_trip_intercity",
+            "intercity_route_id": "guangzhou_shenzhen_rail_second_class",
+            "intercity_one_way_fare_per_person_cny": 74.5,
+            "intercity_round_trip_cost_cny": 298.0,
+            "hard_constraints": {
+              "origin": "guangzhou",
+              "destination": "shenzhen",
+              "start_date": "2026-08-07",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 6200,
+              "traveler_group": "family",
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-07",
+              "2026-08-08"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "预算上限调整为5200元，出发时间、出发地、目的地、行程天数和出行人数均保持不变，只更新预算判断。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "budget_amount": 5200
+          },
+          "slots": {
+            "origin": "guangzhou",
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "origin": "guangzhou",
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_mode": "high_speed_or_d_train",
+            "intercity_seat_class": "second_class",
+            "intercity_transport_included": true,
+            "budget_scope": "local_plus_round_trip_intercity",
+            "intercity_route_id": "guangzhou_shenzhen_rail_second_class",
+            "intercity_one_way_fare_per_person_cny": 74.5,
+            "intercity_round_trip_cost_cny": 298.0,
+            "hard_constraints": {
+              "origin": "guangzhou",
+              "destination": "shenzhen",
+              "start_date": "2026-08-07",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 5200,
+              "traveler_group": "family",
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "budget_amount"
+            ],
+            "preserved_slots": [
+              "origin",
+              "destination",
+              "start_date",
+              "duration_days",
+              "people_count"
+            ],
+            "partial_replan_policy": "budget_only_weather_preserved"
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_004",
+      "scenario_id": "ctp30_mt_v2_004",
+      "title": "人数变化｜桂林｜重排行程预算",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想和朋友去桂林玩3天，日期还没定，两个人，总预算最多5000元，希望山水风景多一点。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "preferences": [
+              "nature"
+            ]
+          },
+          "slots": {
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "preferences": [
+              "nature"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "preferences": [
+              "nature"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "guilin",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5000,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "出行人数调整为3个人，目的地、行程天数和预算上限均保持不变，请重新安排路线和费用。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "people_count": 3
+          },
+          "slots": {
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 3,
+            "budget_amount": 5000,
+            "preferences": [
+              "nature"
+            ]
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 3,
+            "budget_amount": 5000,
+            "preferences": [
+              "nature"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "guilin",
+              "duration_days": 3,
+              "people_count": 3,
+              "budget_limit": 5000,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "people_count"
+            ],
+            "preserved_slots": [
+              "destination",
+              "duration_days",
+              "budget_amount"
+            ],
+            "partial_replan_policy": "people_change_reuse_attractions",
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_005",
+      "scenario_id": "ctp30_mt_v2_005",
+      "title": "人数变化｜西安｜保留日期天气",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "后天我想带长辈去西安玩3天，一共3个人，总预算最多7600元，历史文化景点多一些，尽量少走路。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "xian",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 3,
+            "budget_amount": 7600,
+            "traveler_group": "senior",
+            "preferences": [
+              "history_culture"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "destination": "xian",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 3,
+            "budget_amount": 7600,
+            "traveler_group": "senior",
+            "preferences": [
+              "history_culture"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [],
+            "destination": "xian",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 3,
+            "budget_amount": 7600,
+            "traveler_group": "senior",
+            "preferences": [
+              "history_culture"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "xian",
+              "start_date": "2026-08-08",
+              "duration_days": 3,
+              "people_count": 3,
+              "budget_limit": 7600,
+              "traveler_group": "senior",
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-08",
+              "2026-08-09",
+              "2026-08-10"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "出行人数调整为4个人，仍然是带长辈并且希望少走路，出发时间、目的地、行程天数和预算上限均保持不变，请重新安排路线和预算。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "people_count": 4
+          },
+          "slots": {
+            "destination": "xian",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 4,
+            "budget_amount": 7600,
+            "traveler_group": "senior",
+            "preferences": [
+              "history_culture"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "destination": "xian",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 4,
+            "budget_amount": 7600,
+            "traveler_group": "senior",
+            "preferences": [
+              "history_culture"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "xian",
+              "start_date": "2026-08-08",
+              "duration_days": 3,
+              "people_count": 4,
+              "budget_limit": 7600,
+              "traveler_group": "senior",
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "people_count"
+            ],
+            "preserved_slots": [
+              "destination",
+              "start_date",
+              "duration_days",
+              "budget_amount"
+            ],
+            "partial_replan_policy": "people_change_reuse_attractions_weather"
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_006",
+      "scenario_id": "ctp30_mt_v2_006",
+      "title": "补充出发地｜杭州｜仅重算城际预算",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去杭州玩2天，日期还没定，两个人，总预算最多3600元，先按没有出发地的情况做当地行程。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 3600
+          },
+          "slots": {
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 3600
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 3600,
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "hangzhou",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 3600,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "我们从南京出发，目的地、行程天数、出行人数和预算上限均保持不变，路线不用重排，只把高铁大交通算进预算。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "origin": "nanjing"
+          },
+          "slots": {
+            "origin": "nanjing",
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 3600
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "origin": "nanjing",
+            "destination": "hangzhou",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 3600,
+            "intercity_transport_mode": "high_speed_or_d_train",
+            "intercity_seat_class": "second_class",
+            "intercity_transport_included": true,
+            "budget_scope": "local_plus_round_trip_intercity",
+            "intercity_route_id": "nanjing_hangzhou_rail_second_class",
+            "intercity_one_way_fare_per_person_cny": 103.0,
+            "intercity_round_trip_cost_cny": 412.0,
+            "hard_constraints": {
+              "origin": "nanjing",
+              "destination": "hangzhou",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 3600,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "origin"
+            ],
+            "preserved_slots": [
+              "destination",
+              "duration_days",
+              "people_count",
+              "budget_amount"
+            ],
+            "partial_replan_policy": "origin_changed_budget_only",
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_007",
+      "scenario_id": "ctp30_mt_v2_007",
+      "title": "补充出发地｜桂林｜重新安排行程",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去桂林看山水，日期还没定，两个人玩3天，总预算最多5000元，请先按轻松少走路的节奏安排。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "guilin",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5000,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "我们从广州出发，目的地、行程天数、出行人数和预算上限均保持不变，想重新安排行程。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "origin": "guangzhou"
+          },
+          "slots": {
+            "origin": "guangzhou",
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "origin": "guangzhou",
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_mode": "high_speed_or_d_train",
+            "intercity_seat_class": "second_class",
+            "intercity_transport_included": true,
+            "budget_scope": "local_plus_round_trip_intercity",
+            "intercity_route_id": "guangzhou_guilin_rail_second_class",
+            "intercity_one_way_fare_per_person_cny": 200.0,
+            "intercity_round_trip_cost_cny": 800.0,
+            "hard_constraints": {
+              "origin": "guangzhou",
+              "destination": "guilin",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5000,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "origin"
+            ],
+            "preserved_slots": [
+              "destination",
+              "duration_days",
+              "people_count",
+              "budget_amount"
+            ],
+            "partial_replan_policy": "origin_replan_reuse_attractions",
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_008",
+      "scenario_id": "ctp30_mt_v2_008",
+      "title": "目的地变化｜深圳改桂林｜无日期",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去深圳玩2天，日期还没定，两个人，总预算最多4800元，想安排得轻松一点。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "shenzhen",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4800,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "destination": "shenzhen",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4800,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "shenzhen",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4800,
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "shenzhen",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 4800,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "目的地调整为桂林，行程天数、出行人数和预算上限均保持不变，请重新推荐景点并安排完整路线。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "destination": "guilin"
+          },
+          "slots": {
+            "destination": "guilin",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4800,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "guilin",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4800,
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "guilin",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 4800,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "destination"
+            ],
+            "preserved_slots": [
+              "duration_days",
+              "people_count",
+              "budget_amount"
+            ],
+            "partial_replan_policy": "destination_change_no_weather",
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_009",
+      "scenario_id": "ctp30_mt_v2_009",
+      "title": "目的地变化｜杭州改西安｜保留明天",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我明天想去杭州玩2天，两个人，总预算最多4600元，帮我把景点、天气和预算都安排一下。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4600
+          },
+          "slots": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4600
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [],
+            "destination": "hangzhou",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4600,
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-07",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 4600,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-07",
+              "2026-08-08"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "目的地调整为西安，出发时间、行程天数、出行人数和预算上限均保持不变，请重新做完整安排。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "destination": "xian"
+          },
+          "slots": {
+            "destination": "xian",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4600
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [],
+            "destination": "xian",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4600,
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "xian",
+              "start_date": "2026-08-07",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 4600,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "destination"
+            ],
+            "preserved_slots": [
+              "start_date",
+              "duration_days",
+              "people_count",
+              "budget_amount"
+            ],
+            "partial_replan_policy": "destination_change_weather",
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-07",
+              "2026-08-08"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_010",
+      "scenario_id": "ctp30_mt_v2_010",
+      "title": "天数变化｜北京｜无日期",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去北京玩2天，日期还没定，两个人，总预算最多5200元，经典景点为主，节奏轻松少走路。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "beijing",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "destination": "beijing",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "beijing",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "beijing",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 5200,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "行程天数调整为3天，目的地、出行人数和预算上限均保持不变，请重新安排每天路线和费用。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "duration_days": 3
+          },
+          "slots": {
+            "destination": "beijing",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "destination": "beijing",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "beijing",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5200,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "duration_days"
+            ],
+            "preserved_slots": [
+              "destination",
+              "people_count",
+              "budget_amount"
+            ],
+            "partial_replan_policy": "duration_change_no_weather",
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_011",
+      "scenario_id": "ctp30_mt_v2_011",
+      "title": "天数变化｜深圳｜保留明天",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "明天想去深圳玩2天，两个人，总预算最多5600元，希望亲子友好一点。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "traveler_group": "family"
+          },
+          "slots": {
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "traveler_group": "family"
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [],
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "traveler_group": "family",
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "shenzhen",
+              "start_date": "2026-08-07",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 5600,
+              "traveler_group": "family",
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-07",
+              "2026-08-08"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "行程天数调整为3天，出发时间、目的地、出行人数和预算上限均保持不变，请重新安排路线，并更新天气和预算。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "duration_days": 3
+          },
+          "slots": {
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "traveler_group": "family"
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search"
+            ],
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "traveler_group": "family",
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "shenzhen",
+              "start_date": "2026-08-07",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5600,
+              "traveler_group": "family",
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "duration_days"
+            ],
+            "preserved_slots": [
+              "destination",
+              "start_date",
+              "people_count",
+              "budget_amount"
+            ],
+            "partial_replan_policy": "duration_change_weather",
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-07",
+              "2026-08-08",
+              "2026-08-09"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_012",
+      "scenario_id": "ctp30_mt_v2_012",
+      "title": "日期变化｜西安｜新增天气",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去西安玩3天，日期还没定，两个人，总预算最多5200元，希望历史文化景点多一点。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "xian",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "slots": {
+            "destination": "xian",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "xian",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "history_culture"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "xian",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5200,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "出发时间调整为后天，目的地、行程天数、出行人数和预算上限均保持不变，请加入天气后重新安排。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "start_date": "2026-08-08"
+          },
+          "slots": {
+            "destination": "xian",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search"
+            ],
+            "destination": "xian",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "history_culture"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "xian",
+              "start_date": "2026-08-08",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5200,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "start_date"
+            ],
+            "preserved_slots": [
+              "destination",
+              "duration_days",
+              "people_count",
+              "budget_amount"
+            ],
+            "partial_replan_policy": "start_date_added_weather",
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-08",
+              "2026-08-09",
+              "2026-08-10"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_013",
+      "scenario_id": "ctp30_mt_v2_013",
+      "title": "偏好变化｜杭州｜改历史文化",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去杭州玩3天，日期还没定，两个人，总预算最多5200元，先按自然风景和轻松节奏安排。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "hangzhou",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5200,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "游玩偏好调整为历史文化和博物馆，目的地、行程天数、出行人数和预算上限均保持不变，请重新推荐景点并安排路线。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "slots": {
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "history_culture"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "history_culture"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "hangzhou",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5200,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "preferences"
+            ],
+            "preserved_slots": [
+              "destination",
+              "duration_days",
+              "people_count",
+              "budget_amount"
+            ],
+            "partial_replan_policy": "preference_change_no_weather",
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_014",
+      "scenario_id": "ctp30_mt_v2_014",
+      "title": "人群变化｜北京｜改带父母",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去北京玩3天，日期还没定，两个人，总预算最多6000元，经典景点为主。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "beijing",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6000
+          },
+          "slots": {
+            "destination": "beijing",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6000
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "beijing",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6000,
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "beijing",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 6000,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "出行人数调整为3个人，并且改为带老人出行，希望少走路；目的地、行程天数和预算上限均保持不变。",
+          "task_type": "partial_replan",
+          "current_slots": {
+            "people_count": 3,
+            "traveler_group": "senior",
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "destination": "beijing",
+            "duration_days": 3,
+            "people_count": 3,
+            "budget_amount": 6000,
+            "traveler_group": "senior",
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "beijing",
+            "duration_days": 3,
+            "people_count": 3,
+            "budget_amount": 6000,
+            "traveler_group": "senior",
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "beijing",
+              "duration_days": 3,
+              "people_count": 3,
+              "budget_limit": 6000,
+              "traveler_group": "senior",
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "changed_slots": [
+              "people_count",
+              "traveler_group",
+              "special_requirements"
+            ],
+            "preserved_slots": [
+              "destination",
+              "duration_days",
+              "budget_amount"
+            ],
+            "partial_replan_policy": "traveler_group_change",
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_015",
+      "scenario_id": "ctp30_mt_v2_015",
+      "title": "无变化复用｜桂林｜重复上一轮",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去桂林玩2天，日期还没定，两个人，总预算最多4200元，想看山水，但节奏希望轻松一点。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "guilin",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4200,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "destination": "guilin",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4200,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "guilin",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4200,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "guilin",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 4200,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "就按上一轮方案，目的地、行程天数、出行人数和预算上限均保持不变，请再帮我整理一遍。",
+          "task_type": "partial_replan",
+          "current_slots": {},
+          "slots": {
+            "destination": "guilin",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4200,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "partial_replan",
+            "required_tools": [],
+            "accepted_agent_sets": [
+              []
+            ],
+            "accepted_tool_sets": [
+              []
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "destination": "guilin",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 4200,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "guilin",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 4200
+            },
+            "changed_slots": [],
+            "preserved_slots": [
+              "destination",
+              "duration_days",
+              "people_count",
+              "budget_amount"
+            ],
+            "partial_replan_policy": "no_change_reuse",
+            "replan_policy": "no_change_reuse",
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_016",
+      "scenario_id": "ctp30_mt_v2_016",
+      "title": "天气调整｜深圳｜第一天下雨",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "明天想去深圳玩2天，亲子两个人出行，总预算最多5800元，想安排一个室内外结合的轻松行程。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5800,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity",
+              "indoor_preferred"
+            ]
+          },
+          "slots": {
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5800,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity",
+              "indoor_preferred"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [],
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5800,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity",
+              "indoor_preferred"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "shenzhen",
+              "start_date": "2026-08-07",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 5800,
+              "traveler_group": "family",
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-07",
+              "2026-08-08"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "如果明天下午下雨，出发时间、目的地、行程天数、出行人数和预算上限均保持不变，请把第一天户外项目往后挪，并顺便更新预算。",
+          "task_type": "weather_adjustment",
+          "current_slots": {
+            "weather_scenario": "rain"
+          },
+          "slots": {
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5800,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity",
+              "indoor_preferred"
+            ],
+            "weather_scenario": "rain"
+          },
+          "weather_change": {
+            "scenario_type": "rain",
+            "affected_days": [
+              1
+            ],
+            "description": "明天下午下雨"
+          },
+          "expected": {
+            "task_type": "weather_adjustment",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5800,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity",
+              "indoor_preferred"
+            ],
+            "weather_scenario": "rain",
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "shenzhen",
+              "start_date": "2026-08-07",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 5800,
+              "traveler_group": "family",
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_change": {
+              "scenario_type": "rain",
+              "affected_days": [
+                1
+              ],
+              "description": "明天下午下雨"
+            },
+            "weather_adjustment_required": true,
+            "weather_reuse_expected": true,
+            "weather_query_must_not_rerun": true,
+            "partial_replan_policy": "weather_adjustment_itinerary_budget",
+            "previous_artifacts_expected": [
+              "daily_itinerary",
+              "attractions",
+              "budget",
+              "weather"
+            ]
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_017",
+      "scenario_id": "ctp30_mt_v2_017",
+      "title": "天气调整｜桂林｜第二天下雨",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "后天想去桂林玩3天，两个人，总预算最多5200元，想多看看山水风景。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "guilin",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "nature"
+            ]
+          },
+          "slots": {
+            "destination": "guilin",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "nature"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [],
+            "destination": "guilin",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "nature"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "guilin",
+              "start_date": "2026-08-08",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5200,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-08",
+              "2026-08-09",
+              "2026-08-10"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "如果第2天下雨，出发时间、目的地、行程天数、出行人数和预算上限均保持不变，请把坐船和户外山水安排调整得保守一点，并重新计算费用。",
+          "task_type": "weather_adjustment",
+          "current_slots": {
+            "weather_scenario": "rain"
+          },
+          "slots": {
+            "destination": "guilin",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "nature"
+            ],
+            "weather_scenario": "rain"
+          },
+          "weather_change": {
+            "scenario_type": "rain",
+            "affected_days": [
+              2
+            ],
+            "description": "第2天下雨"
+          },
+          "expected": {
+            "task_type": "weather_adjustment",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "destination": "guilin",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "preferences": [
+              "nature"
+            ],
+            "weather_scenario": "rain",
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "guilin",
+              "start_date": "2026-08-08",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5200,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_change": {
+              "scenario_type": "rain",
+              "affected_days": [
+                2
+              ],
+              "description": "第2天下雨"
+            },
+            "weather_adjustment_required": true,
+            "weather_reuse_expected": true,
+            "weather_query_must_not_rerun": true,
+            "partial_replan_policy": "weather_adjustment_itinerary_budget",
+            "previous_artifacts_expected": [
+              "daily_itinerary",
+              "attractions",
+              "budget",
+              "weather"
+            ]
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_018",
+      "scenario_id": "ctp30_mt_v2_018",
+      "title": "天气调整｜杭州｜第二天高温",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "明天想去杭州玩2天，两个人，总预算最多5000元，想轻松看看自然风景和博物馆。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "preferences": [
+              "history_culture",
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "preferences": [
+              "history_culture",
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [],
+            "destination": "hangzhou",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "preferences": [
+              "history_culture",
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-07",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 5000,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-07",
+              "2026-08-08"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "如果第二天高温，出发时间、目的地、行程天数、出行人数和预算上限均保持不变，请尽量减少室外暴晒项目，并重新计算预算。",
+          "task_type": "weather_adjustment",
+          "current_slots": {
+            "weather_scenario": "high_temperature"
+          },
+          "slots": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "preferences": [
+              "history_culture",
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "weather_scenario": "high_temperature"
+          },
+          "weather_change": {
+            "scenario_type": "high_temperature",
+            "affected_days": [
+              2
+            ],
+            "description": "第二天高温"
+          },
+          "expected": {
+            "task_type": "weather_adjustment",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "destination": "hangzhou",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5000,
+            "preferences": [
+              "history_culture",
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "weather_scenario": "high_temperature",
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-07",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 5000,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_change": {
+              "scenario_type": "high_temperature",
+              "affected_days": [
+                2
+              ],
+              "description": "第二天高温"
+            },
+            "weather_adjustment_required": true,
+            "weather_reuse_expected": true,
+            "weather_query_must_not_rerun": true,
+            "partial_replan_policy": "weather_adjustment_itinerary_budget",
+            "previous_artifacts_expected": [
+              "daily_itinerary",
+              "attractions",
+              "budget",
+              "weather"
+            ]
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_019",
+      "scenario_id": "ctp30_mt_v2_019",
+      "title": "天气调整｜北京｜第一天降温",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "后天想去北京玩2天，两个人，总预算最多5400元，经典文化景点为主。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "beijing",
+            "start_date": "2026-08-08",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5400,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "slots": {
+            "destination": "beijing",
+            "start_date": "2026-08-08",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5400,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [],
+            "destination": "beijing",
+            "start_date": "2026-08-08",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5400,
+            "preferences": [
+              "history_culture"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "beijing",
+              "start_date": "2026-08-08",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 5400,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-08",
+              "2026-08-09"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "如果第一天降温比较明显，出发时间、目的地、行程天数、出行人数和预算上限均保持不变，请把露天排队时间压缩一下，并更新预算。",
+          "task_type": "weather_adjustment",
+          "current_slots": {
+            "weather_scenario": "low_temperature"
+          },
+          "slots": {
+            "destination": "beijing",
+            "start_date": "2026-08-08",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5400,
+            "preferences": [
+              "history_culture"
+            ],
+            "weather_scenario": "low_temperature"
+          },
+          "weather_change": {
+            "scenario_type": "low_temperature",
+            "affected_days": [
+              1
+            ],
+            "description": "第一天降温"
+          },
+          "expected": {
+            "task_type": "weather_adjustment",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "destination": "beijing",
+            "start_date": "2026-08-08",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5400,
+            "preferences": [
+              "history_culture"
+            ],
+            "weather_scenario": "low_temperature",
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "beijing",
+              "start_date": "2026-08-08",
+              "duration_days": 2,
+              "people_count": 2,
+              "budget_limit": 5400,
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_change": {
+              "scenario_type": "low_temperature",
+              "affected_days": [
+                1
+              ],
+              "description": "第一天降温"
+            },
+            "weather_adjustment_required": true,
+            "weather_reuse_expected": true,
+            "weather_query_must_not_rerun": true,
+            "partial_replan_policy": "weather_adjustment_itinerary_budget",
+            "previous_artifacts_expected": [
+              "daily_itinerary",
+              "attractions",
+              "budget",
+              "weather"
+            ]
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_020",
+      "scenario_id": "ctp30_mt_v2_020",
+      "title": "天气调整｜西安｜旅途中有雨",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "明天想去西安玩3天，两个人，总预算最多5600元，历史文化和博物馆多一些。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "xian",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "slots": {
+            "destination": "xian",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [],
+            "destination": "xian",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "preferences": [
+              "history_culture"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "xian",
+              "start_date": "2026-08-07",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5600,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-07",
+              "2026-08-08",
+              "2026-08-09"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "如果旅途中有雨，出发时间、目的地、行程天数、出行人数和预算上限均保持不变，请减少第2天和第3天的室外安排，并重新核算预算。",
+          "task_type": "weather_adjustment",
+          "current_slots": {
+            "weather_scenario": "rain"
+          },
+          "slots": {
+            "destination": "xian",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "preferences": [
+              "history_culture"
+            ],
+            "weather_scenario": "rain"
+          },
+          "weather_change": {
+            "scenario_type": "rain",
+            "affected_days": [
+              2,
+              3
+            ],
+            "description": "第2天和第3天有雨"
+          },
+          "expected": {
+            "task_type": "weather_adjustment",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "destination": "xian",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "preferences": [
+              "history_culture"
+            ],
+            "weather_scenario": "rain",
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "xian",
+              "start_date": "2026-08-07",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5600,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_change": {
+              "scenario_type": "rain",
+              "affected_days": [
+                2,
+                3
+              ],
+              "description": "第2天和第3天有雨"
+            },
+            "weather_adjustment_required": true,
+            "weather_reuse_expected": true,
+            "weather_query_must_not_rerun": true,
+            "partial_replan_policy": "weather_adjustment_itinerary_budget",
+            "previous_artifacts_expected": [
+              "daily_itinerary",
+              "attractions",
+              "budget",
+              "weather"
+            ]
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_021",
+      "scenario_id": "ctp30_mt_v2_021",
+      "title": "天气调整｜深圳｜第二天高温",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "明天从广州去深圳玩3天，两个人，总预算最多6800元，想要轻松一点的亲子路线。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "origin": "guangzhou",
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6800,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "origin": "guangzhou",
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6800,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "weather",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "weather_query",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [],
+            "origin": "guangzhou",
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6800,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_mode": "high_speed_or_d_train",
+            "intercity_seat_class": "second_class",
+            "intercity_transport_included": true,
+            "budget_scope": "local_plus_round_trip_intercity",
+            "intercity_route_id": "guangzhou_shenzhen_rail_second_class",
+            "intercity_one_way_fare_per_person_cny": 74.5,
+            "intercity_round_trip_cost_cny": 298.0,
+            "hard_constraints": {
+              "origin": "guangzhou",
+              "destination": "shenzhen",
+              "start_date": "2026-08-07",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 6800,
+              "traveler_group": "family",
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-07",
+              "2026-08-08",
+              "2026-08-09"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "如果第二天高温暴晒，出发时间、出发地、目的地、行程天数、出行人数和预算上限均保持不变，请把室外活动调整到早晚。",
+          "task_type": "weather_adjustment",
+          "current_slots": {
+            "weather_scenario": "high_temperature"
+          },
+          "slots": {
+            "origin": "guangzhou",
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6800,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "weather_scenario": "high_temperature"
+          },
+          "weather_change": {
+            "scenario_type": "high_temperature",
+            "affected_days": [
+              2
+            ],
+            "description": "第二天高温暴晒"
+          },
+          "expected": {
+            "task_type": "weather_adjustment",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "origin": "guangzhou",
+            "destination": "shenzhen",
+            "start_date": "2026-08-07",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6800,
+            "traveler_group": "family",
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "weather_scenario": "high_temperature",
+            "intercity_transport_mode": "high_speed_or_d_train",
+            "intercity_seat_class": "second_class",
+            "intercity_transport_included": true,
+            "budget_scope": "local_plus_round_trip_intercity",
+            "intercity_route_id": "guangzhou_shenzhen_rail_second_class",
+            "intercity_one_way_fare_per_person_cny": 74.5,
+            "intercity_round_trip_cost_cny": 298.0,
+            "hard_constraints": {
+              "origin": "guangzhou",
+              "destination": "shenzhen",
+              "start_date": "2026-08-07",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 6800,
+              "traveler_group": "family",
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_change": {
+              "scenario_type": "high_temperature",
+              "affected_days": [
+                2
+              ],
+              "description": "第二天高温暴晒"
+            },
+            "weather_adjustment_required": true,
+            "weather_reuse_expected": true,
+            "weather_query_must_not_rerun": true,
+            "partial_replan_policy": "weather_adjustment_itinerary_budget",
+            "previous_artifacts_expected": [
+              "daily_itinerary",
+              "attractions",
+              "budget",
+              "weather"
+            ]
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_022",
+      "scenario_id": "ctp30_mt_v2_022",
+      "title": "预算追问｜桂林｜只问够不够",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去桂林玩3天，两个人，日期还没定，总预算最多4600元，先给我安排一条轻松的山水路线。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4600,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4600,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4600,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "guilin",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 4600,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "行程先不改，目的地、行程天数、出行人数和预算上限均保持不变，只帮我重新说明预算够不够。",
+          "task_type": "budget_query",
+          "current_slots": {},
+          "slots": {
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4600,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "budget_query",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "destination": "guilin",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4600,
+            "preferences": [
+              "nature"
+            ],
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "guilin",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 4600
+            }
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_023",
+      "scenario_id": "ctp30_mt_v2_023",
+      "title": "预算追问｜北京｜含广州出发",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我从广州出发去北京玩4天，两个人，日期还没定，总预算最多12000元，经典景点为主。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "origin": "guangzhou",
+            "destination": "beijing",
+            "duration_days": 4,
+            "people_count": 2,
+            "budget_amount": 12000
+          },
+          "slots": {
+            "origin": "guangzhou",
+            "destination": "beijing",
+            "duration_days": 4,
+            "people_count": 2,
+            "budget_amount": 12000
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "origin": "guangzhou",
+            "destination": "beijing",
+            "duration_days": 4,
+            "people_count": 2,
+            "budget_amount": 12000,
+            "intercity_transport_mode": "high_speed_or_d_train",
+            "intercity_seat_class": "second_class",
+            "intercity_transport_included": true,
+            "budget_scope": "local_plus_round_trip_intercity",
+            "intercity_route_id": "guangzhou_beijing_rail_second_class",
+            "intercity_one_way_fare_per_person_cny": 1033.0,
+            "intercity_round_trip_cost_cny": 4132.0,
+            "hard_constraints": {
+              "origin": "guangzhou",
+              "destination": "beijing",
+              "duration_days": 4,
+              "people_count": 2,
+              "budget_limit": 12000,
+              "min_attractions": 5,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "路线先不改，出发地、目的地、行程天数、出行人数和预算上限均保持不变，只重新列出总费用和人均费用。",
+          "task_type": "budget_query",
+          "current_slots": {},
+          "slots": {
+            "origin": "guangzhou",
+            "destination": "beijing",
+            "duration_days": 4,
+            "people_count": 2,
+            "budget_amount": 12000
+          },
+          "expected": {
+            "task_type": "budget_query",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "origin": "guangzhou",
+            "destination": "beijing",
+            "duration_days": 4,
+            "people_count": 2,
+            "budget_amount": 12000,
+            "intercity_transport_mode": "high_speed_or_d_train",
+            "intercity_seat_class": "second_class",
+            "intercity_transport_included": true,
+            "budget_scope": "local_plus_round_trip_intercity",
+            "intercity_route_id": "guangzhou_beijing_rail_second_class",
+            "intercity_one_way_fare_per_person_cny": 1033.0,
+            "intercity_round_trip_cost_cny": 4132.0,
+            "hard_constraints": {
+              "destination": "beijing",
+              "duration_days": 4,
+              "people_count": 2,
+              "budget_limit": 12000
+            }
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_024",
+      "scenario_id": "ctp30_mt_v2_024",
+      "title": "预算追问｜杭州｜只算当地",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去杭州玩3天，两个人，日期还没定，总预算最多4800元，先安排一版当地行程。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4800
+          },
+          "slots": {
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4800
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4800,
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "hangzhou",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 4800,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "如果只算目的地当地吃住行和门票，不含大交通，目的地、行程天数和出行人数均保持不变，大概需要多少钱？",
+          "task_type": "budget_query",
+          "current_slots": {},
+          "slots": {
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4800
+          },
+          "expected": {
+            "task_type": "budget_query",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 4800,
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "hangzhou",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 4800
+            }
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_025",
+      "scenario_id": "ctp30_mt_v2_025",
+      "title": "预算追问｜西安｜分项费用",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想带老人去西安玩2天，一共3个人，日期还没定，总预算最多6000元，节奏希望轻松一点。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "xian",
+            "duration_days": 2,
+            "people_count": 3,
+            "budget_amount": 6000,
+            "traveler_group": "senior",
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "destination": "xian",
+            "duration_days": 2,
+            "people_count": 3,
+            "budget_amount": 6000,
+            "traveler_group": "senior",
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "xian",
+            "duration_days": 2,
+            "people_count": 3,
+            "budget_amount": 6000,
+            "traveler_group": "senior",
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "xian",
+              "duration_days": 2,
+              "people_count": 3,
+              "budget_limit": 6000,
+              "traveler_group": "senior",
+              "min_attractions": 3,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "行程不用重排，目的地、行程天数、出行人数和预算上限均保持不变，只把住宿、餐饮、门票和市内交通费用分项列清楚。",
+          "task_type": "budget_query",
+          "current_slots": {},
+          "slots": {
+            "destination": "xian",
+            "duration_days": 2,
+            "people_count": 3,
+            "budget_amount": 6000,
+            "traveler_group": "senior",
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "budget_query",
+            "required_tools": [
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query"
+            ],
+            "destination": "xian",
+            "duration_days": 2,
+            "people_count": 3,
+            "budget_amount": 6000,
+            "traveler_group": "senior",
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "xian",
+              "duration_days": 2,
+              "people_count": 3,
+              "budget_limit": 6000
+            }
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_026",
+      "scenario_id": "ctp30_mt_v2_026",
+      "title": "天气追问｜杭州｜明后天",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去杭州玩3天，两个人，日期还没定，总预算最多5200元，先安排一版轻松路线。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "slots": {
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "hangzhou",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "hangzhou",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5200,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "那只帮我查一下杭州明天和后天的天气，路线先不用改。",
+          "task_type": "weather_query",
+          "current_slots": {
+            "start_date": "2026-08-07",
+            "duration_days": 2
+          },
+          "slots": {
+            "destination": "hangzhou",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "special_requirements": [
+              "low_intensity"
+            ]
+          },
+          "expected": {
+            "task_type": "weather_query",
+            "required_tools": [
+              "weather_query"
+            ],
+            "accepted_agent_sets": [
+              [
+                "weather"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "weather_query"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "destination": "hangzhou",
+            "start_date": "2026-08-07",
+            "duration_days": 2,
+            "people_count": 2,
+            "budget_amount": 5200,
+            "special_requirements": [
+              "low_intensity"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "hangzhou",
+              "start_date": "2026-08-07",
+              "duration_days": 2
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-07",
+              "2026-08-08"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_027",
+      "scenario_id": "ctp30_mt_v2_027",
+      "title": "天气追问｜深圳｜后天起三天",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去深圳玩3天，两个人，日期还没定，总预算最多6200元，亲子路线为主。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "shenzhen",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "traveler_group": "family"
+          },
+          "slots": {
+            "destination": "shenzhen",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "traveler_group": "family"
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "shenzhen",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "traveler_group": "family",
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "shenzhen",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 6200,
+              "traveler_group": "family",
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "只帮我查一下深圳后天开始未来3天的天气，看看适不适合安排户外活动。",
+          "task_type": "weather_query",
+          "current_slots": {
+            "start_date": "2026-08-08",
+            "duration_days": 3
+          },
+          "slots": {
+            "destination": "shenzhen",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "traveler_group": "family"
+          },
+          "expected": {
+            "task_type": "weather_query",
+            "required_tools": [
+              "weather_query"
+            ],
+            "accepted_agent_sets": [
+              [
+                "weather"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "weather_query"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "destination": "shenzhen",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "traveler_group": "family",
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "shenzhen",
+              "start_date": "2026-08-08",
+              "duration_days": 3
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "full",
+            "expected_weather_covered_dates": [
+              "2026-08-08",
+              "2026-08-09",
+              "2026-08-10"
+            ],
+            "expected_weather_missing_dates": [],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_028",
+      "scenario_id": "ctp30_mt_v2_028",
+      "title": "天气追问｜北京｜一个月后超范围",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去北京玩3天，两个人，日期还没确定，总预算最多6200元，历史文化景点为主。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "beijing",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "slots": {
+            "destination": "beijing",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "beijing",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "preferences": [
+              "history_culture"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "beijing",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 6200,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "如果一个月后去北京玩3天，现在能查到那几天的天气预报吗？这次只查天气。",
+          "task_type": "weather_query",
+          "current_slots": {
+            "start_date": "2026-09-06",
+            "duration_days": 3
+          },
+          "slots": {
+            "destination": "beijing",
+            "start_date": "2026-09-06",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "expected": {
+            "task_type": "weather_query",
+            "required_tools": [
+              "weather_query"
+            ],
+            "accepted_agent_sets": [
+              [
+                "weather"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "weather_query"
+              ]
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "destination": "beijing",
+            "start_date": "2026-09-06",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 6200,
+            "preferences": [
+              "history_culture"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "beijing",
+              "start_date": "2026-09-06",
+              "duration_days": 3
+            },
+            "weather_required": true,
+            "weather_date_policy": "explicit_date_use_qweather_snapshot",
+            "expected_weather_coverage_status": "out_of_range",
+            "expected_weather_covered_dates": [],
+            "expected_weather_missing_dates": [
+              "2026-09-06",
+              "2026-09-07",
+              "2026-09-08"
+            ],
+            "weather_snapshot_id": "ctp_qweather_20260807_v1"
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_029",
+      "scenario_id": "ctp30_mt_v2_029",
+      "title": "景点追问｜西安｜只要室内景点",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "我想去西安玩3天，两个人，日期还没定，总预算最多5600元，历史文化景点多一些。",
+          "task_type": "trip_planning",
+          "current_slots": {
+            "destination": "xian",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "slots": {
+            "destination": "xian",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "preferences": [
+              "history_culture"
+            ]
+          },
+          "expected": {
+            "task_type": "trip_planning",
+            "required_tools": [
+              "poi_search",
+              "budget_calculator"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction",
+                "itinerary",
+                "budget"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search",
+                "budget_calculator"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query"
+            ],
+            "destination": "xian",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "preferences": [
+              "history_culture"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "xian",
+              "duration_days": 3,
+              "people_count": 2,
+              "budget_limit": 5600,
+              "min_attractions": 4,
+              "max_pois_per_day": 2
+            },
+            "weather_required": false,
+            "weather_date_policy": "no_date_no_specific_weather_for_trip_plan",
+            "no_date_weather_reminder_required": true
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "行程先不用重排，只给我再推荐4个西安室内或博物馆类景点。",
+          "task_type": "attraction_recommendation",
+          "current_slots": {
+            "destination": "xian",
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "special_requirements": [
+              "indoor_preferred"
+            ]
+          },
+          "slots": {
+            "destination": "xian",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "special_requirements": [
+              "indoor_preferred"
+            ]
+          },
+          "expected": {
+            "task_type": "attraction_recommendation",
+            "required_tools": [
+              "poi_search"
+            ],
+            "accepted_agent_sets": [
+              [
+                "attraction"
+              ]
+            ],
+            "accepted_tool_sets": [
+              [
+                "poi_search"
+              ]
+            ],
+            "forbidden_tools": [
+              "weather_query",
+              "budget_calculator"
+            ],
+            "destination": "xian",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5600,
+            "preferences": [
+              "history_culture",
+              "indoor"
+            ],
+            "special_requirements": [
+              "indoor_preferred"
+            ],
+            "intercity_transport_included": false,
+            "budget_scope": "destination_local_only",
+            "mandatory_budget_disclaimer": true,
+            "hard_constraints": {
+              "destination": "xian",
+              "min_attractions": 4,
+              "max_attractions": 6
+            },
+            "min_attractions": 4,
+            "max_attractions": 6
+          },
+          "turn_id": "t2"
+        }
+      ]
+    },
+    {
+      "case_id": "ctp30_mt_v2_030",
+      "scenario_id": "ctp30_mt_v2_030",
+      "title": "闲聊到澄清｜缺核心信息",
+      "evaluation_scope": "target_turn_only_after_freeze",
+      "primary_turn_id": "t2",
+      "check": "第一轮真实运行建立该方法自己的状态；第二轮只允许读取同一方法上一轮状态，不注入金标状态。",
+      "turns": [
+        {
+          "user_input": "你好，我先随便看看，想了解一下你能不能帮我做旅游计划。",
+          "task_type": "general_chat",
+          "current_slots": {},
+          "slots": {},
+          "expected": {
+            "task_type": "general_chat",
+            "required_tools": [],
+            "accepted_agent_sets": [
+              []
+            ],
+            "accepted_tool_sets": [
+              []
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ]
+          },
+          "turn_id": "t1"
+        },
+        {
+          "user_input": "那我想做一份完整行程，但还没想好去哪，也没定玩几天、几个人去，你先问我需要补充什么。",
+          "task_type": "clarification",
+          "current_slots": {},
+          "slots": {},
+          "expected": {
+            "task_type": "clarification",
+            "required_tools": [],
+            "accepted_agent_sets": [
+              []
+            ],
+            "accepted_tool_sets": [
+              []
+            ],
+            "forbidden_tools": [
+              "poi_search",
+              "weather_query",
+              "budget_calculator"
+            ],
+            "missing_slots": [
+              "destination",
+              "duration_days",
+              "people_count"
+            ]
+          },
+          "turn_id": "t2"
+        }
+      ]
+    }
+  ]
+}
