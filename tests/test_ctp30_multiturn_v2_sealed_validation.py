@@ -1,7 +1,13 @@
 import csv
 import json
 import subprocess
+import sys
 from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
 from app.core.fixed_data import canonical_json_sha256
 from experiments.run_ctp30_multiturn_v2_sealed_validation import (
@@ -19,7 +25,6 @@ from experiments.run_ctp30_multiturn_v2_sealed_validation import (
 )
 
 
-ROOT = Path(__file__).resolve().parents[1]
 FROZEN_DATASET = ROOT / "experiments" / "ctp30_multiturn_validation_v2.json"
 FREEZE_MANIFEST = ROOT / "experiments" / "generated" / "ctp30_multiturn_v2_freeze_manifest.json"
 
@@ -95,6 +100,9 @@ def test_ctp30_multiturn_v2_report_passes_for_complete_two_turn_grid(
     assert report["results"]["actual_primary_result_count"] == CTP30_MT_V2_EXPECTED_PRIMARY_RESULTS
     assert report["paired_m3_vs_m2_primary_turn"]["pair_count"] == 30
     assert report["previous_state_audit"]["missing_previous_slots_count"] == 0
+    assert report["worker_previous_state_audit"]["turn2_previous_slots_required_count"] == 58
+    assert report["worker_previous_state_audit"]["turn2_previous_slots_not_required_count"] == 2
+    assert report["worker_previous_state_audit"]["missing_previous_slots_count"] == 0
     assert report["worker_previous_state_audit"]["raw_previous_state_gold_field_violation_count"] == 0
     assert report["failed_checks"] == []
     markdown = render_multiturn_v2_report(report)
@@ -122,7 +130,8 @@ def test_ctp30_multiturn_v2_report_fails_when_turn2_lacks_previous_slots(
     first_t2_request = next(
         path
         for path in sorted((run_dir / "worker_io").glob("*.request.json"))
-        if json.loads(path.read_text(encoding="utf-8"))["case"].get("turn_id") == "t2"
+        if json.loads(path.read_text(encoding="utf-8"))["request_id"]
+        == victim["request_id"]
     )
     request_payload = json.loads(first_t2_request.read_text(encoding="utf-8"))
     request_payload["case"]["previous_state"]["slots"] = {}
@@ -144,6 +153,45 @@ def test_ctp30_multiturn_v2_report_fails_when_turn2_lacks_previous_slots(
 
     assert report["status"] == "failed"
     assert "turn2_previous_slots_auditable" in report["failed_checks"]
+
+
+def test_ctp30_multiturn_v2_report_allows_empty_previous_slots_for_non_slot_control(
+    tmp_path: Path,
+) -> None:
+    run_dir = tmp_path / "ctp30_mt_v2_no_slot_control"
+    run_dir.mkdir()
+    benchmark = json.loads(FROZEN_DATASET.read_text(encoding="utf-8"))
+    results = _complete_results(benchmark)
+    _write_run_artifacts(run_dir, results, benchmark)
+    for request_path in sorted((run_dir / "worker_io").glob("*.request.json")):
+        request_payload = json.loads(request_path.read_text(encoding="utf-8"))
+        case = request_payload.get("case") or {}
+        if case.get("case_id") != "ctp30_mt_v2_030" or case.get("turn_id") != "t2":
+            continue
+        request_payload["case"]["previous_state"]["slots"] = {}
+        request_path.write_text(
+            json.dumps(request_payload, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
+
+    report = build_multiturn_v2_report(
+        run_id="ctp30-mt-v2",
+        run_dir=run_dir,
+        benchmark_path=FROZEN_DATASET,
+        benchmark_document=benchmark,
+        runtime_config=_runtime_config(api_configured=True),
+        preflight=_preflight_dict(),
+        results=results,
+        elapsed_seconds=30.0,
+    )
+
+    worker_audit = report["worker_previous_state_audit"]
+    assert report["status"] == "passed"
+    assert report["checks"]["turn2_previous_slots_auditable"] is True
+    assert worker_audit["missing_previous_slots_count"] == 0
+    assert worker_audit["optional_empty_previous_slots_count"] == 2
+    assert worker_audit["turn2_previous_slots_required_count"] == 58
+    assert worker_audit["turn2_previous_slots_not_required_count"] == 2
 
 
 def _complete_results(benchmark: dict) -> list[dict]:

@@ -436,7 +436,13 @@ def build_multiturn_v2_report(
     )
     paired_stsr = _paired_stsr(summary)
     previous_state_audit = _previous_state_audit(results)
-    worker_audit = _worker_previous_state_audit(run_dir, results)
+    worker_audit = _worker_previous_state_audit(
+        run_dir,
+        results,
+        previous_slots_required_by_case=_previous_slots_required_by_case(
+            benchmark_document
+        ),
+    )
     trace_audit = _trace_audit(run_dir, traces, result_count=len(results))
     api_clean = _api_clean_pair_summary(
         results,
@@ -640,7 +646,10 @@ def render_multiturn_v2_report(report: Mapping[str, Any]) -> str:
         f"- wrong_method_count: `{prev.get('wrong_method_count')}`",
         f"- wrong_prior_turn_count: `{prev.get('wrong_prior_turn_count')}`",
         f"- result_previous_slots_audit_available_count: `{prev.get('result_previous_slots_audit_available_count')}`",
+        f"- worker_previous_slots_required_count: `{worker.get('turn2_previous_slots_required_count')}`",
+        f"- worker_previous_slots_not_required_count: `{worker.get('turn2_previous_slots_not_required_count')}`",
         f"- worker_missing_previous_slots_count: `{worker.get('missing_previous_slots_count')}`",
+        f"- worker_optional_empty_previous_slots_count: `{worker.get('optional_empty_previous_slots_count')}`",
         f"- visible_previous_state_leak_count: `{prev.get('visible_previous_state_leak_count')}`",
         f"- worker_raw_previous_state_gold_field_violation_count: `{worker.get('raw_previous_state_gold_field_violation_count')}`",
         "",
@@ -892,9 +901,38 @@ def _previous_state_audit(results: Iterable[Mapping[str, Any]]) -> Dict[str, Any
     }
 
 
+def _previous_slots_required_by_case(
+    benchmark_document: Mapping[str, Any],
+) -> Dict[str, bool]:
+    """Return whether each scenario should have non-empty previous slots on t2.
+
+    Most CTP30-v2 scenarios start with a concrete travel request, so their second
+    turn must expose auditable slots copied from the method's own first-turn
+    runtime state.  A small number of control scenarios start as general chat or
+    clarification and legitimately have no travel slots yet; those still require
+    a method-local prior state, but they must not fail only because the prior
+    state's slots are empty.
+    """
+    requirements: Dict[str, bool] = {}
+    for case in _cases_from_document(benchmark_document):
+        case_id = _case_id(case)
+        turns = case.get("turns") if isinstance(case.get("turns"), list) else []
+        first_turn = turns[0] if turns and isinstance(turns[0], Mapping) else {}
+        slots = first_turn.get("slots") if isinstance(first_turn.get("slots"), Mapping) else {}
+        current_slots = (
+            first_turn.get("current_slots")
+            if isinstance(first_turn.get("current_slots"), Mapping)
+            else {}
+        )
+        requirements[case_id] = bool(slots or current_slots)
+    return requirements
+
+
 def _worker_previous_state_audit(
     run_dir: Path,
     results: Iterable[Mapping[str, Any]],
+    *,
+    previous_slots_required_by_case: Mapping[str, bool],
 ) -> Dict[str, Any]:
     worker_dir = run_dir / "worker_io"
     request_paths = sorted(worker_dir.glob("*.request.json")) if worker_dir.exists() else []
@@ -918,12 +956,21 @@ def _worker_previous_state_audit(
     ]
     missing_request = []
     missing_previous_state = []
-    missing_previous_slots = []
+    missing_required_previous_slots = []
+    empty_optional_previous_slots = []
     method_local_violations = []
     prior_turn_violations = []
     gold_violations = []
+    previous_slots_required_count = 0
+    previous_slots_not_required_count = 0
     for result in turn2_results:
         label = _result_label(result)
+        case_id = str(label.get("case_id") or "")
+        previous_slots_required = previous_slots_required_by_case.get(case_id, True)
+        if previous_slots_required:
+            previous_slots_required_count += 1
+        else:
+            previous_slots_not_required_count += 1
         request_id = str(result.get("request_id") or "")
         payload = request_by_id.get(request_id)
         if not isinstance(payload, Mapping):
@@ -940,7 +987,10 @@ def _worker_previous_state_audit(
             continue
         previous_slots = previous_state.get("slots")
         if not isinstance(previous_slots, Mapping) or not previous_slots:
-            missing_previous_slots.append(label)
+            if previous_slots_required:
+                missing_required_previous_slots.append(label)
+            else:
+                empty_optional_previous_slots.append(label)
         if str(previous_state.get("method") or "") != str(payload.get("method") or ""):
             method_local_violations.append(label)
         if not (
@@ -963,21 +1013,23 @@ def _worker_previous_state_audit(
         "turn2_result_count": len(turn2_results),
         "turn2_request_count": len(turn2_results) - len(missing_request),
         "turn2_previous_state_count": len(turn2_results) - len(missing_previous_state) - len(missing_request),
+        "turn2_previous_slots_required_count": previous_slots_required_count,
+        "turn2_previous_slots_not_required_count": previous_slots_not_required_count,
         "turn2_previous_slots_auditable_count": (
-            len(turn2_results)
-            - len(missing_request)
-            - len(missing_previous_state)
-            - len(missing_previous_slots)
+            previous_slots_required_count
+            - len(missing_required_previous_slots)
         ),
         "missing_worker_request_count": len(missing_request),
         "missing_previous_state_count": len(missing_previous_state),
-        "missing_previous_slots_count": len(missing_previous_slots),
+        "missing_previous_slots_count": len(missing_required_previous_slots),
+        "optional_empty_previous_slots_count": len(empty_optional_previous_slots),
         "method_local_violation_count": len(method_local_violations),
         "prior_turn_violation_count": len(prior_turn_violations),
         "raw_previous_state_gold_field_violation_count": len(gold_violations),
         "sample_missing_worker_request": missing_request[:10],
         "sample_missing_previous_state": missing_previous_state[:10],
-        "sample_missing_previous_slots": missing_previous_slots[:10],
+        "sample_missing_previous_slots": missing_required_previous_slots[:10],
+        "sample_optional_empty_previous_slots": empty_optional_previous_slots[:10],
         "sample_method_local_violations": method_local_violations[:10],
         "sample_prior_turn_violations": prior_turn_violations[:10],
         "sample_raw_previous_state_gold_field_violations": gold_violations[:10],
