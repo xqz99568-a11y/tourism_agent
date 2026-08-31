@@ -1381,9 +1381,13 @@ def _classify_result_failure(root: Path, result: Dict[str, Any], *, index: int) 
     terminal_api_events = [event for event in api_events if event.get("terminal")]
     hard_timeout = _result_hard_timeout_triggered(result)
     is_failed_status = status == "failed" or result.get("status") == "failed" or bool(result.get("error"))
+    worker_failure_reason = _result_worker_integrity_failure_reason(result)
     if not valid_status:
         category = "integrity_failure"
         reason = "missing_or_invalid_execution_status"
+    elif is_failed_status and worker_failure_reason:
+        category = "integrity_failure"
+        reason = worker_failure_reason
     elif is_failed_status and not trace_exists:
         category = "integrity_failure"
         reason = "failed_result_missing_trace_evidence"
@@ -1590,6 +1594,24 @@ def _result_hard_timeout_triggered(result: Dict[str, Any]) -> bool:
         or _nested(result, "output", "metadata", "result_hard_timeout", "triggered")
         or _nested(result, "result_hard_timeout", "triggered")
     )
+
+
+def _result_worker_integrity_failure_reason(result: Dict[str, Any]) -> str:
+    if _result_hard_timeout_triggered(result):
+        return ""
+    worker_status = str(
+        _nested(result, "result_hard_timeout", "worker_status")
+        or _nested(result, "output", "metadata", "result_hard_timeout", "worker_status")
+        or ""
+    ).strip().lower()
+    if worker_status and worker_status not in {"completed", "timeout"}:
+        return "result_worker_failed_before_valid_result"
+    error = str(result.get("error") or _nested(result, "output", "error") or "").lower()
+    if "experiment result worker failed before producing a valid result" in error:
+        return "result_worker_failed_before_valid_result"
+    if "worker exited with code" in error:
+        return "result_worker_failed_before_valid_result"
+    return ""
 
 
 def _has_model_or_method_evidence(result: Dict[str, Any], trace: Dict[str, Any]) -> bool:

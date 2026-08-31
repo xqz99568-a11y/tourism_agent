@@ -10,6 +10,7 @@ if str(ROOT) not in sys.path:
 
 from app.core.formal_experiment_gate import (
     FORMAL_EXPERIMENT_GATE_SCHEMA_VERSION,
+    _failure_classification_summary,
     write_formal_experiment_gate,
 )
 from app.core.formal_artifact_integrity import build_formal_artifact_integrity_report
@@ -121,6 +122,47 @@ def test_formal_experiment_gate_retains_method_failure_without_blocking_integrit
     assert gate["checks"]["no_integrity_failures"] is True
     assert gate["failure_classification_summary"]["method_failure_count"] == 1
     assert gate["failure_classification_summary"]["integrity_failure_count"] == 0
+
+
+def test_failure_classification_marks_worker_bootstrap_failure_as_integrity(
+    tmp_path: Path,
+) -> None:
+    result = {
+        "case_id": "worker-error-case",
+        "scenario_id": "worker-error-case",
+        "turn_id": "t1",
+        "method": "adaptive_multi_agent_no_reuse",
+        "repeat_index": 0,
+        "status": "failed",
+        "error": (
+            "experiment result worker failed before producing a valid result: "
+            "worker exited with code 1: ValueError: method must be one of ..."
+        ),
+        "trace": {
+            "request_id": "worker-error-trace",
+            "llm_calls": [],
+        },
+        "output": {
+            "execution_status": "failed",
+            "metadata": {
+                "result_hard_timeout": {
+                    "worker_status": "failed",
+                    "triggered": False,
+                }
+            },
+        },
+        "metrics": {
+            "stsr": False,
+            "evaluation_failed_rule_ids": ["G_EXECUTION_STATUS_VALID"],
+        },
+    }
+
+    summary = _failure_classification_summary(tmp_path, [result])
+
+    assert summary["integrity_failure_count"] == 1
+    assert summary["method_failure_count"] == 0
+    assert summary["items"][0]["category"] == "integrity_failure"
+    assert summary["items"][0]["reason"] == "result_worker_failed_before_valid_result"
 
 
 def test_formal_experiment_gate_retains_api_failure_with_retry_evidence(

@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from app.core import experiment_result_worker  # noqa: E402
 from app.core.formal_experiment_preflight import load_benchmark_document  # noqa: E402
 from experiments.run_ctp100_m3_no_reuse_ablation import (  # noqa: E402
     CTP100_M3_NO_REUSE_ABLATION_METHOD,
@@ -45,6 +46,69 @@ def test_ctp100_m3_no_reuse_preflight_selects_all_two_turn_scenarios(
     assert report["benchmark"]["selected_two_turn_scenario_count"] == 30
     assert report["benchmark"]["selected_turn_count"] == 60
     assert report["checks"]["two_turn_scenario_count_30"] is True
+
+
+def test_m3_no_reuse_result_worker_uses_ablation_runner(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    observed = {}
+
+    async def fake_arun(
+        self,
+        case,
+        method="adaptive_multi_agent",
+        *,
+        run_id=None,
+        repeat_index=None,
+        system_variant=None,
+        model_config_name=None,
+        request_id=None,
+    ):
+        observed["runner_class"] = self.__class__.__name__
+        observed["case_id"] = case["case_id"]
+        observed["method"] = method
+        observed["run_id"] = run_id
+        observed["repeat_index"] = repeat_index
+        observed["request_id"] = request_id
+        return {
+            "case_id": case["case_id"],
+            "method": method,
+            "status": "completed",
+        }
+
+    monkeypatch.setattr(M3NoReuseAblationRunner, "arun", fake_arun)
+
+    result = asyncio.run(
+        experiment_result_worker._run(
+            {
+                "case": {
+                    "case_id": "ctp100_v2_051",
+                    "user_input": "预算改成5200元，出发时间、目的地、人数都不变。",
+                },
+                "method": CTP100_M3_NO_REUSE_ABLATION_METHOD,
+                "request_id": "worker-no-reuse-unit",
+                "trace_dir": (tmp_path / "traces").as_posix(),
+                "output_dir": (tmp_path / "results").as_posix(),
+                "run_id": "worker-no-reuse-unit",
+                "repeat_index": 2,
+                "system_variant": CTP100_M3_NO_REUSE_ABLATION_METHOD,
+                "model_config_name": "unit",
+                "repeats": 3,
+                "method_order_seed": 20260718,
+            }
+        )
+    )
+
+    assert result["status"] == "completed"
+    assert observed == {
+        "runner_class": "M3NoReuseAblationRunner",
+        "case_id": "ctp100_v2_051",
+        "method": CTP100_M3_NO_REUSE_ABLATION_METHOD,
+        "run_id": "worker-no-reuse-unit",
+        "repeat_index": 2,
+        "request_id": "worker-no-reuse-unit",
+    }
 
 
 def test_m3_no_reuse_strips_previous_artifacts_but_keeps_slots(

@@ -1,6 +1,6 @@
 {
   "schema_version": "ctp-pre-formal-validation-registry-v1",
-  "created_at": "2026-08-28T15:48:35.491238+00:00",
+  "created_at": "2026-08-30T17:31:13.679416+00:00",
   "hash_strategy": "sha256_file_bytes_v1",
   "purpose": "Bind Task D/E/F real-API validation reports to the formal experiment preflight and delivery package.",
   "warning_policy": {
@@ -101,8 +101,8 @@
       "key": "experiment_result_worker_code",
       "path": "app/core/experiment_result_worker.py",
       "exists": true,
-      "size_bytes": 3716,
-      "sha256": "7a26514e021c915c0abf6d3d1e74e20d0fc7ef411abf8ffaa67694e9b123ca87"
+      "size_bytes": 4534,
+      "sha256": "68cf013d82c4c778e39b81b37cb64940240c843c0df4162e1616f762b9aed684"
     },
     {
       "key": "experiment_run_audit_code",
@@ -143,8 +143,8 @@
       "key": "formal_gate_code",
       "path": "app/core/formal_experiment_gate.py",
       "exists": true,
-      "size_bytes": 78167,
-      "sha256": "3d9f4a4284a83118ded831908931a974e3c517241bfa4930a1f6365ca704666d"
+      "size_bytes": 79206,
+      "sha256": "7a45fcffb6421ed2805e3bde59e16d9467a6f30a1560dcc89414545309155636"
     },
     {
       "key": "formal_preflight_code",

@@ -13,7 +13,7 @@ import sys
 import time
 import traceback
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Type
 
 from app.core.experiment_runner import (
     EXPERIMENT_RESULT_HARD_TIMEOUT_CHILD_ENV,
@@ -66,29 +66,46 @@ def main(argv: list[str] | None = None) -> int:
 
 
 async def _run(payload: Dict[str, Any]) -> Dict[str, Any]:
+    previous_child_env = os.environ.get(EXPERIMENT_RESULT_HARD_TIMEOUT_CHILD_ENV)
     os.environ[EXPERIMENT_RESULT_HARD_TIMEOUT_CHILD_ENV] = "true"
-    runner = ExperimentRunner(
-        trace_dir=Path(str(payload["trace_dir"])),
-        output_dir=Path(str(payload["output_dir"])),
-        repeats=int(payload.get("repeats") or 1),
-        run_id=str(payload.get("run_id") or ""),
-        repeat_index=int(payload.get("repeat_index") or 0),
-        system_variant=str(payload.get("system_variant") or ""),
-        model_config_name=str(payload.get("model_config_name") or ""),
-        method_order_seed=int(payload.get("method_order_seed") or 20260718),
-        enable_research_agent_decision_normalizer=bool(
-            payload.get("enable_research_agent_decision_normalizer", True)
-        ),
-    )
-    return await runner.arun(
-        payload.get("case") if isinstance(payload.get("case"), dict) else {},
-        method=str(payload.get("method") or "adaptive_multi_agent"),
-        run_id=str(payload.get("run_id") or ""),
-        repeat_index=int(payload.get("repeat_index") or 0),
-        system_variant=str(payload.get("system_variant") or ""),
-        model_config_name=str(payload.get("model_config_name") or ""),
-        request_id=str(payload.get("request_id") or ""),
-    )
+    try:
+        runner_class = _runner_class_for_payload(payload)
+        runner = runner_class(
+            trace_dir=Path(str(payload["trace_dir"])),
+            output_dir=Path(str(payload["output_dir"])),
+            repeats=int(payload.get("repeats") or 1),
+            run_id=str(payload.get("run_id") or ""),
+            repeat_index=int(payload.get("repeat_index") or 0),
+            system_variant=str(payload.get("system_variant") or ""),
+            model_config_name=str(payload.get("model_config_name") or ""),
+            method_order_seed=int(payload.get("method_order_seed") or 20260718),
+            enable_research_agent_decision_normalizer=bool(
+                payload.get("enable_research_agent_decision_normalizer", True)
+            ),
+        )
+        return await runner.arun(
+            payload.get("case") if isinstance(payload.get("case"), dict) else {},
+            method=str(payload.get("method") or "adaptive_multi_agent"),
+            run_id=str(payload.get("run_id") or ""),
+            repeat_index=int(payload.get("repeat_index") or 0),
+            system_variant=str(payload.get("system_variant") or ""),
+            model_config_name=str(payload.get("model_config_name") or ""),
+            request_id=str(payload.get("request_id") or ""),
+        )
+    finally:
+        if previous_child_env is None:
+            os.environ.pop(EXPERIMENT_RESULT_HARD_TIMEOUT_CHILD_ENV, None)
+        else:
+            os.environ[EXPERIMENT_RESULT_HARD_TIMEOUT_CHILD_ENV] = previous_child_env
+
+
+def _runner_class_for_payload(payload: Dict[str, Any]) -> Type[ExperimentRunner]:
+    method = str(payload.get("method") or "").strip().lower()
+    if method == "adaptive_multi_agent_no_reuse":
+        from experiments.run_ctp100_m3_no_reuse_ablation import M3NoReuseAblationRunner
+
+        return M3NoReuseAblationRunner
+    return ExperimentRunner
 
 
 def _write_response(path: Path, payload: Dict[str, Any]) -> None:
