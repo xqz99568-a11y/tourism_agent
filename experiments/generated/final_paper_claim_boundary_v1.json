@@ -1,0 +1,126 @@
+{
+  "schema_version": "final_paper_claim_boundary_v1",
+  "created_date": "2026-08-31",
+  "status": "claim_boundary_ready",
+  "purpose": "Freeze the paper-level claim boundary based on completed formal experiments and offline analyses.",
+  "source_artifacts": {
+    "ctp100_main_v6": "D:/Tourism_Agent_Formal_Runs/formal_ctp100_20260825_v6",
+    "ctp100_m2_m3_stability": "D:/Tourism_Agent_Formal_Runs/ctp100_m2_m3_stability/ctp100_m2m3_stability_20260830_v1",
+    "ctp100_m3_no_reuse_ablation": "D:/Tourism_Agent_Formal_Runs/ctp100_m3_no_reuse_ablation/ctp100_m3_no_reuse_ablation_20260831_v2",
+    "ctp30_v1_sealed_validation": "D:/Tourism_Agent_Formal_Runs/ctp30_sealed_validation/ctp30_sealed_validation_20260826_v1",
+    "ctp30_v2_multiturn_sealed_validation": "D:/Tourism_Agent_Formal_Runs/ctp30_sealed_validation/ctp30_multiturn_v2_20260830_v2",
+    "holm_secondary_statistics": "D:/Tourism_Agent_Formal_Runs/formal_ctp100_20260825_v6_secondary_statistics",
+    "final_offline_analysis": "D:/Tourism_Agent_Formal_Runs/paper_final_offline_analysis/paper_final_offline_analysis_20260831_v1"
+  },
+  "allowed_claims": [
+    {
+      "claim_id": "claim_ctp100_main_m3_better_than_m2",
+      "claim": "On the frozen CTP100 benchmark, M3 achieves higher STSR than M2.",
+      "evidence": {
+        "m2_stsr": 0.86,
+        "m3_stsr": 0.96,
+        "delta": 0.1,
+        "ci95": [
+          0.04,
+          0.17
+        ],
+        "mcnemar_p": 0.0063
+      },
+      "recommended_wording_zh": "在CTP100主实验中，M3相对M2在任务成功率上取得10个百分点提升，配对检验显示该差异具有统计证据支持。"
+    },
+    {
+      "claim_id": "claim_ctp100_repeat_stability",
+      "claim": "The M3-over-M2 STSR advantage on CTP100 is supported by repeated runs.",
+      "evidence": {
+        "m2_repeat_stsr": 0.8567,
+        "m3_repeat_stsr": 0.9567,
+        "delta": 0.1,
+        "ci95": [
+          0.04,
+          0.1667
+        ],
+        "mcnemar_p": 0.002
+      },
+      "recommended_wording_zh": "CTP100三次重复实验中，M3相对M2保持约10个百分点的STSR优势，说明主实验观察到的提升具有重复稳定性证据。"
+    },
+    {
+      "claim_id": "claim_reuse_efficiency_not_accuracy",
+      "claim": "The reuse component mainly improves resource efficiency rather than target-turn STSR.",
+      "evidence": {
+        "m3_full_target_stsr": 0.9667,
+        "m3_no_reuse_target_stsr": 0.9667,
+        "stsr_delta": 0.0,
+        "token_delta_full_minus_no_reuse": -4785.6556,
+        "cost_delta_full_minus_no_reuse": -0.0044,
+        "latency_delta_ms_full_minus_no_reuse": -29538.4237,
+        "agent_call_delta_full_minus_no_reuse": -1.5667,
+        "tool_call_delta_full_minus_no_reuse": -1.3333
+      },
+      "recommended_wording_zh": "结果复用没有提高目标轮STSR，但明显减少重复Agent调用、工具调用、Token消耗、标准化估算成本和响应时延。"
+    },
+    {
+      "claim_id": "claim_sealed_validation_boundary",
+      "claim": "CTP30-v2 shows a generalization boundary: M3 does not outperform M2 under stricter sealed multiturn validation.",
+      "evidence": {
+        "ctp30_v2_m2_stsr": 0.6333,
+        "ctp30_v2_m3_stsr": 0.6333,
+        "delta": 0.0,
+        "mcnemar_p": 1.0
+      },
+      "recommended_wording_zh": "CTP30-v2封闭多轮验证中，M3没有表现出相对M2的显著优势，说明当前方法仍存在多轮泛化和鲁棒性边界。"
+    }
+  ],
+  "disallowed_claims": [
+    {
+      "claim": "M3 outperforms M2 in all tourism scenarios.",
+      "reason": "The evidence is limited to frozen CTP100 and CTP30 validation datasets."
+    },
+    {
+      "claim": "M3 significantly outperforms M2 on CTP30-v2.",
+      "reason": "CTP30-v2 reports equal STSR for M2 and M3, with p=1.0."
+    },
+    {
+      "claim": "Result reuse improves task success rate.",
+      "reason": "The M3-full and M3-no-reuse target-turn STSR values are equal."
+    },
+    {
+      "claim": "M3 is cheaper than M2.",
+      "reason": "In CTP100 main results, M3 has higher total tokens and higher standardized estimated cost than M2."
+    },
+    {
+      "claim": "The formal experiment uses real-time weather.",
+      "reason": "The formal experiment uses frozen weather snapshots."
+    },
+    {
+      "claim": "Standardized estimated cost is the actual relay API bill.",
+      "reason": "It is a normalized estimate based on the frozen pricing policy."
+    },
+    {
+      "claim": "The benchmark labels were independently annotated by multiple annotators.",
+      "reason": "The current design is single-person annotation plus automatic rule audit."
+    }
+  ],
+  "paper_section_plan": [
+    {
+      "section": "Main experiment",
+      "role": "Use CTP100 v6 to compare M0, M1, M2, and M3."
+    },
+    {
+      "section": "Repeated stability",
+      "role": "Use CTP100 M2/M3 repeats to show that the M3 advantage is stable across repeated runs."
+    },
+    {
+      "section": "Ablation",
+      "role": "Use M3-no-reuse to isolate the effect of result reuse."
+    },
+    {
+      "section": "Sealed validation and limitations",
+      "role": "Use CTP30-v1/v2 to discuss generalization boundaries."
+    }
+  ],
+  "final_core_claims": [
+    "M3 obtains a stable STSR improvement over M2 on frozen CTP100.",
+    "The main M3 advantage should be attributed to the state-driven adaptive multi-agent scheduling chain, while result reuse primarily reduces resource consumption.",
+    "CTP30-v2 exposes a sealed multiturn generalization boundary where M3 does not outperform M2."
+  ]
+}
