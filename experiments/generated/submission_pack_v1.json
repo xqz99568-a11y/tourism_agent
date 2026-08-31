@@ -1,0 +1,163 @@
+{
+  "schema_version": "submission_pack_v1",
+  "created_date": "2026-08-31",
+  "status": "paper_materials_ready_for_manual_formatting",
+  "current_branch": "m3-no-reuse-ablation-v1",
+  "purpose": "Collect paper draft, formal experiment artifacts, Git freeze tags, claim boundaries, and submission-time manual todos.",
+  "git_freeze_tags": [
+    {
+      "tag": "formal-ctp100-v6",
+      "commit": "0b925c93e2edf88e2dfb4346b11bc24faaae24a7",
+      "purpose": "Freeze CTP100 main experiment v6 code and inputs."
+    },
+    {
+      "tag": "ctp100-m2m3-stability-runner-v1",
+      "commit": "b82346c3461ec95cb669927d26436d0a04b23cf2",
+      "purpose": "Freeze CTP100 M2/M3 repeat-stability runner."
+    },
+    {
+      "tag": "ctp100-m2m3-stability-analysis-v1",
+      "commit": "c59e2618384aee2d8840beb4f33870aceb8f2fb9",
+      "purpose": "Freeze CTP100 M2/M3 repeat-stability offline analysis."
+    },
+    {
+      "tag": "m3-no-reuse-ablation-runner-v1",
+      "commit": "f47c86281dc4aa98f9987ba405c75c0d08046ba7",
+      "purpose": "Freeze initial M3-no-reuse ablation runner."
+    },
+    {
+      "tag": "m3-no-reuse-ablation-worker-fix-v1",
+      "commit": "d2cf9149a44fb476279b9bf19b871741da73fd8b",
+      "purpose": "Freeze valid M3-no-reuse ablation worker fix and runnable version."
+    },
+    {
+      "tag": "ctp30-sealed-validation-v1",
+      "commit": "e097c8fadff980caf0e4f2dcd4980f06dbb573c3",
+      "purpose": "Freeze CTP30-v1 sealed validation."
+    },
+    {
+      "tag": "ctp30-multiturn-v2-gatefix-v1",
+      "commit": "a99082176e9200545378613cbc60a852fba338a7",
+      "purpose": "Freeze CTP30-v2 sealed multiturn validation gate fix."
+    },
+    {
+      "tag": "final-paper-analysis-v1",
+      "commit": "aa7c6eb5af6fa6510b2300b40099f8e4e7818426",
+      "purpose": "Freeze final offline paper analysis and claim boundary."
+    },
+    {
+      "tag": "paper-draft-v1",
+      "commit": "3a7abbdef0b22cbea16b3e3d8395c3913ba6268f",
+      "purpose": "Freeze paper experiment section and full draft."
+    },
+    {
+      "tag": "paper-claim-audit-v1",
+      "commit": "4c72df739dd2451b0d71c4d42b567861e90b7ed3",
+      "purpose": "Freeze paper claim audit."
+    }
+  ],
+  "formal_experiment_artifacts": [
+    {
+      "name": "CTP100 main experiment v6",
+      "path": "D:/Tourism_Agent_Formal_Runs/formal_ctp100_20260825_v6",
+      "paper_role": "Main experiment comparing M0/M1/M2/M3."
+    },
+    {
+      "name": "CTP100 Holm secondary statistics",
+      "path": "D:/Tourism_Agent_Formal_Runs/formal_ctp100_20260825_v6_secondary_statistics",
+      "paper_role": "Holm correction for secondary metrics."
+    },
+    {
+      "name": "CTP100 M2/M3 repeat stability",
+      "path": "D:/Tourism_Agent_Formal_Runs/ctp100_m2_m3_stability/ctp100_m2m3_stability_20260830_v1",
+      "paper_role": "Repeated stability evidence for M3 over M2."
+    },
+    {
+      "name": "CTP100 M2/M3 stability offline analysis",
+      "path": "D:/Tourism_Agent_Formal_Runs/ctp100_m2_m3_stability/ctp100_m2m3_stability_20260830_v1_offline_analysis",
+      "paper_role": "Offline summary of repeat-stability results."
+    },
+    {
+      "name": "M3-no-reuse ablation",
+      "path": "D:/Tourism_Agent_Formal_Runs/ctp100_m3_no_reuse_ablation/ctp100_m3_no_reuse_ablation_20260831_v2",
+      "paper_role": "Result reuse ablation."
+    },
+    {
+      "name": "CTP30-v1 sealed validation",
+      "path": "D:/Tourism_Agent_Formal_Runs/ctp30_sealed_validation/ctp30_sealed_validation_20260826_v1",
+      "paper_role": "Boundary analysis."
+    },
+    {
+      "name": "CTP30-v2 sealed multiturn validation",
+      "path": "D:/Tourism_Agent_Formal_Runs/ctp30_sealed_validation/ctp30_multiturn_v2_20260830_v2",
+      "paper_role": "Unseen multiturn validation and limitation analysis."
+    },
+    {
+      "name": "Final paper offline analysis",
+      "path": "D:/Tourism_Agent_Formal_Runs/paper_final_offline_analysis/paper_final_offline_analysis_20260831_v1",
+      "paper_role": "Final tables and aggregated analysis for the paper."
+    }
+  ],
+  "paper_files": [
+    {
+      "path": "experiments/generated/paper_full_draft_v1.md",
+      "role": "Full Chinese paper draft."
+    },
+    {
+      "path": "experiments/generated/paper_experiment_section_draft_v1.md",
+      "role": "Experiment section draft."
+    },
+    {
+      "path": "experiments/generated/final_paper_claim_boundary_v1.md",
+      "role": "Human-readable allowed/disallowed claim boundary."
+    },
+    {
+      "path": "experiments/generated/final_paper_claim_boundary_v1.json",
+      "role": "Machine-readable allowed/disallowed claim boundary."
+    },
+    {
+      "path": "experiments/generated/paper_claim_audit_v1.md",
+      "role": "Human-readable paper claim audit."
+    },
+    {
+      "path": "experiments/generated/paper_claim_audit_v1.json",
+      "role": "Machine-readable paper claim audit."
+    },
+    {
+      "path": "experiments/generated/submission_pack_v1.md",
+      "role": "Human-readable submission pack."
+    },
+    {
+      "path": "experiments/generated/submission_pack_v1.json",
+      "role": "Machine-readable submission pack."
+    }
+  ],
+  "allowed_core_claims": [
+    "On frozen CTP100, M3 achieves a stable STSR improvement over M2.",
+    "M3's main advantage should be attributed to state-driven adaptive multi-agent scheduling; result reuse mainly improves resource efficiency.",
+    "CTP30-v2 shows no M3-over-M2 advantage and should be discussed as an unseen sealed multiturn generalization boundary."
+  ],
+  "disallowed_claims": [
+    "M3 outperforms M2 in all tourism scenarios.",
+    "M3 outperforms M2 on CTP30-v2.",
+    "Result reuse improves target-turn task success rate.",
+    "M3 is cheaper or more token-efficient than M2 in the main experiment.",
+    "The formal experiment uses real-time weather.",
+    "Standardized estimated cost equals the real relay API bill.",
+    "The dataset was independently annotated by multiple annotators."
+  ],
+  "manual_submission_todos": [
+    "Fill author, affiliation, corresponding author, email, and funding information.",
+    "Apply the official Telecommunications Science journal template.",
+    "Convert the Markdown draft to Word or the required submission format.",
+    "Convert Markdown tables to journal-style three-line tables.",
+    "Draw system architecture and M3 adaptive scheduling flow figures.",
+    "Add Chinese references on smart tourism, tourism recommendation, LLM agents, tool use, and telecom-tourism applications.",
+    "Normalize all references to the journal style.",
+    "Tighten the two minor wording issues identified by paper_claim_audit_v1.",
+    "Backup D:/Tourism_Agent_Formal_Runs before submission.",
+    "Run a final full-text claim and formatting check before submission."
+  ],
+  "recommended_backup_root": "D:/Tourism_Agent_Submission_Backup/submission_v1",
+  "final_recommendation": "Do not run more experiments for the current paper version. Proceed with manual formatting, figures, references, and final claim/format checks."
+}
