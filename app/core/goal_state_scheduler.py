@@ -8,6 +8,7 @@ from typing import Any, Iterable, Mapping
 
 TICKET_SCHEMA_VERSION = "ctp-goal-state-ticket-v1"
 DECISION_SCHEMA_VERSION = "ctp-scheduler-decision-v1"
+INVALIDATION_PROPAGATION_DEFAULT_ENABLED = True
 
 CANONICAL_AGENT_ORDER = ("attraction", "weather", "itinerary", "budget")
 CANONICAL_TOOL_ORDER = ("poi_search", "weather_query", "budget_calculator")
@@ -565,6 +566,12 @@ class SchedulerDecision:
     clarification_fields: list[str] = field(default_factory=list)
     decision_reasons: list[str] = field(default_factory=list)
     reuse_validation: dict[str, Any] = field(default_factory=dict)
+    invalidation_propagation_enabled: bool = True
+    initial_invalidated_agents: list[str] = field(default_factory=list)
+    propagated_invalidated_agents: list[str] = field(default_factory=list)
+    final_invalidated_agents: list[str] = field(default_factory=list)
+    propagation_candidates: list[str] = field(default_factory=list)
+    propagation_reasons: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -957,6 +964,17 @@ class GoalStateTicketBuilder:
 class GoalStateScheduler:
     """Select the minimal required agents/tools from a goal-state ticket."""
 
+    def __init__(
+        self,
+        *,
+        invalidation_propagation_enabled: bool = (
+            INVALIDATION_PROPAGATION_DEFAULT_ENABLED
+        ),
+    ) -> None:
+        self.invalidation_propagation_enabled = bool(
+            invalidation_propagation_enabled
+        )
+
     def schedule(
         self,
         ticket: GoalStateTaskTicket,
@@ -1037,8 +1055,10 @@ class GoalStateScheduler:
                 previous_state=previous_state,
                 planned_agents=["weather", "itinerary", "budget"],
                 invalidated_agents=["weather", "itinerary", "budget"],
+                initial_invalidated_agents=["weather", "budget"],
+                propagated_invalidated_agents=["itinerary"],
                 decision_reasons=["weather_changed_itinerary_adjustment"],
-                reuse_scope_agents=["attraction"],
+                reuse_scope_agents=["attraction", "itinerary"],
             )
 
         if ticket.task_type == "partial_replan":
@@ -1176,64 +1196,87 @@ class GoalStateScheduler:
 
         planned_agents: list[str] = []
         invalidated_agents: list[str] = []
+        initial_invalidated_agents: list[str] = []
         decision_reasons: list[str] = []
 
         if "duration_days" in changed:
+            weather_required = _slots_require_weather_for_itinerary(ticket.current_slots)
             duration_agents = (
                 ["weather", "itinerary", "budget"]
-                if _slots_require_weather_for_itinerary(ticket.current_slots)
+                if weather_required
                 else ["itinerary", "budget"]
             )
             planned_agents.extend(duration_agents)
             invalidated_agents.extend(duration_agents)
+            initial_invalidated_agents.extend(
+                ["weather", "budget"]
+                if weather_required
+                else ["itinerary", "budget"]
+            )
             decision_reasons.append("duration_changed_partial_replan")
 
         if "start_date" in changed:
             planned_agents.extend(["weather", "itinerary", "budget"])
             invalidated_agents.extend(["weather", "itinerary", "budget"])
+            initial_invalidated_agents.extend(["weather", "budget"])
             decision_reasons.append("date_changed_weather_itinerary_budget_replan")
 
         if "people_count" in changed:
             planned_agents.extend(["itinerary", "budget"])
             invalidated_agents.extend(["itinerary", "budget"])
+            initial_invalidated_agents.extend(["itinerary", "budget"])
             decision_reasons.append("people_count_changed_itinerary_budget_replan")
 
         if "traveler_group" in changed:
             planned_agents.extend(["attraction", "itinerary", "budget"])
             invalidated_agents.extend(["attraction", "itinerary", "budget"])
+            initial_invalidated_agents.append("attraction")
             decision_reasons.append("traveler_group_changed_replan")
 
         if "preferences" in changed:
             planned_agents.extend(["attraction", "itinerary", "budget"])
             invalidated_agents.extend(["attraction", "itinerary", "budget"])
+            initial_invalidated_agents.append("attraction")
             decision_reasons.append("preferences_changed_replan")
 
         if "special_requirements" in changed:
             planned_agents.extend(["attraction", "itinerary", "budget"])
             invalidated_agents.extend(["attraction", "itinerary", "budget"])
+            initial_invalidated_agents.append("attraction")
             decision_reasons.append("special_requirements_changed_replan")
 
         if changed & {"budget_amount", "budget_level"}:
             if ticket.goal_change_type == "explicit_replan":
                 planned_agents.extend(["itinerary", "budget"])
                 invalidated_agents.extend(["itinerary", "budget"])
+                initial_invalidated_agents.extend(["itinerary", "budget"])
                 decision_reasons.append("budget_changed_itinerary_budget_replan")
             else:
                 planned_agents.append("budget")
                 invalidated_agents.append("budget")
+                initial_invalidated_agents.append("budget")
                 decision_reasons.append("budget_changed_budget_only")
 
         if "weather_scenario" in changed:
             planned_agents.extend(["weather", "itinerary"])
             invalidated_agents.extend(["weather", "itinerary"])
+            initial_invalidated_agents.append("weather")
             decision_reasons.append("weather_changed_itinerary_adjustment")
 
         if planned_agents or invalidated_agents:
+            initial_set = set(_ordered_agents(initial_invalidated_agents))
+            propagated_invalidated_agents = [
+                agent
+                for agent in _ordered_agents(invalidated_agents)
+                if agent not in initial_set
+            ]
             return self._decision_with_reuse_validation(
                 ticket=ticket,
                 previous_state=previous_state,
                 planned_agents=planned_agents,
                 invalidated_agents=invalidated_agents,
+                initial_invalidated_agents=initial_invalidated_agents,
+                propagated_invalidated_agents=propagated_invalidated_agents,
                 decision_reasons=decision_reasons,
             )
 
@@ -1251,21 +1294,45 @@ class GoalStateScheduler:
         planned_agents: list[str] | None = None,
         reused_agents: list[str] | None = None,
         invalidated_agents: list[str] | None = None,
+        initial_invalidated_agents: list[str] | None = None,
+        propagated_invalidated_agents: list[str] | None = None,
+        propagation_candidates: list[str] | None = None,
+        propagation_reasons: list[str] | None = None,
         clarification_required: bool = False,
         clarification_fields: list[str] | None = None,
         decision_reasons: list[str] | None = None,
         reuse_validation: dict[str, Any] | None = None,
     ) -> SchedulerDecision:
         ordered_planned_agents = _ordered_agents(planned_agents or [])
+        ordered_invalidated_agents = _ordered_agents(invalidated_agents or [])
+        ordered_initial_invalidated_agents = _ordered_agents(
+            ordered_invalidated_agents
+            if initial_invalidated_agents is None
+            else initial_invalidated_agents
+        )
+        ordered_propagated_invalidated_agents = _ordered_agents(
+            propagated_invalidated_agents or []
+        )
+        ordered_propagation_candidates = _ordered_agents(
+            propagation_candidates
+            if propagation_candidates is not None
+            else ordered_propagated_invalidated_agents
+        )
         return SchedulerDecision(
             planned_agents=ordered_planned_agents,
             planned_tools=_tools_for_agents(ordered_planned_agents),
             reused_agents=_ordered_agents(reused_agents or []),
-            invalidated_agents=_ordered_agents(invalidated_agents or []),
+            invalidated_agents=ordered_invalidated_agents,
             clarification_required=clarification_required,
             clarification_fields=clarification_fields or [],
             decision_reasons=decision_reasons or [],
             reuse_validation=reuse_validation or {},
+            invalidation_propagation_enabled=self.invalidation_propagation_enabled,
+            initial_invalidated_agents=ordered_initial_invalidated_agents,
+            propagated_invalidated_agents=ordered_propagated_invalidated_agents,
+            final_invalidated_agents=ordered_invalidated_agents,
+            propagation_candidates=ordered_propagation_candidates,
+            propagation_reasons=list(dict.fromkeys(propagation_reasons or [])),
         )
 
     def _decision_with_reuse_validation(
@@ -1275,11 +1342,42 @@ class GoalStateScheduler:
         previous_state: Mapping[str, Any] | None,
         planned_agents: list[str] | None = None,
         invalidated_agents: list[str] | None = None,
+        initial_invalidated_agents: list[str] | None = None,
+        propagated_invalidated_agents: list[str] | None = None,
         decision_reasons: list[str] | None = None,
         reuse_scope_agents: list[str] | None = None,
     ) -> SchedulerDecision:
         planned = list(planned_agents or [])
         invalidated = list(invalidated_agents or [])
+        initial_invalidated = list(
+            invalidated
+            if initial_invalidated_agents is None
+            else initial_invalidated_agents
+        )
+        declared_propagation_candidates = list(propagated_invalidated_agents or [])
+        propagation_candidates = list(declared_propagation_candidates)
+        applied_propagation = (
+            list(declared_propagation_candidates)
+            if self.invalidation_propagation_enabled
+            else []
+        )
+        propagation_reasons: list[str] = []
+        if declared_propagation_candidates:
+            propagation_reasons.append("slot_change_downstream_invalidation")
+
+        if not self.invalidation_propagation_enabled:
+            suppressed = set(_ordered_agents(declared_propagation_candidates))
+            planned = [agent for agent in planned if agent not in suppressed]
+            invalidated = [agent for agent in invalidated if agent not in suppressed]
+
+        ignored_fingerprint_slots_by_agent: dict[str, tuple[str, ...]] = {}
+        if not self.invalidation_propagation_enabled:
+            ignored_changed_slots = tuple(ticket.changed_slots or [])
+            ignored_fingerprint_slots_by_agent = dict.fromkeys(
+                _ordered_agents(declared_propagation_candidates),
+                ignored_changed_slots,
+            )
+
         scope = tuple(_ordered_agents(reuse_scope_agents or list(CANONICAL_AGENT_ORDER)))
         excluded = tuple(_ordered_agents([*planned, *invalidated]))
         reusable_agents = self._available_agents(
@@ -1287,32 +1385,66 @@ class GoalStateScheduler:
             previous_state,
             exclude=excluded,
             scope=scope,
+            ignored_fingerprint_slots_by_agent=ignored_fingerprint_slots_by_agent,
         )
         unusable_agents = self._unusable_agents(
             ticket,
             previous_state,
             exclude=excluded,
             scope=scope,
+            ignored_fingerprint_slots_by_agent=ignored_fingerprint_slots_by_agent,
         )
+        if not self.invalidation_propagation_enabled:
+            for agent in _ordered_agents(declared_propagation_candidates):
+                if agent not in reusable_agents and agent not in unusable_agents:
+                    planned.append(agent)
         cascaded_unusable = self._cascade_unusable_agents(
             unusable_agents,
             previous_state,
             ticket=ticket,
         )
-        if cascaded_unusable:
-            planned.extend(cascaded_unusable)
-            invalidated.extend(cascaded_unusable)
+        unusable_set = set(unusable_agents)
+        unusable_propagation_candidates = [
+            agent for agent in cascaded_unusable if agent not in unusable_set
+        ]
+        if unusable_propagation_candidates:
+            propagation_candidates.extend(unusable_propagation_candidates)
+            propagation_reasons.append("unusable_upstream_downstream_invalidation")
+            if self.invalidation_propagation_enabled:
+                applied_propagation.extend(unusable_propagation_candidates)
+
+        if unusable_agents or (
+            self.invalidation_propagation_enabled and unusable_propagation_candidates
+        ):
+            initial_invalidated.extend(unusable_agents)
+            planned.extend(unusable_agents)
+            invalidated.extend(unusable_agents)
+            if self.invalidation_propagation_enabled:
+                planned.extend(unusable_propagation_candidates)
+                invalidated.extend(unusable_propagation_candidates)
             if decision_reasons is None:
                 decision_reasons = []
             if "previous_result_unusable_replan" not in decision_reasons:
                 decision_reasons = [*decision_reasons, "previous_result_unusable_replan"]
 
-        planned, invalidated, reusable_agents, dependency_reasons = self._enforce_dependencies(
+        (
+            planned,
+            invalidated,
+            reusable_agents,
+            dependency_reasons,
+            dependency_propagation,
+            dependency_propagation_candidates,
+        ) = self._enforce_dependencies(
             ticket=ticket,
             planned_agents=planned,
             invalidated_agents=invalidated,
             reusable_agents=reusable_agents,
         )
+        if dependency_propagation_candidates:
+            propagation_candidates.extend(dependency_propagation_candidates)
+            propagation_reasons.append("planned_upstream_downstream_invalidation")
+        if dependency_propagation:
+            applied_propagation.extend(dependency_propagation)
         if dependency_reasons:
             existing_reasons = list(decision_reasons or [])
             for reason in dependency_reasons:
@@ -1324,6 +1456,10 @@ class GoalStateScheduler:
             planned_agents=planned,
             reused_agents=reusable_agents,
             invalidated_agents=invalidated,
+            initial_invalidated_agents=initial_invalidated,
+            propagated_invalidated_agents=applied_propagation,
+            propagation_candidates=propagation_candidates,
+            propagation_reasons=propagation_reasons,
             decision_reasons=decision_reasons,
             reuse_validation=self._reuse_validation(
                 ticket,
@@ -1341,6 +1477,7 @@ class GoalStateScheduler:
         *,
         exclude: tuple[str, ...] = (),
         scope: tuple[str, ...] | None = None,
+        ignored_fingerprint_slots_by_agent: Mapping[str, Iterable[str]] | None = None,
     ) -> list[str]:
         excluded = set(exclude)
         scoped_agents = scope or CANONICAL_AGENT_ORDER
@@ -1352,6 +1489,9 @@ class GoalStateScheduler:
                 agent,
                 ticket=ticket,
                 previous_state=previous_state,
+                ignored_fingerprint_slots=(
+                    ignored_fingerprint_slots_by_agent or {}
+                ).get(agent, ()),
             )
         ]
 
@@ -1362,6 +1502,7 @@ class GoalStateScheduler:
         *,
         exclude: tuple[str, ...] = (),
         scope: tuple[str, ...] | None = None,
+        ignored_fingerprint_slots_by_agent: Mapping[str, Iterable[str]] | None = None,
     ) -> list[str]:
         excluded = set(exclude)
         scoped_agents = set(scope or CANONICAL_AGENT_ORDER)
@@ -1374,6 +1515,9 @@ class GoalStateScheduler:
                 agent,
                 ticket=ticket,
                 previous_state=previous_state,
+                ignored_fingerprint_slots=(
+                    ignored_fingerprint_slots_by_agent or {}
+                ).get(agent, ()),
             )
         ]
 
@@ -1447,11 +1591,20 @@ class GoalStateScheduler:
         planned_agents: list[str],
         invalidated_agents: list[str],
         reusable_agents: list[str],
-    ) -> tuple[list[str], list[str], list[str], list[str]]:
+    ) -> tuple[
+        list[str],
+        list[str],
+        list[str],
+        list[str],
+        list[str],
+        list[str],
+    ]:
         planned = set(_ordered_agents(planned_agents))
         invalidated = set(_ordered_agents(invalidated_agents))
         reusable = set(_ordered_agents(reusable_agents))
         reasons: list[str] = []
+        propagated: set[str] = set()
+        propagation_candidates: set[str] = set()
 
         changed = True
         while changed:
@@ -1475,18 +1628,23 @@ class GoalStateScheduler:
                             reasons.append("missing_upstream_result_replan")
 
                 if dependent in reusable and upstream_changed:
-                    reusable.remove(dependent)
-                    planned.add(dependent)
-                    invalidated.add(dependent)
-                    changed = True
-                    if "dependent_result_invalidated" not in reasons:
-                        reasons.append("dependent_result_invalidated")
+                    propagation_candidates.add(dependent)
+                    if self.invalidation_propagation_enabled:
+                        reusable.remove(dependent)
+                        planned.add(dependent)
+                        invalidated.add(dependent)
+                        propagated.add(dependent)
+                        changed = True
+                        if "dependent_result_invalidated" not in reasons:
+                            reasons.append("dependent_result_invalidated")
 
         return (
             _ordered_agents(list(planned)),
             _ordered_agents(list(invalidated)),
             _ordered_agents(list(reusable)),
             reasons,
+            _ordered_agents(list(propagated)),
+            _ordered_agents(list(propagation_candidates)),
         )
 
 
@@ -1507,8 +1665,11 @@ def schedule_goal_state_ticket(
     ticket: GoalStateTaskTicket,
     *,
     previous_state: Mapping[str, Any] | None = None,
+    invalidation_propagation_enabled: bool = INVALIDATION_PROPAGATION_DEFAULT_ENABLED,
 ) -> SchedulerDecision:
-    return GoalStateScheduler().schedule(ticket, previous_state=previous_state)
+    return GoalStateScheduler(
+        invalidation_propagation_enabled=invalidation_propagation_enabled
+    ).schedule(ticket, previous_state=previous_state)
 
 
 def normalize_slots(
@@ -2274,6 +2435,7 @@ def is_goal_state_agent_reusable_for_ticket(
     *,
     ticket: GoalStateTaskTicket | Mapping[str, Any] | None,
     previous_state: Mapping[str, Any] | None,
+    ignored_fingerprint_slots: Iterable[str] = (),
 ) -> bool:
     """Return whether a previous result is reusable under a concrete ticket.
 
@@ -2294,11 +2456,13 @@ def is_goal_state_agent_reusable_for_ticket(
             agent_name,
             current_slots=current_slots,
             previous_state=previous_state,
+            ignored_fingerprint_slots=ignored_fingerprint_slots,
         )
     return _is_agent_reusable_for_ticket(
         agent_name,
         ticket=normalized_ticket,
         previous_state=previous_state,
+        ignored_fingerprint_slots=ignored_fingerprint_slots,
     )
 
 
@@ -2386,11 +2550,13 @@ def _is_agent_reusable_for_ticket(
     *,
     ticket: GoalStateTaskTicket,
     previous_state: Mapping[str, Any] | None,
+    ignored_fingerprint_slots: Iterable[str] = (),
 ) -> bool:
     return _is_agent_reusable(
         agent_name,
         current_slots=_reuse_slots_for_ticket_agent(ticket, agent_name),
         previous_state=previous_state,
+        ignored_fingerprint_slots=ignored_fingerprint_slots,
     )
 
 
@@ -2414,6 +2580,7 @@ def _is_agent_reusable(
     *,
     current_slots: Mapping[str, Any] | None,
     previous_state: Mapping[str, Any] | None,
+    ignored_fingerprint_slots: Iterable[str] = (),
 ) -> bool:
     if agent_name not in CANONICAL_AGENT_ORDER:
         return False
@@ -2423,6 +2590,7 @@ def _is_agent_reusable(
         agent_name,
         current_slots=current_slots,
         previous_state=previous_state,
+        ignored_fingerprint_slots=ignored_fingerprint_slots,
     )
 
 
@@ -2431,6 +2599,7 @@ def _agent_unusable_reason(
     *,
     current_slots: Mapping[str, Any] | None,
     previous_state: Mapping[str, Any] | None,
+    ignored_fingerprint_slots: Iterable[str] = (),
 ) -> str:
     if not _raw_agent_available(previous_state, agent_name):
         return "not_available"
@@ -2440,6 +2609,7 @@ def _agent_unusable_reason(
         agent_name,
         current_slots=current_slots,
         previous_state=previous_state,
+        ignored_fingerprint_slots=ignored_fingerprint_slots,
     ):
         return "input_fingerprint_mismatch"
     return "reusable"
@@ -2557,24 +2727,36 @@ def _agent_fingerprint_matches(
     *,
     current_slots: Mapping[str, Any] | None,
     previous_state: Mapping[str, Any] | None,
+    ignored_fingerprint_slots: Iterable[str] = (),
 ) -> bool:
     if not isinstance(previous_state, Mapping):
         return False
     expected = _agent_fingerprint_from_slots(agent_name, normalize_slots(current_slots))
+    ignored_slots = set(ignored_fingerprint_slots)
     result_candidates = _agent_previous_result_fingerprint_candidates(
         agent_name,
         previous_state,
     )
     if result_candidates:
         return any(
-            _fingerprint_candidate_matches(agent_name, expected, candidate)
+            _fingerprint_candidate_matches(
+                agent_name,
+                expected,
+                candidate,
+                ignored_slots=ignored_slots,
+            )
             for candidate in result_candidates
         )
     candidates = _agent_previous_fingerprint_candidates(agent_name, previous_state)
     if not candidates:
         return not _previous_tool_results_from_state(previous_state)
     return all(
-        _fingerprint_candidate_matches(agent_name, expected, candidate)
+        _fingerprint_candidate_matches(
+            agent_name,
+            expected,
+            candidate,
+            ignored_slots=ignored_slots,
+        )
         for candidate in candidates
     )
 
@@ -2707,10 +2889,13 @@ def _fingerprint_candidate_matches(
     agent_name: str,
     expected: Mapping[str, Any],
     candidate: Mapping[str, Any],
+    *,
+    ignored_slots: set[str] | None = None,
 ) -> bool:
-    comparable_slots = set(AGENT_FINGERPRINT_SLOTS.get(agent_name, ()))
+    ignored = ignored_slots or set()
+    comparable_slots = set(AGENT_FINGERPRINT_SLOTS.get(agent_name, ())) - ignored
     for slot, candidate_value in candidate.items():
-        if slot not in comparable_slots:
+        if slot in ignored or slot not in comparable_slots:
             continue
         if slot not in expected:
             if not _fingerprint_extra_missing_is_allowed(agent_name, slot, candidate_value):
@@ -2719,6 +2904,8 @@ def _fingerprint_candidate_matches(
         if _fingerprint_value(expected.get(slot)) != _fingerprint_value(candidate_value):
             return False
     for slot, expected_value in expected.items():
+        if slot in ignored:
+            continue
         if slot not in candidate and not _fingerprint_missing_is_allowed(agent_name, slot):
             if not _is_empty_value(expected_value):
                 return False

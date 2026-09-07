@@ -105,6 +105,13 @@ def _runner_class_for_payload(payload: Dict[str, Any]) -> Type[ExperimentRunner]
         from experiments.run_ctp100_m3_no_reuse_ablation import M3NoReuseAblationRunner
 
         return M3NoReuseAblationRunner
+    if method in {
+        "adaptive_multi_agent_no_state",
+        "adaptive_multi_agent_no_propagation",
+    }:
+        from experiments.m3_core_ablation_variants import M3CoreAblationRunner
+
+        return M3CoreAblationRunner
     return ExperimentRunner
 
 

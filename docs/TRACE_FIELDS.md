@@ -112,7 +112,64 @@ contains:
   `reuse_hit_rate`.
 - `result_fingerprints`: semantic fingerprints of newly produced results, used
   by the next turn to prevent reuse when the old tool input does not match the
-  current destination, date, duration, people count, preferences, or budget
+  current destination, date, duration, people count, preferences, or budget.
+
+The scheduler `decision` now also records the invalidation split used by the
+core-mechanism ablation. The default switch remains enabled, so existing M3
+execution decisions are unchanged:
+
+- `invalidation_propagation_enabled`: whether downstream invalidation is
+  applied; the production/default M3 value is `true`.
+- `initial_invalidated_agents`: agents invalidated directly by a changed slot
+  or by their own unusable previous result.
+- `propagated_invalidated_agents`: downstream agents actually invalidated only
+  because an upstream result is re-executed or unusable.
+- `final_invalidated_agents`: final invalidated set; this is identical to the
+  backward-compatible `invalidated_agents` field.
+- `propagation_candidates`: downstream agents that propagation would affect.
+  When propagation is disabled, candidates remain auditable even though they
+  are not added to the final invalidated set.
+- `propagation_reasons`: deterministic reasons that produced the propagation
+  candidates. These are separate from the legacy `decision_reasons` so the
+  default M3 decision contract does not drift.
+
+### M3 core-ablation variant evidence
+
+The two supplementary variants are registered outside the frozen four-method
+main benchmark. Their scheduler evidence remains under `adaptive_scheduler`,
+but the method names and visibility policies are distinct:
+
+- `adaptive_multi_agent_no_state` uses
+  `name=stateless_current_request_capability_router`. It must not contain a
+  `ticket`. Its `ablation` block records that structured previous state,
+  previous slots, changed/preserved slots, and previous result reuse are all
+  unavailable. Only current-turn slots parsed from the current utterance and
+  role/content dialogue history are retained.
+- `adaptive_multi_agent_no_propagation` uses
+  `name=goal_state_scheduler_no_propagation_ablation`. It retains the normal M3
+  `ticket` and `reuse_execution`, while its decision must record
+  `invalidation_propagation_enabled=false`. `propagation_candidates` remain in
+  the trace even though they are not added to `final_invalidated_agents`.
+
+For M3-no-state multi-turn rows, `method_previous_state_policy` is
+`role_content_dialogue_history_only_no_structured_state` and
+`previous_state_provided=false`. The scenario runner may hold the prior result
+long enough to append its plain assistant text to dialogue history, but no
+structured previous-state object is passed to generation.
+
+The formal supplementary run uses
+`experiments/run_ctp100_m3_core_ablation.py`. Its fixed plan is 30 two-turn
+scenarios × 2 methods × 3 repeats = 360 rows. Before any LLM call, the runner
+loads the v1 base protocol plus the result-free v2 hash correction, then checks
+both protocol versions, the dataset/comparator hashes, frozen runtime controls, default
+M3 decision regression, no-state visibility boundary, and at least one actual
+propagation opportunity. During execution it writes both checkpoint formats
+and `benchmark_resume_state.json` after every new turn. Resume is allowed only
+when the Git commit, dataset, methods, repeat range, model/runtime controls,
+offline-data hashes, and protocol hash still match. On completion it emits the
+core-ablation JSON/Markdown gate report and `final_artifact_index.json`; the
+gate requires exactly 360 unique scenario-turn-method-repeat keys, complete
+trace and worker I/O inventories, and method-local t1→t2 state provenance.
 
 ## Day 7 LLM runtime audit fields
 

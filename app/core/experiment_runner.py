@@ -438,8 +438,9 @@ class ExperimentRunner:
         timeout_seconds: float,
     ) -> Dict[str, Any]:
         started = time.perf_counter()
+        worker_case = self._case_visible_to_result_worker(case, method)
         worker_payload = {
-            "case": _jsonable_value(case),
+            "case": _jsonable_value(worker_case),
             "method": method,
             "request_id": request_id,
             "trace_dir": self.trace_dir.as_posix(),
@@ -535,6 +536,20 @@ class ExperimentRunner:
             worker_stderr=worker_result.get("stderr"),
         )
         return result
+
+    def _case_visible_to_result_worker(
+        self,
+        case: Dict[str, Any],
+        method: ExperimentMethod,
+    ) -> Dict[str, Any]:
+        """Return the case serialized for the isolated result worker.
+
+        The default is deliberately identity-preserving so existing methods and
+        frozen experiment behavior do not change.  Supplemental methods may
+        override this hook when their contract forbids some input from crossing
+        the worker-process boundary.
+        """
+        return case
 
     def _run_result_hard_timeout_worker_process(
         self,
@@ -3793,7 +3808,10 @@ class ExperimentRunner:
                 self._initialize_trace_for_evaluation(case)
                 set_trace_selected_agents(planned_agents)
                 record_planned_tools(planned_tools)
-                if method == "adaptive_multi_agent" and scheduler_metadata is not None:
+                if (
+                    self._records_adaptive_scheduler(method)
+                    and scheduler_metadata is not None
+                ):
                     set_trace_scheduler_info(scheduler_metadata)
 
             reused_agent_outputs = self._reused_research_agent_outputs(
@@ -3820,7 +3838,9 @@ class ExperimentRunner:
                 called_tools=list(trace.tool_calls) if trace is not None else [],
             )
             result_scheduler = _nested_mapping(result, "metadata", "adaptive_scheduler")
-            if method == "adaptive_multi_agent" and isinstance(result_scheduler, dict):
+            if self._records_adaptive_scheduler(method) and isinstance(
+                result_scheduler, dict
+            ):
                 set_trace_scheduler_info(result_scheduler)
             set_trace_result_summary(result, offline_data=self._offline_data_summary(compact=True))
             return result
@@ -4021,6 +4041,10 @@ class ExperimentRunner:
         self,
         scheduler_metadata: Optional[Dict[str, Any]],
     ) -> bool:
+        if isinstance(scheduler_metadata, dict) and isinstance(
+            scheduler_metadata.get("requires_itinerary_for_budget"), bool
+        ):
+            return bool(scheduler_metadata["requires_itinerary_for_budget"])
         ticket = scheduler_metadata.get("ticket") if isinstance(scheduler_metadata, dict) else None
         if not isinstance(ticket, dict):
             return False
@@ -4045,6 +4069,10 @@ class ExperimentRunner:
         self,
         scheduler_metadata: Optional[Dict[str, Any]],
     ) -> bool:
+        if isinstance(scheduler_metadata, dict) and isinstance(
+            scheduler_metadata.get("requires_weather_for_itinerary"), bool
+        ):
+            return bool(scheduler_metadata["requires_weather_for_itinerary"])
         ticket = scheduler_metadata.get("ticket") if isinstance(scheduler_metadata, dict) else None
         if self._is_fixed_template_scheduler(scheduler_metadata):
             decision = self._scheduler_decision(scheduler_metadata)
@@ -4075,6 +4103,10 @@ class ExperimentRunner:
         self,
         scheduler_metadata: Optional[Dict[str, Any]],
     ) -> bool:
+        if isinstance(scheduler_metadata, dict) and isinstance(
+            scheduler_metadata.get("requires_attraction_for_budget"), bool
+        ):
+            return bool(scheduler_metadata["requires_attraction_for_budget"])
         ticket = scheduler_metadata.get("ticket") if isinstance(scheduler_metadata, dict) else None
         dependency_policy = (
             ticket.get("dependency_policy")
@@ -4956,6 +4988,10 @@ class ExperimentRunner:
                 agent_name,
                 ticket=ticket,
                 previous_state=previous_state,
+                ignored_fingerprint_slots=self._ignored_reuse_fingerprint_slots(
+                    scheduler_metadata,
+                    agent_name,
+                ),
             ):
                 continue
             for tool_name in self._tools_for_research_agent(agent_name):
@@ -5049,6 +5085,10 @@ class ExperimentRunner:
                 agent_name,
                 ticket=ticket or {"current_slots": current_slots},
                 previous_state=previous_state,
+                ignored_fingerprint_slots=self._ignored_reuse_fingerprint_slots(
+                    scheduler_metadata,
+                    agent_name,
+                ),
             ):
                 continue
             agent_tools = self._tools_for_research_agent(agent_name)
@@ -5070,6 +5110,26 @@ class ExperimentRunner:
         if isinstance(reuse_execution, dict):
             return _as_list(reuse_execution.get("reused_agent_results"))
         return []
+
+    def _ignored_reuse_fingerprint_slots(
+        self,
+        scheduler_metadata: Optional[Dict[str, Any]],
+        agent_name: str,
+    ) -> List[str]:
+        """Return slots intentionally ignored only by the propagation ablation."""
+        decision = self._scheduler_decision(scheduler_metadata)
+        if decision.get("invalidation_propagation_enabled") is not False:
+            return []
+        if agent_name not in set(_as_list(decision.get("propagation_candidates"))):
+            return []
+        ticket = (
+            scheduler_metadata.get("ticket")
+            if isinstance(scheduler_metadata, dict)
+            else None
+        )
+        if not isinstance(ticket, dict):
+            return []
+        return _as_list(ticket.get("changed_slots"))
 
     def _case_with_goal_state_slots(
         self,
@@ -7003,14 +7063,23 @@ class ExperimentRunner:
         needle = str(label or "").strip().casefold()
         return bool(needle and needle in haystack)
 
-    def _select_adaptive_research_plan(self, case: Dict[str, Any]) -> Dict[str, Any]:
+    def _select_adaptive_research_plan(
+        self,
+        case: Dict[str, Any],
+        *,
+        invalidation_propagation_enabled: bool = True,
+    ) -> Dict[str, Any]:
         previous_state = self._goal_state_previous_state(case)
         ticket = build_goal_state_ticket(
             user_input=str(case.get("user_input") or ""),
             current_slots=self._goal_state_current_slots(case),
             previous_state=previous_state,
         )
-        decision = schedule_goal_state_ticket(ticket, previous_state=previous_state)
+        decision = schedule_goal_state_ticket(
+            ticket,
+            previous_state=previous_state,
+            invalidation_propagation_enabled=invalidation_propagation_enabled,
+        )
         return {
             "agents": decision.planned_agents,
             "tools": decision.planned_tools,
@@ -7221,6 +7290,17 @@ class ExperimentRunner:
         ticket = scheduler_metadata.get("ticket") if isinstance(scheduler_metadata, dict) else None
         if isinstance(ticket, dict) and ticket.get("task_type"):
             return self._canonical_research_task_type(ticket["task_type"])
+        stateless_understanding = (
+            scheduler_metadata.get("stateless_understanding")
+            if isinstance(scheduler_metadata, dict)
+            else None
+        )
+        if isinstance(stateless_understanding, dict) and stateless_understanding.get(
+            "task_type"
+        ):
+            return self._canonical_research_task_type(
+                stateless_understanding["task_type"]
+            )
         return self._infer_research_task_type(case)
 
     def _research_method_metadata(
@@ -7249,7 +7329,7 @@ class ExperimentRunner:
             metadata["agent_outputs"] = agent_outputs
             metadata["agent_decision_audit"] = self._agent_decision_audit(agent_outputs)
         if scheduler_metadata is not None:
-            if method == "adaptive_multi_agent":
+            if self._records_adaptive_scheduler(method):
                 metadata["adaptive_scheduler"] = scheduler_metadata
             elif method == "fixed_multi_agent":
                 metadata["fixed_template_scheduler"] = scheduler_metadata
@@ -7258,6 +7338,9 @@ class ExperimentRunner:
             if isinstance(reuse_execution, dict):
                 metadata["reuse_execution"] = reuse_execution
         return metadata
+
+    def _records_adaptive_scheduler(self, method: ExperimentMethod) -> bool:
+        return method == "adaptive_multi_agent"
 
     def _scheduler_metadata_with_result_fingerprints(
         self,

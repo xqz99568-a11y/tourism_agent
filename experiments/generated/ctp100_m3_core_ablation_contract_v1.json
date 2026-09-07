@@ -1,0 +1,480 @@
+{
+  "schema_version": "ctp100-m3-core-ablation-contract-v1",
+  "contract_id": "ctp100_m3_core_ablation_20260906_v1",
+  "status": "frozen_before_implementation_and_results",
+  "freeze_date": "2026-09-06",
+  "paper_role": "post-review supplemental core-mechanism ablation on the frozen CTP100 multi-turn scope",
+  "source_system": {
+    "branch": "m3-core-ablation-v1",
+    "authored_from_commit": "4c22dff6b7880c52fb1473c3c4149f8278b9287c",
+    "authored_from_tag": "submission-pack-v1",
+    "main_method": "adaptive_multi_agent",
+    "paper_label": "M3-full"
+  },
+  "research_questions": [
+    {
+      "id": "RQ-A1",
+      "question": "Does the structured cross-turn goal-state representation contribute to multi-turn task success when previous business results are not reused?",
+      "isolated_factor": "structured_cross_turn_goal_state",
+      "retained_method": "adaptive_multi_agent_no_reuse",
+      "ablated_method": "adaptive_multi_agent_no_state"
+    },
+    {
+      "id": "RQ-A2",
+      "question": "Does dependency-aware downstream invalidation propagation contribute to multi-turn consistency and task success?",
+      "isolated_factor": "downstream_invalidation_propagation",
+      "retained_method": "adaptive_multi_agent",
+      "ablated_method": "adaptive_multi_agent_no_propagation"
+    }
+  ],
+  "method_definitions": {
+    "adaptive_multi_agent": {
+      "paper_label": "M3-full",
+      "role": "existing full-method reference",
+      "structured_goal_state_ticket": true,
+      "method_local_previous_slots": true,
+      "changed_and_preserved_slot_reasoning": true,
+      "dynamic_agent_and_tool_scheduling": true,
+      "dependency_completion": true,
+      "downstream_invalidation_propagation": true,
+      "previous_agent_and_tool_result_reuse": true,
+      "raw_role_content_dialogue_history": true
+    },
+    "adaptive_multi_agent_no_reuse": {
+      "paper_label": "M3-no-reuse",
+      "role": "existing matched reference for the state ablation",
+      "structured_goal_state_ticket": true,
+      "method_local_previous_slots": true,
+      "changed_and_preserved_slot_reasoning": true,
+      "dynamic_agent_and_tool_scheduling": true,
+      "dependency_completion": true,
+      "downstream_invalidation_propagation": true,
+      "previous_agent_and_tool_result_reuse": false,
+      "raw_role_content_dialogue_history": true,
+      "result_stripping_policy": "Previous slots are retained; previous agent outputs, tool results, attractions, weather, itinerary, and budget artifacts are stripped."
+    },
+    "adaptive_multi_agent_no_state": {
+      "paper_label": "M3-no-state",
+      "role": "new structured-state ablation",
+      "structured_goal_state_ticket": false,
+      "method_local_previous_slots": false,
+      "changed_and_preserved_slot_reasoning": false,
+      "dynamic_agent_and_tool_scheduling": "retained only as stateless current-request capability routing; it must not consume a goal-state ticket",
+      "dependency_completion": true,
+      "downstream_invalidation_propagation": false,
+      "previous_agent_and_tool_result_reuse": false,
+      "raw_role_content_dialogue_history": true,
+      "allowed_inputs": [
+        "current user utterance",
+        "the method's own ordinary role/content dialogue history",
+        "ephemeral understanding parsed from visible text in the current turn"
+      ],
+      "forbidden_inputs_or_state": [
+        "method_previous_state",
+        "previous_slots",
+        "current_slots merged with previous slots",
+        "changed_slots",
+        "preserved_slots",
+        "GoalStateTaskTicket",
+        "previous structured assistant output",
+        "previous agent outputs",
+        "previous tool results",
+        "gold labels or evaluator-only fields"
+      ],
+      "interpretation": "This removes explicit persisted cross-turn goal state. Natural-language dialogue remains visible because removing the dialogue itself would test memory deprivation rather than structured state representation."
+    },
+    "adaptive_multi_agent_no_propagation": {
+      "paper_label": "M3-no-propagation",
+      "role": "new downstream-invalidation-propagation ablation",
+      "structured_goal_state_ticket": true,
+      "method_local_previous_slots": true,
+      "changed_and_preserved_slot_reasoning": true,
+      "dynamic_agent_and_tool_scheduling": true,
+      "dependency_completion": true,
+      "downstream_invalidation_propagation": false,
+      "previous_agent_and_tool_result_reuse": true,
+      "raw_role_content_dialogue_history": true,
+      "retained_behavior": [
+        "direct invalidation caused by the changed slot",
+        "reuse-validity checks for each previous result",
+        "upstream dependency completion when a required upstream result is missing",
+        "the full M3 agent order, tool order, prompts, model, and frozen data"
+      ],
+      "removed_behavior": [
+        "adding a reusable downstream result solely because an upstream result is re-executed",
+        "invalidating a downstream result solely because an upstream previous result is unusable"
+      ],
+      "interpretation": "Potentially stale downstream reuse is intentional in this variant; it is the mechanism being tested, not an implementation error."
+    }
+  },
+  "invalidation_decomposition": {
+    "purpose": "Separate direct slot impact from transitive downstream propagation without changing M3-full's final scheduling decisions when propagation is enabled.",
+    "direct_invalidation_seed_policy": {
+      "destination": [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ],
+      "duration_days": [
+        "weather",
+        "budget"
+      ],
+      "start_date": [
+        "weather",
+        "budget"
+      ],
+      "people_count": [
+        "itinerary",
+        "budget"
+      ],
+      "traveler_group": [
+        "attraction"
+      ],
+      "preferences": [
+        "attraction"
+      ],
+      "special_requirements": [
+        "attraction"
+      ],
+      "budget_amount": [
+        "budget"
+      ],
+      "budget_level": [
+        "budget"
+      ],
+      "weather_scenario": [
+        "weather"
+      ],
+      "origin_default": [
+        "budget"
+      ],
+      "origin_when_ticket_policy_requires_itinerary_replan": [
+        "itinerary",
+        "budget"
+      ],
+      "explicit_budget_replan": [
+        "itinerary",
+        "budget"
+      ],
+      "weather_adjustment_with_reusable_weather": [
+        "itinerary",
+        "budget"
+      ],
+      "explicit_full_replan_or_unknown_change": [
+        "attraction",
+        "weather",
+        "itinerary",
+        "budget"
+      ]
+    },
+    "propagation_edges": {
+      "attraction": [
+        "itinerary",
+        "budget"
+      ],
+      "weather": [
+        "itinerary"
+      ]
+    },
+    "full_m3_equivalence_requirement": "With propagation enabled, final planned, reused, and invalidated agent sets must match the pre-refactor M3-full decisions for the frozen regression cases.",
+    "no_propagation_rule": "With propagation disabled, apply only direct seeds and required upstream completion; do not add dependent agents solely through propagation.",
+    "required_trace_fields": [
+      "invalidation_propagation_enabled",
+      "initial_invalidated_agents",
+      "propagated_invalidated_agents",
+      "final_invalidated_agents",
+      "propagation_reasons"
+    ]
+  },
+  "comparisons": {
+    "state_ablation_primary": {
+      "comparison_id": "A1_no_state_vs_no_reuse",
+      "retained_method": "adaptive_multi_agent_no_reuse",
+      "ablated_method": "adaptive_multi_agent_no_state",
+      "single_intended_difference": "availability of explicit structured cross-turn goal state",
+      "why_not_full_m3_as_primary": "M3-full also reuses previous business results, so a direct primary comparison would confound structured state with result reuse.",
+      "secondary_context_only": "adaptive_multi_agent"
+    },
+    "propagation_ablation_primary": {
+      "comparison_id": "A2_full_vs_no_propagation",
+      "retained_method": "adaptive_multi_agent",
+      "ablated_method": "adaptive_multi_agent_no_propagation",
+      "single_intended_difference": "dependency-aware downstream invalidation propagation",
+      "all_other_m3_mechanisms_retained": true
+    },
+    "cross_ablation_policy": {
+      "direct_no_state_vs_no_propagation_claim_allowed": false,
+      "reason": "The two variants remove different mechanisms and are not a one-factor matched pair."
+    }
+  },
+  "data_scope": {
+    "source_dataset": {
+      "path": "experiments/ctp100_formal_v2.json",
+      "dataset_id": "ctp100_formal_v2",
+      "dataset_version": "2026-08-21-formal-v3-runtime-control-freeze",
+      "dataset_role": "post_development_frozen_controlled_main_benchmark",
+      "case_count": 100,
+      "turn_count": 130,
+      "raw_file_sha256": "5b393acd26385ff2120d2e01033f49c49d4b7ef5653bf50ee258195d7f8b5f50",
+      "canonical_json_sha256": "c77213f36bffe8090a7c7a7157530a38f58b802b85f844b5d3cb7d8ccb64056e",
+      "hash_strategy": "canonical_json_utf8_sort_keys_v1"
+    },
+    "selection_policy": {
+      "selected_unit": "all source cases whose turns field is a list of exactly two turns",
+      "selected_scenario_count": 30,
+      "selected_turn_count": 60,
+      "target_turn_id": "t2",
+      "primary_target_turn_count": 30,
+      "post_hoc_success_filtering": false,
+      "manual_case_selection": false,
+      "single_turn_cases_included": false,
+      "ctp30_v1_or_v2_included": false,
+      "selected_cases_canonical_sha256": "33ba8cbc4ce16efbb9b2938c612987bcc71946cff703b4154b27ff0b4838f07e"
+    },
+    "selected_case_ids": [
+      "ctp100_v2_051",
+      "ctp100_v2_052",
+      "ctp100_v2_053",
+      "ctp100_v2_054",
+      "ctp100_v2_055",
+      "ctp100_v2_056",
+      "ctp100_v2_057",
+      "ctp100_v2_058",
+      "ctp100_v2_059",
+      "ctp100_v2_060",
+      "ctp100_v2_061",
+      "ctp100_v2_062",
+      "ctp100_v2_063",
+      "ctp100_v2_064",
+      "ctp100_v2_065",
+      "ctp100_v2_066",
+      "ctp100_v2_067",
+      "ctp100_v2_068",
+      "ctp100_v2_069",
+      "ctp100_v2_070",
+      "ctp100_v2_071",
+      "ctp100_v2_072",
+      "ctp100_v2_073",
+      "ctp100_v2_074",
+      "ctp100_v2_075",
+      "ctp100_v2_076",
+      "ctp100_v2_077",
+      "ctp100_v2_078",
+      "ctp100_v2_079",
+      "ctp100_v2_087"
+    ],
+    "target_turn_task_distribution": {
+      "partial_replan": 25,
+      "weather_adjustment": 5
+    },
+    "annotated_target_change_distribution_design_audit_only": {
+      "budget_amount": 4,
+      "people_count": 4,
+      "duration_days": 4,
+      "special_requirements": 3,
+      "preferences": 1,
+      "origin": 4,
+      "start_date": 5,
+      "no_explicit_changed_slot_weather_adjustment": 5
+    },
+    "propagation_activation_design_candidates": {
+      "candidate_count": 13,
+      "case_ids": [
+        "ctp100_v2_059",
+        "ctp100_v2_060",
+        "ctp100_v2_061",
+        "ctp100_v2_062",
+        "ctp100_v2_063",
+        "ctp100_v2_064",
+        "ctp100_v2_065",
+        "ctp100_v2_066",
+        "ctp100_v2_075",
+        "ctp100_v2_076",
+        "ctp100_v2_077",
+        "ctp100_v2_078",
+        "ctp100_v2_079"
+      ],
+      "basis": "Frozen annotated changed-slot categories combined with the frozen direct-seed and propagation-edge policy.",
+      "generation_visible": false,
+      "selection_filter": false,
+      "runtime_requirement": "The implementation must independently audit actual propagation opportunities; these design candidates must never be injected into generation or used to select successful rows."
+    }
+  },
+  "run_scope": {
+    "new_methods": [
+      "adaptive_multi_agent_no_state",
+      "adaptive_multi_agent_no_propagation"
+    ],
+    "repeats": 3,
+    "repeat_indices": [
+      0,
+      1,
+      2
+    ],
+    "scenario_count_per_method_per_repeat": 30,
+    "turn_count_per_method_per_repeat": 60,
+    "expected_new_raw_rows_per_method": 180,
+    "expected_new_raw_rows_total": 360,
+    "expected_new_target_rows_per_method": 90,
+    "expected_new_target_rows_total": 180,
+    "execution_policy": "Each method must generate its own t1 result and t2 may consume only information permitted by that same method's contract.",
+    "first_turn_role": "setup turn required to construct method-local history; report separately and do not pool it into the primary mechanism-effect endpoint",
+    "target_turn_role": "primary multi-turn ablation endpoint"
+  },
+  "existing_reference_results": {
+    "adaptive_multi_agent": {
+      "paper_label": "M3-full",
+      "expected_selected_raw_rows": 180,
+      "expected_selected_target_rows": 90,
+      "filter": "method == adaptive_multi_agent AND scenario_id in selected_case_ids",
+      "sources": [
+        {
+          "run_id": "formal_ctp100_20260825_v6",
+          "repeat_indices": [
+            0
+          ],
+          "git_commit": "0b925c93e2edf88e2dfb4346b11bc24faaae24a7",
+          "git_tag": "formal-ctp100-v6",
+          "results_csv": "D:/Tourism_Agent_Formal_Runs/formal_ctp100_20260825_v6/benchmark_results.csv",
+          "results_csv_raw_sha256": "c4d529b5b8559ec2c2a568311bb5df3c5a1666a4ee24d8984cfbea38915174a8",
+          "manifest_raw_sha256": "ac259eaf372d28e0fc84c7c0ad4c269f14bdf39ff8f71a03f11700bca122865a"
+        },
+        {
+          "run_id": "ctp100_m2m3_stability_20260830_v1",
+          "repeat_indices": [
+            1,
+            2
+          ],
+          "git_commit": "b82346c3461ec95cb669927d26436d0a04b23cf2",
+          "git_tag": "ctp100-m2m3-stability-runner-v1",
+          "results_csv": "D:/Tourism_Agent_Formal_Runs/ctp100_m2_m3_stability/ctp100_m2m3_stability_20260830_v1/benchmark_results.csv",
+          "results_csv_raw_sha256": "ced1e7ab9c289d9ddac994aa14028f5ffa4182b3bf409629764c69d3dd1988fa",
+          "manifest_raw_sha256": "4c59e4aa21ff15ec09e839aecc6b4308f19da6669a0c83834008442510941822"
+        }
+      ]
+    },
+    "adaptive_multi_agent_no_reuse": {
+      "paper_label": "M3-no-reuse",
+      "run_id": "ctp100_m3_no_reuse_ablation_20260831_v2",
+      "repeat_indices": [
+        0,
+        1,
+        2
+      ],
+      "git_commit": "d2cf9149a44fb476279b9bf19b871741da73fd8b",
+      "git_tag": "m3-no-reuse-ablation-worker-fix-v1",
+      "expected_selected_raw_rows": 180,
+      "expected_selected_target_rows": 90,
+      "results_csv": "D:/Tourism_Agent_Formal_Runs/ctp100_m3_no_reuse_ablation/ctp100_m3_no_reuse_ablation_20260831_v2/benchmark_results.csv",
+      "results_csv_raw_sha256": "d14ad86946bdbf4f1c6cd618d7f5f3a1957c73ae00cec84adb436b5c014b0adb",
+      "manifest_raw_sha256": "5560af742e7a1ac4ed3e0df44848becd2f491a38b5d4738e02f87a9811fbd607"
+    },
+    "rerun_policy": "Do not rerun or replace existing references merely to improve their scores. A missing or hash-mismatched reference artifact blocks the corresponding comparison."
+  },
+  "frozen_controls": {
+    "model": "gpt-5-mini",
+    "temperature": 0.0,
+    "max_tokens": 4096,
+    "reasoning_effort": "minimal",
+    "method_order_seed": 20260718,
+    "business_agents": [
+      "attraction",
+      "weather",
+      "itinerary",
+      "budget"
+    ],
+    "generation_tools": [
+      "poi_search",
+      "weather_query",
+      "budget_calculator"
+    ],
+    "fixed_data_combined_sha256": "8746745969a4045b0295bdb27a7a19fb953e50067a097aa53e38c8f9b5e288d0",
+    "qweather_combined_sha256": "7e0bf56ef8061a056063567f29ebf703c15c220fb44be34758d19833a804a997",
+    "intercity_transport_combined_sha256": "c0eb0b9048de4cd35c178a866c70cdf85038521833e62acb92469518d0bb53b8",
+    "same_as_reference": [
+      "business-agent implementation",
+      "business-agent prompts",
+      "tool implementation and tool order",
+      "frozen offline data",
+      "independent evaluator and gold labels",
+      "output schema",
+      "timeout and retry rules",
+      "failure classification and failure retention policy"
+    ],
+    "forbidden_during_ablation_implementation": [
+      "editing the CTP100 or CTP30 datasets",
+      "editing gold labels or evaluator rules",
+      "editing business-agent prompts to favor an ablation",
+      "changing the LLM model or sampling parameters",
+      "changing QWeather, budget, POI, accommodation, restaurant, or intercity data",
+      "selecting cases from observed model success or failure",
+      "silently falling back to mock outputs",
+      "selectively rerunning failed rows to replace them"
+    ]
+  },
+  "outcomes_and_reporting": {
+    "primary_endpoint": "target-turn STSR",
+    "primary_unit": "scenario_id",
+    "primary_scope": "t2 only across all 30 frozen scenarios and all three repeats",
+    "secondary_quality_endpoints": [
+      "target-turn HCSR",
+      "target-turn ITCSR",
+      "unchanged-slot preservation pass rate",
+      "agent-set exact match",
+      "tool-set exact match"
+    ],
+    "secondary_efficiency_endpoints": [
+      "agent call count",
+      "tool call count",
+      "total tokens",
+      "standardized estimated cost",
+      "latency_ms"
+    ],
+    "descriptive_only": [
+      "t1 setup-turn results",
+      "all-60-turn pooled results",
+      "propagation-opportunity-subset results"
+    ],
+    "failure_policy": "Method failures and terminal API infrastructure failures remain in the denominator and are reported separately; integrity failures block paper claims.",
+    "no_cherry_picking": true,
+    "claim_boundary": "These ablations support mechanism claims only on the frozen CTP100 two-turn controlled benchmark; they do not establish generalization to arbitrary tourism conversations."
+  },
+  "implementation_and_run_gates": {
+    "before_any_llm_run": [
+      "the JSON and Markdown contracts agree",
+      "the source dataset hash and all selected case IDs match",
+      "both existing comparator result hashes match",
+      "M3-full default-on scheduling remains regression-equivalent",
+      "M3-no-state has no structured cross-turn state or result-reuse path",
+      "M3-no-propagation records the required propagation audit fields",
+      "the deterministic dry-run audit finds at least one real propagation opportunity",
+      "the worktree is clean and the implementation commit is tagged"
+    ],
+    "hard_block_if": [
+      "selected scenario count is not 30 or selected turn count is not 60",
+      "a comparator artifact is missing or its hash differs",
+      "the default M3-full regression decision changes",
+      "M3-no-state receives structured previous-state fields",
+      "M3-no-propagation produces zero propagation opportunities",
+      "gold or evaluator-only data becomes visible to generation"
+    ],
+    "after_run": [
+      "exactly 360 new raw rows exist",
+      "each new method has 180 rows and repeat indices 0, 1, and 2",
+      "all scenario-turn-method-repeat keys are unique",
+      "each t2 consumes only its own method's t1 history under the method contract",
+      "traces, worker I/O, checkpoints, manifest, gate report, and final artifact index are complete"
+    ]
+  },
+  "change_control": {
+    "before_results": "A necessary protocol correction requires a new versioned contract and an explicit reason before any model call.",
+    "after_results": "Do not alter method definitions, selected cases, endpoints, or comparator sources after inspecting ablation outcomes. Any later exploratory variant must receive a new name and be reported as exploratory.",
+    "paper_disclosure": "State that the core-ablation protocol was frozen before implementation results and that existing M3-full and M3-no-reuse references were identified by immutable hashes."
+  },
+  "api_usage_for_contract_creation": {
+    "llm_calls": 0,
+    "weather_api_calls": 0,
+    "intercity_api_calls": 0
+  }
+}

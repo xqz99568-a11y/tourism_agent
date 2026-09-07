@@ -1,0 +1,46 @@
+{
+  "schema_version": "ctp-m3-core-ablation-contract-amendment-v1",
+  "contract_id": "ctp100_m3_core_ablation_20260907_v2",
+  "status": "frozen_before_results_protocol_hash_correction",
+  "freeze_date": "2026-09-07",
+  "base_contract": {
+    "path": "experiments/generated/ctp100_m3_core_ablation_contract_v1.json",
+    "contract_id": "ctp100_m3_core_ablation_20260906_v1",
+    "raw_sha256": "5f97b6a7f5c3635fbe0c03ab93ed1152e96caa1c7b5ec9d9b15189a79b4645aa",
+    "canonical_sha256": "88116678d22c7a06bdb9c1d70a1cf083b9f4bbc18eb0ccf9fc1fc64f3d025ee6"
+  },
+  "effective_overrides": {
+    "data_scope.selection_policy.selected_cases_canonical_sha256": "f6082726bd82f11ca8f8c330bdfc67c040ed2f5ab56a2915ac95b3a8f179274f",
+    "data_scope.selection_policy.selected_cases_hash_payload": "the ordered JSON list containing the 30 complete selected case objects"
+  },
+  "pre_run_corrections": [
+    {
+      "correction_id": "selected_cases_hash_payload_correction_20260907",
+      "date": "2026-09-07",
+      "timing": "before any core-ablation LLM call or result inspection",
+      "field": "data_scope.selection_policy.selected_cases_canonical_sha256",
+      "previous_value": "33ba8cbc4ce16efbb9b2938c612987bcc71946cff703b4154b27ff0b4838f07e",
+      "corrected_value": "f6082726bd82f11ca8f8c330bdfc67c040ed2f5ab56a2915ac95b3a8f179274f",
+      "reason": "The v1 value was not reproducible from the frozen source dataset and declared selection rule. The v2 value is canonical_json_sha256 over the ordered list of all 30 complete selected case objects."
+    }
+  ],
+  "unchanged_from_v1": [
+    "research questions",
+    "method definitions",
+    "invalidation decomposition",
+    "comparisons",
+    "source dataset and selected case IDs",
+    "run scope and 360-row count",
+    "existing comparator sources and hashes",
+    "frozen model, tools, data, outcomes, and gates"
+  ],
+  "scope_change": false,
+  "method_change": false,
+  "endpoint_change": false,
+  "comparator_change": false,
+  "api_usage_before_v2_freeze": {
+    "core_ablation_llm_calls": 0,
+    "weather_api_calls": 0,
+    "intercity_api_calls": 0
+  }
+}

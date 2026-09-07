@@ -8,6 +8,7 @@ if str(ROOT) not in sys.path:
 
 from app.core.goal_state_scheduler import (
     DECISION_SCHEMA_VERSION,
+    INVALIDATION_PROPAGATION_DEFAULT_ENABLED,
     TICKET_SCHEMA_VERSION,
     build_goal_state_result_fingerprints,
     build_goal_state_ticket,
@@ -1278,6 +1279,194 @@ def test_attraction_expansion_wins_over_same_condition_terms() -> None:
     assert ticket.task_type == "attraction_recommendation"
     assert decision.planned_agents == ["attraction"]
     assert decision.reused_agents == []
+
+
+def test_default_propagation_preserves_m3_decision_and_records_split() -> None:
+    previous_state = _successful_previous_state_with_fingerprints(
+        {
+            "destination": "hangzhou",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "preferences": ["classic"],
+        }
+    )
+    ticket = build_goal_state_ticket(
+        user_input="Change the preference to nature and keep everything else unchanged.",
+        current_slots={"preferences": ["nature"]},
+        previous_state=previous_state,
+    )
+
+    default_decision = schedule_goal_state_ticket(
+        ticket,
+        previous_state=previous_state,
+    )
+    explicitly_enabled = schedule_goal_state_ticket(
+        ticket,
+        previous_state=previous_state,
+        invalidation_propagation_enabled=True,
+    )
+
+    assert INVALIDATION_PROPAGATION_DEFAULT_ENABLED is True
+    assert default_decision.to_dict() == explicitly_enabled.to_dict()
+    assert default_decision.planned_agents == ["attraction", "itinerary", "budget"]
+    assert default_decision.reused_agents == ["weather"]
+    assert default_decision.invalidated_agents == [
+        "attraction",
+        "itinerary",
+        "budget",
+    ]
+    assert default_decision.decision_reasons == ["preferences_changed_replan"]
+    assert default_decision.invalidation_propagation_enabled is True
+    assert default_decision.initial_invalidated_agents == ["attraction"]
+    assert default_decision.propagated_invalidated_agents == ["itinerary", "budget"]
+    assert default_decision.final_invalidated_agents == default_decision.invalidated_agents
+    assert default_decision.propagation_candidates == ["itinerary", "budget"]
+    assert "slot_change_downstream_invalidation" in (
+        default_decision.propagation_reasons
+    )
+
+
+def test_disabling_propagation_reuses_healthy_downstream_results() -> None:
+    previous_state = _successful_previous_state_with_fingerprints(
+        {
+            "destination": "hangzhou",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "preferences": ["classic"],
+        }
+    )
+    ticket = build_goal_state_ticket(
+        user_input="Change the preference to nature and keep everything else unchanged.",
+        current_slots={"preferences": ["nature"]},
+        previous_state=previous_state,
+    )
+
+    decision = schedule_goal_state_ticket(
+        ticket,
+        previous_state=previous_state,
+        invalidation_propagation_enabled=False,
+    )
+
+    assert decision.invalidation_propagation_enabled is False
+    assert decision.planned_agents == ["attraction"]
+    assert decision.reused_agents == ["weather", "itinerary", "budget"]
+    assert decision.invalidated_agents == ["attraction"]
+    assert decision.initial_invalidated_agents == ["attraction"]
+    assert decision.propagated_invalidated_agents == []
+    assert decision.final_invalidated_agents == ["attraction"]
+    assert decision.propagation_candidates == ["itinerary", "budget"]
+    assert "slot_change_downstream_invalidation" in decision.propagation_reasons
+    assert "planned_upstream_downstream_invalidation" in (
+        decision.propagation_reasons
+    )
+    assert decision.decision_reasons == ["preferences_changed_replan"]
+
+
+def test_disabling_propagation_still_reexecutes_failed_upstream_result() -> None:
+    previous_state = _successful_previous_state_with_fingerprints(
+        {
+            "destination": "hangzhou",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "preferences": ["classic"],
+        }
+    )
+    previous_state["tool_results"]["poi_search"].update(
+        {
+            "status": "failed",
+            "success": False,
+            "error": {"message": "previous attraction failed"},
+        }
+    )
+    ticket = build_goal_state_ticket(
+        user_input="same plan again",
+        current_slots={},
+        previous_state=previous_state,
+    )
+
+    decision = schedule_goal_state_ticket(
+        ticket,
+        previous_state=previous_state,
+        invalidation_propagation_enabled=False,
+    )
+
+    assert decision.planned_agents == ["attraction"]
+    assert decision.reused_agents == ["weather", "itinerary", "budget"]
+    assert decision.initial_invalidated_agents == ["attraction"]
+    assert decision.propagated_invalidated_agents == []
+    assert decision.final_invalidated_agents == ["attraction"]
+    assert decision.propagation_candidates == ["itinerary", "budget"]
+    assert decision.decision_reasons == [
+        "identical_request_incomplete_previous_state_replan"
+    ]
+    assert "planned_upstream_downstream_invalidation" in (
+        decision.propagation_reasons
+    )
+
+
+def test_disabling_propagation_still_executes_missing_downstream_result() -> None:
+    previous_state = _successful_previous_state_with_fingerprints(
+        {
+            "destination": "hangzhou",
+            "start_date": "2026-08-08",
+            "duration_days": 3,
+            "people_count": 2,
+            "preferences": ["classic"],
+        },
+        agents=("attraction", "weather", "budget"),
+    )
+    ticket = build_goal_state_ticket(
+        user_input="Change the preference to nature and keep everything else unchanged.",
+        current_slots={"preferences": ["nature"]},
+        previous_state=previous_state,
+    )
+
+    decision = schedule_goal_state_ticket(
+        ticket,
+        previous_state=previous_state,
+        invalidation_propagation_enabled=False,
+    )
+
+    assert decision.planned_agents == ["attraction", "itinerary"]
+    assert decision.reused_agents == ["weather", "budget"]
+    assert decision.initial_invalidated_agents == ["attraction"]
+    assert decision.propagated_invalidated_agents == []
+    assert decision.final_invalidated_agents == ["attraction"]
+    assert decision.propagation_candidates == ["itinerary", "budget"]
+
+
+def test_direct_invalidation_is_not_mislabeled_as_propagation() -> None:
+    previous_state = _successful_previous_state_with_fingerprints(
+        {
+            "destination": "guilin",
+            "start_date": "2026-08-10",
+            "duration_days": 3,
+            "people_count": 2,
+            "budget_amount": 5000,
+        }
+    )
+    ticket = build_goal_state_ticket(
+        user_input="Change the group to three people; keep the other conditions.",
+        current_slots={"people_count": 3},
+        previous_state=previous_state,
+    )
+
+    decision = schedule_goal_state_ticket(
+        ticket,
+        previous_state=previous_state,
+        invalidation_propagation_enabled=False,
+    )
+
+    assert decision.planned_agents == ["itinerary", "budget"]
+    assert decision.reused_agents == ["attraction", "weather"]
+    assert decision.initial_invalidated_agents == ["itinerary", "budget"]
+    assert decision.propagated_invalidated_agents == []
+    assert decision.final_invalidated_agents == ["itinerary", "budget"]
+    assert decision.propagation_candidates == []
+    assert decision.propagation_reasons == []
 
 
 def test_normalize_slots_ignores_empty_values_and_unknown_fields() -> None:
